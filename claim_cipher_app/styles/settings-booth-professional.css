@@ -1,0 +1,363 @@
+/* 🎛️ PROFESSIONAL SETTINGS BOOTH STYLES */
+/* Enterprise-grade settings interface matching Claim Cipher design system */
+
+/* =================================
+   SETTINGS CONTAINER LAYOUT
+   ================================= */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cipher-space-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--cipher-space-lg);
+}
+
+.settings-section {
+    margin-bottom: var(--cipher-space-xl);
+}
+
+.settings-form {
+    padding: var(--cipher-space-md) var(--cipher-space-xl) var(--cipher-space-xl);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--cipher-space-lg);
+}
+
+/* =================================
+   TIME RANGE INPUTS
+   ================================= */
+.time-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-md);
+}
+
+.time-separator {
+    color: var(--cipher-text-secondary);
+    font-weight: var(--cipher-font-weight-medium);
+    padding: 0 var(--cipher-space-sm);
+    font-size: 1rem;
+}
+
+.time-range-inputs .route-input {
+    max-width: 150px;
+}
+
+/* =================================
+   ENHANCED FORM SECTIONS
+   ================================= */
+.form-section {
+    margin-bottom: var(--cipher-space-xxl);
+    padding: var(--cipher-space-lg);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--cipher-radius-lg);
+    backdrop-filter: blur(10px);
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    font-size: 1.2rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-text-primary);
+    margin: 0 0 var(--cipher-space-lg) 0;
+    padding-bottom: var(--cipher-space-sm);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.form-icon {
+    font-size: 1.1rem;
+}
+
+/* =================================
+   SETTINGS SPECIFIC LAYOUTS
+   ================================= */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--cipher-space-lg);
+    margin-bottom: var(--cipher-space-xl);
+}
+
+.settings-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.settings-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.settings-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* =================================
+   PROFESSIONAL BUTTONS
+   ================================= */
+.settings-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--cipher-space-lg);
+    padding: var(--cipher-space-xl) var(--cipher-space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: var(--cipher-space-xl);
+}
+
+.save-settings-btn {
+    background: linear-gradient(135deg, var(--cipher-gold), var(--cipher-gold-dark));
+    color: var(--cipher-bg-primary);
+    border: none;
+    padding: var(--cipher-space-lg) var(--cipher-space-xxl);
+    border-radius: var(--cipher-radius-lg);
+    font-size: 1.1rem;
+    font-weight: var(--cipher-font-weight-bold);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 
+        0 8px 25px rgba(255, 215, 0, 0.3),
+        0 0 0 1px rgba(255, 215, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cipher-space-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.save-settings-btn:hover {
+    background: linear-gradient(135deg, var(--cipher-electric-blue), var(--cipher-electric-blue-dark));
+    box-shadow: 
+        0 12px 35px rgba(0, 191, 255, 0.4),
+        0 0 0 1px rgba(0, 191, 255, 0.2);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.reset-settings-btn {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    color: var(--cipher-text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: var(--cipher-space-lg) var(--cipher-space-xl);
+    border-radius: var(--cipher-radius-lg);
+    font-weight: var(--cipher-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+}
+
+.reset-settings-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 215, 0, 0.15) 0%,
+        rgba(255, 215, 0, 0.08) 100%
+    );
+    color: var(--cipher-gold);
+    border-color: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* =================================
+   DATA MANAGEMENT BUTTONS
+   ================================= */
+.data-management-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--cipher-space-md);
+    margin-top: var(--cipher-space-lg);
+}
+
+.data-btn {
+    padding: var(--cipher-space-md) var(--cipher-space-lg);
+    border-radius: var(--cipher-radius-md);
+    font-weight: var(--cipher-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cipher-space-sm);
+    text-align: center;
+}
+
+.data-btn--export {
+    background: rgba(34, 197, 94, 0.1);
+    color: rgba(34, 197, 94, 0.9);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.data-btn--export:hover {
+    background: rgba(34, 197, 94, 0.2);
+    transform: translateY(-2px);
+}
+
+.data-btn--import {
+    background: rgba(59, 130, 246, 0.1);
+    color: rgba(59, 130, 246, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.data-btn--import:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+}
+
+.data-btn--warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: rgba(245, 158, 11, 0.9);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.data-btn--warning:hover {
+    background: rgba(245, 158, 11, 0.2);
+    transform: translateY(-2px);
+}
+
+.data-btn--danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: rgba(239, 68, 68, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.data-btn--danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+}
+
+/* =================================
+   NOTIFICATION ENHANCEMENTS
+   ================================= */
+.settings-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, 
+        rgba(26, 26, 26, 0.95) 0%,
+        rgba(30, 30, 30, 0.95) 100%
+    );
+    backdrop-filter: blur(25px) saturate(180%);
+    border-radius: var(--cipher-radius-lg);
+    padding: var(--cipher-space-md) var(--cipher-space-lg);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    z-index: 10000;
+    animation: slideInRight 0.3s ease;
+    max-width: 400px;
+}
+
+.settings-notification--success {
+    border-left: 4px solid var(--cipher-success);
+}
+
+.settings-notification--error {
+    border-left: 4px solid var(--cipher-danger);
+}
+
+.settings-notification--warning {
+    border-left: 4px solid var(--cipher-warning);
+}
+
+.settings-notification--info {
+    border-left: 4px solid var(--cipher-electric-blue);
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+@media (max-width: 1024px) {
+    .settings-form {
+        grid-template-columns: 1fr;
+        padding: var(--cipher-space-md);
+    }
+    
+    .settings-grid--2,
+    .settings-grid--3,
+    .settings-grid--4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-range-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .time-separator {
+        text-align: center;
+        padding: var(--cipher-space-xs) 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-container {
+        padding: var(--cipher-space-md);
+    }
+    
+    .settings-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .data-management-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .save-settings-btn,
+    .reset-settings-btn {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-form {
+        padding: var(--cipher-space-sm);
+    }
+    
+    .section-header {
+        padding: var(--cipher-space-md);
+    }
+    
+    .section-title h2 {
+        font-size: 1.3rem;
+    }
+}
+
+/* =================================
+   ANIMATIONS
+   ================================= */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-section {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.settings-section:nth-child(1) { animation-delay: 0.1s; }
+.settings-section:nth-child(2) { animation-delay: 0.2s; }
+.settings-section:nth-child(3) { animation-delay: 0.3s; }
+.settings-section:nth-child(4) { animation-delay: 0.4s; }
+.settings-section:nth-child(5) { animation-delay: 0.5s; }

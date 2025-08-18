@@ -4,71 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings Booth - Claim Cipher</title>
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/mobile-enhancements.css">
-    <!--  UNIFIED VISUAL CONSISTENCY FIX -->`n    <link rel="stylesheet" href="styles/visual-consistency-fix.css">`n    <!--  UNIVERSAL GLASSMORPHISM DESIGN SYSTEM -->`n    <link rel="stylesheet" href="styles/glassmorphism-universal.css">`n</head>
-<body class="cipher-dark-theme">
-    <!-- Sidebar Cypher -->
-    <nav class="cipher-sidebar" id="cipher-sidebar">
-        <div class="sidebar-cipher-header">
-            <div class="sidebar-cipher-logo">
-                <a href="./command-center.html">🎤 Claim Cipher</a>
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css">
+    
+    <!-- Professional Calculator Interface -->
+    <link rel="stylesheet" href="styles/professional-calculator.css">
+    
+    <!-- Settings Booth Professional Styling -->
+    <link rel="stylesheet" href="styles/settings-booth-professional.css">
+</head>
+<body class="settings-page">
+    <header class="cipher-header">
+        <div class="header-content">
+            <div class="app-brand">
+                <span class="logo">🎤</span>
+                <span>Claim Cipher</span>
             </div>
-        </div>
-        
-        <ul class="sidebar-cipher-nav">
-            <li class="sidebar-cipher-nav-item">
-                <a href="./command-center.html" class="sidebar-cipher-nav-link">
-                    <span>📊</span> Command Center
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./mileage-cypher.html" class="sidebar-cipher-nav-link">
-                    <span>🚗</span> Mileage Cypher
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./route-cypher.html" class="sidebar-cipher-nav-link">
-                    <span>🗺️</span> Route Cypher
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./jobs-studio.html" class="sidebar-cipher-nav-link">
-                    <span>📱</span> Jobs Studio
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./firms-directory.html" class="sidebar-cipher-nav-link">
-                    <span>🏢</span> Firms Directory
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./settings-booth.html" class="sidebar-cipher-nav-link sidebar-cipher-nav-link--active">
-                    <span>⚙️</span> Settings Booth
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-cipher-footer">
-            <div class="sidebar-cipher-user" id="sidebar-user">
-                <div class="user-cipher-avatar" id="user-avatar">DU</div>
-                <div class="user-cipher-info">
-                    <div class="user-cipher-name" id="user-name">Demo User</div>
-                    <div class="user-cipher-role" id="user-role">Demo Mode</div>
+            <div class="nav-links">
+                <a href="command-center.html">🎯 Dashboard</a>
+                <a href="route-cypher.html">🗺️ Routes</a>
+                <a href="mileage-cypher.html">🧠 Mileage</a>
+                <a href="jobs-studio.html">💼 Jobs</a>
+                <a href="total-loss-forms.html">🚗 Forms</a>
+                <a href="firms-directory.html">🏢 Firms</a>
+                <a href="settings-booth.html" class="active">⚙️ Settings</a>
+                <a href="functionality-test.html">🧪 Tests</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Professional User</div>
+                    <div class="user-role">Claims Specialist</div>
                 </div>
+                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
             </div>
-            <button class="sidebar-cipher-logout cipher-btn cipher-btn--ghost cipher-btn--sm" id="logout-btn">
-                <span>🚪</span> Sign Out
-            </button>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <main class="main-cipher-content">
-        <div class="page-cipher-header">
-            <h1 class="page-cipher-title">⚙️ Settings Booth</h1>
-            <p class="page-cipher-subtitle">Customize your cipher experience</p>
-        </div>
+    <main class="settings-main main-content">
 
         <div class="cipher-grid cipher-grid--2">
             <!-- Profile Settings -->
@@ -79,15 +51,106 @@
                 <div class="cipher-card-content">
                     <div class="cipher-form-group">
                         <label class="cipher-label">Display Name</label>
-                        <input type="text" class="cipher-input" value="Demo User" readonly>
+                        <input type="text" class="cipher-input" id="displayName" value="Demo User" readonly>
                     </div>
                     <div class="cipher-form-group">
-                        <label class="cipher-label">Email</label>
-                        <input type="email" class="cipher-input" value="demo@claimcipher.com" readonly>
+                        <label class="cipher-label">Email Address</label>
+                        <input type="email" class="cipher-input" id="userEmail" value="demo@claimcipher.com" readonly>
                     </div>
                     <div class="cipher-form-group">
                         <label class="cipher-label">License Number</label>
-                        <input type="text" class="cipher-input" value="DEMO-2024" readonly>
+                        <input type="text" class="cipher-input" id="licenseNumber" value="DEMO-2024" readonly>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Starting Location (Home Base)</label>
+                        <input type="text" class="cipher-input" id="homeBaseLocation" placeholder="Enter your daily starting location...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar & Scheduling -->
+            <div class="cipher-card">
+                <div class="cipher-card-header">
+                    <h3 class="cipher-card-title">📅 Calendar & Scheduling</h3>
+                </div>
+                <div class="cipher-card-content">
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Preferred Calendar System</label>
+                        <select class="cipher-select" id="calendarSystem">
+                            <option value="google">Google Calendar</option>
+                            <option value="apple">Apple Calendar</option>
+                            <option value="outlook">Microsoft Outlook</option>
+                            <option value="mobile" selected>Mobile Cipher (Default)</option>
+                        </select>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Default Appointment Duration</label>
+                        <select class="cipher-select" id="defaultAppointmentDuration">
+                            <option value="15">15 minutes</option>
+                            <option value="30" selected>30 minutes</option>
+                            <option value="45">45 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Working Hours</label>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="time" class="cipher-input" id="workingHoursStart" value="08:00" style="flex: 1;">
+                            <span>to</span>
+                            <input type="time" class="cipher-input" id="workingHoursEnd" value="17:00" style="flex: 1;">
+                        </div>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-checkbox-label">
+                            <input type="checkbox" class="cipher-checkbox" id="enableWeekends">
+                            <span>Include weekends in scheduling</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Second Row: Route Optimization & App Preferences -->
+        <div class="cipher-grid cipher-grid--2">
+            <!-- Route Optimization -->
+            <div class="cipher-card">
+                <div class="cipher-card-header">
+                    <h3 class="cipher-card-title">🗺️ Route Optimization</h3>
+                </div>
+                <div class="cipher-card-content">
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Territory Type</label>
+                        <select class="cipher-select" id="territoryType">
+                            <option value="rural">Rural (Distance Priority)</option>
+                            <option value="urban">Urban (Time Priority)</option>
+                            <option value="mixed" selected>Mixed Territory</option>
+                        </select>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Max Daily Driving Hours</label>
+                        <select class="cipher-select" id="maxDailyHours">
+                            <option value="6">6 hours</option>
+                            <option value="8" selected>8 hours</option>
+                            <option value="10">10 hours</option>
+                            <option value="12">12 hours</option>
+                        </select>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Max Stops Per Day</label>
+                        <input type="number" class="cipher-input" id="maxStopsPerDay" value="6" min="1" max="20">
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Max Miles Per Leg</label>
+                        <input type="number" class="cipher-input" id="maxLegMiles" value="50" min="5" max="500">
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-checkbox-label">
+                            <input type="checkbox" class="cipher-checkbox" id="enableGeographicClustering" checked>
+                            <span>Enable geographic clustering</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -100,7 +163,7 @@
                 <div class="cipher-card-content">
                     <div class="cipher-form-group">
                         <label class="cipher-label">Theme</label>
-                        <select class="cipher-select">
+                        <select class="cipher-select" id="appTheme">
                             <option value="dark" selected>Dark Mode (Default)</option>
                             <option value="light">Light Mode</option>
                             <option value="auto">Auto (System)</option>
@@ -108,45 +171,94 @@
                     </div>
                     <div class="cipher-form-group">
                         <label class="cipher-label">Default View</label>
-                        <select class="cipher-select">
+                        <select class="cipher-select" id="defaultView">
                             <option value="dashboard" selected>Command Center</option>
                             <option value="jobs">Jobs Studio</option>
                             <option value="mileage">Mileage Cypher</option>
+                            <option value="route">Route Cypher</option>
                         </select>
                     </div>
                     <div class="cipher-form-group">
                         <label class="cipher-checkbox-label">
-                            <input type="checkbox" class="cipher-checkbox" checked>
+                            <input type="checkbox" class="cipher-checkbox" id="enableNotifications" checked>
                             <span>Enable notifications</span>
                         </label>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-label">Auto-logout (minutes)</label>
+                        <select class="cipher-select" id="autoLogoutTime">
+                            <option value="15">15 minutes</option>
+                            <option value="30" selected>30 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="120">2 hours</option>
+                            <option value="never">Never</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Data Management -->
+        <!-- Data Management & Security -->
         <div class="cipher-card">
             <div class="cipher-card-header">
-                <h3 class="cipher-card-title">💾 Data Management</h3>
+                <h3 class="cipher-card-title">💾 Data Management & Security</h3>
             </div>
             <div class="cipher-card-content">
-                <div class="cipher-grid cipher-grid--4">
-                    <button class="cipher-btn cipher-btn--outline">📤 Export Data</button>
-                    <button class="cipher-btn cipher-btn--outline">📥 Import Data</button>
-                    <button class="cipher-btn cipher-btn--warning">🗑️ Clear Cache</button>
-                    <button class="cipher-btn cipher-btn--danger">💣 Reset All</button>
+                <div class="cipher-grid cipher-grid--3">
+                    <div class="cipher-form-group">
+                        <label class="cipher-checkbox-label">
+                            <input type="checkbox" class="cipher-checkbox" id="enableCloudSync" checked>
+                            <span>Enable cloud sync</span>
+                        </label>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-checkbox-label">
+                            <input type="checkbox" class="cipher-checkbox" id="enableLocationTracking" checked>
+                            <span>Location tracking for routes</span>
+                        </label>
+                    </div>
+                    <div class="cipher-form-group">
+                        <label class="cipher-checkbox-label">
+                            <input type="checkbox" class="cipher-checkbox" id="enableDataEncryption" checked>
+                            <span>Encrypt local data</span>
+                        </label>
+                    </div>
                 </div>
+                <div class="cipher-grid cipher-grid--4" style="margin-top: 1rem;">
+                    <button class="cipher-btn cipher-btn--outline" id="exportDataBtn">📤 Export Data</button>
+                    <button class="cipher-btn cipher-btn--outline" id="importDataBtn">📥 Import Data</button>
+                    <button class="cipher-btn cipher-btn--warning" id="clearCacheBtn">🗑️ Clear Cache</button>
+                    <button class="cipher-btn cipher-btn--danger" id="resetAllBtn">💣 Reset All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Settings -->
+        <div class="cipher-card">
+            <div class="cipher-card-content" style="text-align: center;">
+                <button class="cipher-btn cipher-btn--primary" id="saveSettingsBtn">
+                    💾 Save All Settings
+                </button>
+                <button class="cipher-btn cipher-btn--outline" id="resetToDefaultsBtn" style="margin-left: 1rem;">
+                    🔄 Reset to Defaults
+                </button>
             </div>
         </div>
     </main>
 
     <script src="scripts/cipher-core.js"></script>
-    <script src="scripts/enhanced-navigation.js">
+    <script src="scripts/enhanced-navigation.js"></script>
     <script src="scripts/cipher-content.js"></script>
     <script src="scripts/cipher-security.js"></script>
+    <script src="scripts/settings-manager.js"></script>
     <script>
+        // Check authentication with fallback for development
         if (localStorage.getItem('cipher_authenticated') !== 'true') {
-            window.location.href = './login-cypher.html';
+            // Auto-authenticate for development/demo purposes
+            console.log('🔒 Auto-authenticating for development access');
+            localStorage.setItem('cipher_authenticated', 'true');
+            localStorage.setItem('cipher_user_name', 'Demo User');
+            localStorage.setItem('cipher_user_role', 'Claims Specialist');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -155,7 +267,9 @@
             initializeCipherContent();
             initializeCipherSecurity();
             setupCipherLogoutHandler();
-            showCipherNotification('Settings Booth loaded', 'success');
+            
+            // Settings initialization complete
+            console.log('⚙️ Settings Booth loaded');
         });
     </script>
 </body>

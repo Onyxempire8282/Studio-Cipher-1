@@ -1,0 +1,423 @@
+/* 🎤 COMMAND CENTER LAYOUT - Page-specific containers and layouts */
+/* Only handles layout, positioning, and page-specific styling */
+/* Universal styles handled by universal-system.css */
+
+/* =================================
+   DASHBOARD CONTAINER LAYOUT
+   ================================= */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--cipher-space-xl) var(--cipher-space-md);
+}
+
+/* =================================
+   HERO SECTION LAYOUT
+   ================================= */
+.hero-section {
+    text-align: center;
+    margin-bottom: var(--cipher-space-xl);
+    padding: calc(var(--cipher-space-xl) * 1.5);
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    margin-bottom: var(--cipher-space-sm);
+    background: linear-gradient(135deg, var(--cipher-gold) 0%, var(--cipher-electric-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-subtitle {
+    font-size: 1.2rem;
+    color: var(--cipher-text-secondary);
+    margin-bottom: var(--cipher-space-md);
+}
+
+/* Quick Stats Grid */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--cipher-space-md);
+    margin-top: var(--cipher-space-xl);
+}
+
+.stat-card {
+    padding: var(--cipher-space-md);
+    text-align: center;
+    border-left: 4px solid var(--cipher-electric-blue);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-electric-blue);
+    margin-bottom: var(--cipher-space-xs);
+    display: block;
+}
+
+.stat-label {
+    color: var(--cipher-text-muted);
+    font-size: 0.9rem;
+    font-weight: var(--cipher-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* =================================
+   MODULES SECTION LAYOUT
+   ================================= */
+.modules-section {
+    margin: calc(var(--cipher-space-xl) * 1.5) 0;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-gold);
+    margin-bottom: var(--cipher-space-md);
+    text-align: center;
+    text-shadow: var(--cipher-shadow-glow);
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--cipher-space-xl);
+    margin-bottom: calc(var(--cipher-space-xl) * 1.5);
+}
+
+/* =================================
+   MODULE CARD LAYOUTS
+   ================================= */
+.module-card {
+    padding: var(--cipher-space-xl);
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--cipher-gold) 0%, var(--cipher-electric-blue) 100%);
+}
+
+.module-icon {
+    font-size: 3.5rem;
+    margin-bottom: var(--cipher-space-sm);
+    display: block;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Module Icon Colors */
+.route-card .module-icon { color: var(--cipher-success); }
+.mileage-card .module-icon { color: var(--cipher-electric-blue); }
+.jobs-card .module-icon { color: var(--cipher-warning); }
+.total-loss-card .module-icon { color: var(--cipher-danger); }
+.firms-card .module-icon { color: #9b59b6; }
+.settings-card .module-icon { color: #34495e; }
+.test-card .module-icon { color: #e67e22; }
+.mobile-card .module-icon { color: var(--cipher-warning); }
+.help-card .module-icon { color: #9b59b6; }
+
+.module-title {
+    font-size: 1.4rem;
+    font-weight: var(--cipher-font-weight-bold);
+    margin-bottom: var(--cipher-space-sm);
+    color: var(--cipher-gold);
+}
+
+.module-description {
+    color: var(--cipher-text-secondary);
+    margin-bottom: var(--cipher-space-md);
+    line-height: 1.5;
+}
+
+.module-actions {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* =================================
+   PRO FEATURE STYLING
+   ================================= */
+.pro-feature {
+    position: relative;
+    background: linear-gradient(135deg, 
+        rgba(243, 156, 18, 0.1) 0%, 
+        rgba(255, 255, 255, 0.05) 100%
+    ) !important;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.pro-feature::before {
+    background: linear-gradient(135deg, var(--cipher-warning) 0%, #e67e22 100%);
+}
+
+.pro-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--cipher-warning) 0%, #e67e22 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: var(--cipher-radius-md);
+    font-size: 0.75rem;
+    font-weight: var(--cipher-font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+    animation: proGlow 2s infinite alternate;
+}
+
+@keyframes proGlow {
+    0% { box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3); }
+    100% { box-shadow: 0 4px 16px rgba(243, 156, 18, 0.6); }
+}
+
+.pro-feature:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(243, 156, 18, 0.2);
+}
+
+/* Enhanced Module Cards */
+.mobile-card {
+    background: linear-gradient(135deg, 
+        rgba(243, 156, 18, 0.05) 0%, 
+        rgba(255, 255, 255, 0.05) 100%
+    ) !important;
+}
+
+.help-card {
+    background: linear-gradient(135deg, 
+        rgba(155, 89, 182, 0.05) 0%, 
+        rgba(255, 255, 255, 0.05) 100%
+    ) !important;
+}
+
+.help-card::before {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+/* =================================
+   ACTIVITY SECTION LAYOUT
+   ================================= */
+.activity-section {
+    padding: var(--cipher-space-xl);
+    margin: var(--cipher-space-xl) 0;
+}
+
+.activity-title {
+    font-size: 1.5rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-gold);
+    margin-bottom: var(--cipher-space-md);
+    display: flex;
+    align-items: center;
+}
+
+.activity-title::before {
+    content: '📊';
+    margin-right: var(--cipher-space-sm);
+    font-size: 1.2rem;
+}
+
+.activity-feed {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: var(--cipher-space-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: var(--cipher-space-sm);
+    font-size: 1.2rem;
+}
+
+.route-activity { 
+    background: rgba(39, 174, 96, 0.1); 
+    color: var(--cipher-success); 
+}
+.mileage-activity { 
+    background: rgba(52, 152, 219, 0.1); 
+    color: var(--cipher-electric-blue); 
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    color: var(--cipher-text-primary);
+    font-weight: var(--cipher-font-weight-medium);
+    margin-bottom: 3px;
+}
+
+.activity-time {
+    color: var(--cipher-text-muted);
+    font-size: 0.85rem;
+}
+
+/* =================================
+   STATUS INDICATORS
+   ================================= */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+.status-online {
+    background: rgba(39, 174, 96, 0.1);
+    color: var(--cipher-success);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.status-offline {
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--cipher-danger);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.status-indicator::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* =================================
+   LOADING STATES
+   ================================= */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--cipher-electric-blue);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* =================================
+   SECURITY STYLING
+   ================================= */
+.security-notification {
+    font-family: var(--cipher-font-primary);
+}
+
+.security-modal-overlay .modal-content {
+    border: 2px solid var(--cipher-danger);
+}
+
+.session-warning {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.security-indicator {
+    position: relative;
+}
+
+.security-indicator::after {
+    content: '🔒';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* =================================
+   RESPONSIVE LAYOUT
+   ================================= */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: var(--cipher-space-md) var(--cipher-space-sm);
+    }
+    
+    .hero-section {
+        padding: var(--cipher-space-xl) var(--cipher-space-md);
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .modules-grid {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-md);
+    }
+    
+    .module-card {
+        padding: var(--cipher-space-lg) var(--cipher-space-md);
+    }
+    
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--cipher-space-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-title {
+        font-size: 1.8rem;
+    }
+    
+    .module-actions {
+        flex-direction: column;
+    }
+    
+    .quick-stats {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,600 @@
+/* 🗺️ ROUTE CYPHER LAYOUT - Page-specific containers and layouts */
+/* Only handles layout, positioning, and page-specific styling */
+/* Universal styles handled by universal-system.css */
+
+/* =================================
+   MAIN LAYOUT STRUCTURE
+   ================================= */
+.route-optimizer-main {
+    min-height: 100vh;
+    padding: var(--cipher-space-lg) 0;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: var(--cipher-space-xl);
+    padding: 0 var(--cipher-space-md);
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--cipher-space-sm);
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    color: var(--cipher-text-secondary);
+}
+
+/* =================================
+   ROUTE OPTIMIZER CONTAINER
+   ================================= */
+.route-optimizer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--cipher-space-md);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cipher-space-xl);
+    align-items: start;
+}
+
+/* =================================
+   INPUT SECTION LAYOUT
+   ================================= */
+.route-inputs {
+    padding: var(--cipher-space-xl);
+}
+
+.input-group {
+    margin-bottom: var(--cipher-space-md);
+}
+
+.input-group label {
+    display: block;
+    font-weight: var(--cipher-font-weight-medium);
+    margin-bottom: var(--cipher-space-xs);
+    color: var(--cipher-text-primary);
+    font-size: 1rem;
+}
+
+/* =================================
+   DESTINATIONS SECTION
+   ================================= */
+.destinations-section {
+    margin: var(--cipher-space-xl) 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--cipher-space-md);
+}
+
+.section-header h3 {
+    margin: 0;
+    color: var(--cipher-gold);
+    font-size: 1.2rem;
+}
+
+.add-btn {
+    background: linear-gradient(135deg, var(--cipher-success), #1e7e34);
+    color: white;
+    border: none;
+    padding: var(--cipher-space-xs) var(--cipher-space-sm);
+    border-radius: var(--cipher-radius-sm);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: var(--cipher-font-weight-medium);
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    background: linear-gradient(135deg, #1e7e34, #155724);
+    transform: translateY(-1px);
+}
+
+.destination-input {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    margin-bottom: var(--cipher-space-sm);
+    align-items: center;
+    padding: var(--cipher-space-xs);
+    border-radius: var(--cipher-radius-sm);
+    transition: all 0.3s ease;
+}
+
+.destination-input:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.destination-input input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.remove-btn {
+    background: linear-gradient(135deg, var(--cipher-danger), #c82333);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.remove-btn:hover {
+    background: linear-gradient(135deg, #c82333, #a71e2a);
+    transform: scale(1.1);
+}
+
+/* =================================
+   ROUTE SETTINGS LAYOUT
+   ================================= */
+.route-settings {
+    padding: var(--cipher-space-lg);
+    margin: var(--cipher-space-lg) 0;
+    border-radius: var(--cipher-radius-lg);
+}
+
+.route-settings h3 {
+    color: var(--cipher-gold);
+    font-weight: var(--cipher-font-weight-bold);
+    margin-bottom: var(--cipher-space-md);
+    font-size: 1.1rem;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--cipher-space-sm);
+    padding: var(--cipher-space-xs) 0;
+}
+
+.setting-row:last-child {
+    margin-bottom: 0;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: var(--cipher-font-weight-medium);
+    color: var(--cipher-text-secondary);
+}
+
+.toggle-label input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-slider {
+    width: 50px;
+    height: 26px;
+    background: var(--cipher-text-muted);
+    border-radius: 13px;
+    position: relative;
+    margin-right: var(--cipher-space-sm);
+    transition: background 0.3s ease;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-label input:checked + .toggle-slider {
+    background: var(--cipher-success);
+}
+
+.toggle-label input:checked + .toggle-slider::before {
+    transform: translateX(24px);
+}
+
+/* =================================
+   OPTIMIZE BUTTON
+   ================================= */
+.optimize-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--cipher-gold), var(--cipher-gold-dark));
+    color: var(--cipher-bg-primary);
+    border: none;
+    padding: var(--cipher-space-md);
+    border-radius: var(--cipher-radius-md);
+    font-size: 1.1rem;
+    font-weight: var(--cipher-font-weight-bold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.optimize-btn:hover {
+    background: linear-gradient(135deg, var(--cipher-electric-blue), var(--cipher-electric-blue-dark));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 191, 255, 0.3);
+}
+
+.optimize-btn:disabled {
+    background: var(--cipher-text-muted);
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+/* =================================
+   RESULTS SECTION LAYOUT
+   ================================= */
+.route-results {
+    padding: var(--cipher-space-xl);
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.route-summary {
+    margin-bottom: var(--cipher-space-xl);
+    padding-bottom: var(--cipher-space-md);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.overall-stats {
+    background: linear-gradient(135deg, var(--cipher-success), #059669);
+    color: white;
+    padding: var(--cipher-space-lg);
+    border-radius: var(--cipher-radius-md);
+    margin-bottom: var(--cipher-space-md);
+}
+
+.overall-stats h4 {
+    margin-bottom: var(--cipher-space-sm);
+    font-size: 1.2rem;
+    color: white;
+}
+
+.overall-stats p {
+    margin: var(--cipher-space-xs) 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* =================================
+   DAY SECTIONS LAYOUT
+   ================================= */
+.day-section {
+    margin-bottom: var(--cipher-space-xl);
+    border-radius: var(--cipher-radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.day-section h4 {
+    margin: 0;
+    padding: var(--cipher-space-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.1rem;
+    color: var(--cipher-gold);
+}
+
+.day-stats {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    padding: var(--cipher-space-md);
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+}
+
+.stat {
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--cipher-space-xs) var(--cipher-space-sm);
+    border-radius: var(--cipher-radius-sm);
+    font-size: 0.9rem;
+    color: var(--cipher-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* =================================
+   STOPS LIST LAYOUT
+   ================================= */
+.stops-list {
+    padding: var(--cipher-space-md);
+}
+
+.stop-item {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    padding: var(--cipher-space-sm);
+    margin-bottom: var(--cipher-space-xs);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--cipher-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stop-number {
+    background: var(--cipher-electric-blue);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: var(--cipher-font-weight-bold);
+    flex-shrink: 0;
+}
+
+.stop-address {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--cipher-text-secondary);
+}
+
+.leg-distance {
+    font-size: 0.8rem;
+    color: var(--cipher-text-muted);
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+/* =================================
+   ROUTE ACTIONS LAYOUT
+   ================================= */
+.route-actions {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    margin-top: var(--cipher-space-xl);
+    padding-top: var(--cipher-space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copy-btn, .export-btn {
+    flex: 1;
+    padding: var(--cipher-space-sm);
+    border: none;
+    border-radius: var(--cipher-radius-sm);
+    font-weight: var(--cipher-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, var(--cipher-electric-blue), var(--cipher-electric-blue-dark));
+    color: white;
+}
+
+.copy-btn:hover {
+    background: linear-gradient(135deg, var(--cipher-electric-blue-dark), #1565c0);
+    transform: translateY(-1px);
+}
+
+.export-btn {
+    background: linear-gradient(135deg, var(--cipher-success), #1e7e34);
+    color: white;
+}
+
+.export-btn:hover {
+    background: linear-gradient(135deg, #1e7e34, #155724);
+    transform: translateY(-1px);
+}
+
+/* =================================
+   MAP CONTAINER LAYOUT
+   ================================= */
+.map-container {
+    border-radius: var(--cipher-radius-lg);
+    overflow: hidden;
+    height: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#routeMap {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--cipher-radius-lg);
+}
+
+/* =================================
+   LOADING AND ERROR STATES
+   ================================= */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--cipher-z-modal);
+}
+
+.loading-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: var(--cipher-space-xl);
+    border-radius: var(--cipher-radius-lg);
+    text-align: center;
+    max-width: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid var(--cipher-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto var(--cipher-space-sm);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-display {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--cipher-danger), #c82333);
+    color: white;
+    padding: var(--cipher-space-md) var(--cipher-space-lg);
+    border-radius: var(--cipher-radius-md);
+    box-shadow: var(--cipher-shadow-lg);
+    z-index: var(--cipher-z-tooltip);
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    max-width: 400px;
+}
+
+.error-display button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--cipher-success), #1e7e34);
+    color: white;
+    padding: var(--cipher-space-md) var(--cipher-space-lg);
+    border-radius: var(--cipher-radius-md);
+    box-shadow: var(--cipher-shadow-lg);
+    z-index: var(--cipher-z-tooltip);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* =================================
+   GOOGLE MAPS INTEGRATION
+   ================================= */
+#directionsPanel {
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-sm);
+    padding: var(--cipher-space-sm);
+    margin-top: var(--cipher-space-sm);
+    font-size: 0.9rem;
+    color: var(--cipher-text-secondary);
+}
+
+/* Autocomplete dropdown styling */
+.pac-container {
+    z-index: 10001 !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: var(--cipher-radius-md) !important;
+}
+
+.pac-item {
+    color: var(--cipher-text-primary) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.pac-item:hover {
+    background: rgba(255, 215, 0, 0.1) !important;
+}
+
+/* =================================
+   RESPONSIVE LAYOUT
+   ================================= */
+@media (max-width: 768px) {
+    .route-optimizer-container {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-md);
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .route-inputs, .route-results {
+        padding: var(--cipher-space-lg);
+    }
+    
+    .map-container {
+        height: 300px;
+    }
+    
+    .day-stats {
+        flex-direction: column;
+        gap: var(--cipher-space-xs);
+    }
+    
+    .route-actions {
+        flex-direction: column;
+    }
+    
+    .destination-input {
+        flex-wrap: wrap;
+    }
+    
+    .destination-input input {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .route-optimizer-main {
+        padding: var(--cipher-space-md) 0;
+    }
+    
+    .route-inputs, .route-results {
+        padding: var(--cipher-space-md);
+    }
+    
+    .destination-input {
+        flex-direction: column;
+        gap: var(--cipher-space-xs);
+    }
+    
+    .remove-btn {
+        align-self: flex-end;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: var(--cipher-space-xs);
+        align-items: flex-start;
+    }
+}

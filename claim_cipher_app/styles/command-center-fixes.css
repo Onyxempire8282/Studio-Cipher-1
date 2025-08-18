@@ -16,9 +16,9 @@ html, body {
     z-index: 1000 !important;
     margin: 0 !important;
     padding: 15px 0 !important;
-    background: rgba(15, 15, 15, 0.95) !important;
-    backdrop-filter: blur(25px) saturate(180%) !important;
-    border-bottom: 2px solid rgba(255, 215, 0, 0.3) !important;
+    background: !important;
+    backdrop-filter:  !important;
+    border-bottom: .5px solid rgba(255, 215, 0, 0.3) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 

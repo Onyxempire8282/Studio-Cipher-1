@@ -1,0 +1,609 @@
+{
+  "meta": {
+    "name": "bcif_generic_mapping_v1",
+    "created": "2025-08-18 05:03:03",
+    "pdf_template": "Fillable_CCC_BCIF.pdf",
+    "notes": [
+      "Set ALL checkboxes OFF first, then enable checkboxes whose tokens match.",
+      "Regex are case-insensitive. Prefer 4DR over 2DR when both detected.",
+      "If multiple matches occur, use the first non-empty capture."
+    ]
+  },
+  "text_fields": {
+    "Company": {
+      "patterns": [
+        "(?m)^For:\\s*([^\\n]+)$",
+        "(?m)^Company:\\s*([^\\n]+)$"
+      ]
+    },
+    "Claim Number": {
+      "patterns": [
+        "Claim #:\\s*([A-Z0-9\\-\\/]+)"
+      ]
+    },
+    "Policy Number": {
+      "patterns": [
+        "Policy #:\\s*([A-Z0-9\\-\\/]+)"
+      ]
+    },
+    "Appraiser First Name": {
+      "patterns": [
+        "Written By:\\s*([A-Za-z]+)"
+      ]
+    },
+    "Appraiser Last Name": {
+      "patterns": [
+        "Written By:\\s*[A-Za-z]+\\s+([A-Za-z\\-']+)"
+      ]
+    },
+    "Adjuster First Name": {
+      "patterns": [
+        "Adjuster:\\s*([A-Za-z\\-']+),\\s*([A-Za-z\\-']+)"
+      ],
+      "transform": "second_group"
+    },
+    "Adjuster Last Name": {
+      "patterns": [
+        "Adjuster:\\s*([A-Za-z\\-']+),\\s*([A-Za-z\\-']+)"
+      ],
+      "transform": "first_group"
+    },
+    "Adjuster Contact Number": {
+      "patterns": [
+        "(\\(\\d{3}\\)\\s*\\d{3}\\-\\d{4})",
+        "(\\d{3}\\-\\d{3}\\-\\d{4})"
+      ]
+    },
+    "Owner First Name": {
+      "patterns": [
+        "Owner:\\s*([A-Z]+),\\s*([A-Z]+)",
+        "Owner:\\s*([A-Z'\\-]+),\\s*([A-Z'\\-]+)",
+        "Owner:\\s*([^,\\n]+?)\\s+(?:Job Number|Policy)"
+      ],
+      "transform": "second_group_title"
+    },
+    "Owner Last Name": {
+      "patterns": [
+        "Owner:\\s*([A-Z]+),\\s*([A-Z]+)",
+        "Owner:\\s*([A-Z'\\-]+),\\s*([A-Z'\\-]+)",
+        "Owner:\\s*([A-Z'\\-]+),"
+      ],
+      "transform": "first_group_title"
+    },
+    "Insured First Name": {
+      "patterns": [
+        "Insured:\\s*([A-Z]+),\\s*([A-Z]+)",
+        "Insured:\\s*([A-Z'\\-]+),\\s*([A-Z'\\-]+)",
+        "Insured:[\\s]*([A-Z'\\-]+),[\\s]*([A-Z'\\-]+)[\\s]*(?:Policy|Claim)"
+      ],
+      "transform": "second_group_title"
+    },
+    "Insured Last Name": {
+      "patterns": [
+        "Insured:\\s*([A-Z]+),\\s*([A-Z]+)",
+        "Insured:\\s*([A-Z'\\-]+),\\s*([A-Z'\\-]+)",
+        "Insured:[\\s]*([A-Z'\\-]+),"
+      ],
+      "transform": "first_group_title"
+    },
+    "VIN": {
+      "patterns": [
+        "VIN:\\s*([A-HJ-NPR-Z0-9]{11,17})"
+      ]
+    },
+    "Year": {
+      "patterns": [
+        "(?m)^Year:\\s*(\\d{4})$",
+        "VEHICLE[\\s\\S]*?(20\\d{2})\\s+[A-Z]{3,12}\\s+",
+        "^(20\\d{2})\\s+[A-Z]{3,12}\\s+[A-Za-z0-9]+",
+        "^(19\\d{2})\\s+[A-Z]{3,12}\\s+[A-Za-z0-9]+"
+      ]
+    },
+    "Make": {
+      "patterns": [
+        "(?m)^Make:\\s*([^\\n]+)$",
+        "VEHICLE[\\s\\S]*?20\\d{2}\\s+(CHEV|CHEVR|FORD|TOYO|TOYOTA|HOND|HONDA|NISS|NISSAN|HYUN|HYUNDAI|MAZD|MAZDA|SUBR|SUBARU|BMW|AUDI|MERC|MERCEDES|VOLK|VOLKSWAGEN|JEEP|CHRY|CHRYSLER|DODG|DODGE|BUIC|BUICK|CADI|CADILLAC|GMC|LINC|LINCOLN|ACUR|ACURA|LEXU|LEXUS|INFI|INFINITI|VOLV|VOLVO|KIA|MITSU|SUZUKI|ISUZU|FIAT|ALFA|MINI|TESLA|JAGUAR|LAND|ROVER|PORSCHE|FERRARI|LAMBORGHINI|MASERATI|BENTLEY|ROLLS)\\s+",
+        "^20\\d{2}\\s+([A-Z]{3,12})\\s+[A-Za-z0-9]+"
+      ]
+    },
+    "Model": {
+      "patterns": [
+        "(?m)^Model:\\s*([^\\n]+)$",
+        "VEHICLE[\\s\\S]*?20\\d{2}\\s+[A-Z]{3,12}\\s+([A-Za-z0-9\\-]+)",
+        "^20\\d{2}\\s+[A-Z]{3,12}\\s+([A-Za-z0-9\\-]+)",
+        "^19\\d{2}\\s+[A-Z]{3,12}\\s+([A-Za-z0-9\\-]+)"
+      ]
+    },
+    "Trim": {
+      "patterns": [
+        "\\b(?:Model|Series|Trim):\\s*([A-Za-z0-9\\-]+)",
+        "\\b[A-Za-z0-9]+\\s+([A-Za-z0-9\\-]+)\\s+(?:FWD|AWD|4WD)"
+      ]
+    },
+    "Cylinders": {
+      "compose": {
+        "cyl_from": [
+          "\\b([46]|V6|V8)\\b",
+          "(\\d)\\-cyl"
+        ],
+        "disp_from": [
+          "\\b([0-9]\\.[0-9]L)\\b",
+          "\\b([0-9]\\.[0-9]{1,2})\\s*L\\b"
+        ],
+        "format": "{cyl}-{disp}",
+        "normalize": {
+          "V6": "6",
+          "V8": "8"
+        }
+      }
+    },
+    "Odometer (mi)": {
+      "patterns": [
+        "Odometer:\\s*([\\d,]+)"
+      ],
+      "transform": "digits_only"
+    },
+    "Date of loss (mm/dd/yyyy)": {
+      "patterns": [
+        "Date of Loss:\\s*([0-9]{1,2}/[0-9]{1,2}/[0-9]{2,4})"
+      ]
+    },
+    "Type of Loss": {
+      "patterns": [
+        "Type of Loss:\\s*([A-Za-z ]+)"
+      ]
+    },
+    "Loss State": {
+      "patterns": [
+        "Loss Location:\\s*[^,]+,\\s*([A-Z]{2})",
+        "Inspection Location:[\\s\\S]*?([A-Z]{2})\\s*\\d{5}",
+        "State:\\s*([A-Z]{2})\\s*Condition",
+        "\\b([A-Z]{2})\\s*\\d{5}\\s*\\(",
+        "\\b([A-Z]{2})\\s*\\d{5}\\s*Other",
+        "\\b([A-Z]{2})\\s*\\d{5}\\b"
+      ]
+    },
+    "Loss ZIP Code": {
+      "patterns": [
+        "Inspection Location:[\\s\\S]*?[A-Z]{2}\\s*([0-9]{5})",
+        "[A-Z]{2}\\s*([0-9]{5})\\s*\\(",
+        "[A-Z]{2}\\s*([0-9]{5})\\s*Other",
+        "\\b([0-9]{5})(?:\\-\\d{4})?\\b"
+      ]
+    }
+  },
+  "checkbox_rules": {
+    "prefer_4dr_over_2dr": true,
+    "rules": [
+      {
+        "field": "4DR",
+        "match_any": [
+          "\\b4D\\b",
+          "\\b4\\-Door\\b",
+          "\\b4 Dr\\b"
+        ]
+      },
+      {
+        "field": "2DR",
+        "match_any": [
+          "\\b2D\\b",
+          "\\b2\\-Door\\b",
+          "\\b2 Dr\\b"
+        ]
+      },
+      {
+        "field": "Utility",
+        "match_any": [
+          "\\bUTV\\b",
+          "\\bSUV\\b",
+          "\\bCUV\\b",
+          "\\bSport Utility\\b"
+        ]
+      },
+      {
+        "field": "Gas",
+        "match_any": [
+          "\\bGasoline\\b",
+          "\\bGas\\b"
+        ]
+      },
+      {
+        "field": "Diesel",
+        "match_any": [
+          "\\bDiesel\\b"
+        ]
+      },
+      {
+        "field": "Hybrid",
+        "match_any": [
+          "\\bHybrid\\b"
+        ]
+      },
+      {
+        "field": "Electric",
+        "match_any": [
+          "\\bElectric\\b",
+          "\\bEV\\b"
+        ]
+      },
+      {
+        "field": "Automatic",
+        "match_any": [
+          "\\bAutomatic Transmission\\b",
+          "\\bAT\\b"
+        ]
+      },
+      {
+        "field": "Manual",
+        "match_any": [
+          "\\bManual Transmission\\b",
+          "\\bMT\\b"
+        ]
+      },
+      {
+        "field": "Overdrive",
+        "match_any": [
+          "\\bOverdrive\\b",
+          "\\bO\\/D\\b"
+        ]
+      },
+      {
+        "field": "Collision",
+        "match_any": [
+          "Type of Loss:\\s*Collision"
+        ]
+      },
+      {
+        "field": "Comprehensive",
+        "match_any": [
+          "Type of Loss:\\s*Comprehensive"
+        ]
+      },
+      {
+        "field": "Liability",
+        "match_any": [
+          "Type of Loss:\\s*Liability"
+        ]
+      },
+      {
+        "field": "AC Air Conditioning",
+        "match_any": [
+          "\\bAir Conditioning\\b",
+          "\\bA\\/C\\b"
+        ]
+      },
+      {
+        "field": "PS Power Steering",
+        "match_any": [
+          "\\bPower Steering\\b"
+        ]
+      },
+      {
+        "field": "PB Power Brakes",
+        "match_any": [
+          "\\bPower Brakes\\b"
+        ]
+      },
+      {
+        "field": "PW Power Windows",
+        "match_any": [
+          "\\bPower Windows\\b"
+        ]
+      },
+      {
+        "field": "PL Power Locks",
+        "match_any": [
+          "\\bPower Locks\\b"
+        ]
+      },
+      {
+        "field": "PM Power Mirrors",
+        "match_any": [
+          "\\bPower Mirrors\\b"
+        ]
+      },
+      {
+        "field": "TW Tilt Wheel",
+        "match_any": [
+          "\\bTilt Wheel\\b"
+        ]
+      },
+      {
+        "field": "TL Telescopic Wheel",
+        "match_any": [
+          "\\bTelescopic Wheel\\b"
+        ]
+      },
+      {
+        "field": "CC Cruise Control",
+        "match_any": [
+          "\\bCruise Control\\b"
+        ]
+      },
+      {
+        "field": "RD Rear Defogger",
+        "match_any": [
+          "\\bRear Defogger\\b"
+        ]
+      },
+      {
+        "field": "RJ Remote Starter",
+        "match_any": [
+          "\\bRemote Starter\\b"
+        ]
+      },
+      {
+        "field": "KE Keyless Entry",
+        "match_any": [
+          "\\bKeyless Entry\\b"
+        ]
+      },
+      {
+        "field": "NV Navigation System",
+        "match_any": [
+          "\\bNavigation System\\b",
+          "\\bNav\\b"
+        ]
+      },
+      {
+        "field": "TQ Steering Wheel Touch Controls",
+        "match_any": [
+          "\\bSteering Wheel .*Controls\\b"
+        ]
+      },
+      {
+        "field": "M3 Auxiliary Audio Connection",
+        "match_any": [
+          "\\bAux(iliary)? Audio\\b",
+          "\\bAux In\\b"
+        ]
+      },
+      {
+        "field": "XM Satellite Radio",
+        "match_any": [
+          "\\bSatellite Radio\\b",
+          "\\bXM\\b",
+          "\\bSirius\\b"
+        ]
+      },
+      {
+        "field": "AM AM Radio",
+        "match_any": [
+          "\\bAM Radio\\b"
+        ]
+      },
+      {
+        "field": "FM FM Radio",
+        "match_any": [
+          "\\bFM Radio\\b"
+        ]
+      },
+      {
+        "field": "ST Stereo",
+        "match_any": [
+          "\\bStereo\\b"
+        ]
+      },
+      {
+        "field": "SE Search/Seek",
+        "match_any": [
+          "\\bSearch/Seek\\b",
+          "\\bSeek\\b"
+        ]
+      },
+      {
+        "field": "AW Aluminum/Alloy Wheels",
+        "match_any": [
+          "\\bAluminum/Alloy Wheels\\b",
+          "\\bAlloy Wheels\\b"
+        ]
+      },
+      {
+        "field": "AG Driver's Side Air Bag",
+        "match_any": [
+          "\\bDriver.?s? Side Air Bag\\b",
+          "\\bDriver Airbag\\b"
+        ]
+      },
+      {
+        "field": "RG Passenger Air Bag",
+        "match_any": [
+          "\\bPassenger Air Bag\\b",
+          "\\bPassenger Airbag\\b"
+        ]
+      },
+      {
+        "field": "XG Front Side Impact Air Bags",
+        "match_any": [
+          "\\bFront Side Impact Air Bags\\b",
+          "\\bFront Side Airbags\\b"
+        ]
+      },
+      {
+        "field": "DG Head/Curtain Air Bags",
+        "match_any": [
+          "\\bHead/Curtain Air Bags\\b",
+          "\\bCurtain Airbags\\b"
+        ]
+      },
+      {
+        "field": "DB 4-Wheel Disc Brakes",
+        "match_any": [
+          "\\b4[ -]Wheel Disc Brakes\\b"
+        ]
+      },
+      {
+        "field": "AB Anti-Lock Brakes (4)",
+        "match_any": [
+          "\\bAnti[- ]Lock Brakes\\b",
+          "\\bABS\\b"
+        ]
+      },
+      {
+        "field": "TX Traction Control",
+        "match_any": [
+          "\\bTraction Control\\b"
+        ]
+      },
+      {
+        "field": "T1 Stability Control",
+        "match_any": [
+          "\\bStability Control\\b"
+        ]
+      },
+      {
+        "field": "XE Xenon or LED Headlamps",
+        "match_any": [
+          "\\bXenon\\b",
+          "\\bLED Headlamps?\\b"
+        ]
+      },
+      {
+        "field": "DV Blind Spot Detection",
+        "match_any": [
+          "\\bBlind Spot\\b"
+        ]
+      },
+      {
+        "field": "LN Lane Departure Warning",
+        "match_any": [
+          "\\bLane Departure\\b"
+        ]
+      },
+      {
+        "field": "PJ Parking Sensors",
+        "match_any": [
+          "\\bParking Sensors?\\b"
+        ]
+      },
+      {
+        "field": "PX Backup Camera",
+        "match_any": [
+          "\\bBackup Camera\\b",
+          "\\bRear View Camera\\b"
+        ]
+      },
+      {
+        "field": "IC Intelligent Cruise",
+        "match_any": [
+          "\\bAdaptive Cruise\\b",
+          "\\bIntelligent Cruise\\b"
+        ]
+      },
+      {
+        "field": "DT Privacy Glass",
+        "match_any": [
+          "\\bPrivacy Glass\\b",
+          "\\bTinted Glass\\b"
+        ]
+      },
+      {
+        "field": "WP Rear Window Wiper",
+        "match_any": [
+          "\\bRear Window Wiper\\b",
+          "\\bRear Wiper\\b"
+        ]
+      },
+      {
+        "field": "DM Dual Mirrors",
+        "match_any": [
+          "\\bDual Mirrors\\b"
+        ]
+      },
+      {
+        "field": "HM Heated Mirrors",
+        "match_any": [
+          "\\bHeated Mirrors\\b"
+        ]
+      },
+      {
+        "field": "HF Hands Free Device",
+        "match_any": [
+          "\\bHands[- ]Free\\b",
+          "\\bBluetooth\\b"
+        ]
+      },
+      {
+        "field": "IP Clear coat Paint",
+        "match_any": [
+          "\\bClear Coat Paint\\b"
+        ]
+      }
+    ]
+  },
+  "post_processing": {
+    "doors_priority": {
+      "prefer": "4DR"
+    },
+    "cylinder_format": {
+      "if_only_displacement_found_assume": "4"
+    },
+    "zip_selection": "first_five_digits",
+    "make_mapping": {
+      "CHEV": "Chevrolet",
+      "CHEVR": "Chevrolet", 
+      "FORD": "Ford",
+      "TOYO": "Toyota",
+      "TOYOTA": "Toyota",
+      "HOND": "Honda",
+      "HONDA": "Honda",
+      "NISS": "Nissan",
+      "NISSAN": "Nissan",
+      "HYUN": "Hyundai",
+      "HYUNDAI": "Hyundai",
+      "MAZD": "Mazda",
+      "MAZDA": "Mazda",
+      "SUBR": "Subaru",
+      "SUBARU": "Subaru",
+      "VOLK": "Volkswagen",
+      "VOLKSWAGEN": "Volkswagen",
+      "JEEP": "Jeep",
+      "CHRY": "Chrysler",
+      "CHRYSLER": "Chrysler",
+      "DODG": "Dodge",
+      "DODGE": "Dodge",
+      "BUIC": "Buick",
+      "BUICK": "Buick",
+      "CADI": "Cadillac",
+      "CADILLAC": "Cadillac",
+      "GMC": "GMC",
+      "LINC": "Lincoln",
+      "LINCOLN": "Lincoln",
+      "ACUR": "Acura",
+      "ACURA": "Acura",
+      "LEXU": "Lexus",
+      "LEXUS": "Lexus",
+      "INFI": "Infiniti",
+      "INFINITI": "Infiniti",
+      "VOLV": "Volvo",
+      "VOLVO": "Volvo",
+      "KIA": "Kia",
+      "MITSU": "Mitsubishi",
+      "SUZUKI": "Suzuki",
+      "ISUZU": "Isuzu",
+      "FIAT": "Fiat",
+      "ALFA": "Alfa Romeo",
+      "MINI": "Mini",
+      "TESLA": "Tesla",
+      "JAGUAR": "Jaguar",
+      "LAND": "Land Rover",
+      "ROVER": "Land Rover",
+      "PORSCHE": "Porsche",
+      "FERRARI": "Ferrari",
+      "LAMBORGHINI": "Lamborghini",
+      "MASERATI": "Maserati",
+      "BENTLEY": "Bentley",
+      "ROLLS": "Rolls-Royce"
+    },
+    "titlecase_fields": [
+      "Owner First Name",
+      "Owner Last Name",
+      "Insured First Name",
+      "Insured Last Name",
+      "Appraiser First Name",
+      "Appraiser Last Name",
+      "Adjuster First Name",
+      "Adjuster Last Name"
+    ]
+  }
+}

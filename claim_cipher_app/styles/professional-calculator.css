@@ -1,0 +1,632 @@
+/* 🧮 PROFESSIONAL MILEAGE CALCULATOR STYLES */
+/* Enterprise-grade calculator interface with modern UX patterns */
+
+/* =================================
+   PROFESSIONAL CONTAINER SYSTEM
+   ================================= */
+.cipher-glass-panel {
+    background: linear-gradient(135deg, 
+        rgba(26, 26, 26, 0.95) 0%,
+        rgba(30, 30, 30, 0.95) 100%
+    );
+    backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: var(--cipher-radius-xl);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.cipher-glass-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--cipher-gold) 25%,
+        var(--cipher-electric-blue) 75%,
+        transparent 100%
+    );
+}
+
+/* =================================
+   SECTION HEADERS
+   ================================= */
+.section-header {
+    padding: var(--cipher-space-xl) var(--cipher-space-xl) var(--cipher-space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, 
+        rgba(255, 215, 0, 0.03) 0%,
+        transparent 100%
+    );
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    margin-bottom: var(--cipher-space-xs);
+}
+
+.section-title h2 {
+    font-size: 1.8rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-gold);
+    margin: 0;
+    text-shadow: var(--cipher-shadow-glow);
+}
+
+.section-icon {
+    font-size: 1.5rem;
+}
+
+.section-subtitle {
+    color: var(--cipher-text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+    margin-left: 2.5rem;
+}
+
+/* =================================
+   FORM STRUCTURE
+   ================================= */
+.calculator-form {
+    padding: var(--cipher-space-md) var(--cipher-space-xl) var(--cipher-space-xl);
+}
+
+.form-section {
+    margin-bottom: var(--cipher-space-xxl);
+    padding: var(--cipher-space-lg);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--cipher-radius-lg);
+    backdrop-filter: blur(10px);
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    font-size: 1.2rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-text-primary);
+    margin: 0 0 var(--cipher-space-lg) 0;
+    padding-bottom: var(--cipher-space-sm);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.form-icon {
+    font-size: 1.1rem;
+}
+
+/* =================================
+   FORM INPUTS - PROFESSIONAL STYLING
+   ================================= */
+.input-group {
+    margin-bottom: var(--cipher-space-lg);
+}
+
+.input-label {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    color: var(--cipher-text-secondary);
+    font-weight: var(--cipher-font-weight-medium);
+    font-size: 0.95rem;
+    margin-bottom: var(--cipher-space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.label-icon {
+    font-size: 0.9rem;
+}
+
+.route-input,
+.distance-input,
+.notes-input,
+.primary-select {
+    width: 100%;
+    padding: var(--cipher-space-md) var(--cipher-space-lg);
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-lg);
+    color: var(--cipher-text-primary);
+    font-size: 1rem;
+    font-weight: var(--cipher-font-weight-medium);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.route-input:focus,
+.distance-input:focus,
+.notes-input:focus,
+.primary-select:focus {
+    outline: none;
+    border-color: var(--cipher-gold);
+    background: linear-gradient(135deg, 
+        rgba(255, 215, 0, 0.08) 0%,
+        rgba(255, 215, 0, 0.04) 100%
+    );
+    box-shadow: 
+        0 0 0 4px rgba(255, 215, 0, 0.1),
+        inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.route-input::placeholder,
+.distance-input::placeholder,
+.notes-input::placeholder {
+    color: var(--cipher-text-muted);
+    font-style: italic;
+}
+
+.input-hint {
+    font-size: 0.8rem;
+    color: var(--cipher-text-muted);
+    margin-top: var(--cipher-space-xs);
+    font-style: italic;
+}
+
+/* =================================
+   ROUTE INPUTS LAYOUT
+   ================================= */
+.route-inputs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--cipher-space-lg);
+    align-items: end;
+}
+
+.route-arrow {
+    font-size: 1.5rem;
+    color: var(--cipher-electric-blue);
+    font-weight: bold;
+    align-self: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+}
+
+/* =================================
+   DISTANCE OPTIONS LAYOUT
+   ================================= */
+.distance-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cipher-space-xl);
+    align-items: start;
+}
+
+.distance-input-wrapper {
+    position: relative;
+}
+
+.distance-status {
+    position: absolute;
+    right: var(--cipher-space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    color: var(--cipher-text-muted);
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+.status-icon {
+    font-size: 0.8rem;
+}
+
+/* =================================
+   MODERN CHECKBOX STYLING
+   ================================= */
+.modern-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--cipher-space-md);
+    cursor: pointer;
+    padding: var(--cipher-space-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+}
+
+.modern-checkbox:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.modern-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    flex-shrink: 0;
+}
+
+.modern-checkbox input:checked + .checkbox-custom {
+    background: linear-gradient(135deg, var(--cipher-gold), var(--cipher-gold-dark));
+    border-color: var(--cipher-gold);
+    transform: scale(1.1);
+}
+
+.modern-checkbox input:checked + .checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    color: var(--cipher-bg-primary);
+    font-size: 14px;
+    font-weight: bold;
+    top: -2px;
+    left: 2px;
+}
+
+.checkbox-label-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cipher-space-xs);
+}
+
+.checkbox-title {
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-text-primary);
+}
+
+.checkbox-subtitle {
+    font-size: 0.85rem;
+    color: var(--cipher-text-muted);
+}
+
+/* =================================
+   FIRM SELECTION LAYOUT
+   ================================= */
+.firm-selection-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--cipher-space-lg);
+    align-items: end;
+}
+
+.firm-input-group {
+    flex: 1;
+}
+
+/* =================================
+   PROFESSIONAL BUTTONS
+   ================================= */
+.primary-action-btn {
+    background: linear-gradient(135deg, var(--cipher-gold), var(--cipher-gold-dark));
+    color: var(--cipher-bg-primary);
+    border: none;
+    padding: var(--cipher-space-lg) var(--cipher-space-xxl);
+    border-radius: var(--cipher-radius-lg);
+    font-size: 1.1rem;
+    font-weight: var(--cipher-font-weight-bold);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 
+        0 8px 25px rgba(255, 215, 0, 0.3),
+        0 0 0 1px rgba(255, 215, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cipher-space-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.primary-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    transition: left 0.5s ease;
+}
+
+.primary-action-btn:hover {
+    background: linear-gradient(135deg, var(--cipher-electric-blue), var(--cipher-electric-blue-dark));
+    box-shadow: 
+        0 12px 35px rgba(0, 191, 255, 0.4),
+        0 0 0 1px rgba(0, 191, 255, 0.2);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.primary-action-btn:hover::before {
+    left: 100%;
+}
+
+.primary-action-btn:active {
+    transform: translateY(-1px) scale(1.01);
+}
+
+.primary-action-btn.secondary {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    color: var(--cipher-text-primary);
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.primary-action-btn.secondary:hover {
+    background: linear-gradient(135deg, 
+        rgba(0, 191, 255, 0.15) 0%,
+        rgba(0, 191, 255, 0.08) 100%
+    );
+    color: var(--cipher-electric-blue);
+    box-shadow: 
+        0 8px 20px rgba(0, 191, 255, 0.2),
+        0 0 0 1px rgba(0, 191, 255, 0.3);
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--cipher-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: var(--cipher-space-sm) var(--cipher-space-lg);
+    border-radius: var(--cipher-radius-md);
+    font-weight: var(--cipher-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    white-space: nowrap;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    color: var(--cipher-gold);
+    border-color: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-icon {
+    font-size: 1rem;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: var(--cipher-space-xxl);
+    padding-top: var(--cipher-space-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* =================================
+   RESULTS SECTION STYLING
+   ================================= */
+.results-content {
+    padding: var(--cipher-space-md) var(--cipher-space-xl) var(--cipher-space-xl);
+}
+
+.breakdown-section,
+.copy-section {
+    margin-bottom: var(--cipher-space-xxl);
+}
+
+.breakdown-title,
+.copy-title {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    font-size: 1.2rem;
+    font-weight: var(--cipher-font-weight-bold);
+    color: var(--cipher-text-primary);
+    margin: 0 0 var(--cipher-space-lg) 0;
+    padding-bottom: var(--cipher-space-sm);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.breakdown-icon,
+.copy-icon {
+    font-size: 1.1rem;
+}
+
+/* =================================
+   COPY AREA STYLING
+   ================================= */
+.copy-area {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--cipher-radius-lg);
+    padding: var(--cipher-space-lg);
+}
+
+.copy-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-md);
+    color: var(--cipher-text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    padding: var(--cipher-space-md);
+    resize: vertical;
+    margin-bottom: var(--cipher-space-md);
+}
+
+.copy-textarea::placeholder {
+    color: var(--cipher-text-muted);
+    font-style: italic;
+}
+
+.copy-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, 
+        rgba(0, 191, 255, 0.2) 0%,
+        rgba(0, 191, 255, 0.1) 100%
+    );
+    color: var(--cipher-electric-blue);
+    border: 1px solid rgba(0, 191, 255, 0.3);
+    padding: var(--cipher-space-sm) var(--cipher-space-xl);
+    border-radius: var(--cipher-radius-md);
+    font-weight: var(--cipher-font-weight-bold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+}
+
+.copy-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(0, 191, 255, 0.3) 0%,
+        rgba(0, 191, 255, 0.2) 100%
+    );
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+}
+
+.copy-hint {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--cipher-text-muted);
+    margin-top: var(--cipher-space-sm);
+    font-style: italic;
+}
+
+/* =================================
+   RESULTS ACTIONS
+   ================================= */
+.results-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--cipher-space-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.settings-link {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    color: var(--cipher-text-secondary);
+    text-decoration: none;
+    padding: var(--cipher-space-sm) var(--cipher-space-md);
+    border-radius: var(--cipher-radius-sm);
+    transition: all 0.3s ease;
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+.settings-link:hover {
+    color: var(--cipher-gold);
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.link-icon {
+    font-size: 0.9rem;
+}
+
+/* =================================
+   LOADING STATES
+   ================================= */
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid var(--cipher-text-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-loading {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+}
+
+.btn-success {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    color: var(--cipher-success);
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+@media (max-width: 1024px) {
+    .route-inputs {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-md);
+    }
+    
+    .route-arrow {
+        display: none;
+    }
+    
+    .distance-options {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-lg);
+    }
+    
+    .firm-selection-group {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-md);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-header,
+    .calculator-form,
+    .results-content {
+        padding-left: var(--cipher-space-md);
+        padding-right: var(--cipher-space-md);
+    }
+    
+    .form-section {
+        padding: var(--cipher-space-md);
+    }
+    
+    .section-title h2 {
+        font-size: 1.5rem;
+    }
+    
+    .results-actions {
+        flex-direction: column;
+        gap: var(--cipher-space-md);
+        align-items: stretch;
+    }
+    
+    .results-actions .settings-link {
+        text-align: center;
+    }
+}

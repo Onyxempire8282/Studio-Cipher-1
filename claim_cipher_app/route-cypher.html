@@ -4,104 +4,275 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Route Cipher - Claim Cipher</title>
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/route-optimizer.css">
-    <!-- 🎨 UNIFIED VISUAL CONSISTENCY FIX -->
-    <link rel="stylesheet" href="styles/visual-consistency-fix.css">
-    <!-- 🌟 UNIVERSAL GLASSMORPHISM DESIGN SYSTEM -->
-    <link rel="stylesheet" href="styles/glassmorphism-universal.css">
-    <!-- 🔥 GLASSMORPHISM FORCE OVERRIDE -->
-    <link rel="stylesheet" href="styles/glassmorphism-force-override.css">
-    <!--  UNIVERSAL HEADER & LAYOUT FIXES -->`n    <link rel="stylesheet" href="styles/universal-header-fixes.css">`n</head>
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css">
+    
+    <!-- Page Layout - Route Cypher specific -->
+    <link rel="stylesheet" href="styles/route-cypher-layout.css">
+    
+    <!-- Professional Calculator Interface -->
+    <link rel="stylesheet" href="styles/professional-calculator.css">
+    
+    <!-- Route Cipher Professional Styling -->
+    <link rel="stylesheet" href="styles/route-cipher-professional.css">
+</head>
 <body class="route-page">
-    <nav class="top-nav">
-        <div class="nav-brand">
-            <h1>🎤 Claim Cipher</h1>
-            <span class="tagline">No Matter What</span>
-        </div>
-        <div class="nav-links">
-            <a href="command-center.html">Dashboard</a>
-            <a href="mileage-cypher.html">Mileage</a>
-            <a href="route-cypher.html" class="active">Routes</a>
-            <a href="settings-booth.html">Settings</a>
-        </div>
-    </nav>
-
-    <main class="route-optimizer-main">
-        <div class="page-header">
-            <h1>🗺️ Route Cipher</h1>
-            <p>Optimize your route like a pro - fastest path, smart splitting</p>
-        </div>
-
-        <div class="route-optimizer-container">
-            <!-- Input Section -->
-            <div class="route-inputs">
-                <div class="input-group">
-                    <label for="startLocation">🎯 Starting Location</label>
-                    <input type="text" id="startLocation" placeholder="Enter starting address or coordinates">
+    <header class="cipher-header">
+        <div class="header-content">
+            <div class="app-brand">
+                <span class="logo">🎤</span>
+                <span>Claim Cipher</span>
+            </div>
+            <div class="nav-links">
+                <a href="command-center.html">🎯 Dashboard</a>
+                <a href="route-cypher.html" class="active">🗺️ Routes</a>
+                <a href="mileage-cypher.html">🧮 Mileage</a>
+                <a href="jobs-studio.html">💼 Jobs</a>
+                <a href="total-loss-forms.html">🚗 Forms</a>
+                <a href="firms-directory.html">🏢 Firms</a>
+                <a href="settings-booth.html">⚙️ Settings</a>
+                <a href="functionality-test.html">🧪 Tests</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Professional User</div>
+                    <div class="user-role">Claims Specialist</div>
                 </div>
+                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </header>
 
-                <div class="destinations-section">
-                    <div class="section-header">
-                        <label>📍 Destinations</label>
-                        <button id="addDestination" class="add-btn">+ Add Stop</button>
+    <main class="route-optimizer-main main-content">
+        
+
+        <div class="route-container">
+            <!-- Left Panel: Input + Results -->
+            <div class="input-and-results-panel">
+                <!-- Route Optimizer Section -->
+                <div class="optimizer-section cipher-glass-panel">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">🗺️</span>
+                        <h2>Route Optimizer</h2>
                     </div>
-                    <div id="destinationsList">
-                        <div class="destination-input">
-                            <input type="text" placeholder="Enter destination address">
-                            <button class="remove-btn" onclick="removeDestination(this)">×</button>
+                    <div class="section-subtitle">Plan efficient multi-stop routes with intelligent day splitting</div>
+                </div>
+                
+                <div class="optimizer-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">🎯</span>
+                            Starting Location
+                        </h3>
+                        <div class="input-group">
+                            <label for="startLocation" class="input-label">
+                                <span class="label-icon">🏠</span>
+                                Starting Point
+                            </label>
+                            <input type="text" id="startLocation" class="route-input" placeholder="Enter your starting address...">
+                            <div class="input-hint">Your starting location will be saved for future use</div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">📍</span>
+                            Destinations
+                        </h3>
+                        <div class="destinations-group">
+                            <div class="destinations-header">
+                                <div class="destinations-label">Add up to 15 destinations</div>
+                                <button id="addDestination" class="secondary-btn">
+                                    <span class="btn-icon">➕</span>
+                                    Add Stop
+                                </button>
+                            </div>
+                            <div id="destinationsList" class="destinations-list">
+                                <div class="destination-input">
+                                    <input type="text" placeholder="Enter destination address" class="destination-address-input">
+                                    <div class="destination-controls">
+                                        <select class="priority-select" title="Set priority level">
+                                            <option value="normal">🔵 Normal</option>
+                                            <option value="high">🟡 High</option>
+                                            <option value="urgent">🔴 Urgent</option>
+                                        </select>
+                                        <button class="remove-btn" onclick="removeDestination(this)" title="Remove this destination">×</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">⚙️</span>
+                            Quick Settings
+                        </h3>
+                        <div class="quick-settings-bar">
+                            <div class="quick-setting">
+                                <label for="territoryType" class="quick-label">Territory:</label>
+                                <select id="territoryType" class="quick-select">
+                                    <option value="rural">Rural (Distance Priority)</option>
+                                    <option value="urban">Urban (Time Priority)</option>
+                                    <option value="mixed">Mixed Territory</option>
+                                </select>
+                            </div>
+                            <div class="quick-setting">
+                                <label class="modern-checkbox compact-checkbox">
+                                    <input type="checkbox" id="geographicClustering" checked>
+                                    <span class="checkbox-custom small"></span>
+                                    <span class="checkbox-label-text">
+                                        <span class="checkbox-title">Geographic Clustering</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="quick-setting">
+                                <label for="maxDailyHours" class="quick-label">Max Hours:</label>
+                                <select id="maxDailyHours" class="quick-select">
+                                    <option value="6">6 hours</option>
+                                    <option value="8" selected>8 hours</option>
+                                    <option value="10">10 hours</option>
+                                </select>
+                            </div>
+                            <div class="quick-setting">
+                                <button id="toggleAdvanced" class="toggle-advanced-btn">
+                                    <span class="btn-icon">⚙️</span>
+                                    More Settings
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Settings (Collapsed by Default) -->
+                        <div id="advancedSettings" class="advanced-settings" style="display: none;">
+                            <div class="settings-grid">
+                                <div class="setting-group">
+                                    <label class="modern-checkbox">
+                                        <input type="checkbox" id="optimizeEnabled" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-label-text">
+                                            <span class="checkbox-title">Route Optimization</span>
+                                            <span class="checkbox-subtitle">Find the most efficient route order</span>
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label class="modern-checkbox">
+                                        <input type="checkbox" id="splitEnabled" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-label-text">
+                                            <span class="checkbox-title">Intelligent Day Splitting</span>
+                                            <span class="checkbox-subtitle">Automatically split routes across multiple days</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="parameters-grid">
+                                <div class="input-group">
+                                    <label for="maxLegMiles" class="input-label">Max Miles Per Leg</label>
+                                    <input type="number" id="maxLegMiles" value="50" min="1" max="500" class="distance-input">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="maxStopsPerDay" class="input-label">Max Stops Per Day</label>
+                                    <input type="number" id="maxStopsPerDay" value="6" min="1" max="20" class="distance-input">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="timePerAppointment" class="input-label">Time Per Stop (minutes)</label>
+                                    <input type="number" id="timePerAppointment" value="30" min="5" max="180" class="distance-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-actions">
+                        <button id="optimizeRoute" class="primary-action-btn">
+                            <span class="btn-icon">🚀</span>
+                            <span class="btn-text">Optimize Route</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="loading-spinner"></span>
+                                Optimizing...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Results Section -->
+                <div class="results-section cipher-glass-panel" id="routeResults" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">🎯</span>
+                            <h2>Route Analysis & Scheduling</h2>
+                        </div>
+                    </div>
+
+                    <div class="results-content">
+                        <div id="routeOutput" class="route-output"></div>
+                        
+                        <div class="route-actions">
+                            <button id="copyRoute" class="copy-btn">
+                                <span class="btn-icon">📋</span>
+                                Copy
+                            </button>
+                            <button id="exportMiles" class="secondary-btn">
+                                <span class="btn-icon">📊</span>
+                                Mileage
+                            </button>
+                        </div>
+                        
+                        <div class="calendar-export-section">
+                            <h3 class="export-title">
+                                <span class="export-icon">📅</span>
+                                Schedule Appointments
+                            </h3>
+                            <div class="export-actions">
+                                <button id="exportGoogleCal" class="calendar-export-btn" disabled>
+                                    <span class="btn-icon">📅</span>
+                                    Google Calendar
+                                </button>
+                                <button id="exportAppleCal" class="calendar-export-btn" disabled>
+                                    <span class="btn-icon">🍎</span>
+                                    Apple Calendar
+                                </button>
+                                <button id="exportMobileCipher" class="primary-action-btn">
+                                    <span class="btn-icon">📱</span>
+                                    Mobile Cipher
+                                </button>
+                            </div>
+                            <div class="export-status">
+                                <span id="exportStatus">Set appointment times above to enable calendar export</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Settings -->
-                <div class="route-settings">
-                    <div class="setting-row">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="optimizeEnabled" checked>
-                            <span class="toggle-slider"></span>
-                            Route Optimization
-                        </label>
-                    </div>
-                    
-                    <div class="setting-row">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="splitEnabled" checked>
-                            <span class="toggle-slider"></span>
-                            Day Splitting
-                        </label>
-                    </div>
-                    
-                    <div class="setting-row">
-                        <label for="maxLegMiles">Max Miles Per Leg:</label>
-                        <input type="number" id="maxLegMiles" value="50" min="1" max="500">
-                        <span>miles</span>
-                    </div>
-                </div>
-
-                <button id="optimizeRoute" class="optimize-btn">🚀 Optimize Route</button>
             </div>
 
-            <!-- Results Section -->
-            <div class="route-results" id="routeResults" style="display: none;">
-                <h3>🎯 Optimized Route</h3>
-                <div id="routeOutput"></div>
-                <div class="route-actions">
-                    <button id="copyRoute" class="copy-btn">📋 Copy Route</button>
-                    <button id="exportMiles" class="export-btn">📊 Export to Mileage Calculator</button>
+            <!-- Right Panel: Map Only -->
+            <div class="map-only-panel">
+                <!-- Map Container -->
+                <div class="map-section cipher-glass-panel">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">🗺️</span>
+                            <h2>Route Visualization</h2>
+                        </div>
+                        <div class="section-subtitle">Visual validation - "Do I want to drive that way?"</div>
+                    </div>
+                    <div class="map-container">
+                        <div id="routeMap"></div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Map Container -->
-            <div class="map-container">
-                <div id="routeMap"></div>
             </div>
         </div>
 
         <!-- Loading Overlay -->
         <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-            <div class="loading-content">
+            <div class="loading-content glass-card">
                 <div class="spinner"></div>
                 <p>🎵 Calculating optimal route...</p>
             </div>
@@ -110,13 +281,17 @@
         <!-- Error Display -->
         <div id="errorDisplay" class="error-display" style="display: none;">
             <p id="errorMessage"></p>
-            <button onclick="hideError()">×</button>
+            <button onclick="hideError()" class="cipher-btn cipher-btn--sm">×</button>
         </div>
     </main>
 
-    <!-- Google Maps API -->
-    <!-- Google Maps API removed for security - configure with your own key -->
-    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places,geometry&callback=initRouteOptimizer"></script> -->
+    <!-- Load API configuration first -->
+    <script src="config/api-config.js"></script>
+    
+    <!-- Core Scripts -->
+    <script src="scripts/cipher-core.js"></script>
+    
+    <!-- Route Optimizer Script -->
     <script src="scripts/route-optimizer.js"></script>
 
     <!-- Security Agent: Google Maps API Script -->
@@ -166,14 +341,6 @@
             document.getElementById('errorDisplay').style.display = 'block';
         }
     </script>
-    
-    <!-- Security Agent: Google Maps API with callback -->
-    <script async defer 
-        <!-- Google Maps API removed for security -->
-        <!-- src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places,geometry&callback=initRouteOptimizer"> -->
-    </script>
-    
-    <script src="scripts/route-optimizer.js"></script>
 </body>
 </html>
 

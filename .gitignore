@@ -11,6 +11,7 @@
 google-api-config.js
 api-keys.json
 config/secrets.json
+config/api-config.js
 secrets/
 private/
 confidential/

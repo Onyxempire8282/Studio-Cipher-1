@@ -37,7 +37,7 @@ body.route-page,
 body.mileage-page,
 body.cipher-dark-theme,
 body {
-    padding-top: 80px !important;
+    padding-top: 40px !important;
 }
 
 /* Fix route and mileage page specific layouts */
@@ -50,7 +50,7 @@ body {
 /* Ensure page headers don't conflict with fixed nav */
 .page-header {
     position: relative !important;
-    margin-top: 20px !important;
+    
     margin-bottom: 30px !important;
 }
 

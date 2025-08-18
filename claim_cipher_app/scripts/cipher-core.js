@@ -188,6 +188,23 @@ function generateCipherDemoData() {
     };
 }
 
+// Global logout function for onclick handlers
+function handleLogout() {
+    console.log('🚪 User signing out of cipher');
+    
+    // Clear all cipher session data
+    localStorage.removeItem('cipher_authenticated');
+    localStorage.removeItem('cipher_user_type');
+    localStorage.removeItem('cipher_user_email');
+    localStorage.removeItem('cipher_demo_start_time');
+    localStorage.removeItem('cipher_demo_expiry');
+    localStorage.removeItem('cipher_remember_me');
+    sessionStorage.removeItem('claimCipherAuth');
+    
+    // Redirect to login
+    window.location.href = './login-cypher.html';
+}
+
 // Export functions globally
 window.initializeCipherUserContext = initializeCipherUserContext;
 window.setupCipherLogoutHandler = setupCipherLogoutHandler;
@@ -195,5 +212,6 @@ window.animateCipherNumber = animateCipherNumber;
 window.showCipherNotification = showCipherNotification;
 window.formatCipherTime = formatCipherTime;
 window.generateCipherDemoData = generateCipherDemoData;
+window.handleLogout = handleLogout;
 
 console.log('🎤 Cipher Core JavaScript loaded - No Matter What!');

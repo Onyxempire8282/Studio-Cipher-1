@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CCC PDF Extraction</title>
+</head>
+<body>
+    <h1>🧪 Test CCC PDF Extraction</h1>
+    
+    <div>
+        <input type="file" id="testFileInput" accept=".pdf">
+        <button onclick="testExtraction()">Test Extraction</button>
+    </div>
+    
+    <div id="results" style="margin-top: 20px; font-family: monospace; white-space: pre-wrap;"></div>
+    
+    <!-- PDF.js for PDF parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- CCC PDF Extractor -->
+    <script src="scripts/bcif-professional-mapper.js"></script>
+    <script src="scripts/ccc-pdf-extractor.js"></script>
+    
+    <script>
+        let extractor = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            extractor = new CCCPDFExtractor();
+            console.log('Test page loaded with extractor');
+        });
+        
+        async function testExtraction() {
+            const fileInput = document.getElementById('testFileInput');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!fileInput.files[0]) {
+                alert('Please select a PDF file first');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            resultsDiv.textContent = 'Testing extraction...\n';
+            
+            try {
+                console.log('🧪 Starting test extraction...');
+                const result = await extractor.extractDataFromCCC(file);
+                
+                resultsDiv.textContent += 'Extraction completed!\n\n';
+                resultsDiv.textContent += 'Results:\n';
+                resultsDiv.textContent += JSON.stringify(result, null, 2);
+                
+            } catch (error) {
+                resultsDiv.textContent += `Error: ${error.message}\n`;
+                console.error('Test extraction failed:', error);
+            }
+        }
+    </script>
+</body>
+</html>

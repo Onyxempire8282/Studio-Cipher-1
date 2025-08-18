@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Created from PDF via Acrobat SaveAsXML -->
+<!-- Mapping Table version: 28-February-2003 -->
+<TaggedPDF-doc>
+<?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?>
+<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c001 79.675d0f7, 2023/06/11-19:21:16        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+         <pdf:Producer>Microsoft® Word for Microsoft 365</pdf:Producer>
+         <dc:format>xml</dc:format>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">Report Retrieval Method</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:creator>
+            <rdf:Seq>
+               <rdf:li>Chad Jorgensen</rdf:li>
+            </rdf:Seq>
+         </dc:creator>
+         <xmp:CreatorTool>Microsoft® Word for Microsoft 365</xmp:CreatorTool>
+         <xmp:CreateDate>2025-07-10T16:27:56-04:00</xmp:CreateDate>
+         <xmp:ModifyDate>2025-08-09T13:20:11-04:00</xmp:ModifyDate>
+         <xmp:MetadataDate>2025-08-09T13:20:11-04:00</xmp:MetadataDate>
+         <xmpMM:DocumentID>uuid:64FBBB12-1C39-48B1-9E4F-FEF25731F2A0</xmpMM:DocumentID>
+         <xmpMM:InstanceID>uuid:4f062e06-9758-4e10-bcfe-8e61e2361887</xmpMM:InstanceID>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                           
+<?xpacket end="w"?>
+<?xpacket end='r'?>
+
+<Document>
+<Table>
+<TBody>
+<TR>
+<TD>
+<P>Office ID Number*  </P>
+</TD>
+
+<TD>
+<P>Company </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Claim Number*   </P>
+</TD>
+
+<TD>
+<P>Policy Number  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>VIN: </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Year*  </P>
+</TD>
+
+<TD>
+<P>Make*  </P>
+</TD>
+
+<TD>
+<P>Model* </P>
+</TD>
+
+<TD>
+<P>Trim </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Body Style   2DR     4DR    Hatchback    Convertible   Wagon    Pickup    Van   Utility </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P> ½ Ton  ¾ Ton    1 Ton      Short Bed     Long Bed    Cab &amp; Chassis    Fleetside    Fenderside </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P></P>
+</TD>
+
+<TD>
+<P>Cylinders </P>
+</TD>
+
+<TD>
+<P>Displacement </P>
+</TD>
+
+<TD>
+<P>Fuel Type     Gas   Diesel     Other  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Adjuster ID </P>
+</TD>
+
+<TD>
+<P>Adjuster First Name  </P>
+</TD>
+
+<TD>
+<P>Adjuster Last Name*  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Appraiser ID </P>
+</TD>
+
+<TD>
+<P>Appraiser First Name  </P>
+</TD>
+
+<TD>
+<P>Appraiser Last Name  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Insured First Name  </P>
+</TD>
+
+<TD>
+<P>Insured Last Name*  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Owner First Name  </P>
+</TD>
+
+<TD>
+<P>Owner Last Name*  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Loss ZIP Code*  - </P>
+</TD>
+
+<TD>
+<P>Loss State*  </P>
+</TD>
+
+<TD>
+<P>PA Appraiser ID# </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Date of loss (mm/dd/yyyy) *  </P>
+</TD>
+
+<TD>
+<P>Type of Loss* </P>
+</TD>
+
+<TD>
+<P> Collision </P>
+</TD>
+
+<TD>
+<P> Theft </P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Loss Category* </P>
+</TD>
+
+<TD>
+<P> Other </P>
+</TD>
+
+<TD>
+<P> Liability </P>
+</TD>
+
+<TD>
+<P> Comprehensive </P>
+</TD>
+
+<TD>
+<P> Collision </P>
+</TD>
+
+<TD>
+<P>Odometer (mi) * </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Leased Vehicle     Yes   No </P>
+</TD>
+
+<TD>
+<P>3rd Party Claim     Yes   No </P>
+</TD>
+
+<TD>
+<P>Claim Class </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Package 1 </P>
+</TD>
+
+<TD>
+<P>Package 2 </P>
+</TD>
+
+<TD>
+<P>Package 3 </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Transmission*        Automatic        Overdrive        S6        S5        S4         S3         4W      </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Power Options </P>
+
+<P> PS Power Steering </P>
+
+<P> PB Power Brakes </P>
+
+<P> PW Power Windows </P>
+
+<P> PL Power Locks </P>
+
+<P> PM Power Mirrors </P>
+
+<P> SP Power Driver Seat </P>
+
+<P> PC Power Passenger Seat </P>
+
+<P> PT Power Trunk/Gate Release </P>
+
+<P> PP Power Adjustable Pedals </P>
+
+<P> PD Power Sliding Door </P>
+
+<P> DP Dual Power Sliding Doors </P>
+
+<P>Décor/Convenience </P>
+
+<P> AC Air Conditioning </P>
+
+<P> CL Climate Control </P>
+
+<P> DA Dual Air Conditioning </P>
+
+<P> TW Tilt Wheel </P>
+
+<P> CC Cruise Control </P>
+
+<P> IW Intermittent Wipers </P>
+
+<P> CN Console/Storage </P>
+
+<P> CO Overhead Console </P>
+
+<P> MM Memory Package </P>
+
+<P> NV Navigation System </P>
+
+<P> EC Entertainment Center </P>
+
+<P> DU Dual Entertainment Center </P>
+
+<P> TL Telescopic Wheel </P>
+
+<P> HW Heated Steering Wheel </P>
+
+<P> MC Message Center </P>
+
+<P> GD Home Link </P>
+
+<P> RD Rear Defogger </P>
+
+<P> RJ Remote Starter </P>
+
+<P> WT Wood Interior Trim </P>
+
+<P> KE Keyless Entry </P>
+
+<P> SZ Rear Power Sunshade </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P>Seating </P>
+
+<P> CS Cloth Seats </P>
+
+<P> BS Bucket Seats </P>
+
+<P> RL Reclining/Lounge Seats </P>
+
+<P> LS Leather Seats </P>
+
+<P> SH Heated Seats  </P>
+
+<P> RH Rear Heated Seats </P>
+
+<P> VB Ventilated Seats </P>
+
+<P> 3S 3rd Row Seat </P>
+
+<P> 3P Power Third Seat </P>
+
+<P> R3 Retractable Seats </P>
+
+<P> 2P 12 Passenger Seating </P>
+
+<P> 5P 15 Passenger Seating </P>
+
+<P> B2 Captain Chairs (2) </P>
+
+<P> B4 Captain Chairs (4) </P>
+
+<P> B6 Captain Chairs (6) </P>
+
+<P>Radio </P>
+
+<P> AM AM Radio </P>
+
+<P> FM FM Radio </P>
+
+<P> ST Stereo </P>
+
+<P> SE Search/Seek </P>
+
+<P> CD CD Player </P>
+
+<P> CA Cassette </P>
+
+<P> TQ Steering Wheel Touch Controls </P>
+
+<P> M3 Auxiliary Audio Connection </P>
+
+<P> UR Premium Radio </P>
+
+<P> SK CD Changer/Stacker </P>
+
+<P> XM Satellite Radio </P>
+
+<P> EQ Equalizer </P>
+
+<P>Wheels </P>
+
+<P> SY Styled Steel Wheels </P>
+
+<P> FC Full Wheel Covers </P>
+
+<P> CY Clad Wheels </P>
+
+<P> AW Aluminum/Alloy Wheels </P>
+
+<P> CJ Chrome Wheels </P>
+
+<P> W2 20” or Larger Wheels </P>
+
+<P> WW Wire Wheels </P>
+
+<P> WC Wire Wheel Covers </P>
+
+<P> KW Locking Wheels </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P>Roof </P>
+
+<P> EG Electric Glass Roof </P>
+
+<P> ES Electric Steel Roof </P>
+
+<P> OR Skyview Roof </P>
+
+<P> SD Dual Power Sunroof </P>
+
+<P> MS Manual Steel Roof </P>
+
+<P> MG Manual Glass Roof </P>
+
+<P> FR Flip Roof </P>
+
+<P> TT T-Top/Panel </P>
+
+<P> VP Power Convertible Roof </P>
+
+<P> RM Detachable Roof </P>
+
+<P> VR Vinyl Covered Roof </P>
+
+<P> HT Hard Top </P>
+
+<P>Safety/Brakes </P>
+
+<P> AG Driver’s Side Air Bag </P>
+
+<P> RG Passenger Air Bag </P>
+
+<P> XG Front Side Impact Air Bags </P>
+
+<P> ZG Rear Side Impact Air Bags </P>
+
+<P> DG Head/Curtain Air Bags </P>
+
+<P> DB 4-Wheel Disc Brakes </P>
+
+<P> AB Anti-Lock Brakes (4) </P>
+
+<P> A2 Anti-Lock Brakes (2) </P>
+
+<P> TX Traction Control </P>
+
+<P> T1 Stability Control </P>
+
+<P> PO Positraction </P>
+
+<P> C2 Communications System </P>
+
+<P> PJ Parking Sensors </P>
+
+<P> PX Backup Camera  </P>
+
+<P> PZ Surround View Camera  </P>
+
+<P> TD Alarm </P>
+
+<P> HF Hands Free Device </P>
+
+<P> XE Xenon or LED Headlamps </P>
+
+<P> HU Heads Up Display </P>
+
+<P> IC Intelligent Cruise </P>
+
+<P> DV Blind Spot Detection </P>
+
+<P> LN Lane Departure Warning </P>
+
+<P> VZ Night Vision </P>
+
+<P> RB Roll Bar </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P>Exterior/Paint/Glass </P>
+
+<P> DM Dual Mirrors </P>
+
+<P> HM Heated Mirrors </P>
+
+<P> BN Body Side Moldings </P>
+
+<P> TG Tinted Glass </P>
+
+<P> AF Aftermarket Film Tint </P>
+
+<P> DT Privacy Glass </P>
+
+<P> WP Rear Window Wiper </P>
+
+<P> FL Fog Lamps </P>
+
+<P> RR Luggage/Roof Rack </P>
+
+<P> SL Rear Spoiler </P>
+
+<P> HV Headlamp Washers </P>
+
+<P> MX Signal Integrated Mirrors </P>
+
+<P> WG Wood grain </P>
+
+<P> IP Clear coat Paint </P>
+
+<P> MP Metallic Paint </P>
+
+<P> 2T Two Tone Paint </P>
+
+<P> HP Three Stage Paint </P>
+
+<P>Other </P>
+
+<P> SB Rear Step Bumper </P>
+
+<P> TH Trailer Hitch </P>
+
+<P> TP Trailering Package </P>
+
+<P> SW Rear Sliding Window </P>
+
+<P> PG Power Rear Window </P>
+
+<P> BD Running Board/Side Steps </P>
+
+<P> UP Power Retractable     </P>
+
+<P>       Running Boards </P>
+
+<P> BL Bed liner </P>
+
+<P> BY Bed liner (Spray On) </P>
+
+<P> TN Soft Tonneau Cover </P>
+
+<P> TZ Hard Tonneau Cover </P>
+
+<P> CP Deluxe Truck Cap </P>
+
+<P> AR Bed Rails </P>
+
+<P> GG Grill Guard </P>
+
+<P> TB Tool Box (Permanent) </P>
+
+<P> WD Dual Rear Wheels </P>
+
+<P> XT Auxiliary Fuel Tank </P>
+
+<P> EM California Emissions </P>
+
+<P> SG Stone Guard </P>
+
+<P> WI Winch </P>
+
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Condition: Rate each of the following   0=Rough, 1=Average Private, 2=Dealer Retail, 3=Exceptional       COMMENTS </P>
+
+<P>Note : Actual verbiage for each condition rating may differ based on the insurance company preference. </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Engine* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+</TD>
+
+<TD>
+<P></P>
+
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Transmission* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Paint* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Front Tires* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Rear Tires* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Body/Glass* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Interior* </P>
+</TD>
+
+<TD>
+<P> 0 </P>
+</TD>
+
+<TD>
+<P> 1 </P>
+</TD>
+
+<TD>
+<P> 2 </P>
+</TD>
+
+<TD>
+<P> 3 </P>
+
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Refurbishments </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Maintenance Item </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Date (mm/yyyy) </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Maintenance Item </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Date (mm/yyyy) </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>New Tires </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Number of Tires </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Rebuilt Transmission </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Mileage since Rebuilt/Replaced </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Rebuilt Engine </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Mileage since Rebuilt/Replaced </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>New Paint </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Paint Type    Basic   Standard    Custom </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Reconditioned Interior </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Interior Type    Vinyl   Cloth    Leather </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Restored </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Special Wheels </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Date (mm/yyyy) </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Other </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Date (mm/yyyy) </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Other </P>
+</TD>
+
+<TD>
+<P>Price $ </P>
+</TD>
+
+<TD>
+<P>Date (mm/yyyy) </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Adjustments </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Sales Tax %  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Prior Damage </P>
+</TD>
+
+<TD>
+<P>Amount $ </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Pre Tax Adjustment 1 </P>
+</TD>
+
+<TD>
+<P>Description </P>
+</TD>
+
+<TD>
+<P>Add $ </P>
+</TD>
+
+<TD>
+<P>Deduct $ </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Pre Tax Adjustment 2 </P>
+</TD>
+
+<TD>
+<P>Description </P>
+</TD>
+
+<TD>
+<P>Add $ </P>
+</TD>
+
+<TD>
+<P>Deduct $ </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Deductible </P>
+</TD>
+
+<TD>
+<P>Amount $ </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Post Tax Adjustment 1 </P>
+</TD>
+
+<TD>
+<P>Description </P>
+</TD>
+
+<TD>
+<P>Add $ </P>
+</TD>
+
+<TD>
+<P>Deduct $ </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Post Tax Adjustment 2 </P>
+</TD>
+
+<TD>
+<P>Description </P>
+</TD>
+
+<TD>
+<P>Add $ </P>
+</TD>
+
+<TD>
+<P>Deduct $ </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Notes </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Processing Instructions </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Adjuster Email*  </P>
+</TD>
+
+<TD>
+<P>Adjuster Contact Number*  </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P> Expand comparable search (if needed) </P>
+</TD>
+
+<TD>
+<P> Replacement Policy </P>
+</TD>
+
+<TD>
+<P> Run with Branded Title if Indicated by Experian History </P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Dealership where purchased (if known) </P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+
+<TD>
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>Report Retrieval Method </P>
+</TD>
+
+<TD>
+<P> Email </P>
+
+<P></P>
+
+<P></P>
+</TD>
+
+<TD>
+<P> Fax </P>
+
+<P></P>
+
+<P></P>
+</TD>
+
+<TD>
+<P> Other (Specify) </P>
+
+<P></P>
+
+<P></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>CCC Phone:  1-800-621-8070 </P>
+</TD>
+
+<TD>
+<P>CCC Fax:  1-800-621-7070 </P>
+</TD>
+
+<TD>
+<P>CCC Email:  CCCValuescopeRequest@cccis.com </P>
+</TD>
+</TR>
+</TBody>
+</Table>
+
+<P></P>
+
+<P>  *=Required Field </P>
+
+<P></P>
+</Document>
+</TaggedPDF-doc>

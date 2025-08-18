@@ -1,33 +1,881 @@
-/* Total Loss Auto Forms - CCC Compatible Styling */
+/* 🚗 TOTAL LOSS FORMS - Dedicated styling for CCC PDF processing */
+/* Responsive multi-step form layout with progress tracking */
+
+/* =================================
+   MAIN LAYOUT STRUCTURE
+   ================================= */
 .total-loss-main {
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin: 2rem auto;
-    max-width: 1200px;
+    min-height: 100vh;
+    padding: var(--cipher-space-lg) 0;
+    background: var(--cipher-bg-primary);
 }
 
-.ccc-form-container {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 400px;
+.total-loss-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--cipher-space-md);
+}
+
+/* =================================
+   PAGE HEADER & NAVIGATION
+   ================================= */
+.total-loss-header {
+    text-align: center;
+    margin-bottom: var(--cipher-space-xl);
+    padding: 0 var(--cipher-space-md);
+}
+
+.total-loss-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--cipher-space-sm);
+    color: var(--cipher-text-primary);
+    font-weight: var(--cipher-font-weight-bold);
+}
+
+.total-loss-header p {
+    font-size: 1.2rem;
+    color: var(--cipher-text-secondary);
+    margin-bottom: var(--cipher-space-lg);
+}
+
+.total-loss-nav {
+    margin-bottom: var(--cipher-space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    color: var(--cipher-text-muted);
+    font-size: 0.9rem;
+}
+
+.nav-breadcrumb a {
+    color: var(--cipher-electric-blue);
+    text-decoration: none;
+}
+
+.nav-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* =================================
+   PROGRESS INDICATOR
+   ================================= */
+.workflow-progress {
+    background: var(--cipher-bg-secondary);
+    border-radius: var(--cipher-radius-lg);
+    padding: var(--cipher-space-lg);
+    margin-bottom: var(--cipher-space-xl);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--cipher-space-md);
+}
+
+.progress-title {
+    font-size: 1.1rem;
+    font-weight: var(--cipher-font-weight-medium);
+    color: var(--cipher-text-primary);
+}
+
+.progress-status {
+    font-size: 0.9rem;
+    color: var(--cipher-text-secondary);
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: var(--cipher-bg-accent);
+    z-index: 1;
+}
+
+.progress-step {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    max-width: 120px;
+}
+
+.progress-step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--cipher-bg-accent);
+    border: 2px solid var(--cipher-text-muted);
+    display: flex;
+    align-items: center;
     justify-content: center;
+    font-weight: var(--cipher-font-weight-bold);
+    margin-bottom: var(--cipher-space-xs);
+    transition: all 0.3s ease;
+}
+
+.progress-step.active .progress-step-circle {
+    background: var(--cipher-electric-blue);
+    border-color: var(--cipher-electric-blue);
+    color: white;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+}
+
+.progress-step.completed .progress-step-circle {
+    background: var(--cipher-success);
+    border-color: var(--cipher-success);
+    color: white;
+}
+
+.progress-step-label {
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--cipher-text-muted);
+    line-height: 1.2;
+}
+
+.progress-step.active .progress-step-label {
+    color: var(--cipher-electric-blue);
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+.progress-step.completed .progress-step-label {
+    color: var(--cipher-success);
+}
+
+/* =================================
+   MAIN CONTENT LAYOUT
+   ================================= */
+.total-loss-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cipher-space-xl);
+    align-items: start;
+}
+
+.process-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cipher-space-lg);
+}
+
+.preview-panel {
+    position: sticky;
+    top: var(--cipher-space-lg);
+}
+
+/* =================================
+   PROCESS STEPS
+   ================================= */
+.process-step {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    border-radius: var(--cipher-radius-lg);
+    padding: var(--cipher-space-lg);
+    transition: all 0.3s ease;
+}
+
+.process-step:hover {
+    border-color: rgba(255, 215, 0, 0.2);
+    box-shadow: var(--cipher-shadow-md);
+}
+
+.process-step.active {
+    border-color: var(--cipher-electric-blue);
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+}
+
+.process-step.completed {
+    border-color: var(--cipher-success);
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-md);
+    margin-bottom: var(--cipher-space-lg);
+    padding-bottom: var(--cipher-space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--cipher-electric-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--cipher-font-weight-bold);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.step-title {
+    flex: 1;
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--cipher-text-primary);
+}
+
+.step-status {
+    padding: 4px 12px;
+    border-radius: var(--cipher-radius-sm);
+    font-size: 0.8rem;
+    font-weight: var(--cipher-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.step-status.waiting {
+    background: rgba(153, 153, 153, 0.2);
+    color: var(--cipher-text-muted);
+}
+
+.step-status.ready {
+    background: rgba(0, 191, 255, 0.2);
+    color: var(--cipher-electric-blue);
+}
+
+.step-status.processing {
+    background: rgba(243, 156, 18, 0.2);
+    color: var(--cipher-warning);
+}
+
+.step-status.completed {
+    background: rgba(39, 174, 96, 0.2);
+    color: var(--cipher-success);
+}
+
+/* =================================
+   UPLOAD ZONE
+   ================================= */
+.upload-zone {
+    border: 2px dashed var(--cipher-text-muted);
+    border-radius: var(--cipher-radius-lg);
+    padding: var(--cipher-space-xxl);
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.upload-zone:hover {
+    border-color: var(--cipher-electric-blue);
+    background: rgba(0, 191, 255, 0.05);
+}
+
+.upload-zone.dragover {
+    border-color: var(--cipher-gold);
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: var(--cipher-space-md);
+    opacity: 0.7;
+}
+
+.upload-zone h3 {
+    margin-bottom: var(--cipher-space-sm);
+    color: var(--cipher-text-primary);
+}
+
+.upload-zone p {
+    color: var(--cipher-text-secondary);
+    margin-bottom: var(--cipher-space-lg);
+}
+
+/* =================================
+   FORM ELEMENTS
+   ================================= */
+.data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--cipher-space-md);
+    margin-bottom: var(--cipher-space-lg);
+}
+
+.data-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.data-field label {
+    display: block;
+    margin-bottom: var(--cipher-space-xs);
+    color: var(--cipher-text-secondary);
+    font-size: 0.9rem;
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+.cipher-input,
+.cipher-textarea {
+    width: 100%;
+    padding: var(--cipher-space-sm);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--cipher-text-primary);
+    font-family: var(--cipher-font-primary);
+    transition: all 0.3s ease;
+}
+
+.cipher-input:focus,
+.cipher-textarea:focus {
+    outline: none;
+    border-color: var(--cipher-electric-blue);
+    box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.2);
+}
+
+/* =================================
+   PREVIEW PANEL
+   ================================= */
+.preview-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    border-radius: var(--cipher-radius-lg);
+    padding: var(--cipher-space-lg);
+    min-height: 400px;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--cipher-space-lg);
+    padding-bottom: var(--cipher-space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-content {
+    color: var(--cipher-text-secondary);
     text-align: center;
 }
 
-.ccc-form-container p {
-    color: #ffffff;
-    font-size: 1.1rem;
-    margin: 1rem 0;
-    opacity: 0.9;
+.preview-placeholder {
+    font-size: 3rem;
+    margin-bottom: var(--cipher-space-md);
+    opacity: 0.3;
 }
 
-/* Agents will expand this with comprehensive CCC form styling */
+.preview-section {
+    margin-bottom: var(--cipher-space-lg);
+    padding: var(--cipher-space-md);
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-section h4 {
+    margin-bottom: var(--cipher-space-sm);
+    color: var(--cipher-text-primary);
+    font-size: 1rem;
+}
+
+.field-preview {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--cipher-space-xs);
+    padding: var(--cipher-space-xs) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.field-preview:last-child {
+    border-bottom: none;
+}
+
+.field-preview strong {
+    color: var(--cipher-text-secondary);
+    font-size: 0.9rem;
+}
+
+.field-preview span {
+    color: var(--cipher-text-primary);
+    font-size: 0.9rem;
+}
+
+.form-thumbnail {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-sm);
+    padding: var(--cipher-space-md);
+    margin-top: var(--cipher-space-sm);
+}
+
+.form-page-preview {
+    background: white;
+    color: black;
+    padding: var(--cipher-space-sm);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    min-height: 120px;
+}
+
+.form-header-preview {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: var(--cipher-space-sm);
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 4px;
+}
+
+.form-fields-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.field-row:last-child {
+    border-bottom: none;
+}
+
+.download-summary {
+    text-align: left;
+}
+
+.file-details {
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--cipher-space-sm);
+    border-radius: var(--cipher-radius-sm);
+    margin-top: var(--cipher-space-sm);
+    font-size: 0.9rem;
+    color: var(--cipher-text-secondary);
+}
+
+/* =================================
+   ACTIONS & BUTTONS
+   ================================= */
+.step-actions {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    margin-top: var(--cipher-space-lg);
+    justify-content: flex-end;
+}
+
+.action-group {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    align-items: center;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+@media (max-width: 1024px) {
+    .total-loss-content {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-lg);
+    }
+    
+    .preview-panel {
+        position: static;
+        order: -1;
+    }
+    
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .total-loss-header h1 {
+        font-size: 2rem;
+    }
+    
+    .total-loss-nav {
+        flex-direction: column;
+        gap: var(--cipher-space-md);
+        align-items: stretch;
+    }
+    
+    .progress-steps {
+        flex-direction: column;
+        gap: var(--cipher-space-md);
+    }
+    
+    .progress-steps::before {
+        display: none;
+    }
+    
+    .upload-zone {
+        padding: var(--cipher-space-lg);
+        min-height: 150px;
+    }
+    
+    .step-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--cipher-space-sm);
+    }
+    
+    .step-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .total-loss-container {
+        padding: 0 var(--cipher-space-sm);
+    }
+    
+    .process-step {
+        padding: var(--cipher-space-md);
+    }
+    
+    .workflow-progress {
+        padding: var(--cipher-space-md);
+    }
+    
+    .upload-icon {
+        font-size: 2rem;
+    }
+}
+
+/* =================================
+   LOADING STATES & ANIMATIONS
+   ================================= */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--cipher-electric-blue);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* =================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================= */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.process-step:focus-within {
+    outline: 2px solid var(--cipher-electric-blue);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .process-step {
+        border-width: 2px;
+    }
+    
+    .cipher-input,
+    .cipher-textarea {
+        border-width: 2px;
+    }
+}
+
+/* =================================
+   BCIF FORM PREVIEW ENHANCEMENTS
+   ================================= */
+
+/* Preview controls layout - button on right */
+.preview-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--cipher-space-md);
+    margin-bottom: var(--cipher-space-lg);
+}
+
+.preview-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cipher-space-xs);
+}
+
+/* Inline form fields */
+.form-fields-inline {
+    display: flex;
+    gap: var(--cipher-space-lg);
+    flex-wrap: wrap;
+}
+
+.form-fields-inline .field-display {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    min-width: 150px;
+}
+
+.form-fields-inline .field-display label {
+    font-weight: var(--cipher-font-weight-medium);
+    color: var(--cipher-text-secondary);
+    margin: 0;
+}
+
+.form-fields-inline .field-display span {
+    color: var(--cipher-text-primary);
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+/* =================================
+   PREVIEW SUCCESS MESSAGE
+   ================================= */
+
+.preview-success {
+    text-align: center;
+    padding: var(--cipher-space-xl);
+    background: rgba(34, 197, 94, 0.1);
+    border: 2px solid var(--cipher-success);
+    border-radius: var(--cipher-radius-lg);
+    color: var(--cipher-text-primary);
+}
+
+.preview-success .success-icon {
+    font-size: 3rem;
+    margin-bottom: var(--cipher-space-md);
+}
+
+.preview-success h4 {
+    color: var(--cipher-success);
+    margin-bottom: var(--cipher-space-md);
+    font-size: 1.2rem;
+}
+
+.preview-success p {
+    margin-bottom: var(--cipher-space-sm);
+    color: var(--cipher-text-secondary);
+}
+
+.preview-success ul {
+    text-align: left;
+    display: inline-block;
+    margin: var(--cipher-space-md) 0;
+}
+
+.preview-success li {
+    margin-bottom: var(--cipher-space-xs);
+    color: var(--cipher-text-primary);
+}
+
+/* =================================
+   INTERACTIVE PDF PREVIEW
+   ================================= */
+
+.interactive-pdf-preview {
+    max-height: 70vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--cipher-radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    padding: var(--cipher-space-md);
+}
+
+.bcif-form-preview {
+    font-size: 0.9rem;
+}
+
+.bcif-form-preview .form-section {
+    margin-bottom: var(--cipher-space-lg);
+    padding: var(--cipher-space-md);
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--cipher-accent);
+}
+
+.bcif-form-preview .form-section h3 {
+    margin: 0 0 var(--cipher-space-sm) 0;
+    color: var(--cipher-accent);
+    font-size: 1rem;
+    font-weight: var(--cipher-font-weight-bold);
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cipher-space-md);
+    margin-bottom: var(--cipher-space-sm);
+}
+
+.field-group {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    min-width: 150px;
+}
+
+.field-group label {
+    font-weight: var(--cipher-font-weight-medium);
+    color: var(--cipher-text-secondary);
+    min-width: 80px;
+}
+
+.field-value {
+    color: var(--cipher-text-primary);
+    font-weight: var(--cipher-font-weight-medium);
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+/* Checkbox Categories */
+.checkbox-category {
+    margin-bottom: var(--cipher-space-md);
+}
+
+.checkbox-category h4 {
+    margin: 0 0 var(--cipher-space-xs) 0;
+    color: var(--cipher-text-primary);
+    font-size: 0.9rem;
+    font-weight: var(--cipher-font-weight-medium);
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--cipher-space-xs);
+    margin-top: var(--cipher-space-xs);
+}
+
+.interactive-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-xs);
+    padding: 4px 8px;
+    border-radius: var(--cipher-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    position: relative;
+}
+
+.interactive-checkbox:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.interactive-checkbox.auto-detected {
+    background: rgba(34, 197, 94, 0.2);
+    border-left: 3px solid var(--cipher-success);
+}
+
+.interactive-checkbox.user-selected {
+    background: rgba(59, 130, 246, 0.2);
+    border-left: 3px solid var(--cipher-accent);
+}
+
+.interactive-checkbox input[type="checkbox"] {
+    margin: 0;
+}
+
+.checkbox-text {
+    flex: 1;
+    color: var(--cipher-text-primary);
+}
+
+.auto-tag {
+    font-size: 0.7rem;
+    color: var(--cipher-success);
+    background: rgba(34, 197, 94, 0.2);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .preview-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .form-fields-inline {
+        flex-direction: column;
+        gap: var(--cipher-space-sm);
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .field-group {
+        min-width: auto;
+    }
+    
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .interactive-pdf-preview {
+        max-height: 50vh;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,166 @@
+/* Settings Booth Specific Styles */
+
+.cipher-help-text {
+    font-size: 0.8rem;
+    color: var(--cipher-text-muted);
+    margin-top: var(--cipher-space-xs);
+    font-style: italic;
+}
+
+.cipher-input-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.cipher-input-prefix,
+.cipher-input-suffix {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: var(--cipher-space-sm) var(--cipher-space-md);
+    color: var(--cipher-text-secondary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.cipher-input-prefix {
+    border-right: none;
+    border-radius: var(--cipher-radius-md) 0 0 var(--cipher-radius-md);
+}
+
+.cipher-input-suffix {
+    border-left: none;
+    border-radius: 0 var(--cipher-radius-md) var(--cipher-radius-md) 0;
+}
+
+.cipher-input-group .cipher-input {
+    border-radius: 0;
+    margin: 0;
+}
+
+.cipher-input-group .cipher-input:first-child {
+    border-radius: var(--cipher-radius-md) 0 0 var(--cipher-radius-md);
+}
+
+.cipher-input-group .cipher-input:last-child {
+    border-radius: 0 var(--cipher-radius-md) var(--cipher-radius-md) 0;
+}
+
+.cipher-time-range {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+}
+
+.cipher-time-separator {
+    color: var(--cipher-text-secondary);
+    font-weight: var(--cipher-font-weight-medium);
+    padding: 0 var(--cipher-space-xs);
+}
+
+.cipher-time-range .cipher-input {
+    max-width: 120px;
+}
+
+/* Notification styles for settings */
+.cipher-notification {
+    font-weight: var(--cipher-font-weight-medium);
+    border-radius: var(--cipher-radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cipher-notification--success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: rgba(16, 185, 129, 0.9);
+}
+
+.cipher-notification--error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: rgba(239, 68, 68, 0.9);
+}
+
+.cipher-notification--warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: rgba(245, 158, 11, 0.9);
+}
+
+.cipher-notification--info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: rgba(59, 130, 246, 0.9);
+}
+
+/* Animation for notifications */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Settings grid improvements */
+.cipher-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Button improvements for settings */
+.cipher-btn--primary {
+    background: linear-gradient(135deg, var(--cipher-gold), var(--cipher-gold-dark));
+    color: var(--cipher-bg-primary);
+    border: none;
+    font-weight: var(--cipher-font-weight-bold);
+    text-shadow: none;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.cipher-btn--primary:hover {
+    background: linear-gradient(135deg, var(--cipher-electric-blue), var(--cipher-electric-blue-dark));
+    box-shadow: 0 6px 16px rgba(0, 191, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .cipher-time-range {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .cipher-time-separator {
+        text-align: center;
+        padding: var(--cipher-space-xs) 0;
+    }
+    
+    .cipher-input-group {
+        flex-direction: column;
+    }
+    
+    .cipher-input-prefix,
+    .cipher-input-suffix {
+        border-radius: var(--cipher-radius-md);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        margin: 2px 0;
+    }
+    
+    .cipher-grid--3 {
+        grid-template-columns: 1fr;
+    }
+}

@@ -4,39 +4,339 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Total Loss Auto Forms - Claim Cipher</title>
-    <link rel="stylesheet" href="styles/cipher-core.css">
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css">
+    
+    <!-- Total Loss Forms - Dedicated styling -->
     <link rel="stylesheet" href="styles/total-loss-forms.css">
-    <!--  UNIFIED VISUAL CONSISTENCY FIX -->`n    <link rel="stylesheet" href="styles/visual-consistency-fix.css">`n    <!--  UNIVERSAL GLASSMORPHISM DESIGN SYSTEM -->`n    <link rel="stylesheet" href="styles/glassmorphism-universal.css">`n</head>
-<body class="cipher-dark-theme">
-    <div class="cipher-container">
-        <header class="cipher-header">
-            <h1 class="cipher-title">🚗 Total Loss Auto Forms</h1>
-            <p class="cipher-subtitle">Professional CCC-Compatible Insurance Form Processing</p>
-        </header>
-
-        <main class="total-loss-main">
-            <!-- Navigation Back to Command Center -->
-            <div class="cipher-nav">
-                <button onclick="window.location.href='command-center.html'" class="cipher-btn cipher-btn--secondary">
-                    ← Back to Command Center
-                </button>
+</head>
+<body class="route-page">
+    <header class="cipher-header">
+        <div class="header-content">
+            <div class="app-brand">
+                <span class="logo">🎤</span>
+                <span>Claim Cipher</span>
+            </div>
+            <div class="nav-links">
+                <a href="command-center.html">🎯 Dashboard</a>
+                <a href="route-cypher.html">🗺️ Routes</a>
+                <a href="mileage-cypher.html">🧮 Mileage</a>
+                <a href="jobs-studio.html">💼 Jobs</a>
+                <a href="total-loss-forms.html" class="active">🚗 Forms</a>
+                <a href="firms-directory.html">🏢 Firms</a>
+                <a href="settings-booth.html">⚙️ Settings</a>
+                <a href="functionality-test.html">🧪 Tests</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Professional User</div>
+                    <div class="user-role">Claims Specialist</div>
+                </div>
+                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </header>
+    
+    <main class="total-loss-main">
+        <div class="total-loss-container">
+            
+            <!-- Page Header -->
+            <div class="total-loss-header">
+                <h1>🚗 Total Loss Auto Forms</h1>
+                <p>Upload CCC PDF, extract data, and generate CCC BCIF forms</p>
             </div>
 
-            <!-- CCC Form Fields Will Be Generated Here -->
-            <div class="ccc-form-container">
-                <div class="form-status">
-                    <h2>🔧 Development Status</h2>
-                    <p>✅ Framework Ready</p>
-                    <p>🔧 Agents are building the comprehensive CCC form with 200+ fields...</p>
-                    <p>📋 This will include all vehicle information, loss details, and valuation data.</p>
-                    <p>💼 Professional PDF generation with company branding</p>
+        
+
+            <!-- Workflow Progress Indicator -->
+            <div class="workflow-progress">
+                <div class="progress-header">
+                    <div class="progress-title">📋 Form Processing Workflow</div>
+                    <div class="progress-status" id="overallStatus">Step 1 of 3</div>
+                </div>
+                <div class="progress-steps">
+                    <div class="progress-step active" id="progressStep1">
+                        <div class="progress-step-circle">1</div>
+                        <div class="progress-step-label">Upload<br>PDF</div>
+                    </div>
+                    <div class="progress-step" id="progressStep2">
+                        <div class="progress-step-circle">2</div>
+                        <div class="progress-step-label">Review<br>Form</div>
+                    </div>
+                    <div class="progress-step" id="progressStep3">
+                        <div class="progress-step-circle">3</div>
+                        <div class="progress-step-label">Download<br>BCIF</div>
+                    </div>
                 </div>
             </div>
-        </main>
-    </div>
 
+            <!-- Main Content: Two-Column Layout -->
+            <div class="total-loss-content">
+                
+                <!-- Left Panel: Process Steps -->
+                <div class="process-panel">
+                
+                    <!-- Step 1: CCC PDF Upload Section -->
+                    <section class="process-step active" id="uploadStep">
+                        <div class="step-header">
+                            <span class="step-number">1</span>
+                            <h2 class="step-title">Upload CCC PDF</h2>
+                            <span class="step-status ready" id="uploadStatus">Ready</span>
+                        </div>
+                    
+                    <div class="upload-zone cipher-glass" id="uploadZone">
+                        <div class="upload-content">
+                            <div class="upload-icon">📄</div>
+                            <h3>Drop CCC PDF here or click to browse</h3>
+                            <p>Supports: PDF files (max 10MB)</p>
+                            <input type="file" id="cccFileInput" accept=".pdf" hidden>
+                            <button class="cipher-btn cipher-btn--primary" onclick="document.getElementById('cccFileInput').click()">
+                                Choose File
+                            </button>
+                        </div>
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <span class="progress-text" id="progressText">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <div class="file-details">
+                            <span class="file-name" id="fileName"></span>
+                            <span class="file-size" id="fileSize"></span>
+                        </div>
+                        <button class="cipher-btn cipher-btn--secondary" id="removeFile">Remove</button>
+                    </div>
+                </section>
+
+
+                    <!-- Step 2: CCC BCIF Form Preview -->
+                    <section class="process-step" id="previewStep">
+                        <div class="step-header">
+                            <span class="step-number">2</span>
+                            <h2 class="step-title">Review CCC BCIF Form</h2>
+                            <span class="step-status waiting" id="previewStatus">Waiting</span>
+                        </div>
+                    
+                    <div class="form-preview-container cipher-glass">
+                        <div class="preview-controls">
+                            <div class="preview-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="includeVehiclePhotos" checked>
+                                    <span>Include vehicle photos (if available)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="includeDamagePhotos" checked>
+                                    <span>Include damage photos (if available)</span>
+                                </label>
+                            </div>
+                            <button class="cipher-btn cipher-btn--primary" id="generateFormBtn" disabled>
+                                📄 Generate CCC BCIF Form
+                            </button>
+                        </div>
+                        
+                        <div class="form-preview" id="formPreviewContainer" style="display: none;">
+                            <div class="preview-header">
+                                <h3>📋 CCC BCIF Form Preview</h3>
+                                <div class="step-actions">
+                                    <div class="action-group">
+                                        <button class="cipher-btn cipher-btn--secondary" id="editFormBtn">
+                                            ✏️ Edit Form
+                                        </button>
+                                        <button class="cipher-btn cipher-btn--primary" id="finalizeFormBtn">
+                                            ✓ Approve Form
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-content" id="formContent">
+                                <!-- Interactive preview now shown in right panel -->
+                                <div class="form-section">
+                                    <div class="preview-success">
+                                        <div class="success-icon">✅</div>
+                                        <h4>BCIF Form Generated Successfully</h4>
+                                        <p>Your interactive form preview is now available in the Live Preview panel on the right.</p>
+                                        <p><strong>Next Steps:</strong></p>
+                                        <ul>
+                                            <li>📋 Review the filled form in the Live Preview panel</li>
+                                            <li>☑️ Click checkboxes to add any missing vehicle options</li>
+                                            <li>📥 Download the final PDF when ready</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                    <!-- Step 3: Download Section -->
+                    <section class="process-step" id="downloadStep">
+                        <div class="step-header">
+                            <span class="step-number">3</span>
+                            <h2 class="step-title">Download Completed Form</h2>
+                            <span class="step-status waiting" id="downloadStatus">Waiting</span>
+                        </div>
+                    
+                    <div class="download-container cipher-glass">
+                        <div class="download-ready" id="downloadReady" style="display: none;">
+                            <div class="download-info">
+                                <div class="download-icon">✅</div>
+                                <h3>Form Ready for Download</h3>
+                                <p>Your CCC BCIF form has been generated and is ready to download.</p>
+                            </div>
+                            
+                            <div class="step-actions">
+                                <div class="action-group">
+                                    <button class="cipher-btn cipher-btn--success" id="downloadPdfBtn">
+                                        📥 Download PDF Form
+                                    </button>
+                                    <button class="cipher-btn cipher-btn--secondary" id="emailFormBtn">
+                                        📧 Email Form
+                                    </button>
+                                    <button class="cipher-btn cipher-btn--secondary" id="saveToJobBtn">
+                                        💼 Save to Job File
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="download-waiting" id="downloadWaiting">
+                            <div class="waiting-icon">⏳</div>
+                            <p>Complete the previous steps to enable download</p>
+                        </div>
+                    </div>
+                    </section>
+                
+                </div>
+                
+                <!-- Right Panel: Live Preview -->
+                <div class="preview-panel">
+                    <div class="preview-container">
+                        <div class="preview-header">
+                            <h3>📋 Live Preview</h3>
+                            <div class="preview-status" id="previewStatusIndicator">
+                                <span class="step-status waiting">Waiting for Upload</span>
+                            </div>
+                        </div>
+                        
+                        <div class="preview-content" id="livePreviewContent">
+                            <div class="preview-placeholder">📄</div>
+                            <h4>Form Preview</h4>
+                            <p>Upload a CCC PDF to see the extracted data and generated BCIF form preview here.</p>
+                            
+                            <!-- Dynamic Preview Content -->
+                            <div id="dynamicPreview" style="display: none;">
+                                <!-- Upload Preview -->
+                                <div class="preview-section" id="uploadPreview" style="display: none;">
+                                    <h4>📄 Uploaded Document</h4>
+                                    <div class="file-preview">
+                                        <span id="previewFileName">-</span>
+                                        <span id="previewFileSize">-</span>
+                                    </div>
+                                </div>
+                                
+                                
+                                <!-- Form Preview -->
+                                <div class="preview-section" id="formPreviewSection" style="display: none;">
+                                    <h4>📑 Generated BCIF Form</h4>
+                                    <div class="form-thumbnail">
+                                        <div class="form-page-preview">
+                                            <div class="form-header-preview">CCC BCIF Form</div>
+                                            <div class="form-fields-preview">
+                                                <div class="field-row">
+                                                    <span>Customer:</span>
+                                                    <span id="formPreviewName">-</span>
+                                                </div>
+                                                <div class="field-row">
+                                                    <span>Claim #:</span>
+                                                    <span id="formPreviewClaim">-</span>
+                                                </div>
+                                                <div class="field-row">
+                                                    <span>Policy #:</span>
+                                                    <span id="formPreviewPolicy">-</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Download Ready -->
+                                <div class="preview-section" id="downloadPreview" style="display: none;">
+                                    <h4>✅ Ready for Download</h4>
+                                    <div class="download-summary">
+                                        <p>Your CCC BCIF form has been successfully generated with all extracted data.</p>
+                                        <div class="file-details">
+                                            <strong>File Size:</strong> ~2.3 MB<br>
+                                            <strong>Pages:</strong> 4<br>
+                                            <strong>Format:</strong> PDF
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Processing Status Modal -->
+            <div class="cipher-modal" id="processingModal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>🔄 Processing</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="processing-spinner"></div>
+                        <p id="processingMessage">Processing your request...</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PDF.js for PDF parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- PDF-lib for PDF manipulation (older stable version) -->
+    <script src="https://unpkg.com/pdf-lib@1.16.0/dist/pdf-lib.min.js"></script>
+    
+    <!-- Load API configuration first -->
+    <script src="config/api-config.js"></script>
+    
+    <!-- Core Scripts -->
+    <script src="scripts/cipher-core.js"></script>
+    
+    <!-- Total Loss Forms Scripts -->
+    <script src="scripts/bcif-professional-mapper.js" defer></script>
+    <script src="scripts/ccc-pdf-extractor.js" defer></script>
+    <script src="scripts/total-loss-field-mapping.js" defer></script>
     <script src="scripts/total-loss-forms.js" defer></script>
     <script src="scripts/total-loss-security.js" defer></script>
+    
+    <!-- Security Agent: Authentication and Navigation -->
+    <script>
+        
+        if (localStorage.getItem('cipher_authenticated') !== 'true') {
+            window.location.href = './login-cypher.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update user info if available
+            const userName = localStorage.getItem('cipher_user_name') || 'Professional User';
+            const userRole = localStorage.getItem('cipher_user_role') || 'Claims Specialist';
+            
+            const userNameElement = document.getElementById('userName');
+            if (userNameElement) {
+                userNameElement.textContent = userName;
+            }
+            
+            console.log('🔒 Security Agent: Total Loss Forms initialized');
+        });
+    </script>
 </body>
 </html>
 

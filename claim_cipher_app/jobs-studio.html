@@ -4,71 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jobs Studio - Claim Cipher</title>
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/mobile-enhancements.css">
-    <link rel="stylesheet" href="styles/jobs-studio.css">
-    <!-- 🎨 UNIFIED VISUAL CONSISTENCY FIX -->
-    <link rel="stylesheet" href="styles/visual-consistency-fix.css">
-    <!--  UNIVERSAL GLASSMORPHISM DESIGN SYSTEM -->`n    <link rel="stylesheet" href="styles/glassmorphism-universal.css">`n    <!--  UNIVERSAL HEADER & LAYOUT FIXES -->`n    <link rel="stylesheet" href="styles/universal-header-fixes.css">`n</head>
-<body class="cipher-dark-theme">
-    <!-- Sidebar Cypher -->
-    <nav class="cipher-sidebar" id="cipher-sidebar">
-        <div class="sidebar-cipher-header">
-            <div class="sidebar-cipher-logo">
-                <a href="./command-center.html">🎤 Claim Cipher</a>
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css">
+    
+    <!-- Page Layout - Route Cypher specific -->
+    <link rel="stylesheet" href="styles/route-cypher-layout.css">
+    
+    <!-- Professional Calculator Interface -->
+    <link rel="stylesheet" href="styles/professional-calculator.css">
+    
+    <!-- Route Cipher Professional Styling -->
+    <link rel="stylesheet" href="styles/route-cipher-professional.css">
+</head>
+<body class="route-page">
+    <header class="cipher-header">
+        <div class="header-content">
+            <div class="app-brand">
+                <span class="logo">🎤</span>
+                <span>Claim Cipher</span>
             </div>
-        </div>
-        
-        <ul class="sidebar-cipher-nav">
-            <li class="sidebar-cipher-nav-item">
-                <a href="./command-center.html" class="sidebar-cipher-nav-link">
-                    <span>📊</span> Command Center
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./mileage-cypher.html" class="sidebar-cipher-nav-link">
-                    <span>🚗</span> Mileage Cypher
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./route-cypher.html" class="sidebar-cipher-nav-link">
-                    <span>🗺️</span> Route Cypher
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./jobs-studio.html" class="sidebar-cipher-nav-link sidebar-cipher-nav-link--active">
-                    <span>📱</span> Jobs Studio
-                    <span class="cipher-badge cipher-badge--pro">PRO</span>
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./firms-directory.html" class="sidebar-cipher-nav-link">
-                    <span>🏢</span> Firms Directory
-                </a>
-            </li>
-            <li class="sidebar-cipher-nav-item">
-                <a href="./settings-booth.html" class="sidebar-cipher-nav-link">
-                    <span>⚙️</span> Settings Booth
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-cipher-footer">
-            <div class="sidebar-cipher-user" id="sidebar-user">
-                <div class="user-cipher-avatar" id="user-avatar">DU</div>
-                <div class="user-cipher-info">
-                    <div class="user-cipher-name" id="user-name">Demo User</div>
-                    <div class="user-cipher-role" id="user-role">Demo Mode</div>
+            <div class="nav-links">
+                <a href="command-center.html">🎯 Dashboard</a>
+                <a href="route-cypher.html">🗺️ Routes</a>
+                <a href="mileage-cypher.html">🧮 Mileage</a>
+                <a href="jobs-studio.html" class="active">💼 Jobs</a>
+                <a href="total-loss-forms.html">🚗 Forms</a>
+                <a href="firms-directory.html">🏢 Firms</a>
+                <a href="settings-booth.html">⚙️ Settings</a>
+                <a href="functionality-test.html">🧪 Tests</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Professional User</div>
+                    <div class="user-role">Claims Specialist</div>
                 </div>
+                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
             </div>
-            <button class="sidebar-cipher-logout cipher-btn cipher-btn--ghost cipher-btn--sm" id="logout-btn">
-                <span>🚪</span> Sign Out
-            </button>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="main-cipher-content">
+    <main class="main-content">
         <div class="page-cipher-header">
             <h1 class="page-cipher-title">📱 Jobs Studio</h1>
             <p class="page-cipher-subtitle">Manage field inspections and sync photos from mobile devices</p>
@@ -221,16 +197,7 @@
         </div>
     </main>
 
-    <!-- Job Details Modal -->
-    <div class="job-modal-overlay" id="job-modal-overlay">
-        <div class="job-modal">
-            <div class="job-modal-header">
-                <h3 class="job-modal-title" id="job-modal-title">Job Details</h3>
-                <button class="job-modal-close" id="job-modal-close">×</button>
-            </div>
-            <div class="job-modal-content" id="job-modal-content">
-                <!-- Content will be populated by JavaScript -->
-            </div>
+   
         </div>
     </div>
 

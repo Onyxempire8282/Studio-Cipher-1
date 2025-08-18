@@ -4,96 +4,209 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mileage Cipher - Claim Cipher</title>
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/mileage-calculator.css">
-    <!-- 🎨 UNIFIED VISUAL CONSISTENCY FIX -->
-    <link rel="stylesheet" href="styles/visual-consistency-fix.css">
-    <!-- 🌟 UNIVERSAL GLASSMORPHISM DESIGN SYSTEM -->
-    <link rel="stylesheet" href="styles/glassmorphism-universal.css">
-    <!-- 🔥 GLASSMORPHISM FORCE OVERRIDE -->
-    <link rel="stylesheet" href="styles/glassmorphism-force-override.css">
-    <!--  UNIVERSAL HEADER & LAYOUT FIXES -->`n    <link rel="stylesheet" href="styles/universal-header-fixes.css">`n</head>
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css">
+    
+    <!-- Page Layout - Mileage Calculator specific -->
+    <link rel="stylesheet" href="styles/mileage-cypher-layout.css">
+    
+    <!-- Professional Calculator Interface -->
+    <link rel="stylesheet" href="styles/professional-calculator.css">
+</head>
 <body class="mileage-page">
-    <nav class="top-nav">
-        <div class="nav-brand">
-            <h1>🎤 Claim Cipher</h1>
-            <span class="tagline">No Matter What</span>
+    <header class="cipher-header">
+        <div class="header-content">
+            <div class="app-brand">
+                <span class="logo">🎤</span>
+                <span>Claim Cipher</span>
+            </div>
+            <div class="nav-links">
+                <a href="command-center.html">🎯 Dashboard</a>
+                <a href="route-cypher.html">🗺️ Routes</a>
+                <a href="mileage-cypher.html" class="active">🧮 Mileage</a>
+                <a href="jobs-studio.html">💼 Jobs</a>
+                <a href="total-loss-forms.html">🚗 Forms</a>
+                <a href="firms-directory.html">🏢 Firms</a>
+                <a href="settings-booth.html">⚙️ Settings</a>
+                <a href="functionality-test.html">🧪 Tests</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Professional User</div>
+                    <div class="user-role">Claims Specialist</div>
+                </div>
+                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
+            </div>
         </div>
-        <div class="nav-links">
-            <a href="command-center.html">Dashboard</a>
-            <a href="mileage-cypher.html" class="active">Mileage</a>
-            <a href="route-cypher.html">Routes</a>
-            <a href="settings-booth.html">Settings</a>
-        </div>
-    </nav>
+    </header>
 
     <main class="mileage-calculator-main">
-        <div class="page-header">
-            <h1>📊 Mileage Cipher</h1>
-            <p>Calculate billable miles with precision - every firm, every rate</p>
-        </div>
+       
 
         <div class="mileage-container">
             <!-- Calculator Section -->
-            <div class="calculator-section">
-                <div class="firm-selection">
-                    <label for="firmSelect">🏢 Insurance Firm</label>
-                    <select id="firmSelect">
-                        <option value="">Select a firm...</option>
-                    </select>
-                    <button id="manageFirms" class="manage-btn">⚙️ Manage Firms</button>
-                </div>
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="pointA">📍 Point A (From)</label>
-                        <input type="text" id="pointA" placeholder="Starting location">
+            <div class="calculator-section cipher-glass-panel">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">🧮</span>
+                        <h2>Mileage Calculator</h2>
                     </div>
-                    <div class="input-group">
-                        <label for="pointB">📍 Point B (To)</label>
-                        <input type="text" id="pointB" placeholder="Destination">
+                    <div class="section-subtitle">Calculate billable mileage for insurance claims</div>
+                </div>
+                
+                <div class="calculator-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">🏢</span>
+                            Insurance Firm Selection
+                        </h3>
+                        <div class="firm-selection-group">
+                            <div class="firm-input-group">
+                                <label for="firmSelect" class="input-label">Select Your Firm</label>
+                                <select id="firmSelect" class="primary-select">
+                                    <option value="">Choose insurance firm...</option>
+                                </select>
+                            </div>
+                            <button id="manageFirms" class="secondary-btn">
+                                <span class="btn-icon">⚙️</span>
+                                Manage Firms
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">🗺️</span>
+                            Route Information
+                        </h3>
+                        <div class="route-inputs">
+                            <div class="input-group">
+                                <label for="pointA" class="input-label">
+                                    <span class="label-icon">🏠</span>
+                                    Starting Location
+                                </label>
+                                <input type="text" id="pointA" class="route-input" placeholder="Enter your starting address...">
+                                <div class="input-hint">Your home base location will be saved for future use</div>
+                            </div>
+                            <div class="route-arrow">→</div>
+                            <div class="input-group">
+                                <label for="pointB" class="input-label">
+                                    <span class="label-icon">📍</span>
+                                    Destination
+                                </label>
+                                <input type="text" id="pointB" class="route-input" placeholder="Enter destination address...">
+                                <div class="input-hint">Distance will be calculated automatically</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">📏</span>
+                            Distance & Options
+                        </h3>
+                        <div class="distance-options">
+                            <div class="input-group distance-input-group">
+                                <label for="distanceMiles" class="input-label">Distance (Miles)</label>
+                                <div class="distance-input-wrapper">
+                                    <input type="number" id="distanceMiles" class="distance-input" placeholder="0.0" step="0.1" min="0">
+                                    <div class="distance-status" id="distanceStatus">
+                                        <span class="status-icon">🎯</span>
+                                        Auto-calculating...
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="trip-options">
+                                <div class="checkbox-wrapper">
+                                    <label class="modern-checkbox">
+                                        <input type="checkbox" id="roundTrip">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-label-text">
+                                            <span class="checkbox-title">Round Trip</span>
+                                            <span class="checkbox-subtitle">Double the distance for return journey</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <span class="form-icon">📝</span>
+                            Additional Information
+                        </h3>
+                        <div class="input-group">
+                            <label for="noteField" class="input-label">Notes (Optional)</label>
+                            <textarea id="noteField" class="notes-input" placeholder="Add any additional notes or special circumstances..." rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="calculateBtn" class="primary-action-btn">
+                            <span class="btn-icon">🧮</span>
+                            <span class="btn-text">Calculate Mileage</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="loading-spinner"></span>
+                                Calculating...
+                            </span>
+                        </button>
                     </div>
                 </div>
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="distanceMiles">📏 Distance (Miles)</label>
-                        <input type="number" id="distanceMiles" step="0.1" min="0" placeholder="0.0">
-                    </div>
-                    <div class="input-group checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="roundTrip">
-                            <span class="checkmark"></span>
-                            Round Trip
-                        </label>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="noteField">📝 Note (Optional)</label>
-                    <input type="text" id="noteField" placeholder="e.g., Customer > Shop">
-                </div>
-
-                <button id="calculateBtn" class="calculate-btn">🧮 Calculate Mileage</button>
             </div>
 
             <!-- Results Section -->
-            <div class="results-section" id="resultsSection" style="display: none;">
-                <h3>💰 Mileage Breakdown</h3>
-                <div id="breakdownDisplay" class="breakdown-display"></div>
-                
-                <div class="copy-section">
-                    <h4>📋 Copy-Ready Line</h4>
-                    <div class="copy-container">
-                        <textarea id="copyText" readonly></textarea>
-                        <button id="copyBtn" class="copy-btn">📋 Copy</button>
+            <div class="results-section cipher-glass-panel" id="resultsSection" style="display: none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">💰</span>
+                        <h2>Billing Results</h2>
                     </div>
+                    <div class="section-subtitle">Your calculated mileage breakdown and billing amount</div>
                 </div>
 
-                <div class="actions">
-                    <button id="newCalculation" class="new-btn">🔄 New Calculation</button>
-                    <a href="settings-booth.html" class="settings-link">⚙️ Saved to Settings</a>
+                <div class="results-content">
+                    <div class="breakdown-section">
+                        <h3 class="breakdown-title">
+                            <span class="breakdown-icon">📊</span>
+                            Calculation Breakdown
+                        </h3>
+                        <div id="breakdownDisplay" class="breakdown-display"></div>
+                    </div>
+
+                    <div class="copy-section">
+                        <h3 class="copy-title">
+                            <span class="copy-icon">📋</span>
+                            Copy for Billing
+                        </h3>
+                        <div class="copy-area">
+                            <div class="copy-container">
+                                <textarea id="copyText" class="copy-textarea" readonly placeholder="Your billing calculation will appear here..."></textarea>
+                                <div class="copy-actions">
+                                    <button id="copyBtn" class="copy-btn">
+                                        <span class="btn-icon">📋</span>
+                                        <span class="btn-text">Copy to Clipboard</span>
+                                        <span class="btn-success" style="display: none;">
+                                            <span class="success-icon">✅</span>
+                                            Copied!
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="copy-hint">This text is formatted for easy pasting into billing systems</div>
+                        </div>
+                    </div>
+
+                    <div class="results-actions">
+                        <button id="newCalculation" class="primary-action-btn secondary">
+                            <span class="btn-icon">🔄</span>
+                            New Calculation
+                        </button>
+                        <a href="settings-booth.html" class="settings-link">
+                            <span class="link-icon">⚙️</span>
+                            Calculator Settings
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,13 +269,14 @@
         <div id="toastContainer" class="toast-container"></div>
     </main>
 
-    <script src="scripts/mileage-calculator.js"></script>
-
-    <!-- Security Agent: Google Maps API for Distance Calculation -->
-    <script async defer 
-        <!-- Google Maps API removed for security -->
-        <!-- src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places,geometry"> -->
-    </script>
+    <!-- Load API configuration first -->
+    <script src="config/api-config.js"></script>
+    
+    <!-- Core Scripts -->
+    <script src="scripts/cipher-core.js"></script>
+    
+    <!-- Load combined mileage calculator -->
+    <script src="scripts/mileage-cypher-combined.js"></script>
 </body>
 </html>
 

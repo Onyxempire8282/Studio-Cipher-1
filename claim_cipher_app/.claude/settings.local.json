@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy \"c:\\Users\\vlong\\Downloads\\bcif_fill.py\" .)",
+      "Bash(cp:*)",
+      "Bash(copy:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

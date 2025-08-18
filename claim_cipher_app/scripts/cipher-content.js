@@ -93,8 +93,11 @@ function enhanceErrorMessages() {
 }
 
 function addOnboardingFlow() {
-    // Check if user is new and show onboarding
-    if (localStorage.getItem('cipher_onboarding_complete') !== 'true') {
+    // Check if user is demo user and hasn't completed onboarding
+    const authData = sessionStorage.getItem('claimCipherAuth');
+    const isDemoUser = authData && JSON.parse(authData).type === 'demo';
+    
+    if (isDemoUser && localStorage.getItem('cipher_onboarding_complete') !== 'true') {
         showOnboardingModal();
     }
 }
