@@ -17,10 +17,10 @@ concurrency:
 
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -32,9 +32,16 @@ jobs:
       run: |
         mkdir -p claim_cipher_app/config
         echo "// GitHub Pages API Configuration" > claim_cipher_app/config/github-pages-env.js
-        echo "window.GITHUB_PAGES_API_KEY = '${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}';" >> claim_cipher_app/config/github-pages-env.js
-      env:
-        GOOGLE_MAPS_API_KEY_RESTRICTED: ${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}
+        if [ -n "${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}" ]; then
+          echo "Using GitHub Secret for API key"
+          echo "window.GITHUB_PAGES_API_KEY = '${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}';" >> claim_cipher_app/config/github-pages-env.js
+        else
+          echo "WARNING: GitHub Secret not found, using placeholder"
+          echo "window.GITHUB_PAGES_API_KEY = null;" >> claim_cipher_app/config/github-pages-env.js
+          echo "console.error('GitHub Secret GOOGLE_MAPS_API_KEY_RESTRICTED not configured');" >> claim_cipher_app/config/github-pages-env.js
+        fi
+        echo "Generated environment file:"
+        cat claim_cipher_app/config/github-pages-env.js
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
