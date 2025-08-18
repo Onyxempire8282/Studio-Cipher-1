@@ -16,8 +16,8 @@ import base64
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Import functions from bcif_fill.py
-from bcif_fill import apply_text_mapping, apply_post_processing, collect_checkbox_states, fill_pdf
+# Import enhanced functions from bcif_fill_enhanced.py
+from bcif_fill_enhanced import apply_text_mapping, apply_post_processing, collect_checkbox_states, fill_pdf
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for browser requests
@@ -138,7 +138,7 @@ def extract_and_fill():
         pdf_file.save(upload_path)
         
         # Extract text from uploaded PDF
-        from bcif_fill import extract_text
+        from bcif_fill_enhanced import extract_text
         extracted_text = extract_text(upload_path)
         
         print(f"Extracted {len(extracted_text)} characters from uploaded PDF")
