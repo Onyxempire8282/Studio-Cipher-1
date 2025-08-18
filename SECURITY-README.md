@@ -4,7 +4,7 @@
 
 ### What happened:
 - Your Google Maps API key was accidentally committed to the public GitHub repository
-- Anyone could see and use your API key: `AIzaSyDR51CGOXEyVz8Dy-6hU7kdaqbq8-CTkBs`
+- Anyone could see and use your API key: `AIzaSyDR51CGOXEyVz8Dy-6hU7kdaqbq8-CTkBs` (DISABLED)
 
 ### What was done:
 1. ✅ Removed the API key from all git history 
@@ -13,7 +13,7 @@
 
 ### IMMEDIATE ACTION REQUIRED:
 1. **Go to Google Cloud Console NOW**
-2. **Find your Google Maps API key: `AIzaSyDR51CGOXEyVz8Dy-6hU7kdaqbq8-CTkBs`**
+2. **Find your Google Maps API key: `AIzaSyDR51CGOXEyVz8Dy-6hU7kdaqbq8-CTkBs` (DISABLED)**
 3. **DISABLE or DELETE this key immediately**
 4. **Create a new API key**
 
