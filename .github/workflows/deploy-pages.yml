@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Create API Environment File
+      run: |
+        mkdir -p claim_cipher_app/config
+        echo "// GitHub Pages API Configuration" > claim_cipher_app/config/github-pages-env.js
+        echo "window.GITHUB_PAGES_API_KEY = '${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}';" >> claim_cipher_app/config/github-pages-env.js
+      env:
+        GOOGLE_MAPS_API_KEY_RESTRICTED: ${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './claim_cipher_app'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
