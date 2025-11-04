@@ -7,6 +7,15 @@
 window.MILEAGE_CYPHER_CONFIG = {
   // Multi-user API key strategy
   GOOGLE_MAPS_API_KEY: (() => {
+    // 0. Local development key from google-config.js (highest priority)
+    if (
+      window.GOOGLE_MAPS_CONFIG?.apiKey &&
+      window.GOOGLE_MAPS_CONFIG.apiKey !==
+        "YOUR_ACTUAL_GOOGLE_MAPS_API_KEY_HERE"
+    ) {
+      return window.GOOGLE_MAPS_CONFIG.apiKey;
+    }
+
     // 1. GitHub Pages with domain restrictions (recommended for public deployment)
     if (window.location.hostname.includes("github.io")) {
       // This key should be domain-restricted to your GitHub Pages URL
