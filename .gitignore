@@ -9,6 +9,7 @@
 .env.test.local
 .env.production.local
 google-api-config.js
+google-config.js
 api-keys.json
 config/secrets.json
 config/api-config.js

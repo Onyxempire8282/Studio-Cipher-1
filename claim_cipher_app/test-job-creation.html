@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Job Creation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #1a1a1a;
+        color: white;
+      }
+      .test-btn {
+        background: #673ab7;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px;
+      }
+      .test-btn:hover {
+        background: #5527a0;
+      }
+      #console-log {
+        background: #2a2a2a;
+        border: 1px solid #444;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+        max-height: 400px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 12px;
+      }
+      .log-entry {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-left: 3px solid #673ab7;
+        padding-left: 10px;
+      }
+      .log-error {
+        border-left-color: #f44336;
+        color: #ff8a80;
+      }
+      .log-success {
+        border-left-color: #4caf50;
+        color: #b9f6ca;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Job Creation Test</h1>
+    <p>This page tests if the "Create Job" button functionality is working</p>
+
+    <button class="test-btn" id="test-button-click">Test Button Click</button>
+    <button class="test-btn" id="open-jobs-studio">Open Jobs Studio</button>
+
+    <div id="console-log">
+      <div class="log-entry">Console output will appear here...</div>
+    </div>
+
+    <script>
+      // Capture console logs
+      const consoleLog = document.getElementById("console-log");
+
+      function addLog(message, type = "info") {
+        const entry = document.createElement("div");
+        entry.className = `log-entry log-${type}`;
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        consoleLog.appendChild(entry);
+        consoleLog.scrollTop = consoleLog.scrollHeight;
+      }
+
+      // Override console methods
+      const originalLog = console.log;
+      const originalError = console.error;
+
+      console.log = function (...args) {
+        originalLog.apply(console, args);
+        addLog(args.join(" "), "info");
+      };
+
+      console.error = function (...args) {
+        originalError.apply(console, args);
+        addLog(args.join(" "), "error");
+      };
+
+      // Test button
+      document
+        .getElementById("test-button-click")
+        .addEventListener("click", () => {
+          console.log("✅ Button click event is working!");
+          addLog("Button clicked successfully!", "success");
+        });
+
+      document
+        .getElementById("open-jobs-studio")
+        .addEventListener("click", () => {
+          console.log("Opening Jobs Studio...");
+          window.location.href = "jobs-studio.html";
+        });
+
+      // Check if we can access localStorage
+      try {
+        const supabaseUrl = localStorage.getItem("supabase_url");
+        const supabaseKey = localStorage.getItem("supabase_anon_key");
+        console.log("Supabase URL configured:", !!supabaseUrl);
+        console.log("Supabase Key configured:", !!supabaseKey);
+      } catch (e) {
+        console.error("Cannot access localStorage:", e.message);
+      }
+
+      // Check if Supabase library is available
+      console.log(
+        "Supabase library available:",
+        typeof window.supabase !== "undefined"
+      );
+
+      addLog("Test page loaded successfully", "success");
+    </script>
+  </body>
+</html>

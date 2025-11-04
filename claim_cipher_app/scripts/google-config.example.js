@@ -1,13 +1,17 @@
 /**
- * 🔒 Security Agent: Google Maps API Configuration
- * SECURE API KEY INTEGRATION
+ * 🔒 Security Agent: Google Maps API Configuration Template
+ * INSTRUCTIONS:
+ * 1. Copy this file and rename it to: google-config.js
+ * 2. Replace 'YOUR_ACTUAL_GOOGLE_MAPS_API_KEY_HERE' with your real API key
+ * 3. The google-config.js file is in .gitignore and won't be committed to GitHub
+ *
+ * Get your API key from: https://console.cloud.google.com/google/maps-apis/
  */
 
 // Security Agent: API Configuration (Production Ready)
 window.GOOGLE_MAPS_CONFIG = {
   // Replace with your actual Google Maps API key
-  // Get your key from: https://console.cloud.google.com/google/maps-apis/
-  apiKey: "AIzaSyByoixnma2_cQFwCR5Tqn3YGNy20qeStF4",
+  apiKey: "YOUR_ACTUAL_GOOGLE_MAPS_API_KEY_HERE",
   libraries: ["places", "geometry"],
   version: "weekly",
   services: {

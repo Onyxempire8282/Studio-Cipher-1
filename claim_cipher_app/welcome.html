@@ -1,215 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Claim Cipher - Welcome</title>
     <!-- Core CSS first -->
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/main.css">
-    
-    <!-- Universal systems third -->
-    <link rel="stylesheet" href="styles/glassmorphism-universal.css">
-    <link rel="stylesheet" href="styles/mobile-enhancements.css">
-    
-    <!-- Fixes last -->
-    <link rel="stylesheet" href="styles/visual-consistency-fix.css">
-    <link rel="stylesheet" href="styles/universal-header-fixes.css">
-    <style>
-        /* Streamlined Welcome - No Unnecessary Landing Container */
-        body {
-            background: linear-gradient(135deg, 
-                var(--cipher-bg-primary) 0%, 
-                var(--cipher-bg-secondary) 25%, 
-                #2d1810 50%, 
-                var(--cipher-bg-secondary) 75%, 
-                var(--cipher-bg-primary) 100%
-            );
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            font-family: var(--cipher-font-primary);
-        }
-        
-        .direct-access-card {
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 215, 0, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-        
-        .cipher-logo {
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: var(--cipher-gold);
-        }
-        
-        .cipher-title {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: var(--cipher-gold);
-            margin-bottom: 10px;
-        }
-        
-        .cipher-tagline {
-            font-size: 1.2em;
-            color: var(--cipher-text-secondary);
-            margin-bottom: 30px;
-        }
-        
-        .direct-entry-btn {
-            background: linear-gradient(135deg, var(--cipher-gold), var(--cipher-gold-dark));
-            color: var(--cipher-bg-primary);
-            padding: 20px 40px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.3em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            min-width: 250px;
-            margin: 10px;
-        }
-        
-        .direct-entry-btn:hover {
-            background: linear-gradient(135deg, var(--cipher-electric-blue), var(--cipher-electric-blue-dark));
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 191, 255, 0.3);
-        }
-        
-        .module-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .module-container {
-            background: rgba(42, 42, 42, 0.8);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 15px;
-            padding: 25px;
-            text-decoration: none;
-            color: var(--cipher-text-primary);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .module-container:hover {
-            background: rgba(42, 42, 42, 0.95);
-            border-color: var(--cipher-electric-blue);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 191, 255, 0.2);
-        }
-        
-        .module-icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
-        
-        .module-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: var(--cipher-gold);
-            margin-bottom: 10px;
-        }
-        
-        .module-description {
-            font-size: 0.9em;
-            color: var(--cipher-text-secondary);
-            line-height: 1.4;
-        }
-        
-        @media (max-width: 768px) {
-            .module-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .direct-access-card {
-                padding: 30px 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="direct-access-card">
-        <div class="cipher-logo">🎤</div>
-        <h1 class="cipher-title">Claim Cipher</h1>
-        <p class="cipher-tagline">Professional Insurance Application</p>
-        
-        <div class="module-grid">
-            <a href="jobs-studio.html" class="module-container">
-                <div class="module-icon">💼</div>
-                <div class="module-title">Jobs Studio</div>
-                <div class="module-description">Manage your claims and assignments</div>
-            </a>
-            
-            <a href="total-loss-forms.html" class="module-container">
-                <div class="module-icon">🚗</div>
-                <div class="module-title">Total Loss Forms</div>
-                <div class="module-description">Process total loss claims</div>
-            </a>
-            
-            <a href="route-cypher.html" class="module-container">
-                <div class="module-icon">🗺️</div>
-                <div class="module-title">Route Optimizer</div>
-                <div class="module-description">Plan efficient routes</div>
-            </a>
-            
-            <a href="mileage-cypher.html" class="module-container">
-                <div class="module-icon">🧮</div>
-                <div class="module-title">Mileage Calculator</div>
-                <div class="module-description">Calculate reimbursements</div>
-            </a>
-        </div>
-        
-        <div style="margin-top: 30px;">
-            <a href="login-cypher.html" class="direct-entry-btn">
-                🔐 Login Required
-            </a>
-        </div>
-    </div>
-    
-    <script>
-        // Check authentication and redirect if needed
-        console.log('🎤 Claim Cipher: Welcome page loaded');
-        
-        // If user is already authenticated, redirect to dashboard
-        if (localStorage.getItem('cipher_authenticated') === 'true') {
-            console.log('🎤 User already authenticated, redirecting to dashboard...');
-            window.location.href = 'command-center.html';
-        }
-        
-        // Add click handlers to modules (they need authentication)
-        document.addEventListener('DOMContentLoaded', function() {
-            const moduleLinks = document.querySelectorAll('.module-container');
-            moduleLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Check if user is authenticated
-                    if (localStorage.getItem('cipher_authenticated') !== 'true') {
-                        // Not authenticated, redirect to login first
-                        console.log('🔒 Authentication required, redirecting to login...');
-                        window.location.href = 'login-cypher.html';
-                    } else {
-                        // Authenticated, go to the target page
-                        window.location.href = this.getAttribute('href');
-                    }
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+    <link rel="stylesheet" href="styles/cipher-core.css" />
+    <link rel="stylesheet" href="styles/main.css" />
 
+    <!-- Universal systems third -->
+    <link rel="stylesheet" href="styles/glassmorphism-universal.css" />
+    <link rel="stylesheet" href="styles/mobile-enhancements.css" />
+
+    <!-- Fixes last -->
+    <link rel="stylesheet" href="styles/visual-consistency-fix.css" />
+    <link rel="stylesheet" href="styles/universal-header-fixes.css" />
+    <style>
+      /* Streamlined Welcome - No Unnecessary Landing Container */
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--cipher-bg-primary) 0%,
+          var(--cipher-bg-secondary) 25%,
+          #2d1810 50%,
+          var(--cipher-bg-secondary) 75%,
+          var(--cipher-bg-primary) 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        font-family: var(--cipher-font-primary);
+      }
+
+      .direct-access-card {
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 215, 0, 0.2);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+      }
+
+      .cipher-logo {
+        font-size: 3em;
+        margin-bottom: 20px;
+        color: var(--cipher-gold);
+      }
+
+      .cipher-title {
+        font-size: 2.5em;
+        font-weight: 700;
+        color: var(--cipher-gold);
+        margin-bottom: 10px;
+      }
+
+      .cipher-tagline {
+        font-size: 1.2em;
+        color: var(--cipher-text-secondary);
+        margin-bottom: 30px;
+      }
+
+      .direct-entry-btn {
+        background: linear-gradient(
+          135deg,
+          var(--cipher-gold),
+          var(--cipher-gold-dark)
+        );
+        color: var(--cipher-bg-primary);
+        padding: 20px 40px;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.3em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 250px;
+        margin: 10px;
+      }
+
+      .direct-entry-btn:hover {
+        background: linear-gradient(
+          135deg,
+          var(--cipher-electric-blue),
+          var(--cipher-electric-blue-dark)
+        );
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 191, 255, 0.3);
+      }
+
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .module-container {
+        background: rgba(42, 42, 42, 0.8);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        text-decoration: none;
+        color: var(--cipher-text-primary);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .module-container:hover {
+        background: rgba(42, 42, 42, 0.95);
+        border-color: var(--cipher-electric-blue);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 191, 255, 0.2);
+      }
+
+      .module-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+      }
+
+      .module-title {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: var(--cipher-gold);
+        margin-bottom: 10px;
+      }
+
+      .module-description {
+        font-size: 0.9em;
+        color: var(--cipher-text-secondary);
+        line-height: 1.4;
+      }
+
+      @media (max-width: 768px) {
+        .module-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .direct-access-card {
+          padding: 30px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="direct-access-card">
+      <div class="cipher-logo">🎤</div>
+      <h1 class="cipher-title">Claim Cipher</h1>
+      <p class="cipher-tagline">Professional Insurance Application</p>
+
+      <div class="module-grid">
+        <a href="jobs-studio.html" class="module-container">
+          <div class="module-icon">💼</div>
+          <div class="module-title">Jobs Studio</div>
+          <div class="module-description">
+            Manage your claims and assignments
+          </div>
+        </a>
+
+        <a href="total-loss-forms.html" class="module-container">
+          <div class="module-icon">🚗</div>
+          <div class="module-title">Total Loss Forms</div>
+          <div class="module-description">Process total loss claims</div>
+        </a>
+
+        <a href="route-cypher.html" class="module-container">
+          <div class="module-icon">🗺️</div>
+          <div class="module-title">Route Optimizer</div>
+          <div class="module-description">Plan efficient routes</div>
+        </a>
+
+        <a href="mileage-cypher.html" class="module-container">
+          <div class="module-icon">🧮</div>
+          <div class="module-title">Mileage Calculator</div>
+          <div class="module-description">Calculate reimbursements</div>
+        </a>
+      </div>
+
+      <div style="margin-top: 30px">
+        <a href="login-cypher.html" class="direct-entry-btn">
+          🔐 Login Required
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // Check authentication and redirect if needed
+      console.log("🎤 Claim Cipher: Welcome page loaded");
+
+      // Authentication disabled for development
+      // If user is already authenticated, redirect to dashboard
+      // if (localStorage.getItem('cipher_authenticated') === 'true') {
+      //     console.log('🎤 User already authenticated, redirecting to dashboard...');
+      //     window.location.href = 'command-center.html';
+      // }
+
+      // Add click handlers to modules (they need authentication)
+      document.addEventListener("DOMContentLoaded", function () {
+        const moduleLinks = document.querySelectorAll(".module-container");
+        moduleLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Authentication disabled for development
+            // Check if user is authenticated
+            // if (localStorage.getItem('cipher_authenticated') !== 'true') {
+            //     // Not authenticated, redirect to login first
+            //     console.log('🔒 Authentication required, redirecting to login...');
+            //     window.location.href = 'login-cypher.html';
+            // } else {
+            //     // Authenticated, go to the target page
+            //     window.location.href = this.getAttribute('href');
+            // }
+
+            // Direct navigation (auth disabled)
+            window.location.href = this.getAttribute("href");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

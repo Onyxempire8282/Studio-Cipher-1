@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supabase Connection Test - Claim Cipher</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 28px;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .status-box {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #667eea;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+      .status-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .status-icon {
+        font-size: 20px;
+        margin-right: 10px;
+      }
+
+      .btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .btn:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-success {
+        background: #28a745;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .log-box {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        border-radius: 8px;
+        padding: 20px;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 20px;
+      }
+
+      .log-entry {
+        margin-bottom: 5px;
+        line-height: 1.5;
+      }
+
+      .log-success {
+        color: #4ade80;
+      }
+
+      .log-error {
+        color: #f87171;
+      }
+
+      .log-info {
+        color: #60a5fa;
+      }
+
+      .log-warning {
+        color: #fbbf24;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔗 Supabase Connection Test</h1>
+      <p class="subtitle">
+        Test and configure your Supabase integration for Jobs Studio
+      </p>
+
+      <div class="status-box">
+        <div class="status-item">
+          <span class="status-icon">🌐</span>
+          <span>URL: <strong id="status-url">Not configured</strong></span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">🔑</span>
+          <span>API Key: <strong id="status-key">Not configured</strong></span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">📊</span>
+          <span>Status: <strong id="status-connection">Unknown</strong></span>
+        </div>
+      </div>
+
+      <div id="config-form">
+        <div class="form-group">
+          <label for="supabase-url">Supabase Project URL</label>
+          <input
+            type="text"
+            id="supabase-url"
+            placeholder="https://xxxxx.supabase.co"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="supabase-key">Anon/Public API Key</label>
+          <input type="password" id="supabase-key" placeholder="eyJhbG..." />
+        </div>
+
+        <button class="btn" onclick="saveConfig()">
+          💾 Save Configuration
+        </button>
+        <button class="btn btn-secondary" onclick="clearConfig()">
+          🗑️ Clear
+        </button>
+      </div>
+
+      <div style="margin-top: 20px">
+        <button class="btn btn-success" onclick="testConnection()">
+          🧪 Test Connection
+        </button>
+        <button class="btn btn-secondary" onclick="checkStatus()">
+          📊 Check Status
+        </button>
+        <button class="btn btn-secondary" onclick="goToJobsStudio()">
+          📱 Open Jobs Studio
+        </button>
+      </div>
+
+      <div class="log-box" id="log-box">
+        <div class="log-entry log-info">
+          Ready to test Supabase connection...
+        </div>
+      </div>
+
+      <div
+        style="
+          margin-top: 20px;
+          padding-top: 20px;
+          border-top: 1px solid #e0e0e0;
+        "
+      >
+        <p style="font-size: 12px; color: #666">
+          <strong>Need help?</strong> See
+          <a href="SUPABASE_JOBS_SETUP.md" style="color: #667eea"
+            >SUPABASE_JOBS_SETUP.md</a
+          >
+          for detailed setup instructions.
+        </p>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+    <script>
+      function log(message, type = "info") {
+        const logBox = document.getElementById("log-box");
+        const timestamp = new Date().toLocaleTimeString();
+        const logClass = `log-${type}`;
+        const entry = document.createElement("div");
+        entry.className = `log-entry ${logClass}`;
+        entry.textContent = `[${timestamp}] ${message}`;
+        logBox.appendChild(entry);
+        logBox.scrollTop = logBox.scrollHeight;
+      }
+
+      function updateStatus() {
+        const url = localStorage.getItem("supabase_url");
+        const key = localStorage.getItem("supabase_anon_key");
+
+        document.getElementById("status-url").textContent =
+          url || "Not configured";
+        document.getElementById("status-key").textContent = key
+          ? "***configured***"
+          : "Not configured";
+
+        if (url) {
+          document.getElementById("supabase-url").value = url;
+        }
+        if (key) {
+          document.getElementById("supabase-key").value = key;
+        }
+      }
+
+      function saveConfig() {
+        const url = document.getElementById("supabase-url").value.trim();
+        const key = document.getElementById("supabase-key").value.trim();
+
+        if (!url || !key) {
+          log("Error: Both URL and API key are required", "error");
+          return;
+        }
+
+        if (!url.includes("supabase.co")) {
+          log("Error: Invalid Supabase URL format", "error");
+          return;
+        }
+
+        localStorage.setItem("supabase_url", url);
+        localStorage.setItem("supabase_anon_key", key);
+
+        log("Configuration saved successfully!", "success");
+        log("You can now test the connection", "info");
+
+        updateStatus();
+      }
+
+      function clearConfig() {
+        localStorage.removeItem("supabase_url");
+        localStorage.removeItem("supabase_anon_key");
+
+        document.getElementById("supabase-url").value = "";
+        document.getElementById("supabase-key").value = "";
+
+        log("Configuration cleared", "warning");
+        updateStatus();
+      }
+
+      async function testConnection() {
+        const url = localStorage.getItem("supabase_url");
+        const key = localStorage.getItem("supabase_anon_key");
+
+        if (!url || !key) {
+          log("Error: Please configure Supabase credentials first", "error");
+          return;
+        }
+
+        log("Testing connection to Supabase...", "info");
+
+        try {
+          const client = window.supabase.createClient(url, key);
+          log("Supabase client created successfully", "success");
+
+          // Test connection by querying the claims table
+          log("Attempting to query claims table...", "info");
+          const { data, error, count } = await client
+            .from("claims")
+            .select("*", { count: "exact", head: false })
+            .limit(5);
+
+          if (error) {
+            log(`Error: ${error.message}`, "error");
+            log(
+              "Make sure the claims table exists and RLS policies are configured",
+              "warning"
+            );
+            document.getElementById("status-connection").textContent = "Failed";
+            return;
+          }
+
+          log(`Successfully connected to Supabase!`, "success");
+          log(`Found ${count || 0} claims in the database`, "success");
+
+          if (data && data.length > 0) {
+            log(`Sample claim: ${data[0].claim_number || "N/A"}`, "info");
+          }
+
+          document.getElementById("status-connection").textContent =
+            "Connected ✅";
+          log(
+            "Connection test passed! You can now use Jobs Studio.",
+            "success"
+          );
+        } catch (error) {
+          log(`Exception: ${error.message}`, "error");
+          log("Check browser console for details", "warning");
+          document.getElementById("status-connection").textContent = "Error ❌";
+          console.error("Connection test error:", error);
+        }
+      }
+
+      function checkStatus() {
+        log("Checking configuration status...", "info");
+        updateStatus();
+
+        const url = localStorage.getItem("supabase_url");
+        const key = localStorage.getItem("supabase_anon_key");
+
+        if (url && key) {
+          log("Configuration is complete", "success");
+          log("Run a connection test to verify database access", "info");
+        } else {
+          log("Configuration is incomplete", "warning");
+          log("Please enter your Supabase URL and API key", "info");
+        }
+      }
+
+      function goToJobsStudio() {
+        const url = localStorage.getItem("supabase_url");
+        const key = localStorage.getItem("supabase_anon_key");
+
+        if (!url || !key) {
+          log(
+            "Warning: Supabase not configured. Jobs Studio will use demo mode.",
+            "warning"
+          );
+          setTimeout(() => {
+            window.location.href = "jobs-studio.html";
+          }, 2000);
+        } else {
+          log("Opening Jobs Studio...", "info");
+          window.location.href = "jobs-studio.html";
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        log("Supabase Connection Test page loaded", "success");
+        updateStatus();
+        checkStatus();
+      });
+    </script>
+  </body>
+</html>

@@ -321,9 +321,10 @@
     <!-- Security Agent: Authentication and Navigation -->
     <script>
         
-        if (localStorage.getItem('cipher_authenticated') !== 'true') {
-            window.location.href = './login-cypher.html';
-        }
+        // Authentication disabled for development
+        // if (localStorage.getItem('cipher_authenticated') !== 'true') {
+        //     window.location.href = './login-cypher.html';
+        // }
 
         document.addEventListener('DOMContentLoaded', function() {
             // Update user info if available

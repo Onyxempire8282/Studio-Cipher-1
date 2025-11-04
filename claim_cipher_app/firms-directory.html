@@ -1,142 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Firms Directory - Claim Cipher</title>
     <!-- Universal System - Base styling -->
-    <link rel="stylesheet" href="styles/universal-system.css">
-    
+    <link rel="stylesheet" href="styles/universal-system.css" />
+
     <!-- Page Layout - Route Cypher specific -->
-    <link rel="stylesheet" href="styles/route-cypher-layout.css">
-    
+    <link rel="stylesheet" href="styles/route-cypher-layout.css" />
+
     <!-- Professional Calculator Interface -->
-    <link rel="stylesheet" href="styles/professional-calculator.css">
-    
+    <link rel="stylesheet" href="styles/professional-calculator.css" />
+
     <!-- Route Cipher Professional Styling -->
-    <link rel="stylesheet" href="styles/route-cipher-professional.css">
-</head>
-<body class="route-page">
+    <link rel="stylesheet" href="styles/route-cipher-professional.css" />
+  </head>
+  <body class="route-page">
     <header class="cipher-header">
-        <div class="header-content">
-            <div class="app-brand">
-                <span class="logo">🎤</span>
-                <span>Claim Cipher</span>
-            </div>
-            <div class="nav-links">
-                <a href="command-center.html">🎯 Dashboard</a>
-                <a href="route-cypher.html">🗺️ Routes</a>
-                <a href="mileage-cypher.html">🧮 Mileage</a>
-                <a href="jobs-studio.html">💼 Jobs</a>
-                <a href="total-loss-forms.html">🚗 Forms</a>
-                <a href="firms-directory.html" class="active">🏢 Firms</a>
-                <a href="settings-booth.html">⚙️ Settings</a>
-                <a href="functionality-test.html">🧪 Tests</a>
-            </div>
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-name" id="userName">Professional User</div>
-                    <div class="user-role">Claims Specialist</div>
-                </div>
-                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
-            </div>
+      <div class="header-content">
+        <div class="app-brand">
+          <span class="logo">🎤</span>
+          <span>Claim Cipher</span>
         </div>
+        <div class="nav-links">
+          <a href="command-center.html">🎯 Dashboard</a>
+          <a href="route-cypher.html">🗺️ Routes</a>
+          <a href="mileage-cypher.html">🧮 Mileage</a>
+          <a href="jobs-studio.html">💼 Jobs</a>
+          <a href="total-loss-forms.html">🚗 Forms</a>
+          <a href="firms-directory.html" class="active">🏢 Firms</a>
+          <a href="settings-booth.html">⚙️ Settings</a>
+          <a href="functionality-test.html">🧪 Tests</a>
+        </div>
+        <div class="user-section">
+          <div class="user-info">
+            <div class="user-name" id="userName">Professional User</div>
+            <div class="user-role">Claims Specialist</div>
+          </div>
+          <button
+            class="logout-btn cipher-btn cipher-btn--danger"
+            onclick="handleLogout()"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-cipher-header">
-            <h1 class="page-cipher-title">🏢 Firms Directory</h1>
-            <p class="page-cipher-subtitle">Manage insurance firm contacts and rates</p>
+      <div class="page-cipher-header">
+        <h1 class="page-cipher-title">🏢 Firms Directory</h1>
+        <p class="page-cipher-subtitle">
+          Manage insurance firm contacts and rates
+        </p>
+      </div>
+
+      <!-- Firms Grid -->
+      <div class="cipher-grid cipher-grid--3">
+        <div class="cipher-card">
+          <div class="cipher-card-header">
+            <h3 class="cipher-card-title">State Farm</h3>
+            <span class="cipher-badge cipher-badge--success">Active</span>
+          </div>
+          <div class="cipher-card-content">
+            <div class="firm-cipher-details">
+              <p><strong>Mileage Rate:</strong> $0.58/mile</p>
+              <p><strong>Contact:</strong> claims@statefarm.com</p>
+              <p><strong>Phone:</strong> 1-800-STATE-FARM</p>
+              <p>
+                <strong>Portal:</strong>
+                <a href="#" class="cipher-link">Login</a>
+              </p>
+            </div>
+          </div>
         </div>
 
-        <!-- Firms Grid -->
-        <div class="cipher-grid cipher-grid--3">
-            <div class="cipher-card">
-                <div class="cipher-card-header">
-                    <h3 class="cipher-card-title">State Farm</h3>
-                    <span class="cipher-badge cipher-badge--success">Active</span>
-                </div>
-                <div class="cipher-card-content">
-                    <div class="firm-cipher-details">
-                        <p><strong>Mileage Rate:</strong> $0.58/mile</p>
-                        <p><strong>Contact:</strong> claims@statefarm.com</p>
-                        <p><strong>Phone:</strong> 1-800-STATE-FARM</p>
-                        <p><strong>Portal:</strong> <a href="#" class="cipher-link">Login</a></p>
-                    </div>
-                </div>
+        <div class="cipher-card">
+          <div class="cipher-card-header">
+            <h3 class="cipher-card-title">Allstate</h3>
+            <span class="cipher-badge cipher-badge--success">Active</span>
+          </div>
+          <div class="cipher-card-content">
+            <div class="firm-cipher-details">
+              <p><strong>Mileage Rate:</strong> $0.62/mile</p>
+              <p><strong>Contact:</strong> adjusters@allstate.com</p>
+              <p><strong>Phone:</strong> 1-800-ALLSTATE</p>
+              <p>
+                <strong>Portal:</strong>
+                <a href="#" class="cipher-link">Login</a>
+              </p>
             </div>
-
-            <div class="cipher-card">
-                <div class="cipher-card-header">
-                    <h3 class="cipher-card-title">Allstate</h3>
-                    <span class="cipher-badge cipher-badge--success">Active</span>
-                </div>
-                <div class="cipher-card-content">
-                    <div class="firm-cipher-details">
-                        <p><strong>Mileage Rate:</strong> $0.62/mile</p>
-                        <p><strong>Contact:</strong> adjusters@allstate.com</p>
-                        <p><strong>Phone:</strong> 1-800-ALLSTATE</p>
-                        <p><strong>Portal:</strong> <a href="#" class="cipher-link">Login</a></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cipher-card">
-                <div class="cipher-card-header">
-                    <h3 class="cipher-card-title">Progressive</h3>
-                    <span class="cipher-badge cipher-badge--success">Active</span>
-                </div>
-                <div class="cipher-card-content">
-                    <div class="firm-cipher-details">
-                        <p><strong>Mileage Rate:</strong> $0.55/mile</p>
-                        <p><strong>Contact:</strong> claims@progressive.com</p>
-                        <p><strong>Phone:</strong> 1-800-PROGRESSIVE</p>
-                        <p><strong>Portal:</strong> <a href="#" class="cipher-link">Login</a></p>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
 
-        <!-- Firms & Billing Settings -->
-        <div class="cipher-card" style="margin-top: 2rem;">
-            <div class="cipher-card-header">
-                <h3 class="cipher-card-title">🏢 Firms & Billing Settings</h3>
+        <div class="cipher-card">
+          <div class="cipher-card-header">
+            <h3 class="cipher-card-title">Progressive</h3>
+            <span class="cipher-badge cipher-badge--success">Active</span>
+          </div>
+          <div class="cipher-card-content">
+            <div class="firm-cipher-details">
+              <p><strong>Mileage Rate:</strong> $0.55/mile</p>
+              <p><strong>Contact:</strong> claims@progressive.com</p>
+              <p><strong>Phone:</strong> 1-800-PROGRESSIVE</p>
+              <p>
+                <strong>Portal:</strong>
+                <a href="#" class="cipher-link">Login</a>
+              </p>
             </div>
-            <div class="cipher-card-content">
-                <div class="cipher-form-group">
-                    <label class="cipher-label">Default Firm</label>
-                    <select class="cipher-select" id="defaultFirm">
-                        <option value="">Select default firm...</option>
-                        <option value="state_farm">State Farm</option>
-                        <option value="allstate">Allstate</option>
-                        <option value="progressive">Progressive</option>
-                        <option value="demo">Demo Insurance Co.</option>
-                    </select>
-                </div>
-                <div class="cipher-form-group">
-                    <label class="cipher-label">Invoice Format</label>
-                    <select class="cipher-select" id="invoiceFormat">
-                        <option value="standard" selected>Standard Format</option>
-                        <option value="detailed">Detailed Breakdown</option>
-                        <option value="summary">Summary Only</option>
-                    </select>
-                </div>
-                <div class="cipher-form-group">
-                    <label class="cipher-label">Currency Format</label>
-                    <select class="cipher-select" id="currencyFormat">
-                        <option value="usd" selected>USD ($)</option>
-                        <option value="cad">CAD (C$)</option>
-                        <option value="eur">EUR (€)</option>
-                    </select>
-                </div>
-                <div class="cipher-form-group" style="text-align: center; margin-top: 1.5rem;">
-                    <button class="cipher-btn cipher-btn--primary" id="saveFirmSettingsBtn">
-                        💾 Save Firm Settings
-                    </button>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Firms & Billing Settings -->
+      <div class="cipher-card" style="margin-top: 2rem">
+        <div class="cipher-card-header">
+          <h3 class="cipher-card-title">🏢 Firms & Billing Settings</h3>
+        </div>
+        <div class="cipher-card-content">
+          <div class="cipher-form-group">
+            <label class="cipher-label">Default Firm</label>
+            <select class="cipher-select" id="defaultFirm">
+              <option value="">Select default firm...</option>
+              <option value="state_farm">State Farm</option>
+              <option value="allstate">Allstate</option>
+              <option value="progressive">Progressive</option>
+              <option value="demo">Demo Insurance Co.</option>
+            </select>
+          </div>
+          <div class="cipher-form-group">
+            <label class="cipher-label">Invoice Format</label>
+            <select class="cipher-select" id="invoiceFormat">
+              <option value="standard" selected>Standard Format</option>
+              <option value="detailed">Detailed Breakdown</option>
+              <option value="summary">Summary Only</option>
+            </select>
+          </div>
+          <div class="cipher-form-group">
+            <label class="cipher-label">Currency Format</label>
+            <select class="cipher-select" id="currencyFormat">
+              <option value="usd" selected>USD ($)</option>
+              <option value="cad">CAD (C$)</option>
+              <option value="eur">EUR (€)</option>
+            </select>
+          </div>
+          <div
+            class="cipher-form-group"
+            style="text-align: center; margin-top: 1.5rem"
+          >
+            <button
+              class="cipher-btn cipher-btn--primary"
+              id="saveFirmSettingsBtn"
+            >
+              💾 Save Firm Settings
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
 
     <script src="scripts/cipher-core.js"></script>
@@ -144,19 +166,19 @@
     <script src="scripts/cipher-content.js"></script>
     <script src="scripts/cipher-security.js"></script>
     <script>
-        if (localStorage.getItem('cipher_authenticated') !== 'true') {
-            window.location.href = './login-cypher.html';
-        }
+      // Authentication disabled for development
+      // if (localStorage.getItem('cipher_authenticated') !== 'true') {
+      //     window.location.href = './login-cypher.html';
+      // }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeCipherUserContext();
-            initializeEnhancedNavigation();
-            initializeCipherContent();
-            initializeCipherSecurity();
-            setupCipherLogoutHandler();
-            showCipherNotification('Firms Directory loaded', 'success');
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeCipherUserContext();
+        initializeEnhancedNavigation();
+        initializeCipherContent();
+        initializeCipherSecurity();
+        setupCipherLogoutHandler();
+        showCipherNotification("Firms Directory loaded", "success");
+      });
     </script>
-</body>
+  </body>
 </html>
-
