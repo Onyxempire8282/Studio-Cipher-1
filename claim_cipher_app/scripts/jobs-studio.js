@@ -652,13 +652,16 @@ class JobsStudioManager {
     const isCompact = size === "compact";
 
     return `
-      <div class="job-cipher-card job-card-enter" data-job-id="${
-        job.id
-      }" data-status="${job.status}" style="animation-delay: ${
+      <div class="job-cipher-card job-card-enter"
+           data-job-id="${job.id}"
+           data-status="${job.status}"
+           draggable="true"
+           ondragstart="handleJobDragStart(event, '${job.id}')"
+           style="animation-delay: ${
       index * 0.05
     }s; padding: ${
       isCompact ? "1rem" : "1.5rem"
-    }; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+    }; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); cursor: grab;">
         <div class="job-cipher-header" style="margin-bottom: ${
           isCompact ? "0.75rem" : "1rem"
         }; padding-bottom: ${
@@ -2155,6 +2158,58 @@ function initializeJobsStudio() {
 
 // Export functions for global access
 window.initializeJobsStudio = initializeJobsStudio;
+
+// Global drag-and-drop handler for job cards
+function handleJobDragStart(event, jobId) {
+  if (!window.jobsStudio) {
+    console.error('Jobs Studio not initialized');
+    return;
+  }
+
+  const job = window.jobsStudio.jobs.find(j => j.id === jobId);
+  if (!job) {
+    console.error('Job not found:', jobId);
+    return;
+  }
+
+  // Create claim data object for Route Cipher
+  const claimData = {
+    id: job.id,
+    claimNumber: job.claimNumber,
+    customerName: job.insured,
+    firmName: job.firmName || 'Unknown',
+    addressLine1: job.address || '',
+    city: job.city || '',
+    state: job.state || '',
+    postalCode: job.postalCode || '',
+    lat: job.lat || null,
+    lng: job.lng || null,
+    phone: job.phone || '',
+    priority: job.priority || 'normal'
+  };
+
+  // Set drag data
+  event.dataTransfer.effectAllowed = 'copy';
+  event.dataTransfer.setData('application/json', JSON.stringify(claimData));
+  event.dataTransfer.setData('text/plain', JSON.stringify(claimData));
+
+  // Visual feedback
+  event.target.style.opacity = '0.5';
+  event.target.style.cursor = 'grabbing';
+
+  console.log('Dragging job:', claimData.claimNumber);
+}
+
+// Add dragend handler to reset visual state
+document.addEventListener('dragend', (event) => {
+  if (event.target.classList.contains('job-cipher-card')) {
+    event.target.style.opacity = '1';
+    event.target.style.cursor = 'grab';
+  }
+});
+
+// Make handleJobDragStart globally accessible
+window.handleJobDragStart = handleJobDragStart;
 
 console.log(
   "🎵 Lyricist Agent: Jobs Studio Professional JavaScript loaded - Ready to manage jobs like a boss!"

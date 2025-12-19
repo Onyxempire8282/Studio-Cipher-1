@@ -10,6 +10,17 @@ class RouteOptimizer {
     this.directionsRenderer = null;
     this.geocoder = null;
     this.currentRoute = null;
+    this.routeStops = [];
+    this.firmColors = {
+      'State Farm': '#cc0000',
+      'Allstate': '#003da5',
+      'Progressive': '#0070ba',
+      'Geico': '#006699',
+      'Liberty Mutual': '#fdb913',
+      'Farmers': '#00a3e0',
+      'USAA': '#003087',
+      'default': '#666666'
+    };
 
     this.init();
   }
@@ -17,6 +28,9 @@ class RouteOptimizer {
   init() {
     this.setupEventListeners();
     this.loadSettings();
+    this.initializeGooglePlacesAutocomplete();
+    this.initializeDropZone();
+    this.loadSavedClaims();
   }
 
   setupEventListeners() {
@@ -140,18 +154,12 @@ class RouteOptimizer {
     const newInput = destDiv.querySelector(".destination-address-input");
     if (newInput) {
       newInput.focus();
-
-      // Add Google Maps autocomplete if available
-      if (typeof google !== "undefined" && google.maps && google.maps.places) {
-        try {
-          const autocomplete = new google.maps.places.Autocomplete(newInput);
-          autocomplete.setFields(["formatted_address", "geometry"]);
-          console.log("🎵 Lyricist: Autocomplete added to new input");
-        } catch (error) {
-          console.warn("🎵 Lyricist: Autocomplete failed:", error);
-        }
-      }
     }
+
+    // Add autocomplete to all inputs (with small delay to ensure DOM is ready)
+    setTimeout(() => {
+      this.addAutocompleteToDestinationInputs();
+    }, 100);
 
     console.log(
       "🎵 Lyricist Emergency: ONE destination input added successfully"
@@ -2105,6 +2113,88 @@ class RouteOptimizer {
     }
   }
 
+  initializeGooglePlacesAutocomplete() {
+    // Wait for Google Maps API to load
+    if (typeof google === "undefined" || !google.maps || !google.maps.places) {
+      console.log("🗺️ Google Places not available - autocomplete disabled");
+      return;
+    }
+
+    console.log(
+      "🗺️ Initializing Google Places Autocomplete for Route Optimizer"
+    );
+
+    // Autocomplete for starting location
+    const startLocationInput = document.getElementById("startLocation");
+    if (startLocationInput) {
+      const autocompleteStart = new google.maps.places.Autocomplete(
+        startLocationInput,
+        {
+          types: ["address"],
+          componentRestrictions: { country: "us" },
+        }
+      );
+
+      autocompleteStart.addListener("place_changed", () => {
+        const place = autocompleteStart.getPlace();
+        if (place.formatted_address) {
+          startLocationInput.value = place.formatted_address;
+          console.log(
+            "🗺️ Starting location selected:",
+            place.formatted_address
+          );
+        }
+      });
+    }
+
+    // Autocomplete for existing destination inputs
+    this.addAutocompleteToDestinationInputs();
+
+    console.log("🗺️ Google Places Autocomplete initialized");
+  }
+
+  addAutocompleteToDestinationInputs() {
+    if (typeof google === "undefined" || !google.maps || !google.maps.places) {
+      console.log("🗺️ Google Places not available, skipping autocomplete");
+      return;
+    }
+
+    const destinationInputs = document.querySelectorAll(
+      ".destination-address-input"
+    );
+
+    console.log(
+      `🗺️ Found ${destinationInputs.length} destination inputs to check for autocomplete`
+    );
+
+    destinationInputs.forEach((input, index) => {
+      // Check if autocomplete already initialized
+      if (input.dataset.autocompleteInitialized === "true") {
+        console.log(`🗺️ Input ${index + 1} already has autocomplete`);
+        return;
+      }
+
+      console.log(`🗺️ Adding autocomplete to input ${index + 1}`);
+
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+      });
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (place.formatted_address) {
+          input.value = place.formatted_address;
+          console.log("🗺️ Destination selected:", place.formatted_address);
+        }
+      });
+
+      // Mark as initialized
+      input.dataset.autocompleteInitialized = "true";
+      console.log(`🗺️ Autocomplete initialized for input ${index + 1}`);
+    });
+  }
+
   saveSettings() {
     const settings = {
       maxLegMiles: parseInt(document.getElementById("maxLegMiles").value),
@@ -2121,6 +2211,378 @@ class RouteOptimizer {
     };
 
     localStorage.setItem("cc_route_settings", JSON.stringify(settings));
+  }
+
+  // =================================
+  // DRAG-AND-DROP CLAIM ROUTING
+  // =================================
+
+  initializeDropZone() {
+    const dropZone = document.getElementById('claimDropZone');
+    const routeClaimsBtn = document.getElementById('routeClaims');
+    const clearClaimsBtn = document.getElementById('clearClaims');
+    const pasteClaimsBtn = document.getElementById('pasteClaimsBtn');
+
+    if (!dropZone) {
+      console.warn('Drop zone element not found');
+      return;
+    }
+
+    // Desktop drag-drop event listeners
+    dropZone.addEventListener('dragover', (e) => this.handleDragOver(e));
+    dropZone.addEventListener('drop', (e) => this.handleDrop(e));
+    dropZone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+
+    // Button event listeners
+    if (routeClaimsBtn) {
+      routeClaimsBtn.addEventListener('click', () => this.routeFromClaims());
+    }
+
+    if (clearClaimsBtn) {
+      clearClaimsBtn.addEventListener('click', () => {
+        this.routeStops = [];
+        this.renderDroppedClaims();
+        this.saveClaims();
+      });
+    }
+
+    if (pasteClaimsBtn) {
+      pasteClaimsBtn.addEventListener('click', () => this.pasteClaimsFromClipboard());
+    }
+
+    // Event delegation for dynamically created elements
+    dropZone.addEventListener('click', (e) => {
+      // Handle remove button clicks
+      if (e.target.classList.contains('claim-remove-btn') || e.target.closest('.claim-remove-btn')) {
+        const card = e.target.closest('.claim-card');
+        if (card) {
+          const claimId = card.dataset.claimId;
+          this.removeClaimFromRoute(claimId);
+        }
+      }
+    });
+
+    // Handle priority select changes
+    dropZone.addEventListener('change', (e) => {
+      if (e.target.classList.contains('claim-priority-select')) {
+        const card = e.target.closest('.claim-card');
+        if (card) {
+          const claimId = card.dataset.claimId;
+          const claim = this.routeStops.find(stop => stop.id === claimId);
+          if (claim) {
+            claim.priority = e.target.value;
+            this.saveClaims();
+          }
+        }
+      }
+    });
+
+    console.log('Drop zone initialized successfully');
+  }
+
+  handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    const dropZone = document.getElementById('claimDropZone');
+    if (dropZone) {
+      dropZone.classList.add('drag-over');
+    }
+  }
+
+  handleDragLeave(e) {
+    const dropZone = document.getElementById('claimDropZone');
+    if (dropZone && !dropZone.contains(e.relatedTarget)) {
+      dropZone.classList.remove('drag-over');
+    }
+  }
+
+  handleDrop(e) {
+    e.preventDefault();
+    const dropZone = document.getElementById('claimDropZone');
+    if (dropZone) {
+      dropZone.classList.remove('drag-over');
+    }
+
+    // Try to get JSON data from drop event
+    let data = e.dataTransfer.getData('application/json');
+    if (!data) {
+      data = e.dataTransfer.getData('text/plain');
+    }
+
+    if (!data) {
+      console.warn('No data in drop event');
+      this.showError('No data received. Make sure you are dragging claim data from Cipher Dispatch.');
+      return;
+    }
+
+    // Check if it looks like JSON before trying to parse
+    const trimmedData = data.trim();
+    if (!trimmedData.startsWith('{') && !trimmedData.startsWith('[')) {
+      console.warn('Dropped data is not JSON:', trimmedData.substring(0, 50));
+      this.showError('Invalid data format. Please drag claims from Cipher Dispatch, not links or text.');
+      return;
+    }
+
+    try {
+      const claimData = JSON.parse(data);
+
+      // Handle both single claim and array of claims
+      if (Array.isArray(claimData)) {
+        claimData.forEach(claim => this.addClaimToRoute(claim));
+      } else {
+        this.addClaimToRoute(claimData);
+      }
+    } catch (error) {
+      console.error('Error parsing dropped data:', error);
+      this.showError('Invalid JSON format. Please ensure claims are properly formatted from Cipher Dispatch.');
+    }
+  }
+
+  addClaimToRoute(claimData) {
+    // Validate required fields
+    if (!claimData.id || !claimData.lat || !claimData.lng || !claimData.addressLine1) {
+      console.error('Missing required fields:', claimData);
+      this.showError('Claim is missing required fields (id, lat, lng, addressLine1)');
+      return;
+    }
+
+    // Check for duplicates
+    if (this.isDuplicateClaim(claimData.id)) {
+      // Flash the existing card
+      const existingCard = document.querySelector(`.claim-card[data-claim-id="${claimData.id}"]`);
+      if (existingCard) {
+        existingCard.classList.add('duplicate-flash');
+        setTimeout(() => {
+          existingCard.classList.remove('duplicate-flash');
+        }, 500);
+      }
+      this.showError('This claim has already been added to the route');
+      return;
+    }
+
+    // Normalize data with defaults
+    const normalizedClaim = {
+      id: claimData.id,
+      claimNumber: claimData.claimNumber || claimData.claim_number || 'N/A',
+      customerName: claimData.customerName || claimData.customer_name || 'Unknown',
+      firmName: claimData.firmName || claimData.firm_name || 'Unknown',
+      addressLine1: claimData.addressLine1 || claimData.address_line1,
+      city: claimData.city || '',
+      state: claimData.state || '',
+      postalCode: claimData.postalCode || claimData.postal_code || '',
+      lat: claimData.lat,
+      lng: claimData.lng,
+      phone: claimData.phone || '',
+      priority: claimData.priority || 'normal'
+    };
+
+    // Get firm color
+    normalizedClaim.firmColor = this.firmColors[normalizedClaim.firmName] || this.firmColors['default'];
+
+    // Add to routeStops array
+    this.routeStops.push(normalizedClaim);
+
+    // Update UI
+    this.renderDroppedClaims();
+    this.saveClaims();
+
+    console.log('Claim added successfully:', normalizedClaim);
+  }
+
+  isDuplicateClaim(id) {
+    return this.routeStops.some(stop => stop.id === id);
+  }
+
+  removeClaimFromRoute(id) {
+    this.routeStops = this.routeStops.filter(stop => stop.id !== id);
+    this.renderDroppedClaims();
+    this.saveClaims();
+    console.log('Claim removed:', id);
+  }
+
+  renderDroppedClaims() {
+    const dropZone = document.getElementById('claimDropZone');
+    const actionsDiv = document.querySelector('.drop-zone-actions');
+    const routeClaimsBtn = document.getElementById('routeClaims');
+    const routeClaimsText = document.querySelector('.route-claims-text');
+
+    if (!dropZone) return;
+
+    // Clear drop zone
+    dropZone.innerHTML = '';
+
+    // If no claims, show empty state
+    if (this.routeStops.length === 0) {
+      dropZone.classList.remove('has-claims');
+      if (actionsDiv) actionsDiv.style.display = 'none';
+
+      dropZone.innerHTML = `
+        <div class="drop-zone-empty-state">
+          <span class="empty-icon">📦</span>
+          <p>Drop claims here from Cipher Dispatch</p>
+          <button id="pasteClaimsBtn" class="secondary-btn">
+            <span class="btn-icon">📋</span>
+            Paste Claims (Mobile)
+          </button>
+        </div>
+      `;
+
+      // Re-attach paste button listener
+      const pasteBtn = document.getElementById('pasteClaimsBtn');
+      if (pasteBtn) {
+        pasteBtn.addEventListener('click', () => this.pasteClaimsFromClipboard());
+      }
+
+      return;
+    }
+
+    // Show actions and update button state
+    dropZone.classList.add('has-claims');
+    if (actionsDiv) actionsDiv.style.display = 'flex';
+
+    // Render claim cards
+    this.routeStops.forEach(claim => {
+      const card = document.createElement('div');
+      card.className = 'claim-card';
+      card.dataset.claimId = claim.id;
+
+      card.innerHTML = `
+        <div class="claim-header">
+          <span class="firm-badge" style="background: ${claim.firmColor}">${claim.firmName}</span>
+          <button class="claim-remove-btn" title="Remove claim">×</button>
+        </div>
+        <div class="claim-body">
+          <div class="claim-customer">${claim.customerName}</div>
+          <div class="claim-address">${claim.addressLine1}${claim.city ? ', ' + claim.city : ''}${claim.state ? ', ' + claim.state : ''}</div>
+          <div class="claim-number">#${claim.claimNumber}</div>
+        </div>
+        <div class="claim-footer">
+          <select class="claim-priority-select">
+            <option value="normal" ${claim.priority === 'normal' ? 'selected' : ''}>🔵 Normal</option>
+            <option value="high" ${claim.priority === 'high' ? 'selected' : ''}>🟡 High</option>
+            <option value="urgent" ${claim.priority === 'urgent' ? 'selected' : ''}>🔴 Urgent</option>
+          </select>
+        </div>
+      `;
+
+      dropZone.appendChild(card);
+    });
+
+    // Update route button
+    if (routeClaimsBtn) {
+      routeClaimsBtn.disabled = this.routeStops.length < 2;
+      if (routeClaimsText) {
+        routeClaimsText.textContent = `Route ${this.routeStops.length} Claim${this.routeStops.length !== 1 ? 's' : ''}`;
+      }
+    }
+  }
+
+  routeFromClaims() {
+    if (this.routeStops.length < 2) {
+      this.showError('You need at least 2 claims to build a route');
+      return;
+    }
+
+    // Sort by priority (urgent > high > normal)
+    const priorityValues = { urgent: 3, high: 2, normal: 1 };
+    const sorted = [...this.routeStops].sort((a, b) => {
+      return priorityValues[b.priority] - priorityValues[a.priority];
+    });
+
+    // Clear existing destinations list
+    const destList = document.getElementById('destinationsList');
+    if (!destList) {
+      this.showError('Destinations list not found');
+      return;
+    }
+    destList.innerHTML = '';
+
+    // Create destination inputs from claims
+    sorted.forEach(claim => {
+      // Add a destination
+      this.addDestination();
+
+      // Get the last added destination
+      const destinations = destList.querySelectorAll('.destination-input');
+      const lastDest = destinations[destinations.length - 1];
+
+      if (lastDest) {
+        const input = lastDest.querySelector('.destination-address-input');
+        const priority = lastDest.querySelector('.priority-select');
+
+        if (input) {
+          // Format full address
+          let address = claim.addressLine1;
+          if (claim.city) address += ', ' + claim.city;
+          if (claim.state) address += ', ' + claim.state;
+          if (claim.postalCode) address += ' ' + claim.postalCode;
+
+          input.value = address;
+        }
+
+        if (priority) {
+          priority.value = claim.priority;
+        }
+
+        // Store claim metadata for reference
+        lastDest.dataset.claimId = claim.id;
+        lastDest.dataset.claimNumber = claim.claimNumber;
+      }
+    });
+
+    // Scroll to top to see the destinations
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Auto-trigger optimization after a brief delay
+    setTimeout(() => {
+      this.optimizeRoute();
+    }, 500);
+
+    console.log(`Routing ${this.routeStops.length} claims`);
+  }
+
+  saveClaims() {
+    try {
+      localStorage.setItem('cc_route_stops', JSON.stringify(this.routeStops));
+    } catch (error) {
+      console.error('Error saving claims to localStorage:', error);
+    }
+  }
+
+  loadSavedClaims() {
+    try {
+      const saved = localStorage.getItem('cc_route_stops');
+      if (saved) {
+        const claims = JSON.parse(saved);
+        if (Array.isArray(claims)) {
+          this.routeStops = claims;
+          this.renderDroppedClaims();
+          console.log(`Loaded ${claims.length} saved claims`);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading saved claims:', error);
+    }
+  }
+
+  async pasteClaimsFromClipboard() {
+    try {
+      const text = await navigator.clipboard.readText();
+      const data = JSON.parse(text);
+
+      if (Array.isArray(data)) {
+        data.forEach(claim => this.addClaimToRoute(claim));
+        this.showError(`Added ${data.length} claims from clipboard`, 'success');
+      } else if (typeof data === 'object') {
+        this.addClaimToRoute(data);
+        this.showError('Added 1 claim from clipboard', 'success');
+      } else {
+        this.showError('Clipboard data is not valid claim JSON');
+      }
+    } catch (error) {
+      console.error('Error pasting claims:', error);
+      this.showError('Could not paste claims. Copy valid JSON first.');
+    }
   }
 }
 
