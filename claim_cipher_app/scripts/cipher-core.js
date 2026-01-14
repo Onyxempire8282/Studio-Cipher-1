@@ -189,10 +189,20 @@ function generateCipherDemoData() {
 }
 
 // Global logout function for onclick handlers
-function handleLogout() {
+// Delegates to Supabase Auth if available (proper session termination)
+async function handleLogout() {
     console.log('🚪 User signing out of cipher');
-    
-    // Clear all cipher session data
+
+    // Use Supabase Auth signOut if available (MUST be awaited)
+    if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+        console.log('🚪 Delegating logout to Supabase Auth');
+        await window.SupabaseAuth.signOut();
+        // signOut() handles redirect internally after session termination
+        return;
+    }
+
+    // Fallback: Clear localStorage and redirect (legacy mode only)
+    console.log('🚪 Fallback: localStorage cleanup (Supabase not available)');
     localStorage.removeItem('cipher_authenticated');
     localStorage.removeItem('cipher_user_type');
     localStorage.removeItem('cipher_user_email');
@@ -200,7 +210,7 @@ function handleLogout() {
     localStorage.removeItem('cipher_demo_expiry');
     localStorage.removeItem('cipher_remember_me');
     sessionStorage.removeItem('claimCipherAuth');
-    
+
     // Redirect to login
     window.location.href = './login-cypher.html';
 }

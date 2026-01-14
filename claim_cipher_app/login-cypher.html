@@ -19,9 +19,9 @@
     <link rel="stylesheet" href="styles/visual-consistency-fix.css">
     <link rel="stylesheet" href="styles/universal-header-fixes.css">
 </head>
-<body class="cipher-dark-theme">
-    
-    
+<body class="cipher-dark-theme" style="visibility: hidden;">
+
+
     <div class="login-cypher-container">
         
         <div class="login-cipher-card">
@@ -234,91 +234,189 @@
         </div>
     </div>
 
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <!-- Legacy login script (kept for form toggle/UI functionality) -->
     <script src="scripts/login-cypher.js"></script>
 
     <script>
-    // Lyricist Emergency: Ensure login form works - FIXED
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🎵 Lyricist Emergency: Login form initialization');
-        
-        // Enable all inputs
-        const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
+    /**
+     * Supabase Auth Integration for Login Page
+     * Overrides legacy login/signup handlers with Supabase Auth
+     */
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log('Supabase Auth: Initializing login page');
+
+        // Check if already logged in - redirect to dashboard
+        // If user is authenticated, loginPageGuard will redirect and return false
+        const shouldStayOnLoginPage = await window.SupabaseAuth.loginPageGuard();
+
+        // Only show page if user should stay on login page (not authenticated)
+        if (shouldStayOnLoginPage) {
+            document.body.style.visibility = 'visible';
+        }
+        // If redirecting, body stays hidden to prevent flash
+
+        // Get form elements
+        const loginForm = document.getElementById('login-cypher-form');
+        const signupForm = document.getElementById('signup-cypher-form');
+        const errorDisplay = document.getElementById('error-cypher');
+        const demoCipherBtn = document.getElementById('demo-cipher-btn');
+
+        // Helper to show error/success messages
+        function showMessage(message, isError = true) {
+            if (errorDisplay) {
+                errorDisplay.textContent = message;
+                errorDisplay.style.display = 'block';
+                errorDisplay.style.color = isError ? '#ff4444' : '#44ff44';
+
+                if (!isError) {
+                    setTimeout(() => {
+                        errorDisplay.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+
+        function clearMessage() {
+            if (errorDisplay) {
+                errorDisplay.style.display = 'none';
+            }
+        }
+
+        // Override Login Form Handler
+        if (loginForm) {
+            // Remove existing submit handlers by cloning the form
+            const newLoginForm = loginForm.cloneNode(true);
+            loginForm.parentNode.replaceChild(newLoginForm, loginForm);
+
+            newLoginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                clearMessage();
+
+                const email = document.getElementById('login-email')?.value?.trim();
+                const password = document.getElementById('login-password')?.value;
+                const loginBtn = document.getElementById('login-btn');
+
+                if (!email || !password) {
+                    showMessage('Please enter both email and password');
+                    return;
+                }
+
+                // Show loading state
+                window.SupabaseAuth.setButtonLoading(loginBtn, true, 'Signing in...');
+
+                const result = await window.SupabaseAuth.signIn(email, password);
+
+                if (result.success) {
+                    showMessage('Login successful! Redirecting...', false);
+                    setTimeout(() => {
+                        window.location.href = 'command-center.html';
+                    }, 1000);
+                } else {
+                    window.SupabaseAuth.setButtonLoading(loginBtn, false);
+                    showMessage(result.error || 'Invalid credentials. Please try again.');
+                }
+            });
+        }
+
+        // Override Signup Form Handler
+        if (signupForm) {
+            // Remove existing submit handlers by cloning the form
+            const newSignupForm = signupForm.cloneNode(true);
+            signupForm.parentNode.replaceChild(newSignupForm, signupForm);
+
+            newSignupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                clearMessage();
+
+                const name = document.getElementById('signup-name')?.value?.trim();
+                const company = document.getElementById('signup-company')?.value?.trim();
+                const email = document.getElementById('signup-email')?.value?.trim();
+                const password = document.getElementById('signup-password')?.value;
+                const agreeTerms = document.getElementById('agree-terms')?.checked;
+                const signupBtn = document.getElementById('signup-btn');
+
+                // Validation
+                if (!name) {
+                    showMessage('Please enter your name');
+                    return;
+                }
+
+                if (!email) {
+                    showMessage('Please enter your email address');
+                    return;
+                }
+
+                if (!password || password.length < 6) {
+                    showMessage('Password must be at least 6 characters long');
+                    return;
+                }
+
+                if (!agreeTerms) {
+                    showMessage('Please agree to the Terms of Service and Privacy Policy');
+                    return;
+                }
+
+                // Show loading state
+                window.SupabaseAuth.setButtonLoading(signupBtn, true, 'Creating account...');
+
+                const result = await window.SupabaseAuth.signUp(email, password, {
+                    full_name: name,
+                    company: company || ''
+                });
+
+                if (result.success) {
+                    if (result.requiresConfirmation) {
+                        window.SupabaseAuth.setButtonLoading(signupBtn, false);
+                        showMessage('Please check your email to confirm your account.', false);
+                    } else {
+                        showMessage('Account created! Redirecting...', false);
+                        setTimeout(() => {
+                            window.location.href = 'command-center.html';
+                        }, 1000);
+                    }
+                } else {
+                    window.SupabaseAuth.setButtonLoading(signupBtn, false);
+                    showMessage(result.error || 'Failed to create account. Please try again.');
+                }
+            });
+        }
+
+        // Disable demo mode button (demo mode not implemented yet per requirements)
+        if (demoCipherBtn) {
+            demoCipherBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showMessage('Demo mode is currently unavailable. Please sign up for an account.');
+            });
+        }
+
+        // Enable all inputs (fix from legacy code)
+        const inputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
         inputs.forEach(input => {
             input.removeAttribute('disabled');
             input.removeAttribute('readonly');
             input.style.pointerEvents = 'auto';
             input.style.opacity = '1';
-            console.log('🎵 Lyricist: Input enabled:', input.id);
         });
-        
+
         // Enable all buttons
-        const buttons = document.querySelectorAll('button, input[type="submit"]');
+        const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             button.removeAttribute('disabled');
             button.style.pointerEvents = 'auto';
             button.style.opacity = '1';
-            console.log('🎵 Lyricist: Button enabled:', button.textContent);
         });
-        
-        // Force focus capability - FIXED IDs
-        const emailInput = document.getElementById('login-email');
-        const passwordInput = document.getElementById('login-password');
-        
-        if (emailInput) {
-            emailInput.addEventListener('click', function() {
-                this.focus();
-            });
-        }
-        
-        if (passwordInput) {
-            passwordInput.addEventListener('click', function() {
-                this.focus();
-            });
-        }
+
+        console.log('Supabase Auth: Login page ready');
     });
-    
-    // 🎤 PRODUCER LOOP 10: Final Override Script
-    // 🎬 PRODUCTION MODE: Test button disabled for clean production interface
-    /*
-    setTimeout(() => {
-        console.log('🎤 PRODUCER LOOP 10: Final functionality check and override');
-        
-        // Test master login functionality - DISABLED FOR PRODUCTION
-        const testButton = document.createElement('button');
-        testButton.textContent = '🎤 Producer Test Login';
-        testButton.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 9999;
-            background: #ff0000;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        `;
-        testButton.onclick = function() {
-            const email = document.getElementById('login-email');
-            const password = document.getElementById('login-password');
-            
-            if (email && password) {
-                email.value = 'master@claimcipher.com';
-                password.value = 'cipher123';
-                
-                // Trigger form submission
-                const form = document.getElementById('login-cypher-form');
-                if (form) {
-                    form.dispatchEvent(new Event('submit'));
-                }
-            }
-        };
-        document.body.appendChild(testButton);
-        
-        console.log('🎤 PRODUCER: Test button added for instant login testing');
-        
-    }, 2000);
-    */
     </script>
 </body>
 </html>

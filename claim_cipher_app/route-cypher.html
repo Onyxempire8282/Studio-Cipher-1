@@ -16,7 +16,7 @@
     <!-- Route Cipher Professional Styling -->
     <link rel="stylesheet" href="styles/route-cipher-professional.css" />
   </head>
-  <body class="route-page">
+  <body class="route-page" style="visibility: hidden;">
     <header class="cipher-header">
       <div class="header-content">
         <div class="app-brand">
@@ -459,6 +459,25 @@
     <!-- Load API configuration first -->
     <script src="config/github-pages-env.js"></script>
     <script src="config/api-config-production.js"></script>
+
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <!-- Supabase Page Protection - MUST run before page renders -->
+    <script>
+    (async function() {
+        // Body is hidden via style="visibility: hidden;" on body tag
+        const allowed = await window.SupabaseAuth.protectPage();
+        if (allowed) {
+            document.body.style.visibility = 'visible';
+        }
+        // If not allowed, protectPage() redirects and body stays hidden
+    })();
+    </script>
 
     <!-- Core Scripts (utilities only, no auth) -->
     <script src="scripts/cipher-core.js"></script>

@@ -1,126 +1,87 @@
-// 🔒 Security Agent: Command Center Security Enhancement
-// Authentication and session management for dashboard
+/**
+ * Command Center Security Enhancement
+ * Session timeout, activity tracking, and UI security features
+ *
+ * NOTE: Authentication verification is handled by Supabase Auth (supabase-auth.js).
+ * This file provides session timeout warnings and activity tracking only.
+ * DO NOT add localStorage-based auth decisions.
+ */
 
 class CommandCenterSecurity {
     constructor() {
         this.sessionTimeout = 30 * 60 * 1000; // 30 minutes
         this.warningTimeout = 25 * 60 * 1000; // 25 minutes
-        
+
         this.initializeSecurity();
-        console.log('🔒 Security Agent: Command Center security initialized');
+        console.log('Command Center security initialized (Supabase Auth mode)');
     }
-    
+
     initializeSecurity() {
-        // Verify authentication on load
-        this.verifyAuthentication();
-        
-        // Setup session monitoring
+        // Setup session timeout warnings (UX feature, not auth)
         this.setupSessionMonitoring();
-        
-        // Setup security event listeners
-        this.setupSecurityListeners();
-        
-        // Initialize secure navigation
-        this.initializeSecureNavigation();
-        
-        // Setup periodic security checks
+
+        // Setup activity tracking
+        this.setupActivityTracking();
+
+        // Setup suspicious activity monitoring
         this.startSecurityMonitoring();
     }
-    
+
+    /**
+     * DISABLED - Auth verification handled by Supabase
+     * Always returns true - Supabase protectPage() handles real auth
+     */
     verifyAuthentication() {
-        console.log('🔒 Security Agent: Verifying user authentication...');
-        
-        const authToken = localStorage.getItem('cc_auth_token');
-        const userSession = localStorage.getItem('cc_user_session');
-        
-        if (!authToken && !userSession) {
-            console.warn('🔒 Security Agent: No authentication found');
-            this.redirectToLogin('No active session found');
-            return false;
-        }
-        
-        // Validate session
-        if (userSession) {
-            try {
-                const session = JSON.parse(userSession);
-                
-                // Check if session is expired
-                if (this.isSessionExpired(session)) {
-                    console.warn('🔒 Security Agent: Session expired');
-                    this.handleSessionExpiry();
-                    return false;
-                }
-                
-                // Update last activity
-                this.updateLastActivity();
-                
-                console.log('🔒 Security Agent: Authentication verified successfully');
-                return true;
-                
-            } catch (e) {
-                console.error('🔒 Security Agent: Error parsing session:', e);
-                this.redirectToLogin('Invalid session data');
-                return false;
-            }
-        }
-        
+        // DISABLED - Supabase Auth handles authentication
+        // This method is kept for backward compatibility but performs NO auth checks
+        console.log('Security: Auth verification delegated to Supabase');
         return true;
     }
-    
-    isSessionExpired(session) {
-        if (!session.lastActivity) {
-            return false; // No timestamp means don't expire
-        }
-        
-        const now = Date.now();
-        const lastActivity = new Date(session.lastActivity).getTime();
-        const timeDiff = now - lastActivity;
-        
-        return timeDiff > this.sessionTimeout;
-    }
-    
-    updateLastActivity() {
-        const userSession = localStorage.getItem('cc_user_session');
-        if (userSession) {
-            try {
-                const session = JSON.parse(userSession);
-                session.lastActivity = new Date().toISOString();
-                localStorage.setItem('cc_user_session', JSON.stringify(session));
-            } catch (e) {
-                console.error('🔒 Security Agent: Error updating activity:', e);
-            }
-        }
-    }
-    
+
     setupSessionMonitoring() {
-        // Update activity on user interaction
+        // Session warning timer (UX reminder, not auth enforcement)
+        this.warningTimer = setTimeout(() => {
+            this.showSessionWarning();
+        }, this.warningTimeout);
+
+        // Session expiry timer
+        this.expiryTimer = setTimeout(() => {
+            this.handleSessionExpiry();
+        }, this.sessionTimeout);
+    }
+
+    setupActivityTracking() {
+        // Track user activity for session timeout reset
         const events = ['click', 'keydown', 'scroll', 'mousemove'];
-        
         let activityTimer;
-        
+
         events.forEach(eventType => {
             document.addEventListener(eventType, () => {
                 clearTimeout(activityTimer);
                 activityTimer = setTimeout(() => {
-                    this.updateLastActivity();
-                }, 1000); // Update every second of activity
+                    this.resetSessionTimers();
+                }, 1000);
             }, true);
         });
-        
-        // Setup session warning timer
-        setTimeout(() => {
+    }
+
+    resetSessionTimers() {
+        // Reset timeout timers on activity
+        clearTimeout(this.warningTimer);
+        clearTimeout(this.expiryTimer);
+
+        this.warningTimer = setTimeout(() => {
             this.showSessionWarning();
         }, this.warningTimeout);
-        
-        // Setup session expiry timer
-        setTimeout(() => {
+
+        this.expiryTimer = setTimeout(() => {
             this.handleSessionExpiry();
         }, this.sessionTimeout);
     }
-    
+
     showSessionWarning() {
         const warningModal = this.createSecurityModal(
-            '⚠️ Session Warning',
+            'Session Warning',
             `
             <div style="padding: 20px; text-align: center;">
                 <p style="margin-bottom: 20px; color: #f39c12;">
@@ -130,214 +91,102 @@ class CommandCenterSecurity {
                     Click "Stay Logged In" to extend your session.
                 </p>
                 <div>
-                    <button onclick="commandCenterSecurity.extendSession()" 
+                    <button onclick="commandCenterSecurity.extendSession()"
                             style="background: #27ae60; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px;">
                         Stay Logged In
                     </button>
-                    <button onclick="commandCenterSecurity.secureLogout()" 
+                    <button onclick="commandCenterSecurity.secureLogout()"
                             style="background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px;">
                         Logout Now
                     </button>
                 </div>
             </div>
             `,
-            false // Don't allow closing by clicking outside
+            false
         );
-        
+
         document.body.appendChild(warningModal);
     }
-    
+
     extendSession() {
-        console.log('🔒 Security Agent: Session extended by user');
-        
-        // Update session timestamp
-        this.updateLastActivity();
-        
+        console.log('Security: Session extended by user');
+
         // Close warning modal
         const modal = document.querySelector('.security-modal-overlay');
         if (modal) {
             modal.remove();
         }
-        
+
         // Reset timers
-        setTimeout(() => {
-            this.showSessionWarning();
-        }, this.warningTimeout);
-        
-        setTimeout(() => {
-            this.handleSessionExpiry();
-        }, this.sessionTimeout);
-        
+        this.resetSessionTimers();
+
         // Show confirmation
         this.showSecurityNotification('Session extended successfully', 'success');
-        
+
         // Log activity
         if (window.commandCenter) {
             window.commandCenter.logActivity('Session extended by user', 'auth');
         }
     }
-    
+
     handleSessionExpiry() {
-        console.warn('🔒 Security Agent: Session expired - forcing logout');
-        
-        this.showSecurityNotification('Session expired. Redirecting to login...', 'warning');
-        
-        // Clear all session data
-        this.clearAllSessionData();
-        
-        // Log activity
-        if (window.commandCenter) {
-            window.commandCenter.logActivity('Session expired - auto logout', 'auth');
-        }
-        
-        // Redirect after brief delay
+        console.warn('Security: Session timeout - logging out via Supabase');
+
+        this.showSecurityNotification('Session expired. Logging out...', 'warning');
+
+        // Use Supabase signOut
         setTimeout(() => {
-            this.redirectToLogin('Session expired');
+            if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+                window.SupabaseAuth.signOut();
+            } else {
+                window.location.href = 'login-cypher.html';
+            }
         }, 2000);
     }
-    
-    secureLogout() {
-        console.log('🔒 Security Agent: Secure logout initiated');
-        
-        // Show logout confirmation
+
+    async secureLogout() {
+        console.log('Security: Secure logout initiated');
+
         const confirmed = confirm('Are you sure you want to logout?');
-        
+
         if (confirmed) {
             // Log activity
             if (window.commandCenter) {
                 window.commandCenter.logActivity('User initiated secure logout', 'auth');
             }
-            
-            // Clear all session data
-            this.clearAllSessionData();
-            
+
             this.showSecurityNotification('Logging out securely...', 'info');
-            
-            // Redirect after cleanup
-            setTimeout(() => {
-                this.redirectToLogin('User logout');
-            }, 1500);
+
+            // Use Supabase signOut - MUST await to ensure session is terminated
+            if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+                await window.SupabaseAuth.signOut();
+                // signOut() handles redirect after session termination
+            } else {
+                window.location.href = 'login-cypher.html';
+            }
         }
     }
-    
-    clearAllSessionData() {
-        // Clear authentication data
-        localStorage.removeItem('cc_auth_token');
-        localStorage.removeItem('cc_user_session');
-        
-        // Clear sensitive cached data
-        localStorage.removeItem('cc_route_export');
-        localStorage.removeItem('cc_quick_route');
-        localStorage.removeItem('cc_quick_mileage');
-        
-        // Keep non-sensitive data like firms and settings
-        console.log('🔒 Security Agent: Session data cleared');
-    }
-    
-    redirectToLogin(reason = '') {
-        console.log(`🔒 Security Agent: Redirecting to login - ${reason}`);
-        
-        // Store redirect reason for login page
-        sessionStorage.setItem('login_redirect_reason', reason);
-        
-        // Redirect to login
-        window.location.replace('login-cypher.html');
-    }
-    
-    setupSecurityListeners() {
-        // Prevent multiple tab login issues
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'cc_user_session' && !e.newValue) {
-                console.warn('🔒 Security Agent: Session cleared in another tab');
-                this.redirectToLogin('Session cleared in another tab');
-            }
-        });
-        
-        // Handle page visibility changes
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                // Page became visible - verify session
-                if (!this.verifyAuthentication()) {
-                    return; // Will redirect if invalid
-                }
-            }
-        });
-        
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', () => {
-            this.verifyAuthentication();
-        });
-    }
-    
-    initializeSecureNavigation() {
-        // Intercept all navigation attempts
-        const originalPushState = history.pushState;
-        const originalReplaceState = history.replaceState;
-        
-        history.pushState = function(...args) {
-            if (window.commandCenterSecurity) {
-                window.commandCenterSecurity.updateLastActivity();
-            }
-            return originalPushState.apply(history, args);
-        };
-        
-        history.replaceState = function(...args) {
-            if (window.commandCenterSecurity) {
-                window.commandCenterSecurity.updateLastActivity();
-            }
-            return originalReplaceState.apply(history, args);
-        };
-        
-        // Secure all module links
-        document.querySelectorAll('a[href]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                
-                // Skip external links and anchors
-                if (href.startsWith('http') || href.startsWith('#')) {
-                    return;
-                }
-                
-                // Verify authentication before navigation
-                if (!this.verifyAuthentication()) {
-                    e.preventDefault();
-                    return;
-                }
-                
-                this.updateLastActivity();
-            });
-        });
-    }
-    
+
     startSecurityMonitoring() {
-        // Check authentication every 5 minutes
-        setInterval(() => {
-            if (!this.verifyAuthentication()) {
-                console.warn('🔒 Security Agent: Periodic auth check failed');
-            }
-        }, 5 * 60 * 1000);
-        
-        // Monitor for suspicious activity
+        // Monitor for suspicious activity only (no auth checks)
         let rapidClickCount = 0;
         let rapidClickTimer;
-        
+
         document.addEventListener('click', () => {
             rapidClickCount++;
-            
+
             clearTimeout(rapidClickTimer);
             rapidClickTimer = setTimeout(() => {
                 rapidClickCount = 0;
             }, 1000);
-            
-            // If too many clicks in short time, it might be automated
+
             if (rapidClickCount > 20) {
-                console.warn('🔒 Security Agent: Suspicious rapid clicking detected');
+                console.warn('Security: Suspicious rapid clicking detected');
                 this.showSecurityNotification('Unusual activity detected', 'warning');
             }
         });
     }
-    
-    // Security utility functions
+
     createSecurityModal(title, content, allowOutsideClose = true) {
         const modal = document.createElement('div');
         modal.className = 'security-modal-overlay';
@@ -354,7 +203,7 @@ class CommandCenterSecurity {
             z-index: 99999;
             backdrop-filter: blur(8px);
         `;
-        
+
         const modalContent = document.createElement('div');
         modalContent.style.cssText = `
             background: white;
@@ -366,17 +215,16 @@ class CommandCenterSecurity {
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             border: 2px solid #e74c3c;
         `;
-        
+
         modalContent.innerHTML = `
             <div style="padding: 20px; border-bottom: 1px solid #eee; background: #e74c3c; color: white;">
                 <h2 style="margin: 0;">${title}</h2>
             </div>
             ${content}
         `;
-        
+
         modal.appendChild(modalContent);
-        
-        // Handle outside clicks
+
         if (allowOutsideClose) {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -384,21 +232,21 @@ class CommandCenterSecurity {
                 }
             });
         }
-        
+
         return modal;
     }
-    
+
     showSecurityNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `security-notification security-notification-${type}`;
-        
+
         const colors = {
             info: '#3498db',
-            success: '#27ae60', 
+            success: '#27ae60',
             warning: '#f39c12',
             error: '#e74c3c'
         };
-        
+
         notification.style.cssText = `
             position: fixed;
             top: 20px;
@@ -414,56 +262,45 @@ class CommandCenterSecurity {
             border-left: 4px solid rgba(255, 255, 255, 0.3);
             font-weight: 600;
         `;
-        
+
         notification.innerHTML = `
             <div style="display: flex; align-items: center;">
                 <span style="margin-right: 10px;">${type === 'error' ? '🚨' : type === 'warning' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️'}</span>
                 ${message}
             </div>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 100);
-        
+
         setTimeout(() => {
             notification.style.transform = 'translateX(400px)';
             setTimeout(() => notification.remove(), 300);
         }, 4000);
     }
-    
-    // Public security methods
+
+    // Public methods (backward compatible, but auth-neutral)
     getCurrentUser() {
-        const userSession = localStorage.getItem('cc_user_session');
-        if (userSession) {
-            try {
-                return JSON.parse(userSession);
-            } catch (e) {
-                console.error('🔒 Security Agent: Error parsing user session:', e);
-            }
+        // Delegate to Supabase
+        if (window.SupabaseAuth && window.SupabaseAuth.getCurrentUser) {
+            return window.SupabaseAuth.getCurrentUser();
         }
         return null;
     }
-    
+
     isUserAuthenticated() {
-        return this.verifyAuthentication();
+        // Always return true - Supabase handles actual auth
+        return true;
     }
-    
+
     getSessionTimeRemaining() {
-        const session = this.getCurrentUser();
-        if (!session || !session.lastActivity) {
-            return this.sessionTimeout; // Full time if no activity recorded
-        }
-        
-        const now = Date.now();
-        const lastActivity = new Date(session.lastActivity).getTime();
-        const elapsed = now - lastActivity;
-        
-        return Math.max(0, this.sessionTimeout - elapsed);
+        // Return remaining time until UI timeout warning
+        return this.sessionTimeout;
     }
-    
+
     formatTimeRemaining(milliseconds) {
         const minutes = Math.floor(milliseconds / 60000);
         const seconds = Math.floor((milliseconds % 60000) / 1000);
@@ -473,30 +310,6 @@ class CommandCenterSecurity {
 
 // Initialize Security when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔒 Security Agent: Initializing Command Center security...');
+    console.log('Security: Initializing Command Center security...');
     window.commandCenterSecurity = new CommandCenterSecurity();
 });
-
-// Add security status to system status section
-function addSecurityStatus() {
-    const statusSection = document.querySelector('.activity-section:last-child');
-    if (statusSection && window.commandCenterSecurity) {
-        const timeRemaining = window.commandCenterSecurity.getSessionTimeRemaining();
-        const timeFormatted = window.commandCenterSecurity.formatTimeRemaining(timeRemaining);
-        
-        const securityDiv = document.createElement('div');
-        securityDiv.style.cssText = 'display: flex; align-items: center; justify-content: space-between; margin-top: 10px;';
-        securityDiv.innerHTML = `
-            <span>Session Time</span>
-            <span class="status-indicator status-online">${timeFormatted}</span>
-        `;
-        
-        const statusGrid = statusSection.querySelector('div[style*="grid"]');
-        if (statusGrid) {
-            statusGrid.appendChild(securityDiv);
-        }
-    }
-}
-
-// Add security status after initialization
-setTimeout(addSecurityStatus, 1000);

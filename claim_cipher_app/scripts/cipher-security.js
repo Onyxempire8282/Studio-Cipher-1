@@ -49,26 +49,25 @@ class CipherSecurity {
   }
 
   handleSessionExpiry() {
-    // showCipherNotification('Session expired for security. Please log in again.', 'warning');
-    console.log("⚠️ Session expired for security. Please log in again.");
+    // DISABLED: Session expiry now handled by Supabase Auth
+    // Only perform localStorage cleanup (no auth decisions)
+    console.log("⚠️ Session timeout - delegating to Supabase Auth");
 
-    setTimeout(() => {
+    // Use Supabase signOut if available
+    if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+      window.SupabaseAuth.signOut();
+    } else {
+      // Fallback cleanup only
       localStorage.removeItem("cipher_authenticated");
       window.location.href = "./login-cypher.html";
-    }, 3000);
+    }
   }
 
   validateSession() {
-    const authenticated = localStorage.getItem("cipher_authenticated");
-    const loginTime = localStorage.getItem("cipher_login_time");
-
-    if (authenticated && loginTime) {
-      const sessionAge = Date.now() - parseInt(loginTime);
-      if (sessionAge > this.sessionTimeout) {
-        this.handleSessionExpiry();
-        return false;
-      }
-    }
+    // DISABLED: No localStorage auth decisions
+    // Supabase Auth handles all session validation via protectPage()
+    // This method is kept for backward compatibility but performs NO auth checks
+    console.log("validateSession: Delegated to Supabase Auth (no localStorage auth)");
     return true;
   }
 

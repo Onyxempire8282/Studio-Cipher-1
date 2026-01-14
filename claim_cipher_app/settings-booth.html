@@ -246,20 +246,33 @@
         </div>
     </main>
 
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <!-- Supabase Page Protection - MUST run before page renders -->
+    <script>
+    (async function() {
+        // Hide body until auth verified
+        document.body.style.visibility = 'hidden';
+        const allowed = await window.SupabaseAuth.protectPage();
+        if (allowed) {
+            document.body.style.visibility = 'visible';
+        }
+    })();
+    </script>
+
     <script src="scripts/cipher-core.js"></script>
     <script src="scripts/enhanced-navigation.js"></script>
     <script src="scripts/cipher-content.js"></script>
     <script src="scripts/cipher-security.js"></script>
     <script src="scripts/settings-manager.js"></script>
     <script>
-        // Check authentication with fallback for development
-        if (localStorage.getItem('cipher_authenticated') !== 'true') {
-            // Auto-authenticate for development/demo purposes
-            console.log('🔒 Auto-authenticating for development access');
-            localStorage.setItem('cipher_authenticated', 'true');
-            localStorage.setItem('cipher_user_name', 'Demo User');
-            localStorage.setItem('cipher_user_role', 'Claims Specialist');
-        }
+        // DISABLED: No localStorage auth decisions
+        // Supabase Auth handles all authentication via protectPage() above
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeCipherUserContext();
@@ -267,7 +280,7 @@
             initializeCipherContent();
             initializeCipherSecurity();
             setupCipherLogoutHandler();
-            
+
             // Settings initialization complete
             console.log('⚙️ Settings Booth loaded');
         });

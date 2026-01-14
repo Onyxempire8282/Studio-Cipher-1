@@ -18,6 +18,7 @@ class MileageCypherCalculator {
     this.loadFirmsToDropdown();
     this.setupAutoCalculation();
     this.loadUserHomeLocation();
+    this.initializeGooglePlacesAutocomplete();
     this.checkForRouteImport();
     console.log("🧮 Mileage Cypher Calculator ready!");
   }
@@ -267,6 +268,56 @@ class MileageCypherCalculator {
     }
 
     console.log("🧮 Auto-calculation setup complete");
+  }
+
+  initializeGooglePlacesAutocomplete() {
+    // Wait for Google Maps API to load
+    if (typeof google === "undefined" || !google.maps || !google.maps.places) {
+      console.log("🧮 Google Places not available - autocomplete disabled");
+      return;
+    }
+
+    const pointAInput = document.getElementById("pointA");
+    const pointBInput = document.getElementById("pointB");
+
+    if (pointAInput) {
+      const autocompleteA = new google.maps.places.Autocomplete(pointAInput, {
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+      });
+
+      autocompleteA.addListener("place_changed", () => {
+        const place = autocompleteA.getPlace();
+        if (place.formatted_address) {
+          pointAInput.value = place.formatted_address;
+          // Save as home location
+          this.settings.homeLocation = place.formatted_address;
+          this.saveSettings();
+          console.log("🧮 Home location updated:", place.formatted_address);
+        }
+      });
+
+      console.log("🧮 Google Places Autocomplete enabled for Point A");
+    }
+
+    if (pointBInput) {
+      const autocompleteB = new google.maps.places.Autocomplete(pointBInput, {
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+      });
+
+      autocompleteB.addListener("place_changed", () => {
+        const place = autocompleteB.getPlace();
+        if (place.formatted_address) {
+          pointBInput.value = place.formatted_address;
+          console.log("🧮 Destination selected:", place.formatted_address);
+          // Trigger auto-distance calculation
+          setTimeout(() => this.triggerAutoDistance(), 300);
+        }
+      });
+
+      console.log("🧮 Google Places Autocomplete enabled for Point B");
+    }
   }
 
   debounceAutoCalculate() {
@@ -1174,9 +1225,14 @@ function closeRouteImportModal() {
   }
 }
 
-function handleLogout() {
-  // Placeholder for logout functionality
+async function handleLogout() {
+  // Delegate to Supabase Auth for proper session termination
   console.log("🧮 Logout requested");
+  if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+    await window.SupabaseAuth.signOut();
+  } else {
+    window.location.href = './login-cypher.html';
+  }
 }
 
 // Initialize when DOM is ready

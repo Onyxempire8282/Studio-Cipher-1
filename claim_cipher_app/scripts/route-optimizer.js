@@ -321,22 +321,25 @@ class RouteOptimizer {
         unitSystem: google.maps.UnitSystem.IMPERIAL,
         avoidHighways: false,
         avoidTolls: false,
-        // Optimization preference: true for distance, false for time
-        drivingOptions: {
-          departureTime: new Date(),
-          trafficModel: optimizeByDistance
-            ? google.maps.TrafficModel.BEST_GUESS
-            : google.maps.TrafficModel.OPTIMISTIC,
-        },
+        // NOTE: No drivingOptions/departureTime - uses static durations only
+        // ETA calculated locally from static duration values returned by API
       };
 
       this.directionsService.route(request, (result, status) => {
-        if (status === "OK") {
-          const optimizedRoute = this.processDirectionsResult(result);
-          resolve(optimizedRoute);
-        } else {
+        // Defensive guard: check for API failures
+        if (
+          status !== google.maps.DirectionsStatus.OK ||
+          !result ||
+          !result.routes ||
+          result.routes.length === 0
+        ) {
+          console.error("Directions API failed:", status, result);
           reject(new Error(`Directions request failed: ${status}`));
+          return;
         }
+
+        const optimizedRoute = this.processDirectionsResult(result);
+        resolve(optimizedRoute);
       });
     });
   }
@@ -493,7 +496,7 @@ class RouteOptimizer {
           score = distance + (distance > 100 ? distance * 2 : 0);
           break;
         case "urban":
-          // Urban: Time is primary concern (traffic, quick routes, stop density)
+          // Urban: Time is primary concern (quick routes, stop density)
           // Factor in appointment efficiency and return journey
           score = time + (time > 45 ? time * 1.5 : 0);
           break;
@@ -708,11 +711,11 @@ class RouteOptimizer {
     let timeMultiplier;
     switch (territoryType) {
       case "rural":
-        // Rural: Faster speeds, less traffic, ~1.2 min/mile
+        // Rural: Faster speeds, highway driving, ~1.2 min/mile
         timeMultiplier = 1.2;
         break;
       case "urban":
-        // Urban: Traffic, lights, slower speeds, ~2.8 min/mile
+        // Urban: Lights, intersections, slower speeds, ~2.8 min/mile
         timeMultiplier = 2.8;
         break;
       case "mixed":
@@ -722,7 +725,7 @@ class RouteOptimizer {
         break;
     }
 
-    // Add traffic variability for longer distances
+    // Add time buffer for longer distances (highway transitions)
     if (distance > 50) {
       timeMultiplier *= 1.1; // 10% longer for highway stretches
     }

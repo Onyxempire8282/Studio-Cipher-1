@@ -121,22 +121,24 @@ class CommandCenterManager {
         this.navigateToModule('functionality-test.html');
     }
     
-    handleLogout() {
+    async handleLogout() {
         if (confirm('Are you sure you want to logout?')) {
             console.log('📝 Lyricist: User logout initiated');
             this.logActivity('User logged out', 'auth');
-            
-            // Clear session data
-            localStorage.removeItem('cc_user_session');
-            localStorage.removeItem('cc_auth_token');
-            
+
             // Show logout message
             this.showNotification('Logged out successfully', 'success');
-            
-            // Redirect after brief delay
-            setTimeout(() => {
+
+            // Use Supabase signOut - MUST await to ensure session is terminated
+            if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+                await window.SupabaseAuth.signOut();
+                // signOut() handles redirect after session termination
+            } else {
+                // Fallback: Clear session data and redirect
+                localStorage.removeItem('cc_user_session');
+                localStorage.removeItem('cc_auth_token');
                 window.location.href = 'login-cypher.html';
-            }, 1500);
+            }
         }
     }
     
@@ -1104,9 +1106,12 @@ function quickTest() {
     }
 }
 
-function handleLogout() {
+async function handleLogout() {
     if (window.commandCenter) {
-        window.commandCenter.handleLogout();
+        await window.commandCenter.handleLogout();
+    } else if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+        // Direct Supabase signOut fallback
+        await window.SupabaseAuth.signOut();
     }
 }
 

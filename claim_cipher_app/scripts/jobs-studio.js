@@ -1,70 +1,87 @@
 // 🎵 Lyricist Agent: Jobs Studio Professional Management System
-// Studio Cipher - Advanced Job Management with Mobile Integration + Supabase
+// Studio Cipher - Advanced Job Management with Mobile Integration
+
+// ============================================================================
+// DISTRO GUARD: Supabase Database functionality is DISABLED for distribution.
+// Only Supabase Auth (via supabase-auth.js) is active.
+// To enable database features, set JOBS_STUDIO_SUPABASE_ENABLED = true
+// and configure proper credentials in supabase-config.js
+// ============================================================================
+const JOBS_STUDIO_SUPABASE_ENABLED = false;
 
 class JobsStudioManager {
   constructor() {
     this.jobs = [];
     this.activeFilter = "all";
     this.isLoading = false;
-    this.syncStatus = "connected";
+    this.syncStatus = "offline"; // Changed: default to offline for distro
     this.modalOpen = false;
     this.supabase = null;
     this.realtimeSubscription = null;
 
     console.log(
-      "🎵 Lyricist: Initializing Jobs Studio Manager with Supabase..."
+      "🎵 Lyricist: Initializing Jobs Studio Manager (local mode)..."
     );
     this.init();
   }
 
   async init() {
-    // Initialize Supabase client
-    await this.initializeSupabase();
-
-    // Load jobs from Supabase
-    await this.fetchJobs();
+    // DISTRO: Supabase DB disabled - use local demo data only
+    if (JOBS_STUDIO_SUPABASE_ENABLED) {
+      await this.initializeSupabase();
+      await this.fetchJobs();
+      this.setupRealtimeSync();
+    } else {
+      console.log("📋 Jobs Studio: Running in local mode (Supabase DB disabled)");
+      this.loadDemoJobs();
+    }
 
     this.setupEventListeners();
     this.setupKeyboardShortcuts();
     this.renderJobs();
     this.updateQuickStats();
-    this.startAutoSync();
 
-    // Set up real-time sync
-    this.setupRealtimeSync();
+    // Only start auto-sync if Supabase is enabled
+    if (JOBS_STUDIO_SUPABASE_ENABLED && this.supabase) {
+      this.startAutoSync();
+    }
 
     this.showNotification(
-      "Jobs Studio ready with live Supabase sync! 🎵",
+      JOBS_STUDIO_SUPABASE_ENABLED
+        ? "Jobs Studio ready with live sync! 🎵"
+        : "Jobs Studio ready (local mode) 🎵",
       "success"
     );
   }
 
   async initializeSupabase() {
-    try {
-      // Get Supabase credentials from localStorage
-      const supabaseUrl = localStorage.getItem("supabase_url");
-      const supabaseKey = localStorage.getItem("supabase_anon_key");
+    // DISTRO GUARD: Only runs if JOBS_STUDIO_SUPABASE_ENABLED = true
+    if (!JOBS_STUDIO_SUPABASE_ENABLED) {
+      console.log("📋 Supabase DB disabled for distribution safety");
+      return;
+    }
 
-      if (!supabaseUrl || !supabaseKey) {
-        console.warn(
-          "⚠️ Supabase credentials not found in localStorage. Using demo mode."
-        );
+    try {
+      // Read credentials from supabase-config.js (NOT localStorage)
+      const config = window.SUPABASE_CONFIG;
+      if (!config || !config.url || config.url === 'YOUR_SUPABASE_URL') {
+        console.warn("⚠️ Supabase not configured in supabase-config.js");
         this.showNotification(
-          "⚠️ Supabase not configured. Using demo mode.",
+          "⚠️ Supabase not configured. Using local mode.",
           "warning"
         );
         return;
       }
 
-      // Create Supabase client
-      this.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+      // Create Supabase client from config (not localStorage)
+      this.supabase = window.supabase.createClient(config.url, config.anonKey);
 
       console.log("✅ Supabase client initialized successfully");
       this.showNotification("✅ Connected to Supabase database", "success");
     } catch (error) {
       console.error("❌ Failed to initialize Supabase:", error);
       this.showNotification(
-        "❌ Failed to connect to Supabase. Using demo mode.",
+        "❌ Failed to connect to Supabase. Using local mode.",
         "error"
       );
     }

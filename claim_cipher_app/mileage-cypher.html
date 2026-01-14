@@ -13,7 +13,7 @@
     <!-- Professional Calculator Interface -->
     <link rel="stylesheet" href="styles/professional-calculator.css" />
   </head>
-  <body class="mileage-page">
+  <body class="mileage-page" style="visibility: hidden;">
     <header class="cipher-header">
       <div class="header-content">
         <div class="app-brand">
@@ -352,6 +352,25 @@
 
     <script src="config/api-config-production.js"></script>
 
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <!-- Supabase Page Protection - MUST run before page renders -->
+    <script>
+    (async function() {
+        // Body is hidden via style="visibility: hidden;" on body tag
+        const allowed = await window.SupabaseAuth.protectPage();
+        if (allowed) {
+            document.body.style.visibility = 'visible';
+        }
+        // If not allowed, protectPage() redirects and body stays hidden
+    })();
+    </script>
+
     <!-- Google Maps API Loader -->
     <script>
       // Load Google Maps API if key is configured
@@ -366,8 +385,13 @@
         }&libraries=${window.GOOGLE_MAPS_CONFIG.libraries.join(",")}`;
         script.async = true;
         script.defer = true;
-        script.onload = () =>
+        script.onload = () => {
           console.log("🗺️ Google Maps API loaded for Mileage Cypher");
+          // Initialize Places Autocomplete after API loads
+          if (window.mileageCalculator) {
+            window.mileageCalculator.initializeGooglePlacesAutocomplete();
+          }
+        };
         script.onerror = () =>
           console.error("🗺️ Failed to load Google Maps API");
         document.head.appendChild(script);

@@ -11,7 +11,7 @@
     <!-- Page Layout - Command Center specific -->
     <link rel="stylesheet" href="styles/command-center-layout.css">
 </head>
-<body>
+<body style="visibility: hidden;">
     <!-- Designer Agent: Modern Header -->
     <header class="command-header cipher-header">
         <div class="header-content">
@@ -313,9 +313,28 @@
         }
     </style>
 
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <!-- Supabase Page Protection - MUST run before page renders -->
+    <script>
+    (async function() {
+        // Body is hidden via style="visibility: hidden;" on body tag
+        const allowed = await window.SupabaseAuth.protectPage();
+        if (allowed) {
+            document.body.style.visibility = 'visible';
+        }
+        // If not allowed, protectPage() redirects and body stays hidden
+    })();
+    </script>
+
     <!-- Core Scripts -->
     <script src="scripts/cipher-core.js"></script>
-    
+
     <script src="scripts/command-center-security.js"></script>
     <script src="scripts/command-center.js"></script>
     <script src="scripts/command-center-tests.js"></script>
