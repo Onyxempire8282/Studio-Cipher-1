@@ -20,7 +20,20 @@ class MileageCypherCalculator {
     this.loadUserHomeLocation();
     this.initializeGooglePlacesAutocomplete();
     this.checkForRouteImport();
+
+    // Check for demo mode and initialize if active
+    if (this.isDemoMode()) {
+      setTimeout(() => this.initializeDemoMode(), 300);
+    }
+
     console.log("🧮 Mileage Cypher Calculator ready!");
+  }
+
+  /**
+   * Check if demo mode is active
+   */
+  isDemoMode() {
+    return sessionStorage.getItem('demo_mode') === 'true';
   }
 
   initializeSettings() {
@@ -1211,6 +1224,117 @@ class MileageCypherCalculator {
       console.log(`🧮 ${type.toUpperCase()}: ${message}`);
     }
   }
+
+  // =================================
+  // DEMO MODE FUNCTIONALITY
+  // =================================
+
+  /**
+   * Initialize demo mode with seeded data and locked inputs
+   */
+  initializeDemoMode() {
+    console.log('🎭 Demo mode detected - initializing demo mileage data');
+
+    // Demo mileage entries - 3 California, 3 Oklahoma
+    const demoEntries = [
+      { from: '111 S Grand Ave, Los Angeles, CA 90012', to: '1 Market St, San Francisco, CA 94105', miles: 382.5 },
+      { from: '1 Market St, San Francisco, CA 94105', to: '600 W Broadway, San Diego, CA 92101', miles: 502.3 },
+      { from: '600 W Broadway, San Diego, CA 92101', to: '111 S Grand Ave, Los Angeles, CA 90012', miles: 120.8 },
+      { from: '100 W Main St, Oklahoma City, OK 73102', to: '401 S Boston Ave, Tulsa, OK 74103', miles: 107.2 },
+      { from: '401 S Boston Ave, Tulsa, OK 74103', to: '15 W 6th St, Stillwater, OK 74074', miles: 68.5 },
+      { from: '15 W 6th St, Stillwater, OK 74074', to: '100 W Main St, Oklahoma City, OK 73102', miles: 65.3 }
+    ];
+
+    // Select a demo firm
+    const firmSelect = document.getElementById('firmSelect');
+    if (firmSelect && firmSelect.options.length > 1) {
+      firmSelect.value = this.settings.firms[0]?.id || '';
+      firmSelect.disabled = true;
+      this.onFirmChange(firmSelect.value);
+    }
+
+    // Set demo starting location and destination
+    const pointA = document.getElementById('pointA');
+    const pointB = document.getElementById('pointB');
+    const distanceInput = document.getElementById('distanceMiles');
+    const roundTrip = document.getElementById('roundTrip');
+    const noteField = document.getElementById('noteField');
+
+    if (pointA) {
+      pointA.value = demoEntries[0].from;
+      pointA.disabled = true;
+    }
+    if (pointB) {
+      pointB.value = demoEntries[0].to;
+      pointB.disabled = true;
+    }
+    if (distanceInput) {
+      distanceInput.value = demoEntries[0].miles;
+      distanceInput.disabled = true;
+    }
+    if (roundTrip) {
+      roundTrip.checked = true;
+      roundTrip.disabled = true;
+    }
+    if (noteField) {
+      noteField.value = 'Demo inspection - San Francisco to Los Angeles';
+      noteField.disabled = true;
+    }
+
+    // Lock management buttons
+    const manageFirmsBtn = document.getElementById('manageFirms');
+    if (manageFirmsBtn) {
+      manageFirmsBtn.disabled = true;
+      manageFirmsBtn.title = 'Disabled in demo mode';
+    }
+
+    // Disable new calculation button's clearing functionality
+    const newCalcBtn = document.getElementById('newCalculation');
+    if (newCalcBtn) {
+      newCalcBtn.disabled = true;
+      newCalcBtn.title = 'Disabled in demo mode';
+    }
+
+    // Show demo mode banner
+    this.showDemoModeBanner();
+
+    // Auto-calculate to show results
+    setTimeout(() => {
+      this.performCalculation(false);
+    }, 500);
+
+    console.log('🎭 Demo mode initialized with sample mileage data');
+  }
+
+  /**
+   * Show demo mode banner
+   */
+  showDemoModeBanner() {
+    const formSection = document.querySelector('.calculator-form');
+    if (formSection && !document.getElementById('demoModeBanner')) {
+      const banner = document.createElement('div');
+      banner.id = 'demoModeBanner';
+      banner.style.cssText = `
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.1));
+        border: 1px solid rgba(255, 193, 7, 0.4);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+      `;
+      banner.innerHTML = `
+        <span style="font-size: 1.2rem;">🎭</span>
+        <div>
+          <strong style="color: #ffc107;">Demo Mode:</strong>
+          <span style="color: var(--cipher-text-secondary);">Example calculation shown. Upgrade to use your own data.</span>
+        </div>
+      `;
+      formSection.insertBefore(banner, formSection.firstChild);
+    }
+  }
 }
 
 // Global Functions for HTML onclick handlers
@@ -1226,8 +1350,20 @@ function closeRouteImportModal() {
 }
 
 async function handleLogout() {
-  // Delegate to Supabase Auth for proper session termination
   console.log("🧮 Logout requested");
+
+  // Demo mode logout - clear demo state and redirect (no Supabase session)
+  if (sessionStorage.getItem('demo_mode') === 'true') {
+    console.log('🎭 Demo mode logout - clearing demo state');
+    sessionStorage.removeItem('demo_mode');
+    sessionStorage.removeItem('claimCipherAuth');
+    localStorage.removeItem('cipher_last_route');
+    localStorage.removeItem('cipher_routes_by_day');
+    window.location.replace('login-cypher.html');
+    return;
+  }
+
+  // Delegate to Supabase Auth for proper session termination
   if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
     await window.SupabaseAuth.signOut();
   } else {

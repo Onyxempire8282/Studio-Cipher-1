@@ -299,6 +299,15 @@
                   </span>
                 </button>
               </div>
+              <div class="form-actions-secondary" style="margin-top: var(--cipher-space-md); text-align: center;">
+                <button
+                  type="button"
+                  onclick="window.routeOptimizer && window.routeOptimizer.clearSavedRoutes()"
+                  style="background: transparent; border: none; color: var(--cipher-text-muted); font-size: 0.75rem; cursor: pointer; text-decoration: underline; padding: var(--cipher-space-xs);"
+                >
+                  Clear Saved Routes
+                </button>
+              </div>
             </div>
           </div>
 
@@ -440,11 +449,19 @@
           </div>
           <div class="modal-actions">
             <button
+              id="editDayBtn"
               class="modal-btn modal-btn-secondary"
-              onclick="closeRouteModal()"
+              onclick="editActiveDay()"
             >
               <span>📝</span>
-              <span>Edit Route</span>
+              <span id="editDayBtnText">Edit Day 1</span>
+            </button>
+            <button
+              class="modal-btn modal-btn-secondary"
+              onclick="window.routeOptimizer.showSaveDayModal()"
+            >
+              <span>💾</span>
+              <span>Save Day</span>
             </button>
             <button
               class="modal-btn modal-btn-primary"
@@ -525,6 +542,9 @@
 
     <!-- Modal Control Functions -->
     <script>
+      // Track the currently active day in the modal
+      let activeModalDayIndex = 0;
+
       // Global functions for modal control
       function closeRouteModal() {
         const modal = document.getElementById("routeMapModal");
@@ -538,6 +558,10 @@
           return;
         }
 
+        // Track the active day
+        activeModalDayIndex = dayIndex;
+        window.routeOptimizer.activeModalDay = dayIndex;
+
         // Update active tab
         document.querySelectorAll(".day-tab").forEach((tab, index) => {
           if (index === dayIndex) {
@@ -546,6 +570,12 @@
             tab.classList.remove("active");
           }
         });
+
+        // Update the Edit Day button label
+        const editBtnText = document.getElementById("editDayBtnText");
+        if (editBtnText) {
+          editBtnText.textContent = `Edit Day ${dayIndex + 1}`;
+        }
 
         // Show timeline and map for selected day
         window.routeOptimizer.showDayTimeline(
@@ -559,9 +589,17 @@
         );
       }
 
+      // Edit the currently active day
+      function editActiveDay() {
+        if (window.routeOptimizer) {
+          window.routeOptimizer.editDayRoute(activeModalDayIndex);
+        }
+      }
+
       function exportRouteFromModal() {
-        // TODO: Implement export functionality
-        alert("Export functionality coming soon!");
+        if (window.routeOptimizer) {
+          window.routeOptimizer.showSaveDayModal();
+        }
       }
     </script>
 

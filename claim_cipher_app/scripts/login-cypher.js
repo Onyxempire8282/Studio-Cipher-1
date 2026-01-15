@@ -404,26 +404,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // LYRICIST FIX 4: Demo mode functionality
+    // LYRICIST FIX 4: Demo mode functionality (session-based, no persistence)
     if (demoCipherBtn) {
         demoCipherBtn.addEventListener('click', function(e) {
             e.preventDefault();
             console.log('🎵 LYRICIST: Demo mode activated');
-            
-            // Store demo authentication
-            const demoAuth = {
-                email: 'demo@claimcipher.com',
-                type: 'demo',
-                loginTime: Date.now(),
-                expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-            };
-            sessionStorage.setItem('claimCipherAuth', JSON.stringify(demoAuth));
-            
-            showSuccess('Demo mode activated! Welcome to Claim Cipher.');
-            
-            setTimeout(() => {
-                window.location.href = 'command-center.html';
-            }, 1500);
+
+            // Enable demo mode via sessionStorage (checked by router + mileage tools)
+            sessionStorage.setItem('demo_mode', 'true');
+
+            // Ensure clean demo state - no auth, no persisted routes
+            sessionStorage.removeItem('claimCipherAuth');
+            localStorage.removeItem('cipher_last_route');
+            localStorage.removeItem('cipher_routes_by_day');
+
+            // Immediate redirect - no setTimeout, no delays
+            window.location.replace('command-center.html');
         });
     }
 

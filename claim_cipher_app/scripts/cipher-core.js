@@ -193,6 +193,17 @@ function generateCipherDemoData() {
 async function handleLogout() {
     console.log('🚪 User signing out of cipher');
 
+    // Demo mode logout - clear demo state and redirect (no Supabase session)
+    if (sessionStorage.getItem('demo_mode') === 'true') {
+        console.log('🎭 Demo mode logout - clearing demo state');
+        sessionStorage.removeItem('demo_mode');
+        sessionStorage.removeItem('claimCipherAuth');
+        localStorage.removeItem('cipher_last_route');
+        localStorage.removeItem('cipher_routes_by_day');
+        window.location.replace('login-cypher.html');
+        return;
+    }
+
     // Use Supabase Auth signOut if available (MUST be awaited)
     if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
         console.log('🚪 Delegating logout to Supabase Auth');

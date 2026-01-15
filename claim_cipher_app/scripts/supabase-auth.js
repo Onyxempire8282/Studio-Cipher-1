@@ -291,6 +291,12 @@
      * @returns {Promise<boolean>}
      */
     async function protectPage() {
+        // Demo mode bypass - allow access without auth
+        if (sessionStorage.getItem('demo_mode') === 'true') {
+            console.log('🎭 Demo mode detected — bypassing auth guards');
+            return true;
+        }
+
         const client = initSupabase();
 
         // If Supabase isn't configured, allow access (for development)
@@ -325,6 +331,13 @@
      * @returns {Promise<boolean>} - true if should stay on login page, false if redirecting
      */
     async function loginPageGuard() {
+        // Demo mode - stay on login page, let demo button handle redirect
+        if (sessionStorage.getItem('demo_mode') === 'true') {
+            console.log('🎭 Demo mode active — redirecting to dashboard');
+            window.location.replace('command-center.html');
+            return false;
+        }
+
         const client = initSupabase();
 
         // If Supabase isn't configured, stay on login page
@@ -427,6 +440,18 @@
 
     // Override global handleLogout function
     window.handleLogout = function() {
+        // Demo mode logout - clear demo state and redirect (no Supabase session)
+        if (sessionStorage.getItem('demo_mode') === 'true') {
+            console.log('🎭 Demo mode logout - clearing demo state');
+            sessionStorage.removeItem('demo_mode');
+            sessionStorage.removeItem('claimCipherAuth');
+            localStorage.removeItem('cipher_last_route');
+            localStorage.removeItem('cipher_routes_by_day');
+            window.location.replace('login-cypher.html');
+            return;
+        }
+
+        // Authenticated user logout via Supabase
         console.log('Logout initiated via Supabase Auth');
         window.SupabaseAuth.signOut();
     };

@@ -31,6 +31,140 @@ class RouteOptimizer {
     this.initializeGooglePlacesAutocomplete();
     this.initializeDropZone();
     this.loadSavedClaims();
+
+    // Track active day for modal editing
+    this.activeModalDay = 0;
+
+    // Check for demo mode first, then saved routes
+    if (this.isDemoMode()) {
+      setTimeout(() => this.initializeDemoMode(), 300);
+    } else {
+      // Check for saved routes on page load (after short delay for DOM)
+      setTimeout(() => this.checkForSavedRoutes(), 500);
+    }
+  }
+
+  // =================================
+  // DEMO MODE FUNCTIONALITY
+  // =================================
+
+  /**
+   * Initialize demo mode with seeded data and locked inputs
+   */
+  initializeDemoMode() {
+    console.log('🎭 Demo mode detected - initializing demo route data');
+
+    // Demo addresses - 3 Texas, 3 Florida
+    const demoAddresses = [
+      '100 Congress Ave, Austin, TX 78701',
+      '400 Main St, Houston, TX 77002',
+      '210 W Rusk St, Fort Worth, TX 76104',
+      '200 S Orange Ave, Orlando, FL 32801',
+      '701 Brickell Ave, Miami, FL 33131',
+      '100 N Ashley Dr, Tampa, FL 33602'
+    ];
+
+    // Set demo starting location
+    const startInput = document.getElementById('startLocation');
+    if (startInput) {
+      startInput.value = '100 Congress Ave, Austin, TX 78701';
+      startInput.disabled = true;
+    }
+
+    // Clear existing destinations and add demo addresses
+    const destList = document.getElementById('destinationsList');
+    if (destList) {
+      destList.innerHTML = '';
+
+      // Add remaining addresses as destinations (skip first as it's starting point)
+      demoAddresses.slice(1).forEach((address, index) => {
+        const destDiv = document.createElement('div');
+        destDiv.className = 'destination-input';
+        destDiv.innerHTML = `
+          <input type="text" placeholder="Enter destination address" class="destination-address-input" value="${address}" disabled>
+          <div class="destination-controls">
+            <select class="priority-select" title="Set priority level" disabled>
+              <option value="normal" ${index < 2 ? 'selected' : ''}>🔵 Normal</option>
+              <option value="high" ${index === 2 ? 'selected' : ''}>🟡 High</option>
+              <option value="urgent" ${index > 2 ? 'selected' : ''}>🔴 Urgent</option>
+            </select>
+            <button class="remove-btn" onclick="return false;" title="Disabled in demo" disabled>×</button>
+          </div>
+        `;
+        destList.appendChild(destDiv);
+      });
+    }
+
+    // Disable Add Destination button
+    const addBtn = document.getElementById('addDestination');
+    if (addBtn) {
+      addBtn.disabled = true;
+      addBtn.title = 'Disabled in demo mode';
+    }
+
+    // Disable settings inputs but keep them visible
+    this.lockDemoInputs();
+
+    // Add demo mode banner
+    this.showDemoModeBanner();
+
+    // Store demo data to instance state for persistence compatibility
+    this.startLocation = '100 Congress Ave, Austin, TX 78701';
+    this.destinations = demoAddresses.slice(1).map((addr, i) => ({
+      address: addr,
+      priority: i < 2 ? 'normal' : (i === 2 ? 'high' : 'urgent')
+    }));
+    this.settings = this.gatherRouteData().settings;
+
+    console.log('🎭 Demo mode initialized with 6 addresses');
+  }
+
+  /**
+   * Lock inputs in demo mode
+   */
+  lockDemoInputs() {
+    // Lock all destination inputs
+    document.querySelectorAll('.destination-address-input').forEach(input => {
+      input.disabled = true;
+    });
+
+    document.querySelectorAll('.priority-select').forEach(select => {
+      select.disabled = true;
+    });
+
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.disabled = true;
+    });
+  }
+
+  /**
+   * Show demo mode banner
+   */
+  showDemoModeBanner() {
+    const formSection = document.querySelector('.optimizer-form');
+    if (formSection && !document.getElementById('demoModeBanner')) {
+      const banner = document.createElement('div');
+      banner.id = 'demoModeBanner';
+      banner.style.cssText = `
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.1));
+        border: 1px solid rgba(255, 193, 7, 0.4);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+      `;
+      banner.innerHTML = `
+        <span style="font-size: 1.2rem;">🎭</span>
+        <div>
+          <strong style="color: #ffc107;">Demo Mode:</strong>
+          <span style="color: var(--cipher-text-secondary);">Example route shown. Upgrade to use your own routes.</span>
+        </div>
+      `;
+      formSection.insertBefore(banner, formSection.firstChild);
+    }
   }
 
   setupEventListeners() {
@@ -126,6 +260,12 @@ class RouteOptimizer {
   addDestination() {
     console.log("🎵 Lyricist Emergency: Add Stop button clicked");
 
+    // Block in demo mode
+    if (this.isDemoMode()) {
+      console.log('🎭 Demo mode - cannot add destinations');
+      return;
+    }
+
     const container = document.getElementById("destinationsList");
     if (!container) {
       console.error("🎵 Lyricist: destinationsList container not found");
@@ -209,6 +349,15 @@ class RouteOptimizer {
       this.renderMapRoute(optimizedRoute, splitRoute);
 
       this.currentRoute = splitRoute;
+      this.currentOriginalRoute = optimizedRoute;
+
+      // Store route data to instance state for persistence
+      this.startLocation = routeData.startLocation;
+      this.destinations = routeData.destinations;
+      this.settings = routeData.settings;
+
+      // Auto-save route state after successful optimization
+      this.autoSaveRouteState();
 
       console.log(
         "🎵 Lyricist Emergency: Route optimization COMPLETED successfully!"
@@ -2585,6 +2734,529 @@ class RouteOptimizer {
     } catch (error) {
       console.error('Error pasting claims:', error);
       this.showError('Could not paste claims. Copy valid JSON first.');
+    }
+  }
+
+  // =================================
+  // LOCALSTORAGE ROUTE PERSISTENCE
+  // =================================
+
+  /**
+   * Check if demo mode is active
+   */
+  isDemoMode() {
+    return sessionStorage.getItem('demo_mode') === 'true';
+  }
+
+  /**
+   * Auto-save route state to localStorage on every meaningful change
+   * Key: cipher_last_route
+   */
+  autoSaveRouteState() {
+    // Don't save in demo mode
+    if (this.isDemoMode()) {
+      console.log('📁 Demo mode active - skipping auto-save');
+      return;
+    }
+
+    if (!this.currentRoute) {
+      console.log('📁 No route to save');
+      return;
+    }
+
+    try {
+      const routeState = {
+        startLocation: this.startLocation,
+        destinations: [...(this.destinations || [])],
+        territoryType: this.settings?.territoryType,
+        settings: { ...this.settings },
+        days: {},
+        route: this.currentRoute,
+        originalRoute: this.currentOriginalRoute,
+        lastUpdated: Date.now()
+      };
+
+      // Store each day's route data
+      if (this.currentRoute && this.currentRoute.days) {
+        this.currentRoute.days.forEach((day, index) => {
+          const dayName = this.getDayNameFromIndex(index);
+          routeState.days[dayName] = day;
+        });
+      }
+
+      localStorage.setItem('cipher_last_route', JSON.stringify(routeState));
+      console.log('📁 Route state auto-saved to cipher_last_route');
+    } catch (error) {
+      console.error('📁 Error auto-saving route state:', error);
+    }
+  }
+
+  /**
+   * Save a specific day's route to cipher_routes_by_day
+   * Does NOT overwrite other days
+   */
+  saveDayRoute(dayName) {
+    // Don't save in demo mode
+    if (this.isDemoMode()) {
+      this.showToast('Cannot save routes in demo mode');
+      return;
+    }
+
+    if (!this.currentRoute || !this.currentRoute.days) {
+      this.showError('No route to save');
+      return;
+    }
+
+    const dayIndex = this.getDayIndexFromName(dayName);
+    if (dayIndex === -1 || !this.currentRoute.days[dayIndex]) {
+      this.showError('Invalid day selected');
+      return;
+    }
+
+    try {
+      const existingDays = JSON.parse(localStorage.getItem('cipher_routes_by_day') || '{}');
+
+      // Save this day's complete route data using instance state
+      existingDays[dayName] = {
+        day: this.currentRoute.days[dayIndex],
+        startLocation: this.startLocation,
+        destinations: (this.destinations || []).filter((dest) => {
+          // Filter destinations for this specific day
+          const dayStops = this.currentRoute.days[dayIndex].stops;
+          return dayStops.some(stop => stop.includes(dest.address) || dest.address.includes(stop));
+        }),
+        settings: { ...this.settings },
+        savedAt: Date.now()
+      };
+
+      localStorage.setItem('cipher_routes_by_day', JSON.stringify(existingDays));
+      this.showToast(`${this.formatDayName(dayName)} route saved successfully!`);
+      console.log(`📁 Saved ${dayName} route to cipher_routes_by_day`);
+    } catch (error) {
+      console.error('📁 Error saving day route:', error);
+      this.showError('Failed to save route');
+    }
+  }
+
+  /**
+   * Check for saved routes on page load and show restore modal if found
+   */
+  checkForSavedRoutes() {
+    const savedByDay = localStorage.getItem('cipher_routes_by_day');
+    const lastRoute = localStorage.getItem('cipher_last_route');
+
+    // In demo mode, only restore if it's demo data
+    if (this.isDemoMode()) {
+      console.log('📁 Demo mode - checking for demo routes only');
+      return;
+    }
+
+    if (savedByDay || lastRoute) {
+      try {
+        const dayRoutes = savedByDay ? JSON.parse(savedByDay) : {};
+        const daysWithRoutes = Object.keys(dayRoutes);
+
+        if (daysWithRoutes.length > 0 || lastRoute) {
+          this.showRestoreModal(daysWithRoutes, !!lastRoute);
+        }
+      } catch (error) {
+        console.error('📁 Error checking saved routes:', error);
+      }
+    }
+  }
+
+  /**
+   * Show the restore route modal
+   */
+  showRestoreModal(savedDays, hasLastRoute) {
+    // Create modal HTML
+    const modalHTML = `
+      <div id="restoreRouteModal" class="route-map-modal">
+        <div class="modal-container" style="max-width: 500px; height: auto; margin: auto;">
+          <div class="modal-header">
+            <div class="modal-title">
+              <span>📂</span>
+              <span>Resume a Saved Route?</span>
+            </div>
+            <button class="modal-close-btn" onclick="window.routeOptimizer.closeRestoreModal()">×</button>
+          </div>
+          <div class="modal-content" style="padding: var(--cipher-space-xl); display: block;">
+            <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-lg);">
+              We found saved routes. Would you like to restore one?
+            </p>
+            <div class="restore-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-md);">
+              ${savedDays.map(day => `
+                <button class="restore-day-btn modal-btn modal-btn-secondary" onclick="window.routeOptimizer.restoreDayRoute('${day}')" style="justify-content: flex-start; width: 100%;">
+                  <span>📅</span>
+                  <span>Resume ${this.formatDayName(day)}</span>
+                </button>
+              `).join('')}
+              ${hasLastRoute ? `
+                <button class="restore-last-btn modal-btn modal-btn-secondary" onclick="window.routeOptimizer.restoreLastRoute()" style="justify-content: flex-start; width: 100%;">
+                  <span>🔄</span>
+                  <span>Resume Last Session</span>
+                </button>
+              ` : ''}
+              <button class="start-fresh-btn modal-btn modal-btn-primary" onclick="window.routeOptimizer.closeRestoreModal()" style="justify-content: center; width: 100%; margin-top: var(--cipher-space-md);">
+                <span>✨</span>
+                <span>Start Fresh</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Remove existing modal if any
+    const existingModal = document.getElementById('restoreRouteModal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Show modal
+    setTimeout(() => {
+      document.getElementById('restoreRouteModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }, 100);
+  }
+
+  /**
+   * Close the restore modal
+   */
+  closeRestoreModal() {
+    const modal = document.getElementById('restoreRouteModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(() => modal.remove(), 300);
+    }
+  }
+
+  /**
+   * Restore a specific day's route
+   */
+  restoreDayRoute(dayName) {
+    try {
+      const savedDays = JSON.parse(localStorage.getItem('cipher_routes_by_day') || '{}');
+      const dayData = savedDays[dayName];
+
+      if (!dayData) {
+        this.showError('Could not find saved route for ' + this.formatDayName(dayName));
+        return;
+      }
+
+      this.closeRestoreModal();
+
+      // Restore start location
+      if (dayData.startLocation) {
+        const startInput = document.getElementById('startLocation');
+        if (startInput) startInput.value = dayData.startLocation;
+      }
+
+      // Clear and restore destinations
+      const destList = document.getElementById('destinationsList');
+      if (destList) destList.innerHTML = '';
+
+      if (dayData.day && dayData.day.stops) {
+        // Restore stops (excluding first and last which are start/return)
+        const stops = dayData.day.stops.slice(1, -1);
+        stops.forEach(stop => {
+          this.addDestination();
+          const inputs = destList.querySelectorAll('.destination-address-input');
+          const lastInput = inputs[inputs.length - 1];
+          if (lastInput) lastInput.value = stop;
+        });
+      }
+
+      // Restore settings
+      if (dayData.settings) {
+        this.applySettings(dayData.settings);
+      }
+
+      // Store the restored route data
+      this.currentRoute = { days: [dayData.day], overall: this.calculateOverall([dayData.day]) };
+
+      this.showToast(`${this.formatDayName(dayName)} route restored!`);
+      console.log(`📁 Restored ${dayName} route`);
+    } catch (error) {
+      console.error('📁 Error restoring day route:', error);
+      this.showError('Failed to restore route');
+    }
+  }
+
+  /**
+   * Restore the last session's route
+   */
+  restoreLastRoute() {
+    try {
+      const lastRoute = JSON.parse(localStorage.getItem('cipher_last_route') || '{}');
+
+      if (!lastRoute.startLocation) {
+        this.showError('Could not find last route data');
+        return;
+      }
+
+      this.closeRestoreModal();
+
+      // Restore start location
+      const startInput = document.getElementById('startLocation');
+      if (startInput) startInput.value = lastRoute.startLocation;
+
+      // Clear and restore destinations
+      const destList = document.getElementById('destinationsList');
+      if (destList) destList.innerHTML = '';
+
+      if (lastRoute.destinations) {
+        lastRoute.destinations.forEach(dest => {
+          this.addDestination();
+          const inputs = destList.querySelectorAll('.destination-input');
+          const lastDest = inputs[inputs.length - 1];
+          if (lastDest) {
+            const input = lastDest.querySelector('.destination-address-input');
+            const prioritySelect = lastDest.querySelector('.priority-select');
+            if (input) input.value = dest.address;
+            if (prioritySelect) prioritySelect.value = dest.priority || 'normal';
+          }
+        });
+      }
+
+      // Restore settings
+      if (lastRoute.settings) {
+        this.applySettings(lastRoute.settings);
+      }
+
+      // Restore route data
+      if (lastRoute.route) {
+        this.currentRoute = lastRoute.route;
+        this.currentOriginalRoute = lastRoute.originalRoute;
+
+        // Show results and modal
+        this.showRouteModal(this.currentRoute, this.currentOriginalRoute);
+      }
+
+      this.showToast('Last session restored!');
+      console.log('📁 Restored last route');
+    } catch (error) {
+      console.error('📁 Error restoring last route:', error);
+      this.showError('Failed to restore route');
+    }
+  }
+
+  /**
+   * Apply settings to form fields
+   */
+  applySettings(settings) {
+    if (settings.territoryType) {
+      const el = document.getElementById('territoryType');
+      if (el) el.value = settings.territoryType;
+    }
+    if (settings.maxDailyHours) {
+      const el = document.getElementById('maxDailyHours');
+      if (el) el.value = settings.maxDailyHours;
+    }
+    if (settings.maxStopsPerDay) {
+      const el = document.getElementById('maxStopsPerDay');
+      if (el) el.value = settings.maxStopsPerDay;
+    }
+    if (settings.maxLegMiles) {
+      const el = document.getElementById('maxLegMiles');
+      if (el) el.value = settings.maxLegMiles;
+    }
+    if (settings.timePerAppointment) {
+      const el = document.getElementById('timePerAppointment');
+      if (el) el.value = settings.timePerAppointment;
+    }
+    if (settings.geographicClustering !== undefined) {
+      const el = document.getElementById('geographicClustering');
+      if (el) el.checked = settings.geographicClustering;
+    }
+    if (settings.optimizeEnabled !== undefined) {
+      const el = document.getElementById('optimizeEnabled');
+      if (el) el.checked = settings.optimizeEnabled;
+    }
+    if (settings.splitEnabled !== undefined) {
+      const el = document.getElementById('splitEnabled');
+      if (el) el.checked = settings.splitEnabled;
+    }
+  }
+
+  /**
+   * Calculate overall stats from days array
+   */
+  calculateOverall(days) {
+    const totalMiles = days.reduce((sum, day) => sum + (day.totalMiles || 0), 0);
+    const totalMinutes = days.reduce((sum, day) => sum + (day.totalMinutes || 0), 0);
+    return {
+      miles: Math.round(totalMiles * 10) / 10,
+      minutes: Math.round(totalMinutes),
+      totalDays: days.length
+    };
+  }
+
+  /**
+   * Edit a specific day's route (called from modal)
+   */
+  editDayRoute(dayIndex) {
+    if (!this.currentRoute || !this.currentRoute.days || !this.currentRoute.days[dayIndex]) {
+      this.showError('No route data for this day');
+      return;
+    }
+
+    const day = this.currentRoute.days[dayIndex];
+
+    // Close the visualization modal
+    const modal = document.getElementById('routeMapModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Clear existing destinations
+    const destList = document.getElementById('destinationsList');
+    if (destList) destList.innerHTML = '';
+
+    // Load only this day's stops into the form (excluding start and return)
+    const stops = day.stops.slice(1, -1);
+    stops.forEach(stop => {
+      this.addDestination();
+      const inputs = destList.querySelectorAll('.destination-address-input');
+      const lastInput = inputs[inputs.length - 1];
+      if (lastInput) lastInput.value = stop;
+    });
+
+    // Store which day we're editing for save functionality
+    this.editingDayIndex = dayIndex;
+
+    this.showToast(`Editing Day ${dayIndex + 1} - ${stops.length} stops loaded`);
+    console.log(`📁 Loaded Day ${dayIndex + 1} for editing`);
+  }
+
+  /**
+   * Clear all saved routes from localStorage
+   */
+  clearSavedRoutes() {
+    if (!confirm('Are you sure you want to clear all saved routes? This cannot be undone.')) {
+      return;
+    }
+
+    try {
+      localStorage.removeItem('cipher_last_route');
+      localStorage.removeItem('cipher_routes_by_day');
+      this.showToast('All saved routes cleared');
+      console.log('📁 Cleared all saved routes');
+    } catch (error) {
+      console.error('📁 Error clearing saved routes:', error);
+      this.showError('Failed to clear saved routes');
+    }
+  }
+
+  /**
+   * Get day name from index (0 = monday, etc.)
+   */
+  getDayNameFromIndex(index) {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    return days[index] || `day_${index + 1}`;
+  }
+
+  /**
+   * Get day index from name
+   */
+  getDayIndexFromName(dayName) {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const index = days.indexOf(dayName.toLowerCase());
+    return index !== -1 ? index : parseInt(dayName.replace('day_', '')) - 1;
+  }
+
+  /**
+   * Format day name for display
+   */
+  formatDayName(dayName) {
+    if (dayName.startsWith('day_')) {
+      return `Day ${dayName.replace('day_', '')}`;
+    }
+    return dayName.charAt(0).toUpperCase() + dayName.slice(1);
+  }
+
+  /**
+   * Show the save day selector modal
+   */
+  showSaveDayModal() {
+    // Don't allow in demo mode
+    if (this.isDemoMode()) {
+      this.showToast('Cannot save routes in demo mode');
+      return;
+    }
+
+    if (!this.currentRoute || !this.currentRoute.days) {
+      this.showError('No route to save');
+      return;
+    }
+
+    const modalHTML = `
+      <div id="saveDayModal" class="route-map-modal">
+        <div class="modal-container" style="max-width: 400px; height: auto; margin: auto;">
+          <div class="modal-header">
+            <div class="modal-title">
+              <span>💾</span>
+              <span>Save Day Route</span>
+            </div>
+            <button class="modal-close-btn" onclick="window.routeOptimizer.closeSaveDayModal()">×</button>
+          </div>
+          <div class="modal-content" style="padding: var(--cipher-space-xl); display: block;">
+            <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-lg);">
+              Select which day to save:
+            </p>
+            <div class="save-day-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-sm);">
+              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('monday')" style="justify-content: flex-start; width: 100%;">
+                <span>📅</span>
+                <span>Monday</span>
+              </button>
+              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('tuesday')" style="justify-content: flex-start; width: 100%;">
+                <span>📅</span>
+                <span>Tuesday</span>
+              </button>
+              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('wednesday')" style="justify-content: flex-start; width: 100%;">
+                <span>📅</span>
+                <span>Wednesday</span>
+              </button>
+              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('thursday')" style="justify-content: flex-start; width: 100%;">
+                <span>📅</span>
+                <span>Thursday</span>
+              </button>
+              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('friday')" style="justify-content: flex-start; width: 100%;">
+                <span>📅</span>
+                <span>Friday</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Remove existing modal if any
+    const existingModal = document.getElementById('saveDayModal');
+    if (existingModal) existingModal.remove();
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    setTimeout(() => {
+      document.getElementById('saveDayModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }, 100);
+  }
+
+  /**
+   * Close the save day modal
+   */
+  closeSaveDayModal() {
+    const modal = document.getElementById('saveDayModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(() => modal.remove(), 300);
     }
   }
 }

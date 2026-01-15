@@ -127,10 +127,10 @@
             <div class="demo-cipher-section">
                 <div class="demo-cipher-title">🎯 Try Demo Mode</div>
                 <div class="demo-cipher-description">
-                    Experience Claim Cipher with sample data - No Matter What
+                    Preview Claim Cipher with sample data
                 </div>
                 <button id="demo-cipher-btn" class="cipher-btn cipher-btn--secondary cipher-btn--full">
-                    🎤 Start Demo (7 days free)
+                    🎤 Start Demo
                 </button>
             </div>
         </div>
@@ -390,11 +390,23 @@
             });
         }
 
-        // Disable demo mode button (demo mode not implemented yet per requirements)
+        // Demo mode button - session-based demo with sample data
         if (demoCipherBtn) {
             demoCipherBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                showMessage('Demo mode is currently unavailable. Please sign up for an account.');
+
+                // Enable demo mode via sessionStorage
+                sessionStorage.setItem('demo_mode', 'true');
+
+                // Ensure clean demo state - no auth, no persisted routes
+                sessionStorage.removeItem('claimCipherAuth');
+                localStorage.removeItem('cipher_last_route');
+                localStorage.removeItem('cipher_routes_by_day');
+
+                console.log('🎭 Demo mode activated - redirecting to dashboard');
+
+                // Immediate redirect - no setTimeout, no delays
+                window.location.replace('command-center.html');
             });
         }
 

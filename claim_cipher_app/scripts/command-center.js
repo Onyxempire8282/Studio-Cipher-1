@@ -129,6 +129,17 @@ class CommandCenterManager {
             // Show logout message
             this.showNotification('Logged out successfully', 'success');
 
+            // Demo mode logout - clear demo state and redirect (no Supabase session)
+            if (sessionStorage.getItem('demo_mode') === 'true') {
+                console.log('🎭 Demo mode logout - clearing demo state');
+                sessionStorage.removeItem('demo_mode');
+                sessionStorage.removeItem('claimCipherAuth');
+                localStorage.removeItem('cipher_last_route');
+                localStorage.removeItem('cipher_routes_by_day');
+                window.location.replace('login-cypher.html');
+                return;
+            }
+
             // Use Supabase signOut - MUST await to ensure session is terminated
             if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
                 await window.SupabaseAuth.signOut();
@@ -1107,6 +1118,17 @@ function quickTest() {
 }
 
 async function handleLogout() {
+    // Demo mode logout - clear demo state and redirect (no Supabase session)
+    if (sessionStorage.getItem('demo_mode') === 'true') {
+        console.log('🎭 Demo mode logout - clearing demo state');
+        sessionStorage.removeItem('demo_mode');
+        sessionStorage.removeItem('claimCipherAuth');
+        localStorage.removeItem('cipher_last_route');
+        localStorage.removeItem('cipher_routes_by_day');
+        window.location.replace('login-cypher.html');
+        return;
+    }
+
     if (window.commandCenter) {
         await window.commandCenter.handleLogout();
     } else if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
