@@ -318,9 +318,15 @@
     <script src="scripts/total-loss-forms.js" defer></script>
     <script src="scripts/total-loss-security.js" defer></script>
     
+    <!-- DISTRO: Feature hidden - redirect to main app -->
+    <script>
+    // This feature is hidden for distribution - redirect to Route Optimizer
+    window.location.href = 'route-cypher.html';
+    </script>
+
     <!-- Security Agent: Authentication and Navigation -->
     <script>
-        
+
         // Authentication disabled for development
         // if (localStorage.getItem('cipher_authenticated') !== 'true') {
         //     window.location.href = './login-cypher.html';

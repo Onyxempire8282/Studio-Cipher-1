@@ -347,16 +347,10 @@
     <script src="scripts/supabase-config.js"></script>
     <script src="scripts/supabase-auth.js"></script>
 
-    <!-- Supabase Page Protection - MUST run before page renders -->
+    <!-- DISTRO: Feature hidden - redirect to main app -->
     <script>
-    (async function() {
-        // Body is hidden via style="visibility: hidden;" on body tag
-        const allowed = await window.SupabaseAuth.protectPage();
-        if (allowed) {
-            document.body.style.visibility = 'visible';
-        }
-        // If not allowed, protectPage() redirects and body stays hidden
-    })();
+    // This feature is hidden for distribution - redirect to Route Optimizer
+    window.location.href = 'route-cypher.html';
     </script>
 
     <script src="scripts/cipher-core.js"></script>
