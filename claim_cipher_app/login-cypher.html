@@ -25,11 +25,14 @@
     <div class="login-cypher-container">
         
         <div class="login-cipher-card">
-            <!-- 🎨 DESIGNER LOOP 4: Enhanced logo and branding -->
-            
-            
+            <!-- Brand Header: Clear product identification -->
+            <div class="auth-brand-header">
+                <h1 class="auth-brand-name">Claim Cipher</h1>
+                <p class="auth-brand-tagline">Insurance appraisal workflow</p>
+            </div>
+
             <div id="error-cypher" class="error-cypher"></div>
-            
+
             <!-- Login/Signup Toggle -->
             <div class="auth-cipher-toggle">
                 <button class="toggle-cipher active" id="login-toggle">Drop In</button>
@@ -106,7 +109,7 @@
                     <label class="form-cipher-checkbox">
                         <input type="checkbox" id="agree-terms" required>
                         <span class="checkmark"></span>
-                        I agree to the <a href="#" class="cipher-link">Terms of Service</a> and <a href="#" class="cipher-link">Privacy Policy</a>
+                        I agree to the <a href="#" class="cipher-link" id="terms-link">Terms of Service</a> and <a href="#" class="cipher-link" id="privacy-link">Privacy Policy</a>
                     </label>
                 </div>
                 
@@ -231,6 +234,66 @@
             <span class="timer-text">Demo Time Remaining: </span>
             <span class="timer-countdown" id="demo-countdown">6d 23h 59m 45s</span>
             <button class="timer-upgrade-btn" onclick="showUpgradeModal()">Upgrade Now</button>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div id="terms-modal" class="legal-modal" style="display: none;">
+        <div class="legal-modal-content">
+            <div class="legal-modal-header">
+                <h2>Terms of Service</h2>
+                <button class="legal-modal-close" onclick="closeLegalModal('terms-modal')">&times;</button>
+            </div>
+            <div class="legal-modal-body">
+                <p><strong>Effective Date:</strong> January 1, 2025</p>
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing or using Claim Cipher, you agree to be bound by these Terms of Service. If you do not agree, please do not use the service.</p>
+                <h3>2. Service Description</h3>
+                <p>Claim Cipher provides insurance appraisal workflow tools including route optimization, mileage tracking, and scheduling features for professional appraisers.</p>
+                <h3>3. User Responsibilities</h3>
+                <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.</p>
+                <h3>4. Acceptable Use</h3>
+                <p>You agree to use the service only for lawful purposes and in accordance with these terms. You may not use the service to transmit harmful or illegal content.</p>
+                <h3>5. Intellectual Property</h3>
+                <p>All content and functionality of Claim Cipher is owned by Studio Cipher and is protected by copyright and other intellectual property laws.</p>
+                <h3>6. Limitation of Liability</h3>
+                <p>Claim Cipher is provided "as is" without warranties. We are not liable for any indirect, incidental, or consequential damages arising from your use of the service.</p>
+                <h3>7. Changes to Terms</h3>
+                <p>We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of modified terms.</p>
+                <h3>8. Contact</h3>
+                <p>For questions about these terms, please contact support@claimcipher.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="legal-modal" style="display: none;">
+        <div class="legal-modal-content">
+            <div class="legal-modal-header">
+                <h2>Privacy Policy</h2>
+                <button class="legal-modal-close" onclick="closeLegalModal('privacy-modal')">&times;</button>
+            </div>
+            <div class="legal-modal-body">
+                <p><strong>Effective Date:</strong> January 1, 2025</p>
+                <h3>1. Information We Collect</h3>
+                <p>We collect information you provide directly, such as your name, email, and company information when you create an account.</p>
+                <h3>2. How We Use Your Information</h3>
+                <p>We use your information to provide and improve our services, communicate with you, and ensure the security of your account.</p>
+                <h3>3. Data Storage</h3>
+                <p>Your data is stored securely using industry-standard encryption. We use Supabase for authentication and data management.</p>
+                <h3>4. Information Sharing</h3>
+                <p>We do not sell your personal information. We may share data with service providers who assist in operating our service, subject to confidentiality agreements.</p>
+                <h3>5. Your Rights</h3>
+                <p>You have the right to access, correct, or delete your personal information. Contact us to exercise these rights.</p>
+                <h3>6. Cookies</h3>
+                <p>We use cookies and similar technologies to maintain your session and improve user experience.</p>
+                <h3>7. Security</h3>
+                <p>We implement appropriate security measures to protect your information against unauthorized access or disclosure.</p>
+                <h3>8. Changes to This Policy</h3>
+                <p>We may update this policy periodically. We will notify you of significant changes via email or service notification.</p>
+                <h3>9. Contact</h3>
+                <p>For privacy inquiries, please contact privacy@claimcipher.com</p>
+            </div>
         </div>
     </div>
 
@@ -428,6 +491,51 @@
         });
 
         console.log('Supabase Auth: Login page ready');
+
+        // Legal Modal Handlers
+        const termsLink = document.getElementById('terms-link');
+        const privacyLink = document.getElementById('privacy-link');
+
+        if (termsLink) {
+            termsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openLegalModal('terms-modal');
+            });
+        }
+
+        if (privacyLink) {
+            privacyLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openLegalModal('privacy-modal');
+            });
+        }
+    });
+
+    // Legal Modal Functions
+    function openLegalModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeLegalModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Close legal modal when clicking outside content
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('legal-modal')) {
+            e.target.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     });
     </script>
 </body>

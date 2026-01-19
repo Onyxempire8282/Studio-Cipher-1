@@ -40,7 +40,7 @@
     border-radius: 20px;
     border: 2px solid rgba(255, 215, 0, 0.2);
     padding: 3rem;
-    box-shadow: 
+    box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.4),
         0 0 0 1px rgba(255, 215, 0, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -49,6 +49,136 @@
     width: 100%;
     max-width: 400px;
     animation: cardSlideUp 0.6s ease-out;
+    /* Height Stability: min-height prevents layout jump between login/signup */
+    min-height: 580px;
+}
+
+/* ============================================
+   BRAND HEADER: Product identification
+   ============================================ */
+.auth-brand-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+}
+
+.auth-brand-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffd700, #ffb700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 0.25rem 0;
+    letter-spacing: 0.5px;
+}
+
+.auth-brand-tagline {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+/* ============================================
+   FORM HEIGHT STABILITY: Prevent layout shift
+   ============================================ */
+#login-cypher-form,
+#signup-cypher-form {
+    /* Smooth transition when switching forms */
+    transition: opacity 0.15s ease-in-out;
+}
+
+/* ============================================
+   LEGAL MODALS: Terms & Privacy Policy
+   ============================================ */
+.legal-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.legal-modal-content {
+    background: rgba(26, 26, 26, 0.98);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.legal-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+}
+
+.legal-modal-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.legal-modal-close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.legal-modal-close:hover {
+    color: #fff;
+}
+
+.legal-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    color: #ccc;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.legal-modal-body h3 {
+    color: #ffd700;
+    font-size: 0.95rem;
+    margin: 1.25rem 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.legal-modal-body h3:first-of-type {
+    margin-top: 0.5rem;
+}
+
+.legal-modal-body p {
+    margin: 0 0 0.75rem 0;
+    color: #aaa;
+}
+
+.legal-modal-body p:first-of-type {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
 }
 
 @keyframes cardSlideUp {
@@ -665,15 +795,37 @@
         margin: 1rem;
         padding: 2rem;
         max-width: calc(100% - 2rem);
+        /* Adjusted min-height for mobile */
+        min-height: auto;
     }
-    
+
     .cipher-logo {
         font-size: 2rem;
     }
-    
+
     .form-cipher-input {
         padding: 0.875rem;
         font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Brand header mobile adjustments */
+    .auth-brand-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .auth-brand-name {
+        font-size: 1.4rem;
+    }
+
+    /* Legal modal mobile adjustments */
+    .legal-modal-content {
+        max-height: 90vh;
+        margin: 0.5rem;
+    }
+
+    .legal-modal-body {
+        padding: 1rem;
     }
     
     .cipher-btn {
