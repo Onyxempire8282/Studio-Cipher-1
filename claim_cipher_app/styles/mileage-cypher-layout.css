@@ -5,10 +5,20 @@
 /* =================================
    MAIN LAYOUT STRUCTURE
    ================================= */
+/*
+ * CONTAINER FIX: Updated to match Route page container behavior.
+ * - max-width: 1400px (was 1600px) - matches route-container
+ * - padding: var(--cipher-space-lg) - consistent with Route page
+ * - Added padding-bottom for clean visual closure
+ *
+ * This ensures the Mileage page has the same centered, closed container
+ * feel as the Route Optimizer page.
+ */
 .mileage-calculator-main {
-    max-width: 1600px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: var(--cipher-space-xl) var(--cipher-space-md);
+    padding: var(--cipher-space-lg);
+    padding-bottom: var(--cipher-space-xxl);
     min-height: calc(100vh - 80px);
 }
 
@@ -16,7 +26,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--cipher-space-xl);
-    margin-bottom: var(--cipher-space-xl);
+    margin-bottom: var(--cipher-space-lg);
     transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -39,6 +49,20 @@
     height: fit-content;
 }
 
+/*
+ * FIX: Removed .calculator-section::after pseudo-element that was creating
+ * ghost text ("🧮 Mileage Calculator") under the nav bar.
+ *
+ * ROOT CAUSE: The HTML already has a proper .section-header with h2 at lines 53-61.
+ * The CSS ::after pseudo-element was creating a DUPLICATE header positioned
+ * absolutely, which appeared as ghost text bleeding under the navigation.
+ *
+ * The Route page does NOT use pseudo-element headers - it relies solely on
+ * HTML structure, which is the correct approach.
+ *
+ * KEPT: The ::before gradient accent line (purely decorative, no text).
+ * REMOVED: The ::after text header and the compensating margin-top on first-child.
+ */
 .calculator-section::before {
     content: '';
     position: absolute;
@@ -47,24 +71,6 @@
     right: 0;
     height: 4px;
     background: linear-gradient(135deg, var(--cipher-gold) 0%, var(--cipher-electric-blue) 100%);
-}
-
-/* Calculator section header */
-.calculator-section::after {
-    content: '🧮 Mileage Calculator';
-    position: absolute;
-    top: var(--cipher-space-md);
-    left: var(--cipher-space-xl);
-    font-size: 1.3rem;
-    font-weight: var(--cipher-font-weight-bold);
-    color: var(--cipher-gold);
-    text-shadow: var(--cipher-shadow-glow);
-    pointer-events: none;
-}
-
-/* Add top padding to account for header */
-.calculator-section > *:first-child {
-    margin-top: calc(var(--cipher-space-xl) + 1rem);
 }
 
 /* Firm Selection Layout */
@@ -188,6 +194,10 @@
     transform: translateX(0);
 }
 
+/*
+ * FIX: Removed .results-section::after pseudo-element (same issue as calculator-section).
+ * The HTML already has proper headers - pseudo-element was creating duplicate ghost text.
+ */
 .results-section::before {
     content: '';
     position: absolute;
@@ -196,24 +206,6 @@
     right: 0;
     height: 4px;
     background: linear-gradient(135deg, var(--cipher-success) 0%, var(--cipher-electric-blue) 100%);
-}
-
-/* Results section header */
-.results-section::after {
-    content: '💰 Billing Results';
-    position: absolute;
-    top: var(--cipher-space-md);
-    left: var(--cipher-space-xl);
-    font-size: 1.3rem;
-    font-weight: var(--cipher-font-weight-bold);
-    color: var(--cipher-success);
-    text-shadow: var(--cipher-shadow-glow);
-    pointer-events: none;
-}
-
-/* Add top padding to account for header */
-.results-section > *:first-child {
-    margin-top: calc(var(--cipher-space-xl) + 1rem);
 }
 
 .results-section h3 {
@@ -763,26 +755,19 @@
 @media (max-width: 768px) {
     .mileage-calculator-main {
         padding: var(--cipher-space-md) var(--cipher-space-sm);
+        padding-bottom: var(--cipher-space-xl);
     }
-    
+
     .calculator-section,
     .results-section {
         padding: var(--cipher-space-lg) var(--cipher-space-md);
     }
-    
-    /* Adjust header positioning for mobile */
-    .calculator-section::after,
-    .results-section::after {
-        font-size: 1.1rem;
-        top: var(--cipher-space-sm);
-        left: var(--cipher-space-md);
-    }
-    
-    .calculator-section > *:first-child,
-    .results-section > *:first-child {
-        margin-top: calc(var(--cipher-space-lg) + 0.5rem);
-    }
-    
+
+    /*
+     * REMOVED: Mobile styles for ::after pseudo-elements and margin-top compensations.
+     * These were artifacts from the removed ghost text headers.
+     */
+
     .firm-selection {
         grid-template-columns: 1fr;
         gap: var(--cipher-space-sm);
