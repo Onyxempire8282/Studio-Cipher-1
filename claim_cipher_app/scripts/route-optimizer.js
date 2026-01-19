@@ -3572,14 +3572,109 @@ class RouteOptimizer {
     }
 
     try {
+      // Clear persisted data
       localStorage.removeItem('cipher_last_route');
       localStorage.removeItem('cipher_routes_by_day');
+
+      // Clear in-memory state and re-render UI
+      this.resetRouteState();
+      this.renderEmptyRouteState();
+
       this.showToast('All saved routes cleared');
-      console.log('📁 Cleared all saved routes');
+      console.log('📁 Cleared all saved routes and reset UI');
     } catch (error) {
       console.error('📁 Error clearing saved routes:', error);
       this.showError('Failed to clear saved routes');
     }
+  }
+
+  /**
+   * Reset all in-memory route state
+   * Call this when clearing routes or starting fresh
+   */
+  resetRouteState() {
+    // Clear route data
+    this.currentRoute = null;
+    this.currentOriginalRoute = null;
+    this.routeStops = [];
+
+    // Clear editing state
+    this.editingDayIndex = null;
+    this.activeModalDay = 0;
+
+    // Clear clustering state
+    this.clusterOverrideDecisions.clear();
+    this._distanceCache.clear();
+
+    // Clear any pending override modal state
+    this._overrideResolve = null;
+    this._pendingCluster = null;
+
+    console.log('📁 Route state reset');
+  }
+
+  /**
+   * Re-render UI to empty state (no routes displayed)
+   * Does not reload the page
+   */
+  renderEmptyRouteState() {
+    // Close any open modals
+    const routeModal = document.getElementById('routeMapModal');
+    if (routeModal) {
+      routeModal.classList.remove('active');
+    }
+
+    const overrideModal = document.getElementById('clusterOverrideModal');
+    if (overrideModal) {
+      overrideModal.classList.remove('active');
+    }
+
+    const restoreModal = document.getElementById('restoreRouteModal');
+    if (restoreModal) {
+      restoreModal.remove(); // This one is dynamically created
+    }
+
+    // Restore body scroll
+    document.body.style.overflow = '';
+
+    // Hide the results section
+    const resultsSection = document.getElementById('routeResults');
+    if (resultsSection) {
+      resultsSection.style.display = 'none';
+    }
+
+    // Clear route output
+    const routeOutput = document.getElementById('routeOutput');
+    if (routeOutput) {
+      routeOutput.innerHTML = '';
+    }
+
+    // Clear modal content
+    const dayTabs = document.getElementById('dayTabs');
+    if (dayTabs) {
+      dayTabs.innerHTML = '';
+    }
+
+    const modalTimeline = document.getElementById('modalTimeline');
+    if (modalTimeline) {
+      modalTimeline.innerHTML = '';
+    }
+
+    const modalStats = document.getElementById('modalStats');
+    if (modalStats) {
+      modalStats.innerHTML = '';
+    }
+
+    // Reset optimize button state
+    const optimizeBtn = document.getElementById('optimizeRoute');
+    if (optimizeBtn) {
+      optimizeBtn.disabled = false;
+      optimizeBtn.textContent = optimizeBtn.textContent.includes('Optimizing')
+        ? '🗺️ Optimize Route'
+        : optimizeBtn.textContent;
+    }
+
+    console.log('📁 UI reset to empty state');
   }
 
   /**
