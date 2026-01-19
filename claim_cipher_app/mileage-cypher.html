@@ -46,7 +46,20 @@
       </div>
     </header>
 
-    <main class="mileage-calculator-main">
+    <!--
+      LAYOUT FIX: Added 'main-content' class to match Route page structure.
+
+      ROOT CAUSE: Route page uses class="route-optimizer-main main-content"
+      but Mileage was missing the 'main-content' class.
+
+      The 'main-content' class from universal-system.css and universal-header-fixes.css
+      provides consistent vertical positioning relative to the fixed header.
+      Without it, Mileage had different spacing than Route.
+
+      WHY IT ONLY AFFECTED MILEAGE: Route page had both classes; Mileage only had one.
+      WHY THIS FIX IS CORRECT: Normalizes both pages to use the same layout architecture.
+    -->
+    <main class="mileage-calculator-main main-content">
       <div class="mileage-container">
         <!-- Calculator Section -->
         <div class="calculator-section cipher-glass-panel">
