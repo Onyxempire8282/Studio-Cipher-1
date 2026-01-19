@@ -475,6 +475,79 @@
       </div>
     </div>
 
+    <!-- Cluster Override Modal -->
+    <div id="clusterOverrideModal" class="route-map-modal">
+      <div class="cluster-override-container">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>🗺️</span>
+            <span>Route Decision Needed</span>
+          </div>
+        </div>
+
+        <div class="override-content">
+          <div class="override-summary">
+            <div class="cluster-info">
+              <h3 id="clusterStopsTitle">2 stops in same region</h3>
+              <p class="cluster-description">These stops are close together but adding them exceeds your daily mileage target:</p>
+              <ul id="clusterStopsList" class="cluster-stops-list">
+                <!-- Dynamically populated -->
+              </ul>
+            </div>
+
+            <div class="overage-info">
+              <div class="overage-stat">
+                <span class="stat-label">Current day mileage:</span>
+                <span class="stat-value" id="currentDayMiles">0 mi</span>
+              </div>
+              <div class="overage-stat">
+                <span class="stat-label">Adding these stops:</span>
+                <span class="stat-value" id="clusterMiles">+0 mi</span>
+              </div>
+              <div class="overage-stat highlight">
+                <span class="stat-label">Total if kept together:</span>
+                <span class="stat-value" id="totalIfKept">0 mi</span>
+              </div>
+              <div class="overage-stat warning">
+                <span class="stat-label">Your daily target:</span>
+                <span class="stat-value" id="dailyCapDisplay">0 mi</span>
+              </div>
+              <div class="overage-stat overage">
+                <span class="stat-label">Overage:</span>
+                <span class="stat-value" id="overageDisplay">+0 mi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="override-recommendation">
+            <span class="recommendation-icon">💡</span>
+            <p id="recommendationText">
+              Keeping these stops together avoids backtracking and is more efficient.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer override-actions">
+          <button
+            id="overrideSplitBtn"
+            class="modal-btn modal-btn-secondary"
+            onclick="window.routeOptimizer.handleClusterOverride('split')"
+          >
+            <span>📅</span>
+            <span>Split Into Separate Days</span>
+          </button>
+          <button
+            id="overrideKeepBtn"
+            class="modal-btn modal-btn-primary"
+            onclick="window.routeOptimizer.handleClusterOverride('keepTogether')"
+          >
+            <span>🎯</span>
+            <span>Keep Together (More Efficient)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Load API configuration first -->
     <script src="config/github-pages-env.js"></script>
     <script src="config/api-config-production.js"></script>

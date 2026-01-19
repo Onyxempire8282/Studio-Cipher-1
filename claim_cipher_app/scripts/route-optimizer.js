@@ -4,6 +4,15 @@
  */
 
 class RouteOptimizer {
+  // Geographic clustering configuration
+  static CLUSTERING_CONFIG = {
+    CLUSTER_RADIUS_MILES: 27.5,        // Stops within this distance are clustered
+    SOFT_CAP_OVERAGE_PERCENT: 0.20,    // Allow 20% overage for cluster integrity
+    SOFT_CAP_OVERAGE_ABSOLUTE: 30,     // Or 30 miles absolute (whichever is smaller)
+    SAME_CITY_DISTANCE_ESTIMATE: 12,   // Fallback for same-city stops
+    NEARBY_REGION_DISTANCE_ESTIMATE: 35 // Fallback for nearby regions
+  };
+
   constructor() {
     this.map = null;
     this.directionsService = null;
@@ -11,6 +20,12 @@ class RouteOptimizer {
     this.geocoder = null;
     this.currentRoute = null;
     this.routeStops = [];
+
+    // Clustering state
+    this._distanceCache = new Map();           // Deterministic distance caching
+    this.clusterOverrideDecisions = new Map(); // User override choices (in-memory)
+    this.editingDayIndex = null;               // Track which day is being edited
+
     this.firmColors = {
       'State Farm': '#cc0000',
       'Allstate': '#003da5',
@@ -316,6 +331,9 @@ class RouteOptimizer {
       const routeData = this.gatherRouteData();
       console.log("🎵 Lyricist: Route data gathered:", routeData);
 
+      // Clear distance cache for fresh optimization
+      this.clearDistanceCache();
+
       if (!this.validateRouteData(routeData)) {
         console.warn("🎵 Lyricist: Route data validation failed");
         return;
@@ -339,11 +357,18 @@ class RouteOptimizer {
       const optimizedRoute = await this.calculateOptimizedRoute(routeData);
       console.log("🎵 Lyricist: Route optimized:", optimizedRoute);
 
-      const splitRoute = this.applySplitting(
+      let splitRoute = await this.applySplitting(
         optimizedRoute,
         routeData.settings
       );
       console.log("🎵 Lyricist: Route split applied:", splitRoute);
+
+      // Check if we're editing a specific day - merge back into full route
+      if (typeof this.editingDayIndex === 'number' && this.currentRoute?.days) {
+        console.log(`🎵 Merging edited Day ${this.editingDayIndex + 1} back into full route`);
+        splitRoute = this.mergeEditedDay(splitRoute, this.editingDayIndex);
+        this.editingDayIndex = null; // Clear editing state
+      }
 
       this.displayResults(splitRoute, optimizedRoute);
       this.renderMapRoute(optimizedRoute, splitRoute);
@@ -707,10 +732,13 @@ class RouteOptimizer {
   }
 
   estimateDistance(origin, destination) {
-    // Enhanced distance estimation with realistic geographic clustering
-    // Parse addresses for geographic intelligence
-    const originWords = origin.toLowerCase().split(/[\s,]+/);
-    const destWords = destination.toLowerCase().split(/[\s,]+/);
+    // Check cache first for deterministic results
+    const cacheKey = `${origin}|||${destination}`;
+    if (this._distanceCache.has(cacheKey)) {
+      return this._distanceCache.get(cacheKey);
+    }
+
+    const config = RouteOptimizer.CLUSTERING_CONFIG;
 
     // Extract location indicators
     const originState = this.extractState(origin);
@@ -718,47 +746,319 @@ class RouteOptimizer {
     const originCity = this.extractCity(origin);
     const destCity = this.extractCity(destination);
 
-    // Different states = much longer distance
+    let distance;
+
+    // Different states = much longer distance (deterministic)
     if (originState && destState && originState !== destState) {
-      return Math.random() * 200 + 80; // 80-280 miles for different states
+      distance = 180; // Fixed cross-state estimate
+    }
+    // Same city = shorter distance (deterministic)
+    else if (originCity && destCity && originCity.toLowerCase() === destCity.toLowerCase()) {
+      distance = config.SAME_CITY_DISTANCE_ESTIMATE; // 12 miles
+    }
+    else {
+      // Check for shared geographic indicators (counties, regions)
+      const originWords = origin.toLowerCase().split(/[\s,]+/);
+      const destWords = destination.toLowerCase().split(/[\s,]+/);
+      const sharedWords = originWords.filter(
+        (word) =>
+          destWords.includes(word) &&
+          word.length > 3 &&
+          !["street", "road", "ave", "avenue", "drive", "lane", "way"].includes(word)
+      );
+      const similarity = sharedWords.length / Math.max(originWords.length, destWords.length);
+
+      // Deterministic distance based on similarity
+      if (similarity > 0.3) {
+        // High similarity = likely same region
+        distance = 20;
+      } else if (similarity > 0.1) {
+        // Some similarity = nearby regions
+        distance = config.NEARBY_REGION_DISTANCE_ESTIMATE; // 35 miles
+      } else {
+        // Low similarity = more distant locations in same state
+        distance = 65;
+      }
     }
 
-    // Same city = shorter distance
-    if (originCity && destCity && originCity === destCity) {
-      return Math.random() * 15 + 3; // 3-18 miles within same city
+    distance = Math.max(distance, 2); // Minimum 2 miles
+
+    // Cache and return
+    this._distanceCache.set(cacheKey, distance);
+    return distance;
+  }
+
+  /**
+   * Build geographic clusters using Union-Find algorithm
+   * Groups stops that are within CLUSTER_RADIUS_MILES of each other
+   * @param {string[]} stops - Array of address strings (excluding start point)
+   * @param {Object} distanceMatrix - Precomputed pairwise distances (optional)
+   * @returns {Object} { clusters: Cluster[], stopToCluster: Map }
+   */
+  buildGeographicClusters(stops, distanceMatrix = null) {
+    const config = RouteOptimizer.CLUSTERING_CONFIG;
+    const n = stops.length;
+
+    if (n === 0) {
+      return { clusters: [], stopToCluster: new Map() };
     }
 
-    // Check for shared geographic indicators (counties, regions)
-    const sharedWords = originWords.filter(
-      (word) =>
-        destWords.includes(word) &&
-        word.length > 3 &&
-        !["street", "road", "ave", "avenue", "drive", "lane", "way"].includes(
-          word
-        )
-    );
-    const similarity =
-      sharedWords.length / Math.max(originWords.length, destWords.length);
+    // Union-Find data structure
+    const parent = Array.from({ length: n }, (_, i) => i);
+    const rank = Array(n).fill(0);
 
-    // Base distance calculation with geographic intelligence
-    let baseDistance;
-    if (similarity > 0.3) {
-      // High similarity = likely same region
-      baseDistance = Math.random() * 25 + 8; // 8-33 miles
-    } else if (similarity > 0.1) {
-      // Some similarity = nearby regions
-      baseDistance = Math.random() * 50 + 15; // 15-65 miles
-    } else {
-      // Low similarity = distant locations
-      baseDistance = Math.random() * 80 + 25; // 25-105 miles
+    const find = (x) => {
+      if (parent[x] !== x) {
+        parent[x] = find(parent[x]); // Path compression
+      }
+      return parent[x];
+    };
+
+    const union = (x, y) => {
+      const px = find(x);
+      const py = find(y);
+      if (px === py) return;
+      // Union by rank
+      if (rank[px] < rank[py]) {
+        parent[px] = py;
+      } else if (rank[px] > rank[py]) {
+        parent[py] = px;
+      } else {
+        parent[py] = px;
+        rank[px]++;
+      }
+    };
+
+    // Build pairwise distances and union stops within cluster radius
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        let distance;
+        if (distanceMatrix && distanceMatrix[i] && distanceMatrix[i][j] !== undefined) {
+          distance = distanceMatrix[i][j];
+        } else {
+          distance = this.estimateDistance(stops[i], stops[j]);
+        }
+
+        if (distance <= config.CLUSTER_RADIUS_MILES) {
+          union(i, j);
+        }
+      }
     }
 
-    // Apply realistic constraints like the user's NC example
-    // Raleigh to home: 60.9 miles (acceptable)
-    // Home to Wilmington: 87.9 miles (acceptable)
-    // Raleigh to Wilmington: 129 miles (unacceptable)
+    // Group stops by their root (cluster)
+    const clusterGroups = new Map();
+    for (let i = 0; i < n; i++) {
+      const root = find(i);
+      if (!clusterGroups.has(root)) {
+        clusterGroups.set(root, []);
+      }
+      clusterGroups.get(root).push(i);
+    }
 
-    return Math.max(baseDistance, 2); // Minimum 2 miles
+    // Build cluster objects
+    const clusters = [];
+    const stopToCluster = new Map();
+    let clusterId = 0;
+
+    for (const [root, indices] of clusterGroups) {
+      const clusterStops = indices.map(i => stops[i]);
+
+      // Calculate internal mileage (sum of distances within cluster)
+      let internalMileage = 0;
+      if (indices.length > 1) {
+        for (let i = 0; i < indices.length - 1; i++) {
+          const dist = distanceMatrix?.[indices[i]]?.[indices[i + 1]]
+            ?? this.estimateDistance(stops[indices[i]], stops[indices[i + 1]]);
+          internalMileage += dist;
+        }
+      }
+
+      const cluster = {
+        id: clusterId,
+        stops: clusterStops,
+        indices: indices,
+        internalMileage: Math.round(internalMileage * 10) / 10,
+        size: clusterStops.length
+      };
+
+      clusters.push(cluster);
+
+      // Map each stop to its cluster
+      for (const stop of clusterStops) {
+        stopToCluster.set(stop, clusterId);
+      }
+
+      clusterId++;
+    }
+
+    console.log(`🗺️ Built ${clusters.length} geographic clusters from ${n} stops`);
+    clusters.forEach((c, i) => {
+      console.log(`  Cluster ${i + 1}: ${c.size} stops, ~${c.internalMileage} mi internal`);
+    });
+
+    return { clusters, stopToCluster };
+  }
+
+  /**
+   * Check if a cluster qualifies for soft cap override
+   * @param {number} currentDayMiles - Miles already in the current day
+   * @param {number} additionalMiles - Miles to add (cluster internal + travel to)
+   * @param {Object} settings - Route settings
+   * @returns {Object} { eligible, overagePercent, overageAbsolute, projectedTotal, dailyCap }
+   */
+  checkSoftCapEligibility(currentDayMiles, additionalMiles, settings) {
+    const config = RouteOptimizer.CLUSTERING_CONFIG;
+
+    // Calculate effective daily cap based on settings
+    // Using maxLegMiles * maxStopsPerDay as a reasonable daily cap
+    const dailyCapMiles = settings.maxLegMiles * settings.maxStopsPerDay;
+
+    const projectedTotal = currentDayMiles + additionalMiles;
+    const overageAbsolute = projectedTotal - dailyCapMiles;
+    const overagePercent = dailyCapMiles > 0 ? overageAbsolute / dailyCapMiles : 0;
+
+    // Eligible for soft cap if:
+    // 1. Actually exceeds the cap
+    // 2. Overage is within percentage limit OR within absolute limit
+    const eligible =
+      overageAbsolute > 0 &&
+      (overagePercent <= config.SOFT_CAP_OVERAGE_PERCENT ||
+       overageAbsolute <= config.SOFT_CAP_OVERAGE_ABSOLUTE);
+
+    return {
+      eligible,
+      overagePercent: Math.round(overagePercent * 100),
+      overageAbsolute: Math.round(overageAbsolute * 10) / 10,
+      projectedTotal: Math.round(projectedTotal * 10) / 10,
+      dailyCap: dailyCapMiles
+    };
+  }
+
+  /**
+   * Get a unique key for a cluster to track override decisions
+   * @param {Object} cluster - Cluster object
+   * @returns {string} Unique key
+   */
+  getClusterKey(cluster) {
+    return cluster.stops.slice().sort().join('|');
+  }
+
+  /**
+   * Show the cluster override modal and wait for user decision
+   * @param {Object} cluster - The cluster being considered
+   * @param {Object} currentDayStats - { totalMiles, dailyCap }
+   * @param {Object} overageInfo - From checkSoftCapEligibility
+   * @returns {Promise<string>} - 'keepTogether' or 'split'
+   */
+  showClusterOverrideModal(cluster, currentDayStats, overageInfo) {
+    return new Promise((resolve) => {
+      const modal = document.getElementById('clusterOverrideModal');
+      if (!modal) {
+        console.warn('Cluster override modal not found, defaulting to split');
+        resolve('split');
+        return;
+      }
+
+      // Populate modal content
+      const titleEl = document.getElementById('clusterStopsTitle');
+      if (titleEl) {
+        titleEl.textContent = `${cluster.stops.length} stops in same region`;
+      }
+
+      const stopsListEl = document.getElementById('clusterStopsList');
+      if (stopsListEl) {
+        stopsListEl.innerHTML = cluster.stops
+          .map(stop => `<li>📍 ${this.formatAddressShort(stop)}</li>`)
+          .join('');
+      }
+
+      const currentMilesEl = document.getElementById('currentDayMiles');
+      if (currentMilesEl) {
+        currentMilesEl.textContent = `${Math.round(currentDayStats.totalMiles)} mi`;
+      }
+
+      const clusterMilesEl = document.getElementById('clusterMiles');
+      if (clusterMilesEl) {
+        clusterMilesEl.textContent = `+${Math.round(cluster.internalMileage + (cluster.travelToMiles || 0))} mi`;
+      }
+
+      const totalEl = document.getElementById('totalIfKept');
+      if (totalEl) {
+        totalEl.textContent = `${Math.round(overageInfo.projectedTotal)} mi`;
+      }
+
+      const capEl = document.getElementById('dailyCapDisplay');
+      if (capEl) {
+        capEl.textContent = `${Math.round(overageInfo.dailyCap)} mi`;
+      }
+
+      const overageEl = document.getElementById('overageDisplay');
+      if (overageEl) {
+        overageEl.textContent = `+${Math.round(overageInfo.overageAbsolute)} mi (${overageInfo.overagePercent}%)`;
+      }
+
+      // Store resolve function for button handlers
+      this._overrideResolve = resolve;
+      this._pendingCluster = cluster;
+
+      // Show modal
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      console.log(`🗺️ Showing override modal for cluster with ${cluster.stops.length} stops`);
+    });
+  }
+
+  /**
+   * Handle user's override decision from modal
+   * @param {string} decision - 'keepTogether' or 'split'
+   */
+  handleClusterOverride(decision) {
+    const modal = document.getElementById('clusterOverrideModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Store decision for this cluster (in-memory only per user request)
+    if (this._pendingCluster) {
+      const clusterKey = this.getClusterKey(this._pendingCluster);
+      this.clusterOverrideDecisions.set(clusterKey, decision);
+      console.log(`🗺️ Override decision stored: ${decision} for cluster key: ${clusterKey.substring(0, 50)}...`);
+    }
+
+    // Resolve the pending promise
+    if (this._overrideResolve) {
+      this._overrideResolve(decision);
+      this._overrideResolve = null;
+      this._pendingCluster = null;
+    }
+  }
+
+  /**
+   * Format an address to a shorter display version
+   * @param {string} address - Full address
+   * @returns {string} Shortened address
+   */
+  formatAddressShort(address) {
+    if (!address) return '';
+    // Remove country suffix
+    let short = address.replace(/,?\s*(USA|United States)$/i, '');
+    // If still long, try to extract city and state
+    const parts = short.split(',').map(p => p.trim());
+    if (parts.length >= 3) {
+      // Return last 2-3 meaningful parts (city, state, zip)
+      return parts.slice(-3).join(', ');
+    }
+    return short;
+  }
+
+  /**
+   * Clear the distance cache (call when starting new optimization)
+   */
+  clearDistanceCache() {
+    this._distanceCache.clear();
+    console.log('🗺️ Distance cache cleared');
   }
 
   getDefaultDate(dayIndex) {
@@ -991,7 +1291,7 @@ class RouteOptimizer {
     return processedRoute;
   }
 
-  applySplitting(route, settings) {
+  async applySplitting(route, settings) {
     if (!settings.splitEnabled) {
       return {
         days: [
@@ -1014,13 +1314,19 @@ class RouteOptimizer {
       };
     }
 
-    return this.intelligentDaySplitting(route, settings);
+    return await this.intelligentDaySplitting(route, settings);
   }
 
-  intelligentDaySplitting(route, settings) {
+  async intelligentDaySplitting(route, settings) {
     const days = [];
     const maxDailyMinutes = settings.maxDailyHours * 60;
     const startingPoint = route.stops[0]; // Save the starting point
+
+    // Build geographic clusters for all destination stops (excluding start)
+    const destinationStops = route.stops.slice(1);
+    const { clusters, stopToCluster } = this.buildGeographicClusters(destinationStops);
+
+    console.log(`🗺️ Day splitting with ${clusters.length} clusters from ${destinationStops.length} stops`);
 
     let currentDay = {
       label: `Day ${days.length + 1}`,
@@ -1042,6 +1348,7 @@ class RouteOptimizer {
         currentDay.appointmentTime + appointmentTimeForStop;
       const projectedTotalTime = projectedTravelTime + projectedAppointmentTime;
       const projectedStops = currentDay.stops.length + 1;
+      const projectedMiles = currentDay.totalMiles + leg.distance;
 
       // Check multiple splitting criteria
       const exceedsTime = projectedTotalTime > maxDailyMinutes;
@@ -1049,8 +1356,55 @@ class RouteOptimizer {
       const exceedsDistance = leg.distance > settings.maxLegMiles;
       const dayHasContent = currentDay.legs.length > 0;
 
-      // Smart splitting logic
-      if (dayHasContent && (exceedsTime || exceedsStops || exceedsDistance)) {
+      // Determine if we should split
+      let shouldSplit = dayHasContent && (exceedsTime || exceedsStops || exceedsDistance);
+
+      // If would split, check if this is a cluster situation where we should ask user
+      if (shouldSplit && !exceedsTime && !exceedsStops) {
+        // Only exceedsDistance triggered - check cluster membership
+        const lastStopOnDay = currentDay.stops[currentDay.stops.length - 1];
+        const nextStop = leg.destination;
+
+        // Check if both stops are in the same cluster
+        const lastClusterId = stopToCluster.get(lastStopOnDay);
+        const nextClusterId = stopToCluster.get(nextStop);
+
+        if (lastClusterId !== undefined && lastClusterId === nextClusterId) {
+          // Same cluster - check soft cap eligibility
+          const cluster = clusters.find(c => c.id === lastClusterId);
+          const additionalMiles = leg.distance;
+          const softCapInfo = this.checkSoftCapEligibility(
+            currentDay.totalMiles,
+            additionalMiles,
+            settings
+          );
+
+          if (softCapInfo.eligible) {
+            // Check if we already have a decision for this cluster
+            const clusterKey = this.getClusterKey(cluster);
+            let decision = this.clusterOverrideDecisions.get(clusterKey);
+
+            if (!decision) {
+              // No decision yet - show modal
+              cluster.travelToMiles = leg.distance;
+              decision = await this.showClusterOverrideModal(
+                cluster,
+                { totalMiles: currentDay.totalMiles, dailyCap: softCapInfo.dailyCap },
+                softCapInfo
+              );
+            }
+
+            if (decision === 'keepTogether') {
+              // User wants to keep them together - don't split
+              shouldSplit = false;
+              console.log(`🗺️ Keeping cluster together (user override): ${cluster.stops.length} stops`);
+            }
+          }
+        }
+      }
+
+      // Apply split decision
+      if (shouldSplit) {
         // Add return leg to starting point for current day
         const returnLeg = this.calculateReturnLeg(
           currentDay.stops[currentDay.stops.length - 1],
@@ -3132,6 +3486,81 @@ class RouteOptimizer {
 
     this.showToast(`Editing Day ${dayIndex + 1} - ${stops.length} stops loaded`);
     console.log(`📁 Loaded Day ${dayIndex + 1} for editing`);
+  }
+
+  /**
+   * Merge a re-optimized day back into the full route
+   * Preserves other days that weren't being edited
+   * @param {Object} newDayRoute - The re-optimized route (may contain 1+ days)
+   * @param {number} editedDayIndex - Which day in the original route was being edited
+   * @returns {Object} - Complete merged route with all days
+   */
+  mergeEditedDay(newDayRoute, editedDayIndex) {
+    if (!this.currentRoute?.days || editedDayIndex < 0) {
+      console.warn('🎵 Cannot merge: no existing route or invalid day index');
+      return newDayRoute;
+    }
+
+    const originalDays = [...this.currentRoute.days];
+    const newDays = newDayRoute.days || [];
+
+    console.log(`🎵 Merging: replacing Day ${editedDayIndex + 1} with ${newDays.length} new day(s)`);
+
+    if (newDays.length === 1) {
+      // Simple case: edited day is still one day
+      // Replace just that day, keeping the original label
+      originalDays[editedDayIndex] = {
+        ...newDays[0],
+        label: `Day ${editedDayIndex + 1}`
+      };
+    } else if (newDays.length > 1) {
+      // Complex case: edited day split into multiple days
+      // Remove the old day and insert the new days
+      originalDays.splice(editedDayIndex, 1, ...newDays);
+
+      // Relabel all days sequentially
+      originalDays.forEach((day, idx) => {
+        day.label = `Day ${idx + 1}`;
+      });
+    } else {
+      // No new days (shouldn't happen, but handle gracefully)
+      console.warn('🎵 No new days to merge, keeping original');
+      return this.currentRoute;
+    }
+
+    // Recalculate overall stats
+    const overall = this.calculateOverallStats(originalDays);
+
+    console.log(`🎵 Merge complete: ${originalDays.length} total days`);
+
+    return {
+      days: originalDays,
+      overall: overall
+    };
+  }
+
+  /**
+   * Recalculate overall route statistics from all days
+   * @param {Array} days - Array of day objects
+   * @returns {Object} - Overall statistics
+   */
+  calculateOverallStats(days) {
+    if (!days || days.length === 0) {
+      return { miles: 0, minutes: 0, totalDays: 0, avgStopsPerDay: 0, avgEfficiency: 0 };
+    }
+
+    const totalMiles = days.reduce((sum, day) => sum + (day.totalMiles || 0), 0);
+    const totalMinutes = days.reduce((sum, day) => sum + (day.totalMinutes || 0), 0);
+    const totalStops = days.reduce((sum, day) => sum + (day.stopsCount || 0), 0);
+    const totalEfficiency = days.reduce((sum, day) => sum + (day.efficiency || 0), 0);
+
+    return {
+      miles: Math.round(totalMiles * 10) / 10,
+      minutes: Math.round(totalMinutes),
+      totalDays: days.length,
+      avgStopsPerDay: Math.round((totalStops / days.length) * 10) / 10,
+      avgEfficiency: Math.round(totalEfficiency / days.length)
+    };
   }
 
   /**
