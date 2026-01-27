@@ -1885,3 +1885,120 @@
     width: 100%;
   }
 }
+
+/* =================================
+   SAVE ROUTE MODAL
+   ================================= */
+.save-route-container {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  max-width: 500px;
+  margin: auto;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 26, 0.98) 0%,
+    rgba(30, 30, 30, 0.98) 100%
+  );
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: var(--cipher-radius-xl);
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.save-route-content {
+  padding: var(--cipher-space-xl);
+}
+
+.save-route-description {
+  color: var(--cipher-text-muted);
+  margin-bottom: var(--cipher-space-lg);
+  line-height: 1.5;
+}
+
+.save-route-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cipher-space-lg);
+}
+
+.save-route-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cipher-space-xs);
+}
+
+.save-route-form .input-label {
+  color: var(--cipher-text-secondary);
+  font-weight: var(--cipher-font-weight-medium);
+  font-size: 0.9rem;
+}
+
+.save-route-form .filter-input {
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-md);
+  color: var(--cipher-text-primary);
+  font-size: 1rem;
+}
+
+.save-route-form .filter-input:focus {
+  outline: none;
+  border-color: var(--cipher-gold);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15);
+}
+
+.save-route-form .input-hint {
+  font-size: 0.8rem;
+  color: var(--cipher-text-muted);
+  opacity: 0.7;
+}
+
+.route-summary-preview {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--cipher-radius-md);
+  padding: var(--cipher-space-md);
+}
+
+.route-summary-preview .summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--cipher-space-xs) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.route-summary-preview .summary-row:last-child {
+  border-bottom: none;
+}
+
+.route-summary-preview .summary-label {
+  color: var(--cipher-text-muted);
+}
+
+.route-summary-preview .summary-value {
+  color: var(--cipher-text-primary);
+  font-weight: var(--cipher-font-weight-medium);
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.route-summary-preview .summary-row--highlight .summary-value {
+  color: var(--cipher-gold);
+  font-size: 1.1rem;
+}
+
+/* Mobile adjustments for save route modal */
+@media (max-width: 600px) {
+  .save-route-container {
+    width: 95vw;
+  }
+
+  .route-summary-preview .summary-value {
+    max-width: 150px;
+  }
+}

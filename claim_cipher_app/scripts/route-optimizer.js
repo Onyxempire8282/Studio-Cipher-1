@@ -214,6 +214,18 @@ class RouteOptimizer {
       exportBtn.addEventListener("click", () => this.exportToMileage());
     }
 
+    // Save to My Routes button
+    const saveToMyRoutesBtn = document.getElementById("saveToMyRoutes");
+    if (saveToMyRoutesBtn) {
+      saveToMyRoutesBtn.addEventListener("click", () => {
+        if (typeof openSaveRouteModal === "function") {
+          openSaveRouteModal();
+        } else {
+          console.error("openSaveRouteModal function not found");
+        }
+      });
+    }
+
     // Settings change handlers
     const maxLegMiles = document.getElementById("maxLegMiles");
     if (maxLegMiles) {

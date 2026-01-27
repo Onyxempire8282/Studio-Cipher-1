@@ -26,6 +26,7 @@
         <div class="nav-links">
           <a href="command-center.html">🎯 Dashboard</a>
           <a href="route-cypher.html" class="active">🗺️ Routes</a>
+          <a href="my-routes.html">📋 My Routes</a>
           <a href="mileage-cypher.html">🧮 Mileage</a>
           <!-- DISTRO: Hidden features - do not delete -->
           <!-- <a href="jobs-studio.html">💼 Jobs</a> -->
@@ -336,6 +337,10 @@
                   <span class="btn-icon">📊</span>
                   Mileage
                 </button>
+                <button id="saveToMyRoutes" class="primary-action-btn">
+                  <span class="btn-icon">💾</span>
+                  Save to My Routes
+                </button>
               </div>
 
               <div class="calendar-export-section">
@@ -548,6 +553,58 @@
       </div>
     </div>
 
+    <!-- Save to My Routes Modal -->
+    <div id="saveRouteModal" class="route-map-modal">
+      <div class="save-route-container">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>💾</span>
+            <span>Save Route</span>
+          </div>
+          <button class="modal-close-btn" onclick="closeSaveRouteModal()">×</button>
+        </div>
+
+        <div class="save-route-content">
+          <p class="save-route-description">
+            Save this route to My Routes for lifecycle management and mileage logging.
+          </p>
+
+          <div class="save-route-form">
+            <div class="form-group">
+              <label for="routeDate" class="input-label">Route Date</label>
+              <input type="date" id="routeDate" class="filter-input" required />
+              <span class="input-hint">The effective work date for this route</span>
+            </div>
+
+            <div class="route-summary-preview">
+              <div class="summary-row">
+                <span class="summary-label">Start:</span>
+                <span class="summary-value" id="saveRouteStart">-</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">End:</span>
+                <span class="summary-value" id="saveRouteEnd">-</span>
+              </div>
+              <div class="summary-row summary-row--highlight">
+                <span class="summary-label">Total Miles:</span>
+                <span class="summary-value" id="saveRouteMiles">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="modal-btn modal-btn-secondary" onclick="closeSaveRouteModal()">
+            Cancel
+          </button>
+          <button id="confirmSaveRouteBtn" class="modal-btn modal-btn-primary" onclick="confirmSaveRoute()">
+            <span>💾</span>
+            <span>Save Route</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Load API configuration first -->
     <script src="config/github-pages-env.js"></script>
     <script src="config/api-config-production.js"></script>
@@ -558,6 +615,7 @@
     <!-- Supabase Configuration and Auth -->
     <script src="scripts/supabase-config.js"></script>
     <script src="scripts/supabase-auth.js"></script>
+    <script src="scripts/route-service.js"></script>
 
     <!-- Supabase Page Protection - MUST run before page renders -->
     <script>
@@ -672,6 +730,98 @@
       function exportRouteFromModal() {
         if (window.routeOptimizer) {
           window.routeOptimizer.showSaveDayModal();
+        }
+      }
+
+      // Save Route Modal Functions
+      function openSaveRouteModal() {
+        if (!window.routeOptimizer || !window.routeOptimizer.currentRoute) {
+          alert('No route to save. Please optimize a route first.');
+          return;
+        }
+
+        const route = window.routeOptimizer.currentRoute;
+        const startLocation = window.routeOptimizer.startLocation ||
+                              document.getElementById('startLocation')?.value || 'Unknown';
+
+        // Get destinations
+        const destinations = window.routeOptimizer.destinations || [];
+        const endAddress = destinations.length > 0
+          ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
+          : startLocation;
+
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('routeDate').value = today;
+
+        // Populate summary
+        document.getElementById('saveRouteStart').textContent = startLocation;
+        document.getElementById('saveRouteEnd').textContent = endAddress;
+        document.getElementById('saveRouteMiles').textContent =
+          (route.overall?.miles || 0) + ' miles';
+
+        // Show modal
+        const modal = document.getElementById('saveRouteModal');
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSaveRouteModal() {
+        const modal = document.getElementById('saveRouteModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      async function confirmSaveRoute() {
+        const dateInput = document.getElementById('routeDate');
+        if (!dateInput.value) {
+          alert('Please select a route date.');
+          return;
+        }
+
+        const btn = document.getElementById('confirmSaveRouteBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span><span>Saving...</span>';
+
+        try {
+          const route = window.routeOptimizer.currentRoute;
+          const startLocation = window.routeOptimizer.startLocation ||
+                                document.getElementById('startLocation')?.value || 'Unknown';
+          const destinations = window.routeOptimizer.destinations || [];
+          const endAddress = destinations.length > 0
+            ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
+            : startLocation;
+
+          const routeData = {
+            date: dateInput.value,
+            start_address: startLocation,
+            end_address: endAddress,
+            total_miles: route.overall?.miles || 0
+          };
+
+          const result = await window.RouteService.saveRoute(routeData);
+
+          if (result.success) {
+            closeSaveRouteModal();
+            if (window.routeOptimizer.showToast) {
+              window.routeOptimizer.showToast('Route saved to My Routes!');
+            } else {
+              alert('Route saved successfully! View it in My Routes.');
+            }
+
+            // Offer to go to My Routes
+            if (confirm('Route saved! Open My Routes to manage it?')) {
+              window.location.href = 'my-routes.html';
+            }
+          } else {
+            alert('Failed to save route: ' + (result.error || 'Unknown error'));
+          }
+        } catch (err) {
+          console.error('Save route error:', err);
+          alert('Error saving route: ' + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<span>💾</span><span>Save Route</span>';
         }
       }
     </script>

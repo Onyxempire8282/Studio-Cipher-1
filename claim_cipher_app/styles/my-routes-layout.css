@@ -1,0 +1,621 @@
+/* ========================================
+   MY ROUTES PAGE LAYOUT
+   Route lifecycle management and mileage logging
+   Uses universal-system.css variables for consistency
+   ======================================== */
+
+/* =================================
+   MAIN LAYOUT STRUCTURE
+   ================================= */
+.my-routes-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--cipher-space-lg);
+  padding-bottom: var(--cipher-space-xxl);
+  min-height: calc(100vh - 80px);
+}
+
+.my-routes-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cipher-space-xl);
+}
+
+/* =================================
+   PAGE HEADER
+   ================================= */
+.page-header {
+  text-align: center;
+  margin-bottom: var(--cipher-space-md);
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cipher-space-sm);
+  margin-bottom: var(--cipher-space-xs);
+}
+
+.page-icon {
+  font-size: 2rem;
+}
+
+.page-title h1 {
+  font-size: 2rem;
+  font-weight: var(--cipher-font-weight-bold);
+  color: var(--cipher-text-primary);
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--cipher-text-muted);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* =================================
+   FILTERS SECTION
+   ================================= */
+.filters-section {
+  padding: var(--cipher-space-lg);
+}
+
+.filters-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    135deg,
+    var(--cipher-electric-blue) 0%,
+    var(--cipher-gold) 100%
+  );
+}
+
+.filters-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cipher-space-md);
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cipher-space-xs);
+  min-width: 150px;
+}
+
+.filter-select,
+.filter-input {
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-md);
+  color: var(--cipher-text-primary);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.filter-select:hover,
+.filter-input:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: var(--cipher-electric-blue);
+  box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.15);
+}
+
+.secondary-btn--muted {
+  opacity: 0.7;
+}
+
+.secondary-btn--muted:hover {
+  opacity: 1;
+}
+
+/* =================================
+   ROUTES LIST SECTION
+   ================================= */
+.routes-list-section {
+  padding: var(--cipher-space-lg);
+  position: relative;
+}
+
+.routes-list-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    135deg,
+    var(--cipher-gold) 0%,
+    var(--cipher-electric-blue) 100%
+  );
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--cipher-space-lg);
+  flex-wrap: wrap;
+  gap: var(--cipher-space-md);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--cipher-space-sm);
+}
+
+.section-icon {
+  font-size: 1.5rem;
+}
+
+.section-title h2 {
+  font-size: 1.25rem;
+  font-weight: var(--cipher-font-weight-semibold);
+  color: var(--cipher-text-primary);
+  margin: 0;
+}
+
+.route-count {
+  color: var(--cipher-text-muted);
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+/* Routes List Container */
+.routes-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cipher-space-md);
+}
+
+/* Loading State */
+.routes-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cipher-space-md);
+  padding: var(--cipher-space-xxl);
+  color: var(--cipher-text-muted);
+}
+
+.cipher-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--cipher-gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.routes-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--cipher-space-xxl);
+  text-align: center;
+  color: var(--cipher-text-muted);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: var(--cipher-space-md);
+  opacity: 0.5;
+}
+
+.routes-empty p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: var(--cipher-space-xs) !important;
+}
+
+/* Error State */
+.routes-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cipher-space-sm);
+  padding: var(--cipher-space-xl);
+  color: var(--cipher-danger);
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: var(--cipher-radius-md);
+}
+
+/* =================================
+   ROUTE ITEM CARDS
+   ================================= */
+.route-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--cipher-space-lg);
+  align-items: center;
+  padding: var(--cipher-space-lg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--cipher-radius-md);
+  transition: all 0.3s ease;
+}
+
+.route-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+}
+
+.route-item[data-status="closed"] {
+  opacity: 0.8;
+}
+
+.route-item[data-status="closed"]:hover {
+  transform: none;
+}
+
+/* Route Info */
+.route-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cipher-space-xs);
+  min-width: 0;
+}
+
+.route-date {
+  font-weight: var(--cipher-font-weight-semibold);
+  color: var(--cipher-text-primary);
+  font-size: 1rem;
+}
+
+.route-addresses {
+  display: flex;
+  align-items: center;
+  gap: var(--cipher-space-xs);
+  font-size: 0.9rem;
+  color: var(--cipher-text-muted);
+  overflow: hidden;
+}
+
+.address-label {
+  color: var(--cipher-text-muted);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.start-address,
+.end-address {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Route Meta (miles + badge) */
+.route-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--cipher-space-xs);
+}
+
+.route-miles {
+  font-weight: var(--cipher-font-weight-semibold);
+  color: var(--cipher-gold);
+  font-size: 1rem;
+}
+
+.route-miles.miles-missing {
+  color: var(--cipher-text-muted);
+  font-style: italic;
+  font-weight: normal;
+}
+
+/* Status Badges */
+.cipher-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--cipher-radius-sm);
+  font-size: 0.75rem;
+  font-weight: var(--cipher-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cipher-badge--info {
+  background: rgba(0, 191, 255, 0.15);
+  color: var(--cipher-electric-blue);
+  border: 1px solid rgba(0, 191, 255, 0.3);
+}
+
+.cipher-badge--warning {
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--cipher-gold);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.cipher-badge--success {
+  background: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+/* Route Actions */
+.route-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--cipher-space-sm);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--cipher-space-xs);
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
+  border: none;
+  border-radius: var(--cipher-radius-md);
+  font-size: 0.85rem;
+  font-weight: var(--cipher-font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn--activate {
+  background: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.action-btn--activate:hover {
+  background: rgba(39, 174, 96, 0.25);
+  transform: translateY(-2px);
+}
+
+.action-btn--close {
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--cipher-gold);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.action-btn--close:hover:not(.action-btn--disabled) {
+  background: rgba(255, 215, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.action-btn--delete {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--cipher-danger);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  padding: var(--cipher-space-sm);
+}
+
+.action-btn--delete:hover {
+  background: rgba(231, 76, 60, 0.2);
+}
+
+.action-btn--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.action-hint {
+  font-size: 0.75rem;
+  color: var(--cipher-text-muted);
+  font-style: italic;
+}
+
+.read-only-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--cipher-space-xs);
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--cipher-radius-md);
+  color: var(--cipher-text-muted);
+  font-size: 0.85rem;
+}
+
+/* =================================
+   MODALS
+   ================================= */
+.cipher-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--cipher-z-modal, 1100);
+  backdrop-filter: blur(4px);
+}
+
+.cipher-modal-content {
+  background: var(--cipher-bg-secondary, #1a1a1a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--cipher-radius-lg);
+  min-width: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.cipher-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--cipher-space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cipher-modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--cipher-text-primary);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--cipher-text-muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--cipher-text-primary);
+}
+
+.cipher-modal-body {
+  padding: var(--cipher-space-lg);
+}
+
+.modal-description {
+  color: var(--cipher-text-muted);
+  margin-bottom: var(--cipher-space-lg);
+  line-height: 1.5;
+}
+
+.modal-warning {
+  color: var(--cipher-warning, #f39c12);
+  background: rgba(243, 156, 18, 0.1);
+  border: 1px solid rgba(243, 156, 18, 0.3);
+  border-radius: var(--cipher-radius-md);
+  padding: var(--cipher-space-md);
+  margin-bottom: var(--cipher-space-lg);
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: var(--cipher-space-md);
+}
+
+.input-label {
+  display: block;
+  color: var(--cipher-text-secondary);
+  font-weight: var(--cipher-font-weight-medium);
+  font-size: 0.9rem;
+  margin-bottom: var(--cipher-space-xs);
+}
+
+.cipher-modal-footer {
+  display: flex;
+  gap: var(--cipher-space-md);
+  padding: var(--cipher-space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: flex-end;
+}
+
+/* Route Summary in Close Modal */
+.route-summary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--cipher-radius-md);
+  padding: var(--cipher-space-md);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--cipher-space-xs) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  color: var(--cipher-text-muted);
+}
+
+.summary-value {
+  color: var(--cipher-text-primary);
+  font-weight: var(--cipher-font-weight-medium);
+}
+
+.summary-row--highlight .summary-value {
+  color: var(--cipher-gold);
+  font-size: 1.1rem;
+}
+
+/* Warning Button Variant */
+.primary-action-btn--warning {
+  background: linear-gradient(
+    135deg,
+    var(--cipher-warning, #f39c12),
+    #e67e22
+  ) !important;
+}
+
+.primary-action-btn--warning:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400) !important;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+@media (max-width: 768px) {
+  .my-routes-main {
+    padding: var(--cipher-space-md);
+  }
+
+  .filters-form {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .route-item {
+    grid-template-columns: 1fr;
+    gap: var(--cipher-space-md);
+  }
+
+  .route-meta {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .route-actions {
+    justify-content: flex-end;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cipher-modal-content {
+    min-width: unset;
+    margin: var(--cipher-space-md);
+  }
+}
