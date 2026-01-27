@@ -229,18 +229,46 @@ class CommandCenterManager {
     }
     
     getStoredStats() {
-        const defaultStats = { routes: 0, miles: 0, firms: 2, sessions: 1 };
+        const defaultStats = { routes: 0, miles: 0, firms: 0, sessions: 1 };
         const stored = localStorage.getItem('cc_dashboard_stats');
-        
+
         if (stored) {
             try {
-                return { ...defaultStats, ...JSON.parse(stored) };
+                const parsed = { ...defaultStats, ...JSON.parse(stored) };
+                // Override firms count from mileage calculator settings
+                parsed.firms = this.getFirmsWithBillingRate();
+                return parsed;
             } catch (e) {
                 console.warn('📝 Lyricist: Error parsing stored stats');
             }
         }
-        
+
+        // Even with default stats, get firms from mileage calculator
+        defaultStats.firms = this.getFirmsWithBillingRate();
         return defaultStats;
+    }
+
+    /**
+     * Get count of firms saved in Mileage Calculator with a billing rate
+     * Sources from mileage_cypher_settings_v2 localStorage key
+     * @returns {number} Number of firms with billing rates configured
+     */
+    getFirmsWithBillingRate() {
+        try {
+            const mileageSettings = localStorage.getItem('mileage_cypher_settings_v2');
+            if (!mileageSettings) return 0;
+
+            const settings = JSON.parse(mileageSettings);
+            if (!settings.firms || !Array.isArray(settings.firms)) return 0;
+
+            // Count firms that have a billing rate set (ratePerMile > 0)
+            return settings.firms.filter(firm =>
+                firm && typeof firm.ratePerMile === 'number' && firm.ratePerMile > 0
+            ).length;
+        } catch (e) {
+            console.warn('📝 Lyricist: Error reading mileage calculator firms');
+            return 0;
+        }
     }
     
     updateStats(type, increment = 1) {

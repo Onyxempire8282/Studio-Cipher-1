@@ -459,8 +459,8 @@
         summaryEl.innerHTML = `
           <div class="export-empty">
             <span class="empty-icon">📭</span>
-            <p>No mileage logs found</p>
-            <p class="empty-hint">Close routes to create mileage logs for export</p>
+            <p>No mileage logs yet</p>
+            <p class="empty-hint">Close active routes to create exportable mileage logs</p>
           </div>
         `;
       }
@@ -613,7 +613,7 @@
     }
 
     if (logs.length === 0) {
-      notify("No mileage logs found for selected date range", "info");
+      notify("No closed routes in this date range. Close routes first to create mileage logs.", "info");
       return;
     }
 
@@ -623,32 +623,25 @@
 
   /**
    * Generate and download CSV file
+   * Summary-first format for IRS mileage logs
    */
   function generateCsv(logs, dateFrom, dateTo) {
-    // IRS-friendly columns
+    // Summary-first IRS-friendly columns
     const headers = [
       "Date",
-      "Trip Type",
-      "Start Address",
-      "End Address",
       "Total Miles",
       "Business Purpose",
       "Claim Count",
-      "Claim IDs",
+      "Route ID",
     ];
 
     const rows = logs.map((log) => {
-      const isRT = log.start_address && log.end_address &&
-                   log.start_address.trim().toLowerCase() === log.end_address.trim().toLowerCase();
       return [
         log.log_date,
-        isRT ? "Round Trip" : "One Way",
-        `"${(log.start_address || "").replace(/"/g, '""')}"`,
-        `"${(log.end_address || "").replace(/"/g, '""')}"`,
         log.total_miles,
-        "Business - Claims Inspection",
+        "Business – Claims Inspection",
         log.claim_count || 0,
-        `"${(log.claim_ids || []).join("; ")}"`,
+        log.route_id || "",
       ];
     });
 
@@ -671,7 +664,7 @@
     URL.revokeObjectURL(url);
 
     const totalMiles = logs.reduce((sum, log) => sum + (parseFloat(log.total_miles) || 0), 0);
-    notify(`Exported ${logs.length} routes · ${totalMiles.toFixed(1)} miles`, "success");
+    notify(`Exported ${logs.length} routes · ${totalMiles.toFixed(1)} total miles`, "success");
   }
 
   // ========================================

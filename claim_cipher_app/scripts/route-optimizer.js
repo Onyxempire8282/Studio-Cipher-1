@@ -3197,6 +3197,9 @@ class RouteOptimizer {
       localStorage.setItem('cipher_routes_by_day', JSON.stringify(existingDays));
       console.log(`📁 Saved ${dayName} route to localStorage`);
 
+      // Clear start_fresh flag so resume modal can show again next session
+      sessionStorage.removeItem('cipher_start_fresh');
+
       // 2. Persist to Supabase for My Routes lifecycle management
       if (window.RouteService) {
         // Calculate the actual date for this day
@@ -3223,7 +3226,7 @@ class RouteOptimizer {
           const activateResult = await window.RouteService.activateRoute(result.data.id);
 
           if (activateResult.success) {
-            this.showToast(`Route saved! Available in My Routes.`);
+            this.showToast(`Route saved (${totalMiles} mi). Ready to close in My Routes.`);
             console.log(`✅ Route persisted to Supabase (active):`, activateResult.data);
           } else {
             // Draft saved but activation failed - still usable
@@ -3233,7 +3236,7 @@ class RouteOptimizer {
         } else {
           // Supabase save failed - localStorage still has it
           console.error('❌ Supabase save failed:', result.error);
-          this.showToast(`${this.formatDayName(dayName)} saved locally. Database sync failed.`);
+          this.showToast(`Route saved locally only. Database sync failed.`);
         }
       } else {
         // RouteService not available - localStorage only
@@ -3290,6 +3293,12 @@ class RouteOptimizer {
    * Check for saved routes on page load and show restore modal if found
    */
   checkForSavedRoutes() {
+    // Check if user clicked "Start Fresh" this session - suppress modal
+    if (sessionStorage.getItem('cipher_start_fresh') === 'true') {
+      console.log('📁 Start Fresh active - suppressing resume modal');
+      return;
+    }
+
     const savedByDay = localStorage.getItem('cipher_routes_by_day');
     const lastRoute = localStorage.getItem('cipher_last_route');
 
@@ -3345,7 +3354,7 @@ class RouteOptimizer {
                   <span>Resume Last Session</span>
                 </button>
               ` : ''}
-              <button class="start-fresh-btn modal-btn modal-btn-primary" onclick="window.routeOptimizer.closeRestoreModal()" style="justify-content: center; width: 100%; margin-top: var(--cipher-space-md);">
+              <button class="start-fresh-btn modal-btn modal-btn-primary" onclick="window.routeOptimizer.startFresh()" style="justify-content: center; width: 100%; margin-top: var(--cipher-space-md);">
                 <span>✨</span>
                 <span>Start Fresh</span>
               </button>
@@ -3380,6 +3389,46 @@ class RouteOptimizer {
       modal.classList.remove('active');
       document.body.style.overflow = '';
       setTimeout(() => modal.remove(), 300);
+    }
+  }
+
+  /**
+   * Start Fresh - fully reset route state and suppress resume modal for this session
+   * Called when user clicks "Start Fresh" in the restore modal
+   */
+  startFresh() {
+    try {
+      // 1. Clear all route-related localStorage keys
+      localStorage.removeItem('cipher_last_route');
+      localStorage.removeItem('cipher_routes_by_day');
+      localStorage.removeItem('cc_route_export');
+      localStorage.removeItem('cc_route_settings');
+      localStorage.removeItem('cc_route_stops');
+
+      // 2. Set session flag to suppress resume modal for this session
+      sessionStorage.setItem('cipher_start_fresh', 'true');
+
+      // 3. Reset in-memory route state
+      this.resetRouteState();
+
+      // 4. Close the modal
+      this.closeRestoreModal();
+
+      // 5. Clear UI elements
+      this.renderEmptyRouteState();
+
+      // 6. Clear form inputs
+      const startInput = document.getElementById('startLocation');
+      if (startInput) startInput.value = '';
+
+      const destList = document.getElementById('destinationsList');
+      if (destList) destList.innerHTML = '';
+
+      this.showToast('Started fresh! All saved routes cleared.');
+      console.log('📁 Start Fresh: Cleared all route data and suppressed resume modal');
+    } catch (error) {
+      console.error('📁 Error in startFresh:', error);
+      this.showError('Failed to start fresh');
     }
   }
 
