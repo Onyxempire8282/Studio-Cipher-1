@@ -268,12 +268,17 @@
   transform: translateX(4px);
 }
 
-.route-item[data-status="closed"] {
-  opacity: 0.8;
+.route-item[data-status="closed"],
+.route-item--closed {
+  opacity: 0.7;
+  background: rgba(39, 174, 96, 0.03);
+  border-color: rgba(39, 174, 96, 0.15);
 }
 
-.route-item[data-status="closed"]:hover {
+.route-item[data-status="closed"]:hover,
+.route-item--closed:hover {
   transform: none;
+  opacity: 0.75;
 }
 
 /* Route Info */
@@ -312,6 +317,39 @@
   text-overflow: ellipsis;
 }
 
+/* Trip Type Badges */
+.trip-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--cipher-radius-sm);
+  font-size: 0.7rem;
+  font-weight: var(--cipher-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
+  border: 1px solid rgba(39, 174, 96, 0.3);
+  flex-shrink: 0;
+}
+
+.trip-type-badge--oneway {
+  background: rgba(0, 191, 255, 0.15);
+  color: var(--cipher-electric-blue);
+  border-color: rgba(0, 191, 255, 0.3);
+}
+
+.route-addresses--roundtrip {
+  display: flex;
+  align-items: center;
+  gap: var(--cipher-space-sm);
+}
+
+.route-address {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Route Meta (miles + badge) */
 .route-meta {
   display: flex;
@@ -330,6 +368,13 @@
   color: var(--cipher-text-muted);
   font-style: italic;
   font-weight: normal;
+}
+
+/* Export Indicator (shown on closed routes) */
+.export-indicator {
+  font-size: 0.7rem;
+  color: rgba(39, 174, 96, 0.8);
+  font-style: italic;
 }
 
 /* Status Badges */
@@ -577,6 +622,103 @@
 
 .primary-action-btn--warning:hover {
   background: linear-gradient(135deg, #e67e22, #d35400) !important;
+}
+
+/* =================================
+   EXPORT SUMMARY / PREVIEW
+   ================================= */
+.export-summary {
+  margin-top: var(--cipher-space-lg);
+  padding-top: var(--cipher-space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.export-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cipher-space-md);
+  padding: var(--cipher-space-md);
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: var(--cipher-radius-md);
+}
+
+.preview-stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cipher-space-xs);
+}
+
+.preview-stat .stat-value {
+  font-size: 1.5rem;
+  font-weight: var(--cipher-font-weight-bold);
+  color: var(--cipher-gold);
+}
+
+.preview-stat .stat-label {
+  font-size: 0.9rem;
+  color: var(--cipher-text-muted);
+}
+
+.preview-divider {
+  font-size: 1.5rem;
+  color: var(--cipher-text-muted);
+  opacity: 0.5;
+}
+
+.export-loading {
+  display: block;
+  text-align: center;
+  padding: var(--cipher-space-md);
+  color: var(--cipher-text-muted);
+  font-style: italic;
+}
+
+.export-error {
+  display: block;
+  text-align: center;
+  padding: var(--cipher-space-md);
+  color: var(--cipher-danger);
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: var(--cipher-radius-md);
+}
+
+.export-hint {
+  display: block;
+  text-align: center;
+  padding: var(--cipher-space-md);
+  color: var(--cipher-text-muted);
+  font-size: 0.9rem;
+}
+
+.export-empty,
+.export-empty-range {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--cipher-space-lg);
+  text-align: center;
+  color: var(--cipher-text-muted);
+}
+
+.export-empty .empty-icon,
+.export-empty-range .empty-icon {
+  font-size: 2rem;
+  margin-bottom: var(--cipher-space-sm);
+  opacity: 0.5;
+}
+
+.export-empty p,
+.export-empty-range p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.export-empty .empty-hint {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: var(--cipher-space-xs);
 }
 
 /* =================================

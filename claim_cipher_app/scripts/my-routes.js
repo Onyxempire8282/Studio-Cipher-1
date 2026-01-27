@@ -9,6 +9,8 @@
   // State
   let currentRoutes = [];
   let pendingCloseRouteId = null;
+  let pendingCloseRoute = null;
+  let exportPreviewLogs = [];
 
   /**
    * Initialize the page
@@ -39,6 +41,14 @@
     document
       .getElementById("confirmExportBtn")
       ?.addEventListener("click", exportToCsv);
+
+    // Export date change listeners for preview
+    document
+      .getElementById("exportDateFrom")
+      ?.addEventListener("change", updateExportPreview);
+    document
+      .getElementById("exportDateTo")
+      ?.addEventListener("change", updateExportPreview);
 
     // Close route confirmation
     document
@@ -134,6 +144,42 @@
   }
 
   /**
+   * Determine if route is a round-trip (start === end)
+   */
+  function isRoundTrip(route) {
+    if (!route.start_address || !route.end_address) return false;
+    return route.start_address.trim().toLowerCase() === route.end_address.trim().toLowerCase();
+  }
+
+  /**
+   * Format route address display
+   * Shows "Round-trip from X" if start === end
+   */
+  function formatRouteAddresses(route) {
+    if (isRoundTrip(route)) {
+      return `
+        <div class="route-addresses route-addresses--roundtrip">
+          <span class="trip-type-badge">Round Trip</span>
+          <span class="route-address">${escapeHtml(route.start_address)}</span>
+        </div>
+      `;
+    }
+    return `
+      <div class="route-addresses">
+        <span class="trip-type-badge trip-type-badge--oneway">One Way</span>
+      </div>
+      <div class="route-addresses">
+        <span class="address-label">From:</span>
+        <span class="start-address">${escapeHtml(route.start_address)}</span>
+      </div>
+      <div class="route-addresses">
+        <span class="address-label">To:</span>
+        <span class="end-address">${escapeHtml(route.end_address)}</span>
+      </div>
+    `;
+  }
+
+  /**
    * Render the routes list
    */
   function renderRoutes(routes) {
@@ -153,17 +199,10 @@
     listContainer.innerHTML = routes
       .map(
         (route) => `
-      <div class="route-item" data-route-id="${route.id}" data-status="${route.status}">
+      <div class="route-item ${route.status === 'closed' ? 'route-item--closed' : ''}" data-route-id="${route.id}" data-status="${route.status}">
         <div class="route-info">
           <div class="route-date">${formatDate(route.date)}</div>
-          <div class="route-addresses">
-            <span class="address-label">From:</span>
-            <span class="start-address">${escapeHtml(route.start_address)}</span>
-          </div>
-          <div class="route-addresses">
-            <span class="address-label">To:</span>
-            <span class="end-address">${escapeHtml(route.end_address)}</span>
-          </div>
+          ${formatRouteAddresses(route)}
         </div>
         <div class="route-meta">
           <div class="route-miles ${route.total_miles ? "" : "miles-missing"}">
@@ -172,6 +211,7 @@
           <span class="cipher-badge cipher-badge--${getStatusBadgeClass(route.status)}">
             ${route.status}
           </span>
+          ${route.status === 'closed' ? '<span class="export-indicator">Included in export</span>' : ''}
         </div>
         <div class="route-actions">
           ${renderRouteActions(route)}
@@ -302,21 +342,38 @@
     if (!route) return;
 
     pendingCloseRouteId = routeId;
+    pendingCloseRoute = route;
 
     const summaryEl = document.getElementById("closeRouteSummary");
+
+    // Format address display based on round-trip
+    let addressHtml;
+    if (isRoundTrip(route)) {
+      addressHtml = `
+        <div class="summary-row">
+          <span class="summary-label">Route:</span>
+          <span class="summary-value">Round-trip from ${escapeHtml(route.start_address)}</span>
+        </div>
+      `;
+    } else {
+      addressHtml = `
+        <div class="summary-row">
+          <span class="summary-label">From:</span>
+          <span class="summary-value">${escapeHtml(route.start_address)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">To:</span>
+          <span class="summary-value">${escapeHtml(route.end_address)}</span>
+        </div>
+      `;
+    }
+
     summaryEl.innerHTML = `
       <div class="summary-row">
         <span class="summary-label">Date:</span>
         <span class="summary-value">${formatDate(route.date)}</span>
       </div>
-      <div class="summary-row">
-        <span class="summary-label">From:</span>
-        <span class="summary-value">${escapeHtml(route.start_address)}</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">To:</span>
-        <span class="summary-value">${escapeHtml(route.end_address)}</span>
-      </div>
+      ${addressHtml}
       <div class="summary-row summary-row--highlight">
         <span class="summary-label">Total Miles:</span>
         <span class="summary-value">${route.total_miles} miles</span>
@@ -332,6 +389,7 @@
   function closeCloseRouteModal() {
     document.getElementById("closeRouteModal").style.display = "none";
     pendingCloseRouteId = null;
+    pendingCloseRoute = null;
   }
   window.closeCloseRouteModal = closeCloseRouteModal;
 
@@ -339,21 +397,22 @@
    * Confirm and execute route closure
    */
   async function confirmCloseRoute() {
-    if (!pendingCloseRouteId) return;
+    if (!pendingCloseRouteId || !pendingCloseRoute) return;
 
+    const route = pendingCloseRoute;
     const btn = document.getElementById("confirmCloseBtn");
     btn.disabled = true;
-    btn.innerHTML =
-      '<span class="btn-icon">⏳</span> Closing...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Closing...';
 
     const result = await window.RouteService.closeRoute(pendingCloseRouteId, {});
 
     btn.disabled = false;
-    btn.innerHTML =
-      '<span class="btn-icon">🔒</span> Close Route & Log Mileage';
+    btn.innerHTML = '<span class="btn-icon">🔒</span> Close Route & Log Mileage';
 
     if (result.success) {
-      notify("Mileage logged and ready for export.", "success");
+      // Show detailed success message with date and miles
+      const dateStr = formatDate(route.date);
+      notify(`${route.total_miles} miles logged for ${dateStr}. Ready for export.`, "success");
       closeCloseRouteModal();
       await loadRoutes();
     } else {
@@ -366,17 +425,145 @@
   // ========================================
 
   /**
-   * Show export modal with default date range
+   * Show export modal with auto-populated date range from existing logs
    */
-  function showExportModal() {
-    // Default to current year
-    const now = new Date();
-    const yearStart = `${now.getFullYear()}-01-01`;
-    const today = now.toISOString().split("T")[0];
+  async function showExportModal() {
+    const modal = document.getElementById("exportModal");
+    const summaryEl = document.getElementById("exportSummary");
+    const downloadBtn = document.getElementById("confirmExportBtn");
 
-    document.getElementById("exportDateFrom").value = yearStart;
-    document.getElementById("exportDateTo").value = today;
-    document.getElementById("exportModal").style.display = "flex";
+    // Show loading state
+    modal.style.display = "flex";
+    if (summaryEl) {
+      summaryEl.innerHTML = '<span class="export-loading">Loading mileage logs...</span>';
+    }
+
+    // Fetch ALL mileage logs to determine date range
+    const result = await window.RouteService.getMileageLogs('1900-01-01', '2100-12-31');
+
+    if (!result.success) {
+      if (summaryEl) {
+        summaryEl.innerHTML = `<span class="export-error">Error loading logs: ${escapeHtml(result.error)}</span>`;
+      }
+      downloadBtn.disabled = true;
+      return;
+    }
+
+    const logs = result.data || [];
+
+    if (logs.length === 0) {
+      // No logs exist - show empty state
+      document.getElementById("exportDateFrom").value = "";
+      document.getElementById("exportDateTo").value = "";
+      if (summaryEl) {
+        summaryEl.innerHTML = `
+          <div class="export-empty">
+            <span class="empty-icon">📭</span>
+            <p>No mileage logs found</p>
+            <p class="empty-hint">Close routes to create mileage logs for export</p>
+          </div>
+        `;
+      }
+      downloadBtn.disabled = true;
+      downloadBtn.innerHTML = '<span class="btn-icon">💾</span> No Logs to Export';
+      return;
+    }
+
+    // Calculate date range from existing logs
+    const dates = logs.map(log => log.log_date).sort();
+    const minDate = dates[0];
+    const maxDate = dates[dates.length - 1];
+
+    document.getElementById("exportDateFrom").value = minDate;
+    document.getElementById("exportDateTo").value = maxDate;
+
+    // Store for export and show preview
+    exportPreviewLogs = logs;
+    updateExportSummary(logs);
+    downloadBtn.disabled = false;
+    downloadBtn.innerHTML = '<span class="btn-icon">💾</span> Download CSV';
+  }
+
+  /**
+   * Update export preview when dates change
+   */
+  async function updateExportPreview() {
+    const dateFrom = document.getElementById("exportDateFrom").value;
+    const dateTo = document.getElementById("exportDateTo").value;
+    const summaryEl = document.getElementById("exportSummary");
+    const downloadBtn = document.getElementById("confirmExportBtn");
+
+    if (!dateFrom || !dateTo) {
+      if (summaryEl) {
+        summaryEl.innerHTML = '<span class="export-hint">Select date range to preview</span>';
+      }
+      downloadBtn.disabled = true;
+      return;
+    }
+
+    if (dateFrom > dateTo) {
+      if (summaryEl) {
+        summaryEl.innerHTML = '<span class="export-error">Start date must be before end date</span>';
+      }
+      downloadBtn.disabled = true;
+      return;
+    }
+
+    // Fetch logs for the selected range
+    const result = await window.RouteService.getMileageLogs(dateFrom, dateTo);
+
+    if (!result.success) {
+      if (summaryEl) {
+        summaryEl.innerHTML = `<span class="export-error">Error: ${escapeHtml(result.error)}</span>`;
+      }
+      downloadBtn.disabled = true;
+      return;
+    }
+
+    exportPreviewLogs = result.data || [];
+    updateExportSummary(exportPreviewLogs);
+
+    if (exportPreviewLogs.length === 0) {
+      downloadBtn.disabled = true;
+      downloadBtn.innerHTML = '<span class="btn-icon">💾</span> No Logs in Range';
+    } else {
+      downloadBtn.disabled = false;
+      downloadBtn.innerHTML = '<span class="btn-icon">💾</span> Download CSV';
+    }
+  }
+
+  /**
+   * Update export summary display
+   */
+  function updateExportSummary(logs) {
+    const summaryEl = document.getElementById("exportSummary");
+    if (!summaryEl) return;
+
+    if (!logs || logs.length === 0) {
+      summaryEl.innerHTML = `
+        <div class="export-empty-range">
+          <span class="empty-icon">📭</span>
+          <p>No mileage logs in selected date range</p>
+        </div>
+      `;
+      return;
+    }
+
+    const totalMiles = logs.reduce((sum, log) => sum + (parseFloat(log.total_miles) || 0), 0);
+
+    summaryEl.innerHTML = `
+      <div class="export-preview">
+        <div class="preview-stat">
+          <span class="stat-value">${logs.length}</span>
+          <span class="stat-label">${logs.length === 1 ? 'route' : 'routes'}</span>
+        </div>
+        <div class="preview-divider">·</div>
+        <div class="preview-stat">
+          <span class="stat-value">${totalMiles.toFixed(1)}</span>
+          <span class="stat-label">total miles</span>
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -384,6 +571,7 @@
    */
   function closeExportModal() {
     document.getElementById("exportModal").style.display = "none";
+    exportPreviewLogs = [];
   }
   window.closeExportModal = closeExportModal;
 
@@ -404,26 +592,32 @@
       return;
     }
 
-    const btn = document.getElementById("confirmExportBtn");
-    btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Exporting...';
+    // Use cached logs if available, otherwise fetch
+    let logs = exportPreviewLogs;
+    if (!logs || logs.length === 0) {
+      const btn = document.getElementById("confirmExportBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn-icon">⏳</span> Exporting...';
 
-    const result = await window.RouteService.getMileageLogs(dateFrom, dateTo);
+      const result = await window.RouteService.getMileageLogs(dateFrom, dateTo);
 
-    btn.disabled = false;
-    btn.innerHTML = '<span class="btn-icon">💾</span> Download CSV';
+      btn.disabled = false;
+      btn.innerHTML = '<span class="btn-icon">💾</span> Download CSV';
 
-    if (!result.success) {
-      notify(result.error || "Failed to fetch mileage logs", "error");
-      return;
+      if (!result.success) {
+        notify(result.error || "Failed to fetch mileage logs", "error");
+        return;
+      }
+
+      logs = result.data;
     }
 
-    if (result.data.length === 0) {
+    if (logs.length === 0) {
       notify("No mileage logs found for selected date range", "info");
       return;
     }
 
-    generateCsv(result.data, dateFrom, dateTo);
+    generateCsv(logs, dateFrom, dateTo);
     closeExportModal();
   }
 
@@ -434,6 +628,7 @@
     // IRS-friendly columns
     const headers = [
       "Date",
+      "Trip Type",
       "Start Address",
       "End Address",
       "Total Miles",
@@ -442,15 +637,20 @@
       "Claim IDs",
     ];
 
-    const rows = logs.map((log) => [
-      log.log_date,
-      `"${(log.start_address || "").replace(/"/g, '""')}"`,
-      `"${(log.end_address || "").replace(/"/g, '""')}"`,
-      log.total_miles,
-      "Business - Claims Inspection",
-      log.claim_count || 0,
-      `"${(log.claim_ids || []).join("; ")}"`,
-    ]);
+    const rows = logs.map((log) => {
+      const isRT = log.start_address && log.end_address &&
+                   log.start_address.trim().toLowerCase() === log.end_address.trim().toLowerCase();
+      return [
+        log.log_date,
+        isRT ? "Round Trip" : "One Way",
+        `"${(log.start_address || "").replace(/"/g, '""')}"`,
+        `"${(log.end_address || "").replace(/"/g, '""')}"`,
+        log.total_miles,
+        "Business - Claims Inspection",
+        log.claim_count || 0,
+        `"${(log.claim_ids || []).join("; ")}"`,
+      ];
+    });
 
     const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join(
       "\n"
@@ -470,7 +670,8 @@
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    notify(`Exported ${logs.length} mileage records`, "success");
+    const totalMiles = logs.reduce((sum, log) => sum + (parseFloat(log.total_miles) || 0), 0);
+    notify(`Exported ${logs.length} routes · ${totalMiles.toFixed(1)} miles`, "success");
   }
 
   // ========================================
