@@ -353,7 +353,7 @@
       '<span class="btn-icon">🔒</span> Close Route & Log Mileage';
 
     if (result.success) {
-      notify("Route closed and mileage logged successfully", "success");
+      notify("Mileage logged and ready for export.", "success");
       closeCloseRouteModal();
       await loadRoutes();
     } else {

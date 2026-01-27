@@ -3158,10 +3158,10 @@ class RouteOptimizer {
   }
 
   /**
-   * Save a specific day's route to cipher_routes_by_day
-   * Does NOT overwrite other days
+   * Save a specific day's route to localStorage AND Supabase
+   * Persists to routes table with status='active' for My Routes lifecycle
    */
-  saveDayRoute(dayName) {
+  async saveDayRoute(dayName) {
     // Don't save in demo mode
     if (this.isDemoMode()) {
       this.showToast('Cannot save routes in demo mode');
@@ -3179,29 +3179,111 @@ class RouteOptimizer {
       return;
     }
 
-    try {
-      const existingDays = JSON.parse(localStorage.getItem('cipher_routes_by_day') || '{}');
+    const dayData = this.currentRoute.days[dayIndex];
 
-      // Save this day's complete route data using instance state
+    try {
+      // 1. Save to localStorage (existing behavior for restore functionality)
+      const existingDays = JSON.parse(localStorage.getItem('cipher_routes_by_day') || '{}');
       existingDays[dayName] = {
-        day: this.currentRoute.days[dayIndex],
+        day: dayData,
         startLocation: this.startLocation,
         destinations: (this.destinations || []).filter((dest) => {
-          // Filter destinations for this specific day
-          const dayStops = this.currentRoute.days[dayIndex].stops;
+          const dayStops = dayData.stops;
           return dayStops.some(stop => stop.includes(dest.address) || dest.address.includes(stop));
         }),
         settings: { ...this.settings },
         savedAt: Date.now()
       };
-
       localStorage.setItem('cipher_routes_by_day', JSON.stringify(existingDays));
-      this.showToast(`${this.formatDayName(dayName)} route saved successfully!`);
-      console.log(`📁 Saved ${dayName} route to cipher_routes_by_day`);
+      console.log(`📁 Saved ${dayName} route to localStorage`);
+
+      // 2. Persist to Supabase for My Routes lifecycle management
+      if (window.RouteService) {
+        // Calculate the actual date for this day
+        const routeDate = this.calculateDateForDay(dayName);
+
+        // Get start and end addresses from the day's stops
+        const stops = dayData.stops || [];
+        const startAddress = this.startLocation || stops[0] || 'Unknown';
+        const endAddress = stops.length > 1 ? stops[stops.length - 1] : startAddress;
+        const totalMiles = dayData.totalMiles || 0;
+
+        const routeData = {
+          date: routeDate,
+          start_address: startAddress,
+          end_address: endAddress,
+          total_miles: totalMiles
+        };
+
+        // Save as active (ready for closing) since user explicitly saved it
+        const result = await window.RouteService.saveRoute(routeData);
+
+        if (result.success) {
+          // Immediately activate the route so it's ready for closing
+          const activateResult = await window.RouteService.activateRoute(result.data.id);
+
+          if (activateResult.success) {
+            this.showToast(`Route saved! Available in My Routes.`);
+            console.log(`✅ Route persisted to Supabase (active):`, activateResult.data);
+          } else {
+            // Draft saved but activation failed - still usable
+            this.showToast(`Route saved as draft. Activate it in My Routes.`);
+            console.warn('Route saved but activation failed:', activateResult.error);
+          }
+        } else {
+          // Supabase save failed - localStorage still has it
+          console.error('❌ Supabase save failed:', result.error);
+          this.showToast(`${this.formatDayName(dayName)} saved locally. Database sync failed.`);
+        }
+      } else {
+        // RouteService not available - localStorage only
+        this.showToast(`${this.formatDayName(dayName)} route saved locally.`);
+        console.warn('RouteService not available - saved to localStorage only');
+      }
+
+      // Close the save modal
+      this.closeSaveDayModal();
+
     } catch (error) {
-      console.error('📁 Error saving day route:', error);
-      this.showError('Failed to save route');
+      console.error('📁 Error saving route:', error);
+      this.showError('Failed to save route: ' + error.message);
     }
+  }
+
+  /**
+   * Calculate the actual date for a given day name
+   * Returns YYYY-MM-DD format
+   */
+  calculateDateForDay(dayName) {
+    const dayMap = {
+      'sunday': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3,
+      'thursday': 4, 'friday': 5, 'saturday': 6
+    };
+
+    const today = new Date();
+    const todayDay = today.getDay();
+    const targetDay = dayMap[dayName.toLowerCase()];
+
+    if (targetDay === undefined) {
+      // If dayName is like "day_1", "day_2", use today + offset
+      const match = dayName.match(/day_(\d+)/i);
+      if (match) {
+        const offset = parseInt(match[1], 10) - 1;
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + offset);
+        return targetDate.toISOString().split('T')[0];
+      }
+      // Default to today
+      return today.toISOString().split('T')[0];
+    }
+
+    // Calculate days until the target day (this week or next)
+    let daysUntil = targetDay - todayDay;
+    if (daysUntil < 0) daysUntil += 7; // Next week
+
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + daysUntil);
+    return targetDate.toISOString().split('T')[0];
   }
 
   /**
@@ -3737,13 +3819,13 @@ class RouteOptimizer {
           <div class="modal-header">
             <div class="modal-title">
               <span>💾</span>
-              <span>Save Day Route</span>
+              <span>Save Route</span>
             </div>
             <button class="modal-close-btn" onclick="window.routeOptimizer.closeSaveDayModal()">×</button>
           </div>
           <div class="modal-content" style="padding: var(--cipher-space-xl); display: block;">
             <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-lg);">
-              Select which day to save:
+              Select which day's route to save to My Routes:
             </p>
             <div class="save-day-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-sm);">
               <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('monday')" style="justify-content: flex-start; width: 100%;">
