@@ -216,36 +216,44 @@ class CommandCenterManager {
         }
     }
     
-    // Statistics Management
-    updateStatistics() {
-        const stats = this.getStoredStats();
-        
-        document.getElementById('routesCalculated').textContent = stats.routes;
-        document.getElementById('milesComputed').textContent = stats.miles.toLocaleString();
-        document.getElementById('firmsManaged').textContent = stats.firms;
-        
-        // Animate counters
-        this.animateCounters();
-    }
-    
-    getStoredStats() {
-        const defaultStats = { routes: 0, miles: 0, firms: 0, sessions: 1 };
-        const stored = localStorage.getItem('cc_dashboard_stats');
+    // Statistics Management (Database-backed, display-only)
+    async updateStatistics() {
+        // Show loading state
+        const routesEl = document.getElementById('routesCalculated');
+        const milesEl = document.getElementById('milesComputed');
+        const firmsEl = document.getElementById('firmsManaged');
 
-        if (stored) {
+        // Fetch authoritative stats from database
+        if (window.RouteService && window.RouteService.getDashboardStats) {
             try {
-                const parsed = { ...defaultStats, ...JSON.parse(stored) };
-                // Override firms count from mileage calculator settings
-                parsed.firms = this.getFirmsWithBillingRate();
-                return parsed;
+                const result = await window.RouteService.getDashboardStats();
+                if (result.success) {
+                    // Routes Calculated: from routes table (usage metric)
+                    if (routesEl) routesEl.textContent = result.data.routes;
+                    // Miles Counted: from mileage_logs ONLY (accountant-safe)
+                    if (milesEl) milesEl.textContent = result.data.miles.toLocaleString();
+                } else {
+                    console.warn('📝 Dashboard stats fetch failed:', result.error);
+                    // Show 0 on error - no localStorage fallback
+                    if (routesEl) routesEl.textContent = '0';
+                    if (milesEl) milesEl.textContent = '0';
+                }
             } catch (e) {
-                console.warn('📝 Lyricist: Error parsing stored stats');
+                console.warn('📝 Dashboard stats error:', e);
+                if (routesEl) routesEl.textContent = '0';
+                if (milesEl) milesEl.textContent = '0';
             }
+        } else {
+            // RouteService not loaded yet - show 0
+            if (routesEl) routesEl.textContent = '0';
+            if (milesEl) milesEl.textContent = '0';
         }
 
-        // Even with default stats, get firms from mileage calculator
-        defaultStats.firms = this.getFirmsWithBillingRate();
-        return defaultStats;
+        // Active Firms: from mileage calculator settings (local preference)
+        if (firmsEl) firmsEl.textContent = this.getFirmsWithBillingRate();
+
+        // Animate counters
+        this.animateCounters();
     }
 
     /**
@@ -270,38 +278,23 @@ class CommandCenterManager {
             return 0;
         }
     }
-    
-    updateStats(type, increment = 1) {
-        const stats = this.getStoredStats();
-        
-        switch(type) {
-            case 'route':
-                stats.routes += increment;
-                break;
-            case 'miles':
-                stats.miles += increment;
-                break;
-            case 'firm':
-                stats.firms += increment;
-                break;
-        }
-        
-        localStorage.setItem('cc_dashboard_stats', JSON.stringify(stats));
-        this.updateStatistics();
-    }
-    
+
     animateCounters() {
         const counters = document.querySelectorAll('.stat-number');
-        
+
         counters.forEach(counter => {
-            const target = parseInt(counter.textContent.replace(/,/g, ''));
+            const target = parseFloat(counter.textContent.replace(/,/g, '')) || 0;
+            if (target === 0) return; // Skip animation for zero values
+
             let current = 0;
             const increment = target / 30;
-            
+
             const timer = setInterval(() => {
                 current += increment;
                 if (current >= target) {
-                    counter.textContent = target.toLocaleString();
+                    counter.textContent = Number.isInteger(target)
+                        ? target.toLocaleString()
+                        : target.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
                     clearInterval(timer);
                 } else {
                     counter.textContent = Math.floor(current).toLocaleString();

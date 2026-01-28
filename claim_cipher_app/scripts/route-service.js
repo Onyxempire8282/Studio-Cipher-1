@@ -483,6 +483,63 @@
     }
 
     // ========================================
+    // DASHBOARD STATS (READ-ONLY METRICS)
+    // ========================================
+
+    /**
+     * Get dashboard statistics for Command Center
+     * Routes Calculated: Count of routes created (usage metric)
+     * Miles Counted: Sum from mileage_logs ONLY (accountant-safe, tax-ready)
+     * @returns {Promise<{success: boolean, data?: {routes: number, miles: number}, error?: string}>}
+     */
+    async function getDashboardStats() {
+        const client = getSupabaseClient();
+        const userId = await getUserId();
+
+        if (!client) {
+            return { success: false, error: 'Supabase not configured' };
+        }
+        if (!userId) {
+            return { success: false, error: 'Not authenticated' };
+        }
+
+        try {
+            // Routes Calculated: Count of all routes (usage/engagement metric)
+            const { count: routesCount, error: routesError } = await client
+                .from('routes')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', userId);
+
+            if (routesError) throw routesError;
+
+            // Miles Counted: ONLY from mileage_logs (authoritative, tax-ready)
+            // This matches CSV export totals exactly
+            const { data: milesData, error: milesError } = await client
+                .from('mileage_logs')
+                .select('total_miles')
+                .eq('user_id', userId);
+
+            if (milesError) throw milesError;
+
+            // Sum total miles from mileage_logs
+            const totalMiles = (milesData || []).reduce((sum, log) => {
+                return sum + (parseFloat(log.total_miles) || 0);
+            }, 0);
+
+            return {
+                success: true,
+                data: {
+                    routes: routesCount || 0,
+                    miles: Math.round(totalMiles * 10) / 10 // One decimal place
+                }
+            };
+        } catch (error) {
+            console.error('RouteService.getDashboardStats error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // ========================================
     // EXPOSE PUBLIC API
     // ========================================
 
@@ -498,7 +555,10 @@
 
         // Mileage log operations
         getMileageLogs,
-        getMileageLogForRoute
+        getMileageLogForRoute,
+
+        // Dashboard stats (read-only)
+        getDashboardStats
     };
 
     console.log('RouteService initialized');
