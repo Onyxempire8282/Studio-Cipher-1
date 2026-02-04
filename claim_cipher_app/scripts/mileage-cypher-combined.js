@@ -9,6 +9,10 @@ class MileageCypherCalculator {
     this.currentCalculation = null;
     this.calculationHistory = [];
 
+    // Distance source metadata (separate from distance value)
+    // Tracks: 'google_api' | 'cache_google' | 'user_manual' | null
+    this.currentDistanceSource = null;
+
     this.init();
   }
 
@@ -265,6 +269,10 @@ class MileageCypherCalculator {
     if (pointAInput && pointBInput) {
       [pointAInput, pointBInput].forEach((input) => {
         input.addEventListener("input", () => {
+          // Reset distance source when address changes (prevents stale data)
+          this.currentDistanceSource = null;
+          console.log("🧮 Distance source reset (address changed)");
+
           if (this.settings.autoCalculateEnabled) {
             this.debounceAutoCalculate();
           }
@@ -274,6 +282,10 @@ class MileageCypherCalculator {
 
     if (distanceInput) {
       distanceInput.addEventListener("input", () => {
+        // Mark as manual entry when user types in the distance field
+        this.currentDistanceSource = 'user_manual';
+        console.log("🧮 Distance source set to: user_manual (manual input)");
+
         if (this.settings.autoCalculateEnabled) {
           this.debounceAutoCalculate();
         }
@@ -350,6 +362,10 @@ class MileageCypherCalculator {
 
     const firm = this.settings.firms.find((f) => f.id === firmId);
     if (!firm) return;
+
+    // Reset distance source when firm changes (different billing rules may apply)
+    this.currentDistanceSource = null;
+    console.log("🧮 Distance source reset (firm changed)");
 
     // Set round trip default based on firm preference
     const roundTripCheckbox = document.getElementById("roundTrip");
@@ -459,8 +475,16 @@ class MileageCypherCalculator {
         );
       });
 
+      // Write to DistanceCache with source 'google_api'
+      if (window.DistanceCache) {
+        window.DistanceCache.set(origin, destination, result, 'google_api');
+      }
+
+      // Track source metadata for billing validation
+      this.currentDistanceSource = 'google_api';
+
       distanceInput.value = result;
-      console.log("🧮 Distance set to:", result, "miles");
+      console.log("🧮 Distance set to:", result, "miles (source: google_api)");
 
       // Automatically perform the billing calculation
       setTimeout(() => {
@@ -591,12 +615,42 @@ class MileageCypherCalculator {
       return false;
     }
 
+    // Billing source validation - CRITICAL for billing integrity
+    // Block billing if distance source is unknown or not authoritative
+    if (!silentMode) {
+      if (!this.currentDistanceSource) {
+        console.warn("🧮 Validation failed: Distance source is unknown");
+        this.showNotification(
+          "Distance source unknown. Click 'Calculate Distance' or enter miles manually.",
+          "error"
+        );
+        this.showCalculateLoading(false);
+        return false;
+      }
+
+      // Validate source is authoritative using DistanceCache
+      if (window.DistanceCache) {
+        const validation = window.DistanceCache.validateForBilling(
+          data.distance,
+          this.currentDistanceSource
+        );
+        if (!validation.valid) {
+          console.warn("🧮 Billing validation failed:", validation.reason);
+          this.showNotification(validation.reason, "error");
+          this.showCalculateLoading(false);
+          return false;
+        }
+      }
+    }
+
     console.log(
       "🧮 Validation passed - Firm:",
       data.firm.name,
       "Distance:",
       data.distance,
-      "miles"
+      "miles",
+      "Source:",
+      this.currentDistanceSource
     );
     return true;
   }
@@ -1092,6 +1146,14 @@ class MileageCypherCalculator {
       distanceInput.value = this.pendingRouteImport.distance;
     }
 
+    // IMPORTANT: Do NOT set currentDistanceSource for imports
+    // Route Optimizer may have used heuristic estimates for some legs.
+    // Source remains null, which will block billing until user either:
+    // 1. Recalculates with Google (authoritative)
+    // 2. Manually enters/confirms distance (user_manual)
+    this.currentDistanceSource = null;
+    console.log("🧮 Route imported - source NOT set (may contain estimates). Recalculate for billing.");
+
     // Import route points if available
     if (this.pendingRouteImport.route.days[0]?.stops) {
       const stops = this.pendingRouteImport.route.days[0].stops;
@@ -1103,9 +1165,11 @@ class MileageCypherCalculator {
 
     this.closeRouteImportModal();
 
-    if (this.settings.autoCalculateEnabled) {
-      this.debounceAutoCalculate();
-    }
+    // Show notification about needing to recalculate for billing
+    this.showNotification(
+      "Route imported for planning. Recalculate or enter miles manually before billing.",
+      "warning"
+    );
 
     localStorage.removeItem("cc_route_export");
     this.pendingRouteImport = null;
