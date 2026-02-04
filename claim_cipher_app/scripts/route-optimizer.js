@@ -1250,13 +1250,21 @@ class RouteOptimizer {
           if (status === "OK") {
             const element = response.rows[0].elements[0];
             if (element.status === "OK") {
+              const miles = element.distance.value * 0.000621371; // Convert meters to miles
+
+              // Write to DistanceCache (symmetric) for return-leg optimization
+              if (window.DistanceCache) {
+                window.DistanceCache.set(origin, destination, miles, 'google_api');
+              }
+
               resolve({
                 origin,
                 destination,
-                distance: element.distance.value * 0.000621371, // Convert meters to miles
+                distance: miles,
                 duration: element.duration.value / 60, // Convert seconds to minutes
                 distanceText: element.distance.text,
                 durationText: element.duration.text,
+                isEstimated: false,
               });
             } else {
               reject(
@@ -1525,11 +1533,29 @@ class RouteOptimizer {
         distanceText: "0 mi",
         durationText: "0 min",
         isReturn: true,
+        isEstimated: false,
       };
     }
 
-    // Use same estimation logic as other legs
-    const distance = this.estimateDistance(lastStop, startingPoint);
+    // Check DistanceCache first for authoritative symmetric distance
+    let distance;
+    let isEstimated = true;
+
+    if (window.DistanceCache) {
+      const cached = window.DistanceCache.get(lastStop, startingPoint);
+      if (cached) {
+        distance = cached.miles;
+        isEstimated = false;
+        console.log(`📏 Return leg using cached distance: ${distance} mi`);
+      }
+    }
+
+    // Fall back to heuristic estimation (visual only, not for billing)
+    if (distance === undefined) {
+      distance = this.estimateDistance(lastStop, startingPoint);
+      console.log(`📏 Return leg using estimated distance: ${distance} mi`);
+    }
+
     const duration = this.estimateTime(lastStop, startingPoint);
 
     return {
@@ -1537,15 +1563,34 @@ class RouteOptimizer {
       destination: startingPoint,
       distance: distance,
       duration: duration,
-      distanceText: `${distance.toFixed(1)} mi`,
+      distanceText: isEstimated ? `~${distance.toFixed(1)} mi` : `${distance.toFixed(1)} mi`,
       durationText: `${Math.round(duration)} min`,
       isReturn: true,
+      isEstimated: isEstimated,
     };
   }
 
   calculateLegFromStart(startingPoint, destination) {
     // Calculate leg from starting point to a destination
-    const distance = this.estimateDistance(startingPoint, destination);
+    // Check DistanceCache first for authoritative distance
+    let distance;
+    let isEstimated = true;
+
+    if (window.DistanceCache) {
+      const cached = window.DistanceCache.get(startingPoint, destination);
+      if (cached) {
+        distance = cached.miles;
+        isEstimated = false;
+        console.log(`📏 Start leg using cached distance: ${distance} mi`);
+      }
+    }
+
+    // Fall back to heuristic estimation (visual only)
+    if (distance === undefined) {
+      distance = this.estimateDistance(startingPoint, destination);
+      console.log(`📏 Start leg using estimated distance: ${distance} mi`);
+    }
+
     const duration = this.estimateTime(startingPoint, destination);
 
     return {
@@ -1553,9 +1598,10 @@ class RouteOptimizer {
       destination: destination,
       distance: distance,
       duration: duration,
-      distanceText: `${distance.toFixed(1)} mi`,
+      distanceText: isEstimated ? `~${distance.toFixed(1)} mi` : `${distance.toFixed(1)} mi`,
       durationText: `${Math.round(duration)} min`,
       fromStart: true,
+      isEstimated: isEstimated,
     };
   }
 
