@@ -540,12 +540,12 @@ class RouteOptimizer {
     const newInput = destDiv.querySelector(".destination-address-input");
     if (newInput) {
       newInput.focus();
-    }
 
-    // Add autocomplete to all inputs (with small delay to ensure DOM is ready)
-    setTimeout(() => {
-      this.addAutocompleteToDestinationInputs();
-    }, 100);
+      // Attach Google Places Autocomplete to the new input
+      if (window.google && google.maps && google.maps.places) {
+        new google.maps.places.Autocomplete(newInput);
+      }
+    }
 
     console.log(
       "🎵 Lyricist Emergency: ONE destination input added successfully"
