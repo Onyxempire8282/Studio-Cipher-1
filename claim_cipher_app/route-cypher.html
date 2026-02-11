@@ -571,9 +571,9 @@
 
           <div class="save-route-form">
             <div class="form-group">
-              <label for="routeDate" class="input-label">Route Date</label>
-              <input type="date" id="routeDate" class="filter-input" required />
-              <span class="input-hint">The effective work date for this route</span>
+              <label for="routeDate" class="input-label">Route Date (optional)</label>
+              <input type="date" id="routeDate" class="filter-input" />
+              <span class="input-hint">Leave blank to save without a date</span>
             </div>
 
             <div class="route-summary-preview">
@@ -631,6 +631,10 @@
 
     <!-- Core Scripts (utilities only, no auth) -->
     <script src="scripts/cipher-core.js"></script>
+
+    <!-- Shared Firm Storage & Session Manager -->
+    <script src="scripts/firm-store.js"></script>
+    <script src="scripts/session-manager.js"></script>
 
     <!-- Google Maps Configuration -->
     <script src="scripts/google-config.js"></script>
@@ -777,10 +781,7 @@
 
       async function confirmSaveRoute() {
         const dateInput = document.getElementById('routeDate');
-        if (!dateInput.value) {
-          alert('Please select a route date.');
-          return;
-        }
+        const routeDate = dateInput.value || null; // null if no date selected
 
         const btn = document.getElementById('confirmSaveRouteBtn');
         btn.disabled = true;
@@ -795,29 +796,52 @@
             ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
             : startLocation;
 
-          const routeData = {
-            date: dateInput.value,
-            start_address: startLocation,
-            end_address: endAddress,
-            total_miles: route.overall?.miles || 0
+          // Always save to SessionManager (local session tracking)
+          const sessionRouteData = {
+            startLocation: startLocation,
+            endAddress: endAddress,
+            totalMiles: route.overall?.miles || 0,
+            date: routeDate,
+            days: route.days,
+            savedAt: Date.now()
           };
 
-          const result = await window.RouteService.saveRoute(routeData);
+          if (window.SessionManager) {
+            window.SessionManager.addRouteToSession(sessionRouteData);
+            console.log('Route added to SessionManager');
+          }
 
-          if (result.success) {
-            closeSaveRouteModal();
-            if (window.routeOptimizer.showToast) {
-              window.routeOptimizer.showToast('Route saved to My Routes!');
+          // Only persist to Supabase if a date was provided
+          if (routeDate && window.RouteService) {
+            const routeData = {
+              date: routeDate,
+              start_address: startLocation,
+              end_address: endAddress,
+              total_miles: route.overall?.miles || 0
+            };
+
+            const result = await window.RouteService.saveRoute(routeData);
+
+            if (result.success) {
+              closeSaveRouteModal();
+              if (window.routeOptimizer.showToast) {
+                window.routeOptimizer.showToast('Route saved to My Routes!');
+              } else {
+                alert('Route saved successfully! View it in My Routes.');
+              }
+
+              if (confirm('Route saved! Open My Routes to manage it?')) {
+                window.location.href = 'my-routes.html';
+              }
             } else {
-              alert('Route saved successfully! View it in My Routes.');
-            }
-
-            // Offer to go to My Routes
-            if (confirm('Route saved! Open My Routes to manage it?')) {
-              window.location.href = 'my-routes.html';
+              alert('Failed to save route: ' + (result.error || 'Unknown error'));
             }
           } else {
-            alert('Failed to save route: ' + (result.error || 'Unknown error'));
+            // No date - saved to session only
+            closeSaveRouteModal();
+            if (window.routeOptimizer && window.routeOptimizer.showToast) {
+              window.routeOptimizer.showToast('Route saved to current session.');
+            }
           }
         } catch (err) {
           console.error('Save route error:', err);

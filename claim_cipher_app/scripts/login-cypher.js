@@ -413,10 +413,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enable demo mode via sessionStorage (checked by router + mileage tools)
             sessionStorage.setItem('demo_mode', 'true');
 
-            // Ensure clean demo state - no auth, no persisted routes
+            // Ensure clean demo state - no auth, no persisted demo data
             sessionStorage.removeItem('claimCipherAuth');
-            localStorage.removeItem('cipher_last_route');
-            localStorage.removeItem('cipher_routes_by_day');
+            if (window.FirmStore) window.FirmStore.clearDemo();
+            if (window.SessionManager) window.SessionManager.clearDemo();
 
             // Immediate redirect - no setTimeout, no delays
             window.location.replace('command-center.html');

@@ -3162,7 +3162,7 @@ class RouteOptimizer {
 
   /**
    * Auto-save route state to localStorage on every meaningful change
-   * Key: cipher_last_route
+   * Key: cipher_optimizer_draft_state
    */
   autoSaveRouteState() {
     // Don't save in demo mode
@@ -3196,18 +3196,19 @@ class RouteOptimizer {
         });
       }
 
-      localStorage.setItem('cipher_last_route', JSON.stringify(routeState));
-      console.log('📁 Route state auto-saved to cipher_last_route');
+      localStorage.setItem('cipher_optimizer_draft_state', JSON.stringify(routeState));
+      console.log('📁 Route state auto-saved to cipher_optimizer_draft_state');
     } catch (error) {
       console.error('📁 Error auto-saving route state:', error);
     }
   }
 
   /**
-   * Save a specific day's route to localStorage AND Supabase
-   * Persists to routes table with status='active' for My Routes lifecycle
+   * Save a specific day's route to SessionManager AND optionally Supabase
+   * @param {string} dayName - day identifier (e.g. 'monday', 'day_1')
+   * @param {string|null} [routeDate] - optional YYYY-MM-DD date; skip Supabase if null
    */
-  async saveDayRoute(dayName) {
+  async saveDayRoute(dayName, routeDate) {
     // Don't save in demo mode
     if (this.isDemoMode()) {
       this.showToast('Cannot save routes in demo mode');
@@ -3228,35 +3229,34 @@ class RouteOptimizer {
     const dayData = this.currentRoute.days[dayIndex];
 
     try {
-      // 1. Save to localStorage (existing behavior for restore functionality)
-      const existingDays = JSON.parse(localStorage.getItem('cipher_routes_by_day') || '{}');
-      existingDays[dayName] = {
-        day: dayData,
-        startLocation: this.startLocation,
-        destinations: (this.destinations || []).filter((dest) => {
-          const dayStops = dayData.stops;
-          return dayStops.some(stop => stop.includes(dest.address) || dest.address.includes(stop));
-        }),
-        settings: { ...this.settings },
-        savedAt: Date.now()
-      };
-      localStorage.setItem('cipher_routes_by_day', JSON.stringify(existingDays));
-      console.log(`📁 Saved ${dayName} route to localStorage`);
+      const stops = dayData.stops || [];
+      const startAddress = this.startLocation || stops[0] || 'Unknown';
+      const endAddress = stops.length > 1 ? stops[stops.length - 1] : startAddress;
+      const totalMiles = dayData.totalMiles || 0;
+
+      // 1. Save to SessionManager (always)
+      if (window.SessionManager) {
+        const sessionRouteData = {
+          dayName: dayName,
+          startLocation: startAddress,
+          endAddress: endAddress,
+          totalMiles: totalMiles,
+          date: routeDate || null,
+          day: dayData,
+          destinations: (this.destinations || []).filter((dest) => {
+            return stops.some(stop => stop.includes(dest.address) || dest.address.includes(stop));
+          }),
+          settings: { ...this.settings }
+        };
+        window.SessionManager.addRouteToSession(sessionRouteData);
+        console.log(`📁 Saved ${dayName} route to SessionManager`);
+      }
 
       // Clear start_fresh flag so resume modal can show again next session
       sessionStorage.removeItem('cipher_start_fresh');
 
-      // 2. Persist to Supabase for My Routes lifecycle management
-      if (window.RouteService) {
-        // Calculate the actual date for this day
-        const routeDate = this.calculateDateForDay(dayName);
-
-        // Get start and end addresses from the day's stops
-        const stops = dayData.stops || [];
-        const startAddress = this.startLocation || stops[0] || 'Unknown';
-        const endAddress = stops.length > 1 ? stops[stops.length - 1] : startAddress;
-        const totalMiles = dayData.totalMiles || 0;
-
+      // 2. Persist to Supabase only if a date was provided
+      if (routeDate && window.RouteService) {
         const routeData = {
           date: routeDate,
           start_address: startAddress,
@@ -3264,30 +3264,27 @@ class RouteOptimizer {
           total_miles: totalMiles
         };
 
-        // Save as active (ready for closing) since user explicitly saved it
         const result = await window.RouteService.saveRoute(routeData);
 
         if (result.success) {
-          // Immediately activate the route so it's ready for closing
           const activateResult = await window.RouteService.activateRoute(result.data.id);
 
           if (activateResult.success) {
             this.showToast(`Route saved (${totalMiles} mi). Ready to close in My Routes.`);
             console.log(`✅ Route persisted to Supabase (active):`, activateResult.data);
           } else {
-            // Draft saved but activation failed - still usable
             this.showToast(`Route saved as draft. Activate it in My Routes.`);
             console.warn('Route saved but activation failed:', activateResult.error);
           }
         } else {
-          // Supabase save failed - localStorage still has it
           console.error('❌ Supabase save failed:', result.error);
-          this.showToast(`Route saved locally only. Database sync failed.`);
+          this.showToast(`Route saved to session only. Database sync failed.`);
         }
+      } else if (!routeDate) {
+        this.showToast(`${this.formatDayName(dayName)} route saved to session.`);
       } else {
-        // RouteService not available - localStorage only
-        this.showToast(`${this.formatDayName(dayName)} route saved locally.`);
-        console.warn('RouteService not available - saved to localStorage only');
+        this.showToast(`${this.formatDayName(dayName)} route saved to session.`);
+        console.warn('RouteService not available - saved to session only');
       }
 
       // Close the save modal
@@ -3337,6 +3334,7 @@ class RouteOptimizer {
 
   /**
    * Check for saved routes on page load and show restore modal if found
+   * Checks: draft state + SessionManager history
    */
   checkForSavedRoutes() {
     // Check if user clicked "Start Fresh" this session - suppress modal
@@ -3345,33 +3343,42 @@ class RouteOptimizer {
       return;
     }
 
-    const savedByDay = localStorage.getItem('cipher_routes_by_day');
-    const lastRoute = localStorage.getItem('cipher_last_route');
+    const draftState = localStorage.getItem('cipher_optimizer_draft_state');
+    const sessionHistory = window.SessionManager ? window.SessionManager.getSessionHistory() : [];
+    const activeSession = window.SessionManager ? window.SessionManager.getActiveSession() : null;
 
-    // In demo mode, only restore if it's demo data
-    if (this.isDemoMode()) {
-      console.log('📁 Demo mode - checking for demo routes only');
-      return;
-    }
+    const hasDraft = !!draftState;
+    const hasHistory = sessionHistory.length > 0;
+    const hasActiveSession = activeSession && (activeSession.routeIds || []).length > 0;
 
-    if (savedByDay || lastRoute) {
-      try {
-        const dayRoutes = savedByDay ? JSON.parse(savedByDay) : {};
-        const daysWithRoutes = Object.keys(dayRoutes);
-
-        if (daysWithRoutes.length > 0 || lastRoute) {
-          this.showRestoreModal(daysWithRoutes, !!lastRoute);
-        }
-      } catch (error) {
-        console.error('📁 Error checking saved routes:', error);
-      }
+    if (hasDraft || hasHistory || hasActiveSession) {
+      this.showRestoreModal(hasDraft, activeSession, sessionHistory);
     }
   }
 
   /**
    * Show the restore route modal
+   * @param {boolean} hasDraft - whether a draft state exists
+   * @param {Object|null} activeSession - current active session
+   * @param {Array} sessionHistory - past session summaries
    */
-  showRestoreModal(savedDays, hasLastRoute) {
+  showRestoreModal(hasDraft, activeSession, sessionHistory) {
+    // Build session history buttons
+    const historyButtons = (sessionHistory || []).slice(0, 5).map(s => `
+      <button class="restore-day-btn modal-btn modal-btn-secondary" onclick="window.routeOptimizer.restoreSession('${s.id || s.sessionId}')" style="justify-content: flex-start; width: 100%;">
+        <span>📂</span>
+        <span>${s.name} (${s.routeCount || 0} routes)</span>
+      </button>
+    `).join('');
+
+    // Build active session info
+    const activeInfo = activeSession && (activeSession.routeIds || []).length > 0 ? `
+      <button class="restore-day-btn modal-btn modal-btn-secondary" onclick="window.routeOptimizer.restoreActiveSession()" style="justify-content: flex-start; width: 100%;">
+        <span>📋</span>
+        <span>Continue ${activeSession.name} (${activeSession.routeIds.length} routes)</span>
+      </button>
+    ` : '';
+
     // Create modal HTML
     const modalHTML = `
       <div id="restoreRouteModal" class="route-map-modal">
@@ -3388,18 +3395,14 @@ class RouteOptimizer {
               We found saved routes. Would you like to restore one?
             </p>
             <div class="restore-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-md);">
-              ${savedDays.map(day => `
-                <button class="restore-day-btn modal-btn modal-btn-secondary" onclick="window.routeOptimizer.restoreDayRoute('${day}')" style="justify-content: flex-start; width: 100%;">
-                  <span>📅</span>
-                  <span>Resume ${this.formatDayName(day)}</span>
-                </button>
-              `).join('')}
-              ${hasLastRoute ? `
+              ${hasDraft ? `
                 <button class="restore-last-btn modal-btn modal-btn-secondary" onclick="window.routeOptimizer.restoreLastRoute()" style="justify-content: flex-start; width: 100%;">
                   <span>🔄</span>
-                  <span>Resume Last Session</span>
+                  <span>Resume Draft (unsaved work)</span>
                 </button>
               ` : ''}
+              ${activeInfo}
+              ${historyButtons}
               <button class="start-fresh-btn modal-btn modal-btn-primary" onclick="window.routeOptimizer.startFresh()" style="justify-content: center; width: 100%; margin-top: var(--cipher-space-md);">
                 <span>✨</span>
                 <span>Start Fresh</span>
@@ -3444,12 +3447,16 @@ class RouteOptimizer {
    */
   startFresh() {
     try {
-      // 1. Clear all route-related localStorage keys
-      localStorage.removeItem('cipher_last_route');
-      localStorage.removeItem('cipher_routes_by_day');
+      // 1. Clear draft and legacy route-related localStorage keys
+      localStorage.removeItem('cipher_optimizer_draft_state');
       localStorage.removeItem('cc_route_export');
       localStorage.removeItem('cc_route_settings');
       localStorage.removeItem('cc_route_stops');
+
+      // Archive active session to history via SessionManager
+      if (window.SessionManager) {
+        window.SessionManager.startFresh();
+      }
 
       // 2. Set session flag to suppress resume modal for this session
       sessionStorage.setItem('cipher_start_fresh', 'true');
@@ -3479,11 +3486,13 @@ class RouteOptimizer {
   }
 
   /**
-   * Restore a specific day's route
+   * Restore a specific day's route (legacy - kept for compatibility with migrated data)
    */
   restoreDayRoute(dayName) {
     try {
-      const savedDays = JSON.parse(localStorage.getItem('cipher_routes_by_day') || '{}');
+      // Try legacy key first (for migrated data), then fall back
+      const legacyRaw = localStorage.getItem('cipher_routes_by_day');
+      const savedDays = legacyRaw ? JSON.parse(legacyRaw) : {};
       const dayData = savedDays[dayName];
 
       if (!dayData) {
@@ -3531,11 +3540,77 @@ class RouteOptimizer {
   }
 
   /**
-   * Restore the last session's route
+   * Restore a session from SessionManager history
+   */
+  restoreSession(sessionId) {
+    try {
+      if (!window.SessionManager) {
+        this.showError('SessionManager not available');
+        return;
+      }
+
+      const { session, routes } = window.SessionManager.restoreSession(sessionId);
+      if (!session) {
+        this.showError('Session not found');
+        return;
+      }
+
+      this.closeRestoreModal();
+
+      if (routes.length > 0) {
+        // Restore the most recent route from the session
+        const latestRoute = routes.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0))[0];
+        const data = latestRoute.data || latestRoute || {};
+
+        if (data.startLocation) {
+          const startInput = document.getElementById('startLocation');
+          if (startInput) startInput.value = data.startLocation;
+        }
+
+        if (data.destinations) {
+          const destList = document.getElementById('destinationsList');
+          if (destList) {
+            destList.innerHTML = '';
+            data.destinations.forEach(dest => {
+              this.addDestination();
+              const inputs = destList.querySelectorAll('.destination-input');
+              const lastDest = inputs[inputs.length - 1];
+              if (lastDest) {
+                const input = lastDest.querySelector('.destination-address-input');
+                if (input) input.value = dest.address || dest;
+              }
+            });
+          }
+        }
+
+        if (data.settings) {
+          this.applySettings(data.settings);
+        }
+      }
+
+      this.showToast(`Session "${session.name}" restored with ${routes.length} route(s)!`);
+      console.log('📁 Restored session:', sessionId);
+    } catch (error) {
+      console.error('📁 Error restoring session:', error);
+      this.showError('Failed to restore session');
+    }
+  }
+
+  /**
+   * Continue the active session (re-enter without archiving)
+   */
+  restoreActiveSession() {
+    this.closeRestoreModal();
+    this.showToast('Continuing active session.');
+    console.log('📁 Continuing active session');
+  }
+
+  /**
+   * Restore the last draft route state
    */
   restoreLastRoute() {
     try {
-      const lastRoute = JSON.parse(localStorage.getItem('cipher_last_route') || '{}');
+      const lastRoute = JSON.parse(localStorage.getItem('cipher_optimizer_draft_state') || '{}');
 
       if (!lastRoute.startLocation) {
         this.showError('Could not find last route data');
@@ -3753,7 +3828,7 @@ class RouteOptimizer {
   }
 
   /**
-   * Clear all saved routes from localStorage
+   * Clear all saved routes from localStorage and SessionManager
    */
   clearSavedRoutes() {
     if (!confirm('Are you sure you want to clear all saved routes? This cannot be undone.')) {
@@ -3761,9 +3836,13 @@ class RouteOptimizer {
     }
 
     try {
-      // Clear persisted data
-      localStorage.removeItem('cipher_last_route');
-      localStorage.removeItem('cipher_routes_by_day');
+      // Clear draft state
+      localStorage.removeItem('cipher_optimizer_draft_state');
+
+      // Clear SessionManager active session
+      if (window.SessionManager) {
+        window.SessionManager.startFresh();
+      }
 
       // Clear in-memory state and re-render UI
       this.resetRouteState();
@@ -3894,7 +3973,7 @@ class RouteOptimizer {
   }
 
   /**
-   * Show the save day selector modal
+   * Show the save day selector modal with optional date picker and dynamic day buttons
    */
   showSaveDayModal() {
     // Don't allow in demo mode
@@ -3908,9 +3987,22 @@ class RouteOptimizer {
       return;
     }
 
+    // Build dynamic day buttons based on actual route days
+    const dayButtons = this.currentRoute.days.map((day, index) => {
+      const dayName = this.getDayNameFromIndex(index);
+      const miles = day.totalMiles ? ` (${Math.round(day.totalMiles * 10) / 10} mi)` : '';
+      const stopsCount = day.stops ? day.stops.length : 0;
+      return `
+        <button class="modal-btn modal-btn-secondary save-day-btn" data-day="${dayName}" style="justify-content: flex-start; width: 100%;">
+          <span>📅</span>
+          <span>Day ${index + 1} - ${this.formatDayName(dayName)}${miles} - ${stopsCount} stops</span>
+        </button>
+      `;
+    }).join('');
+
     const modalHTML = `
       <div id="saveDayModal" class="route-map-modal">
-        <div class="modal-container" style="max-width: 400px; height: auto; margin: auto;">
+        <div class="modal-container" style="max-width: 450px; height: auto; margin: auto;">
           <div class="modal-header">
             <div class="modal-title">
               <span>💾</span>
@@ -3919,30 +4011,26 @@ class RouteOptimizer {
             <button class="modal-close-btn" onclick="window.routeOptimizer.closeSaveDayModal()">×</button>
           </div>
           <div class="modal-content" style="padding: var(--cipher-space-xl); display: block;">
-            <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-lg);">
-              Select which day's route to save to My Routes:
+            <div style="margin-bottom: var(--cipher-space-lg);">
+              <label style="color: var(--cipher-text-secondary); display: block; margin-bottom: var(--cipher-space-xs); font-size: 0.85rem;">
+                Route Date (optional)
+              </label>
+              <input type="date" id="saveDayDatePicker" value="" style="
+                width: 100%; padding: 8px 12px; border-radius: 6px;
+                border: 1px solid var(--cipher-border, #333);
+                background: var(--cipher-bg-secondary, #1a1a2e);
+                color: var(--cipher-text-primary, #fff);
+                font-size: 0.9rem;
+              " />
+              <span style="color: var(--cipher-text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">
+                Leave blank to save without a date (session only)
+              </span>
+            </div>
+            <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-md); font-size: 0.9rem;">
+              Select which day to save:
             </p>
             <div class="save-day-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-sm);">
-              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('monday')" style="justify-content: flex-start; width: 100%;">
-                <span>📅</span>
-                <span>Monday</span>
-              </button>
-              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('tuesday')" style="justify-content: flex-start; width: 100%;">
-                <span>📅</span>
-                <span>Tuesday</span>
-              </button>
-              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('wednesday')" style="justify-content: flex-start; width: 100%;">
-                <span>📅</span>
-                <span>Wednesday</span>
-              </button>
-              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('thursday')" style="justify-content: flex-start; width: 100%;">
-                <span>📅</span>
-                <span>Thursday</span>
-              </button>
-              <button class="modal-btn modal-btn-secondary" onclick="window.routeOptimizer.saveDayRoute('friday')" style="justify-content: flex-start; width: 100%;">
-                <span>📅</span>
-                <span>Friday</span>
-              </button>
+              ${dayButtons}
             </div>
           </div>
         </div>
@@ -3955,8 +4043,18 @@ class RouteOptimizer {
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
+    // Attach click handlers to day buttons (reads date picker value at click time)
+    const modal = document.getElementById('saveDayModal');
+    modal.querySelectorAll('.save-day-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const datePicker = document.getElementById('saveDayDatePicker');
+        const routeDate = datePicker ? datePicker.value || null : null;
+        this.saveDayRoute(btn.dataset.day, routeDate);
+      });
+    });
+
     setTimeout(() => {
-      document.getElementById('saveDayModal').classList.add('active');
+      modal.classList.add('active');
       document.body.style.overflow = 'hidden';
     }, 100);
   }

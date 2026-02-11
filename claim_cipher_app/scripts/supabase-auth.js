@@ -445,8 +445,8 @@
             console.log('🎭 Demo mode logout - clearing demo state');
             sessionStorage.removeItem('demo_mode');
             sessionStorage.removeItem('claimCipherAuth');
-            localStorage.removeItem('cipher_last_route');
-            localStorage.removeItem('cipher_routes_by_day');
+            if (window.FirmStore) window.FirmStore.clearDemo();
+            if (window.SessionManager) window.SessionManager.clearDemo();
             window.location.replace('login-cypher.html');
             return;
         }

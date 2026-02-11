@@ -42,33 +42,8 @@ class MileageCypherCalculator {
 
   initializeSettings() {
     const defaultSettings = {
-      // Default firms with realistic rates and free miles
-      firms: [
-        {
-          id: "sedgwick",
-          name: "Sedgwick",
-          freeMiles: 50,
-          ratePerMile: 0.67,
-          roundTripDefault: true,
-        },
-        {
-          id: "acd",
-          name: "ACD (American Claims & Disposal)",
-          freeMiles: 30,
-          ratePerMile: 0.6,
-          roundTripDefault: false,
-        },
-        {
-          id: "crawford",
-          name: "Crawford & Company",
-          freeMiles: 40,
-          ratePerMile: 0.65,
-          roundTripDefault: true,
-        },
-      ],
       // User preferences
       homeLocation: "", // Static starting point for user
-      lastSelectedFirmId: "sedgwick",
       // API configuration
       googleMapsApiKey: window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY || "", // Load from config
       autoCalculateEnabled: true,
@@ -76,9 +51,24 @@ class MileageCypherCalculator {
     };
 
     const saved = localStorage.getItem("mileage_cypher_settings_v2");
-    return saved
+    const settings = saved
       ? { ...defaultSettings, ...JSON.parse(saved) }
       : defaultSettings;
+
+    // Seed FirmStore with defaults if empty (first-time user, no migration data)
+    if (window.FirmStore && window.FirmStore.getAll().length === 0) {
+      const defaultFirms = [
+        { id: "sedgwick", name: "Sedgwick", freeMiles: 50, ratePerMile: 0.67, roundTripDefault: true },
+        { id: "acd", name: "ACD (American Claims & Disposal)", freeMiles: 30, ratePerMile: 0.6, roundTripDefault: false },
+        { id: "crawford", name: "Crawford & Company", freeMiles: 40, ratePerMile: 0.65, roundTripDefault: true },
+      ];
+      defaultFirms.forEach(f => window.FirmStore.save(f));
+      if (!window.FirmStore.getLastSelected()) {
+        window.FirmStore.setLastSelected("sedgwick");
+      }
+    }
+
+    return settings;
   }
 
   setupEventListeners() {
@@ -219,7 +209,8 @@ class MileageCypherCalculator {
 
     select.innerHTML = '<option value="">Select your firm...</option>';
 
-    this.settings.firms.forEach((firm) => {
+    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+    firms.forEach((firm) => {
       const option = document.createElement("option");
       option.value = firm.id;
       option.textContent = `${firm.name} (${firm.freeMiles} free, $${firm.ratePerMile}/mi)`;
@@ -227,9 +218,10 @@ class MileageCypherCalculator {
     });
 
     // Restore last selected firm
-    if (this.settings.lastSelectedFirmId) {
-      select.value = this.settings.lastSelectedFirmId;
-      this.onFirmChange(this.settings.lastSelectedFirmId);
+    const lastSelected = window.FirmStore ? window.FirmStore.getLastSelected() : '';
+    if (lastSelected) {
+      select.value = lastSelected;
+      this.onFirmChange(lastSelected);
     }
   }
 
@@ -360,7 +352,7 @@ class MileageCypherCalculator {
   onFirmChange(firmId) {
     if (!firmId) return;
 
-    const firm = this.settings.firms.find((f) => f.id === firmId);
+    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) return;
 
     // Reset distance source when firm changes (different billing rules may apply)
@@ -373,9 +365,10 @@ class MileageCypherCalculator {
       roundTripCheckbox.checked = firm.roundTripDefault;
     }
 
-    // Save selection
-    this.settings.lastSelectedFirmId = firmId;
-    this.saveSettings();
+    // Save selection to FirmStore
+    if (window.FirmStore) {
+      window.FirmStore.setLastSelected(firmId);
+    }
 
     // Auto-calculate if we have all required data
     if (this.settings.autoCalculateEnabled) {
@@ -544,7 +537,7 @@ class MileageCypherCalculator {
 
   gatherCalculationInputs() {
     const firmId = document.getElementById("firmSelect")?.value || "";
-    const firm = this.settings.firms.find((f) => f.id === firmId);
+    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
 
     const pointA = document.getElementById("pointA")?.value?.trim() || "";
     const pointB = document.getElementById("pointB")?.value?.trim() || "";
@@ -875,7 +868,8 @@ class MileageCypherCalculator {
 
     firmsList.innerHTML = "";
 
-    this.settings.firms.forEach((firm) => {
+    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+    firms.forEach((firm) => {
       const firmElement = document.createElement("div");
       firmElement.className = "firm-item";
       firmElement.innerHTML = `
@@ -933,30 +927,27 @@ class MileageCypherCalculator {
 
     if (editingId) {
       // Edit existing firm
-      const firmIndex = this.settings.firms.findIndex(
-        (f) => f.id === editingId
-      );
-      if (firmIndex !== -1) {
-        this.settings.firms[firmIndex] = { id: editingId, ...firmData };
-        this.saveSettings();
-        this.loadFirmsListInModal();
-        this.loadFirmsToDropdown();
-        this.resetAddFirmForm();
-        console.log("🧮 Firm updated:", firmData.name);
+      if (window.FirmStore) {
+        window.FirmStore.save({ id: editingId, ...firmData });
       }
+      this.loadFirmsListInModal();
+      this.loadFirmsToDropdown();
+      this.resetAddFirmForm();
+      console.log("🧮 Firm updated:", firmData.name);
     } else {
       // Add new firm
       const firmId = this.generateFirmId(firmData.name);
 
       // Check for duplicates
-      if (this.settings.firms.find((f) => f.id === firmId)) {
+      if (window.FirmStore && window.FirmStore.getById(firmId)) {
         console.warn("🧮 Duplicate firm name:", firmData.name);
         return;
       }
 
       const newFirm = { id: firmId, ...firmData };
-      this.settings.firms.push(newFirm);
-      this.saveSettings();
+      if (window.FirmStore) {
+        window.FirmStore.save(newFirm);
+      }
 
       // Update UI
       this.loadFirmsListInModal();
@@ -970,7 +961,7 @@ class MileageCypherCalculator {
   editFirm(firmId) {
     console.log("🧮 Edit firm requested for ID:", firmId);
 
-    const firm = this.settings.firms.find((f) => f.id === firmId);
+    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) {
       console.error("🧮 Firm not found:", firmId);
       return;
@@ -1060,12 +1051,13 @@ class MileageCypherCalculator {
   deleteFirm(firmId) {
     console.log("🧮 Delete firm requested for ID:", firmId);
 
-    if (this.settings.firms.length <= 1) {
+    const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
+    if (allFirms.length <= 1) {
       console.warn("🧮 Cannot delete last firm");
       return;
     }
 
-    const firm = this.settings.firms.find((f) => f.id === firmId);
+    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) {
       console.error("🧮 Firm not found for deletion:", firmId);
       return;
@@ -1077,16 +1069,16 @@ class MileageCypherCalculator {
     );
 
     if (confirmDelete) {
-      // Remove firm from array
-      this.settings.firms = this.settings.firms.filter((f) => f.id !== firmId);
+      // Remove firm from FirmStore
+      if (window.FirmStore) {
+        window.FirmStore.delete(firmId);
 
-      // Update selected firm if the deleted firm was selected
-      if (this.settings.lastSelectedFirmId === firmId) {
-        this.settings.lastSelectedFirmId = this.settings.firms[0]?.id || "";
+        // Update selected firm if the deleted firm was selected
+        if (window.FirmStore.getLastSelected() === firmId) {
+          const remaining = window.FirmStore.getAll();
+          window.FirmStore.setLastSelected(remaining[0]?.id || "");
+        }
       }
-
-      // Save to localStorage
-      this.saveSettings();
 
       // Update UI
       this.loadFirmsListInModal();
@@ -1100,7 +1092,6 @@ class MileageCypherCalculator {
       }
 
       console.log("🧮 Firm deleted:", firm.name);
-      console.log("🧮 Firm deleted:", firmId);
     }
   }
 
@@ -1205,15 +1196,13 @@ class MileageCypherCalculator {
 
   saveSettings() {
     try {
+      // Firms are managed by FirmStore, so exclude them from settings
+      const { firms, lastSelectedFirmId, ...settingsToSave } = this.settings;
       localStorage.setItem(
         "mileage_cypher_settings_v2",
-        JSON.stringify(this.settings)
+        JSON.stringify(settingsToSave)
       );
-      console.log(
-        "🧮 Settings saved to localStorage:",
-        this.settings.firms.length,
-        "firms"
-      );
+      console.log("🧮 Settings saved to localStorage");
     } catch (error) {
       console.error("🧮 Failed to save settings:", error);
     }
@@ -1312,7 +1301,8 @@ class MileageCypherCalculator {
     // Select a demo firm
     const firmSelect = document.getElementById('firmSelect');
     if (firmSelect && firmSelect.options.length > 1) {
-      firmSelect.value = this.settings.firms[0]?.id || '';
+      const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
+      firmSelect.value = allFirms[0]?.id || '';
       firmSelect.disabled = true;
       this.onFirmChange(firmSelect.value);
     }
@@ -1421,8 +1411,8 @@ async function handleLogout() {
     console.log('🎭 Demo mode logout - clearing demo state');
     sessionStorage.removeItem('demo_mode');
     sessionStorage.removeItem('claimCipherAuth');
-    localStorage.removeItem('cipher_last_route');
-    localStorage.removeItem('cipher_routes_by_day');
+    if (window.FirmStore) window.FirmStore.clearDemo();
+    if (window.SessionManager) window.SessionManager.clearDemo();
     window.location.replace('login-cypher.html');
     return;
   }
