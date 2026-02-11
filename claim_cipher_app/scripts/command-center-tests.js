@@ -237,11 +237,20 @@ class CommandCenterTestSuite {
     }
 }
 
-// Auto-run tests if this script is loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => new CommandCenterTestSuite(), 2000);
-    });
-} else {
-    setTimeout(() => new CommandCenterTestSuite(), 2000);
+function isDevMode() {
+    return (
+        location.hostname.includes('localhost') ||
+        localStorage.getItem('cipher_dev_mode') === 'true'
+    );
+}
+
+// Dev-only execution
+if (isDevMode()) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => new CommandCenterTestSuite(), 1000);
+        });
+    } else {
+        setTimeout(() => new CommandCenterTestSuite(), 1000);
+    }
 }
