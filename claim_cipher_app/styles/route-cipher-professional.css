@@ -53,8 +53,7 @@
 }
 
 .destination-input {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
   gap: var(--cipher-space-sm);
   align-items: center;
   padding: var(--cipher-space-sm) var(--cipher-space-md);
@@ -64,32 +63,27 @@
   transition: all 0.3s ease;
 }
 
-.destination-controls {
-  display: flex;
-  gap: var(--cipher-space-xs);
-  align-items: center;
-}
-
 .destination-input:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 215, 0, 0.2);
+  border-color: rgba(212, 170, 0, 0.2);
 }
 
 .destination-address-input {
+  flex: 1;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--cipher-radius-sm);
-  padding: var(--cipher-space-xs) var(--cipher-space-sm);
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
   color: var(--cipher-text-primary);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
 }
 
 .destination-address-input:focus {
   outline: none;
-  border-color: var(--cipher-electric-blue);
-  background: rgba(0, 191, 255, 0.05);
-  box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.1);
+  border-color: rgba(212, 170, 0, 0.6);
+  background: rgba(255, 215, 0, 0.04);
+  box-shadow: 0 0 0 2px rgba(212, 170, 0, 0.15);
 }
 
 .remove-btn {
@@ -106,6 +100,7 @@
   transition: all 0.3s ease;
   font-size: 1.2rem;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .remove-btn:hover {
@@ -115,35 +110,11 @@
   transform: scale(1.1);
 }
 
-.priority-select {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--cipher-radius-sm);
-  color: var(--cipher-text-primary);
-  padding: 4px var(--cipher-space-xs);
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 90px;
-}
-
-.priority-select:focus {
-  outline: none;
-  border-color: var(--cipher-electric-blue);
-  background: rgba(0, 191, 255, 0.05);
-  box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.1);
-}
-
-.priority-select:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 215, 0, 0.3);
-}
-
 /* =================================
    COMPACT FORM SECTIONS
    ================================= */
 .form-section {
-  margin-bottom: var(--cipher-space-lg) !important;
+  margin-bottom: 32px !important;
   padding: var(--cipher-space-md) !important;
 }
 
@@ -160,148 +131,25 @@
   font-size: 1.4rem !important;
 }
 
-/* =================================
-   QUICK SETTINGS BAR (PRODUCT MANAGER DESIGN)
-   ================================= */
-.quick-settings-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--cipher-space-md);
-  align-items: center;
-  padding: var(--cipher-space-md);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--cipher-radius-md);
-  margin-bottom: var(--cipher-space-md);
-}
-
-.quick-setting {
-  display: flex;
-  align-items: center;
-  gap: var(--cipher-space-sm);
-  min-width: 0;
-}
-
-.quick-label {
-  color: var(--cipher-text-secondary);
-  font-size: 0.85rem;
-  font-weight: var(--cipher-font-weight-medium);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.quick-select {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--cipher-radius-sm);
-  color: var(--cipher-text-primary);
-  padding: var(--cipher-space-xs) var(--cipher-space-sm);
-  font-size: 0.85rem;
-  cursor: pointer;
-  flex: 1;
-  min-width: 100px;
-}
-
-.quick-select:focus {
+/* Softened gold focus for route page inputs */
+.route-container input:focus,
+.route-container select:focus,
+.route-container textarea:focus {
+  border-color: rgba(212, 170, 0, 0.6);
+  box-shadow: 0 0 0 2px rgba(212, 170, 0, 0.15);
   outline: none;
-  border-color: var(--cipher-electric-blue);
-  background: rgba(0, 191, 255, 0.05);
 }
 
-.toggle-advanced-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--cipher-text-secondary);
-  padding: var(--cipher-space-xs) var(--cipher-space-md);
-  border-radius: var(--cipher-radius-sm);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* Centered, visually dominant optimize button */
+.form-actions {
   display: flex;
-  align-items: center;
-  gap: var(--cipher-space-xs);
+  justify-content: center;
+  padding: var(--cipher-space-lg) 0 var(--cipher-space-sm);
 }
 
-.toggle-advanced-btn:hover {
-  background: rgba(255, 215, 0, 0.1);
-  border-color: rgba(255, 215, 0, 0.3);
-  color: var(--cipher-gold);
-}
-
-.compact-checkbox {
-  padding: 0 !important;
-  border: none !important;
-  background: none !important;
-  margin: 0 !important;
-}
-
-.compact-checkbox .checkbox-custom.small {
-  width: 16px;
-  height: 16px;
-}
-
-.compact-checkbox .checkbox-title {
-  font-size: 0.85rem;
-  white-space: nowrap;
-}
-
-/* =================================
-   ADVANCED SETTINGS (COLLAPSIBLE)
-   ================================= */
-.advanced-settings {
-  margin-top: var(--cipher-space-md);
-  padding: var(--cipher-space-md);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--cipher-radius-md);
-  animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  to {
-    opacity: 1;
-    max-height: 500px;
-    padding-top: var(--cipher-space-md);
-    padding-bottom: var(--cipher-space-md);
-  }
-}
-
-.settings-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--cipher-space-sm);
-  margin-bottom: var(--cipher-space-md);
-}
-
-.setting-group {
-  padding: var(--cipher-space-sm);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--cipher-radius-sm);
-}
-
-/* =================================
-   COMPACT PARAMETERS GRID
-   ================================= */
-.parameters-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--cipher-space-sm);
-}
-
-.parameters-grid .input-group {
-  margin-bottom: 0;
-}
-
-.parameters-grid .input-label {
-  font-size: 0.8rem;
-  margin-bottom: var(--cipher-space-xs);
+.form-actions .primary-action-btn {
+  min-width: 280px;
+  font-size: 1.05rem;
 }
 
 /* =================================

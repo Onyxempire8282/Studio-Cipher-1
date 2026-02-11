@@ -136,159 +136,28 @@
                         placeholder="Enter destination address"
                         class="destination-address-input"
                       />
-                      <div class="destination-controls">
-                        <select
-                          class="priority-select"
-                          title="Set priority level"
-                          aria-label="Priority level"
-                        >
-                          <option value="normal">🔵 Normal</option>
-                          <option value="high">🟡 High</option>
-                          <option value="urgent">🔴 Urgent</option>
-                        </select>
-                        <button
-                          class="remove-btn"
-                          onclick="removeDestination(this)"
-                          title="Remove this destination"
-                        >
-                          ×
-                        </button>
-                      </div>
+                      <button
+                        class="remove-btn"
+                        onclick="removeDestination(this)"
+                        title="Remove this destination"
+                      >
+                        ×
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="form-section">
-                <h3 class="form-section-title">
-                  <span class="form-icon">⚙️</span>
-                  Quick Settings
-                </h3>
-                <div class="quick-settings-bar">
-                  <div class="quick-setting">
-                    <label for="territoryType" class="quick-label"
-                      >Territory:</label
-                    >
-                    <select id="territoryType" class="quick-select">
-                      <option value="rural">Rural (Distance Priority)</option>
-                      <option value="urban">Urban (Time Priority)</option>
-                      <option value="mixed">Mixed Territory</option>
-                    </select>
-                  </div>
-                  <div class="quick-setting">
-                    <label for="geographicClustering" class="modern-checkbox compact-checkbox">
-                      <input
-                        type="checkbox"
-                        id="geographicClustering"
-                        checked
-                      />
-                      <span class="checkbox-custom small"></span>
-                      <span class="checkbox-label-text">
-                        <span class="checkbox-title"
-                          >Geographic Clustering</span
-                        >
-                      </span>
-                    </label>
-                  </div>
-                  <div class="quick-setting">
-                    <label for="maxDailyHours" class="quick-label"
-                      >Max Hours:</label
-                    >
-                    <select id="maxDailyHours" class="quick-select">
-                      <option value="6">6 hours</option>
-                      <option value="8" selected>8 hours</option>
-                      <option value="10">10 hours</option>
-                    </select>
-                  </div>
-                  <div class="quick-setting">
-                    <button id="toggleAdvanced" class="toggle-advanced-btn">
-                      <span class="btn-icon">⚙️</span>
-                      More Settings
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Advanced Settings (Collapsed by Default) -->
-                <div
-                  id="advancedSettings"
-                  class="advanced-settings"
-                  style="display: none"
-                >
-                  <div class="settings-grid">
-                    <div class="setting-group">
-                      <label for="optimizeEnabled" class="modern-checkbox">
-                        <input type="checkbox" id="optimizeEnabled" checked />
-                        <span class="checkbox-custom"></span>
-                        <span class="checkbox-label-text">
-                          <span class="checkbox-title">Route Optimization</span>
-                          <span class="checkbox-subtitle"
-                            >Find the most efficient route order</span
-                          >
-                        </span>
-                      </label>
-                    </div>
-
-                    <div class="setting-group">
-                      <label for="splitEnabled" class="modern-checkbox">
-                        <input type="checkbox" id="splitEnabled" checked />
-                        <span class="checkbox-custom"></span>
-                        <span class="checkbox-label-text">
-                          <span class="checkbox-title"
-                            >Intelligent Day Splitting</span
-                          >
-                          <span class="checkbox-subtitle"
-                            >Automatically split routes across multiple
-                            days</span
-                          >
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div class="parameters-grid">
-                    <div class="input-group">
-                      <label for="maxLegMiles" class="input-label"
-                        >Max Miles Per Leg</label
-                      >
-                      <input
-                        type="number"
-                        id="maxLegMiles"
-                        value="50"
-                        min="1"
-                        max="500"
-                        class="distance-input"
-                      />
-                    </div>
-
-                    <div class="input-group">
-                      <label for="maxStopsPerDay" class="input-label"
-                        >Max Stops Per Day</label
-                      >
-                      <input
-                        type="number"
-                        id="maxStopsPerDay"
-                        value="6"
-                        min="1"
-                        max="20"
-                        class="distance-input"
-                      />
-                    </div>
-
-                    <div class="input-group">
-                      <label for="timePerAppointment" class="input-label"
-                        >Time Per Stop (minutes)</label
-                      >
-                      <input
-                        type="number"
-                        id="timePerAppointment"
-                        value="30"
-                        min="5"
-                        max="180"
-                        class="distance-input"
-                      />
-                    </div>
-                  </div>
-                </div>
+              <!-- Hidden defaults for route-optimizer.js (UI removed, values preserved) -->
+              <div style="display:none">
+                <input type="checkbox" id="optimizeEnabled" checked />
+                <input type="checkbox" id="splitEnabled" checked />
+                <input type="number" id="maxLegMiles" value="50" />
+                <select id="territoryType"><option value="mixed" selected>Mixed</option></select>
+                <input type="checkbox" id="geographicClustering" checked />
+                <select id="maxDailyHours"><option value="8" selected>8</option></select>
+                <input type="number" id="maxStopsPerDay" value="6" />
+                <input type="number" id="timePerAppointment" value="30" />
               </div>
 
               <div class="form-actions">

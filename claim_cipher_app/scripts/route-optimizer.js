@@ -530,14 +530,7 @@ class RouteOptimizer {
     destDiv.className = "destination-input";
     destDiv.innerHTML = `
             <input type="text" placeholder="Enter destination address" class="destination-address-input">
-            <div class="destination-controls">
-                <select class="priority-select" title="Set priority level">
-                    <option value="normal">🔵 Normal</option>
-                    <option value="high">🟡 High</option>
-                    <option value="urgent">🔴 Urgent</option>
-                </select>
-                <button class="remove-btn" onclick="removeDestination(this)" title="Remove this destination">×</button>
-            </div>
+            <button class="remove-btn" onclick="removeDestination(this)" title="Remove this destination">×</button>
         `;
 
     // Add to container
