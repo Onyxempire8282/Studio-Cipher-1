@@ -584,14 +584,15 @@
                 .eq('id', logId)
                 .eq('user_id', userId)
                 .is('voided_at', null)
-                .select()
-                .single();
+                .select();
 
             if (error) throw error;
-            if (!data) throw new Error('Mileage log not found or already voided');
+            if (data.length === 0) {
+                return { success: false, error: 'Log already voided or not found.' };
+            }
 
             console.log('Mileage log voided:', logId);
-            return { success: true, data };
+            return { success: true, data: data[0] };
         } catch (error) {
             console.error('RouteService.voidMileageLog error:', error);
             return { success: false, error: error.message };
