@@ -257,24 +257,17 @@ class CommandCenterManager {
     }
 
     /**
-     * Get count of firms saved in Mileage Calculator with a billing rate
-     * Sources from mileage_cypher_settings_v2 localStorage key
+     * Get count of firms saved in FirmStore with a billing rate
      * @returns {number} Number of firms with billing rates configured
      */
     getFirmsWithBillingRate() {
         try {
-            const mileageSettings = localStorage.getItem('mileage_cypher_settings_v2');
-            if (!mileageSettings) return 0;
-
-            const settings = JSON.parse(mileageSettings);
-            if (!settings.firms || !Array.isArray(settings.firms)) return 0;
-
-            // Count firms that have a billing rate set (ratePerMile > 0)
-            return settings.firms.filter(firm =>
+            const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+            return firms.filter(firm =>
                 firm && typeof firm.ratePerMile === 'number' && firm.ratePerMile > 0
             ).length;
         } catch (e) {
-            console.warn('📝 Lyricist: Error reading mileage calculator firms');
+            console.warn('Command Center: Error reading FirmStore');
             return 0;
         }
     }
