@@ -178,64 +178,77 @@ class CommandCenterTestSuite {
         console.log('✅ Producer: Accessibility tests completed');
     }
     
-    generateTestReport() {
-        console.log('🎤 Producer Agent: Generating test report...');
-        
-        let totalTests = 0;
-        let passedTests = 0;
-        
-        const report = [];
-        
-        for (const [category, tests] of Object.entries(this.testResults)) {
-            const categoryTests = Object.values(tests);
-            const categoryPassed = categoryTests.filter(Boolean).length;
-            
-            totalTests += categoryTests.length;
-            passedTests += categoryPassed;
-            
-            const percentage = Math.round((categoryPassed / categoryTests.length) * 100);
-            
-            report.push({
-                category: category.replace('_', ' ').toUpperCase(),
-                passed: categoryPassed,
-                total: categoryTests.length,
-                percentage: percentage,
-                status: percentage >= 80 ? '✅' : percentage >= 60 ? '⚠️' : '❌'
-            });
-        }
-        
-        const overallPercentage = Math.round((passedTests / totalTests) * 100);
-        
-        console.log('\n🎤 PRODUCER AGENT - COMMAND CENTER TEST REPORT');
-        console.log('='.repeat(60));
-        
-        report.forEach(item => {
-            console.log(`${item.status} ${item.category.padEnd(20)} | ${item.passed}/${item.total} (${item.percentage}%)`);
+  generateTestReport() {
+    console.log('🎤 Producer Agent: Generating test report...');
+
+    let totalTests = 0;
+    let passedTests = 0;
+
+    const report = [];
+
+    // 🔹 1. Build summary per category
+    for (const [category, tests] of Object.entries(this.testResults)) {
+        const categoryTests = Object.values(tests);
+        const categoryPassed = categoryTests.filter(Boolean).length;
+
+        totalTests += categoryTests.length;
+        passedTests += categoryPassed;
+
+        const percentage = Math.round((categoryPassed / categoryTests.length) * 100);
+
+        report.push({
+            category: category.replace('_', ' ').toUpperCase(),
+            passed: categoryPassed,
+            total: categoryTests.length,
+            percentage: percentage,
+            status: percentage >= 80 ? '✅' : percentage >= 60 ? '⚠️' : '❌'
         });
-        
-        console.log('='.repeat(60));
-        console.log(`🏆 OVERALL SCORE: ${passedTests}/${totalTests} (${overallPercentage}%)`);
-        
-        if (overallPercentage >= 90) {
-            console.log('🌟 EXCELLENT - Command Center is production ready!');
-        } else if (overallPercentage >= 80) {
-            console.log('✅ GOOD - Command Center meets quality standards');
-        } else if (overallPercentage >= 70) {
-            console.log('⚠️ ACCEPTABLE - Minor issues to address');
-        } else {
-            console.log('❌ NEEDS IMPROVEMENT - Major issues require attention');
-        }
-        
-        // Store test results
-        localStorage.setItem('cc_test_results', JSON.stringify({
-            results: this.testResults,
-            summary: { totalTests, passedTests, overallPercentage },
-            timestamp: new Date().toISOString()
-        }));
-        
-        return overallPercentage;
     }
+
+    // 🔹 2. Log individual failed tests
+    console.log('\n🔎 FAILED TESTS DETAIL');
+    for (const [category, tests] of Object.entries(this.testResults)) {
+        Object.entries(tests).forEach(([testName, passed]) => {
+            if (!passed) {
+                console.warn(`❌ FAILED → ${category} → ${testName}`);
+            }
+        });
+    }
+
+    // 🔹 3. Overall summary
+    const overallPercentage = Math.round((passedTests / totalTests) * 100);
+
+    console.log('\n🎤 PRODUCER AGENT - COMMAND CENTER TEST REPORT');
+    console.log('='.repeat(60));
+
+    report.forEach(item => {
+        console.log(`${item.status} ${item.category.padEnd(20)} | ${item.passed}/${item.total} (${item.percentage}%)`);
+    });
+
+    console.log('='.repeat(60));
+    console.log(`🏆 OVERALL SCORE: ${passedTests}/${totalTests} (${overallPercentage}%)`);
+
+    if (overallPercentage >= 90) {
+        console.log('🌟 EXCELLENT - Command Center is production ready!');
+    } else if (overallPercentage >= 80) {
+        console.log('✅ GOOD - Command Center meets quality standards');
+    } else if (overallPercentage >= 70) {
+        console.log('⚠️ ACCEPTABLE - Minor issues to address');
+    } else {
+        console.log('❌ NEEDS IMPROVEMENT - Major issues require attention');
+    }
+
+    // Store test results
+    localStorage.setItem('cc_test_results', JSON.stringify({
+        results: this.testResults,
+        summary: { totalTests, passedTests, overallPercentage },
+        timestamp: new Date().toISOString()
+    }));
+
+    return overallPercentage;
 }
+}
+
 
 function isDevMode() {
     return (
