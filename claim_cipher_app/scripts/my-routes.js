@@ -239,6 +239,10 @@
 
     if (route.status === "draft") {
       return `
+        <button class="action-btn action-btn--edit" data-action="edit" data-route-id="${route.id}">
+          <span class="btn-icon">✏️</span>
+          Edit
+        </button>
         <button class="action-btn action-btn--activate" data-action="activate" data-route-id="${route.id}">
           <span class="btn-icon">✅</span>
           Activate
@@ -252,6 +256,10 @@
     if (route.status === "active") {
       const canClose = route.total_miles !== null && route.total_miles > 0;
       return `
+        <button class="action-btn action-btn--edit" data-action="edit" data-route-id="${route.id}">
+          <span class="btn-icon">✏️</span>
+          Edit
+        </button>
         <button class="action-btn action-btn--close ${canClose ? "" : "action-btn--disabled"}"
                 data-action="close"
                 data-route-id="${route.id}"
@@ -288,6 +296,9 @@
     }
 
     switch (action) {
+      case "edit":
+        handleEditRoute(routeId);
+        break;
       case "activate":
         await handleActivate(routeId);
         break;
@@ -303,6 +314,35 @@
   // ========================================
   // ROUTE LIFECYCLE ACTIONS
   // ========================================
+
+  /**
+   * Handle route edit - store payload and redirect to Route Optimizer
+   */
+  function handleEditRoute(routeId) {
+    const route = currentRoutes.find((r) => r.id === routeId);
+    if (!route) {
+      notify("Route not found", "error");
+      return;
+    }
+
+    if (route.status === "closed") {
+      notify("Closed routes cannot be edited", "warning");
+      return;
+    }
+
+    const editPayload = {
+      routeId: route.id,
+      date: route.date,
+      start_address: route.start_address,
+      end_address: route.end_address,
+      total_miles: route.total_miles,
+      status: route.status,
+      storedAt: Date.now()
+    };
+
+    localStorage.setItem('cipher_edit_route', JSON.stringify(editPayload));
+    window.location.href = 'route-cypher.html';
+  }
 
   /**
    * Handle route activation (draft -> active)

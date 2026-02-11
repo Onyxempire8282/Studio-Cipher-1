@@ -25,6 +25,8 @@ class RouteOptimizer {
     this._distanceCache = new Map();           // Deterministic distance caching
     this.clusterOverrideDecisions = new Map(); // User override choices (in-memory)
     this.editingDayIndex = null;               // Track which day is being edited
+    this.editingRouteId = null;                // Track route being edited from My Routes
+    this.editingRouteDate = null;              // Original date of route being edited
 
     this.firmColors = {
       'State Farm': '#cc0000',
@@ -50,8 +52,10 @@ class RouteOptimizer {
     // Track active day for modal editing
     this.activeModalDay = 0;
 
-    // Check for demo mode first, then saved routes
-    if (this.isDemoMode()) {
+    // Check for edit payload first (from My Routes), then demo, then saved routes
+    if (this.checkForEditRoute()) {
+      // Edit payload detected — form pre-populated, skip other checks
+    } else if (this.isDemoMode()) {
       setTimeout(() => this.initializeDemoMode(), 300);
     } else {
       // Check for saved routes on page load (after short delay for DOM)
@@ -179,6 +183,228 @@ class RouteOptimizer {
         </div>
       `;
       formSection.insertBefore(banner, formSection.firstChild);
+    }
+  }
+
+  // =================================
+  // EDIT ROUTE FROM MY ROUTES
+  // =================================
+
+  /**
+   * Check for an edit route payload (from My Routes page)
+   * Priority: 1) draft state with editingRouteId (refresh resume), 2) fresh cipher_edit_route payload
+   * @returns {boolean} true if edit payload was detected and loaded
+   */
+  checkForEditRoute() {
+    // Block in demo mode
+    if (this.isDemoMode()) {
+      localStorage.removeItem('cipher_edit_route');
+      return false;
+    }
+
+    // 1. Check if draft state has an active edit (refresh during edit)
+    try {
+      const draftRaw = localStorage.getItem('cipher_optimizer_draft_state');
+      if (draftRaw) {
+        const draft = JSON.parse(draftRaw);
+        if (draft.editingRouteId) {
+          console.log('📝 Edit state found in draft — resuming via restoreLastRoute');
+          // Let restoreLastRoute handle the full restore including edit flags
+          setTimeout(() => this.restoreLastRoute(), 300);
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn('📝 Error reading draft for edit state:', e);
+    }
+
+    // 2. Check for fresh payload from My Routes
+    const raw = localStorage.getItem('cipher_edit_route');
+    if (!raw) return false;
+
+    try {
+      const payload = JSON.parse(raw);
+
+      // Validate required fields
+      if (!payload.routeId || !payload.start_address) {
+        console.warn('📝 Invalid edit payload — missing required fields');
+        localStorage.removeItem('cipher_edit_route');
+        return false;
+      }
+
+      // Staleness check (5 minutes)
+      if (payload.storedAt && (Date.now() - payload.storedAt > 5 * 60 * 1000)) {
+        console.warn('📝 Edit payload is stale (>5min) — discarding');
+        localStorage.removeItem('cipher_edit_route');
+        return false;
+      }
+
+      // Consume the payload
+      localStorage.removeItem('cipher_edit_route');
+
+      // Set editing flags
+      this.editingRouteId = payload.routeId;
+      this.editingRouteDate = payload.date || null;
+
+      // Load the route into the form
+      this.loadEditRoute(payload);
+
+      return true;
+    } catch (e) {
+      console.error('📝 Error parsing edit payload:', e);
+      localStorage.removeItem('cipher_edit_route');
+      return false;
+    }
+  }
+
+  /**
+   * Load an edit route payload into the optimizer form
+   * @param {Object} payload - { routeId, date, start_address, end_address, total_miles, status }
+   */
+  loadEditRoute(payload) {
+    // Set start location
+    const startInput = document.getElementById('startLocation');
+    if (startInput) {
+      startInput.value = payload.start_address;
+      this.startLocation = payload.start_address;
+    }
+
+    // Clear existing destinations
+    const destList = document.getElementById('destinationsList');
+    if (destList) destList.innerHTML = '';
+
+    // Pre-populate end_address as first destination (if different from start)
+    if (payload.end_address && payload.end_address !== payload.start_address) {
+      this.addDestination();
+      const inputs = destList.querySelectorAll('.destination-address-input');
+      const lastInput = inputs[inputs.length - 1];
+      if (lastInput) lastInput.value = payload.end_address;
+    }
+
+    // Show edit mode banner
+    this.showEditModeBanner(payload);
+
+    // Persist edit state to draft so refresh resumes correctly
+    this.autoSaveRouteState();
+
+    console.log(`📝 Edit route loaded: ${payload.routeId} (${payload.status})`);
+  }
+
+  /**
+   * Show edit mode banner above the form
+   * @param {Object} payload - edit route payload
+   */
+  showEditModeBanner(payload) {
+    // Remove existing banner if any
+    const existing = document.getElementById('editModeBanner');
+    if (existing) existing.remove();
+
+    const dateDisplay = payload.date ? this.formatEditDate(payload.date) : 'No date';
+    const milesDisplay = payload.total_miles ? `${Math.round(payload.total_miles * 10) / 10} mi` : '';
+    const statusDisplay = payload.status ? payload.status.charAt(0).toUpperCase() + payload.status.slice(1) : '';
+
+    const formSection = document.querySelector('.optimizer-form');
+    if (!formSection) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'editModeBanner';
+    banner.style.cssText = `
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(41, 128, 185, 0.1));
+      border: 1px solid rgba(52, 152, 219, 0.4);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.9rem;
+    `;
+    banner.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 1.2rem;">✏️</span>
+        <div>
+          <strong style="color: #3498db;">Editing Route:</strong>
+          <span style="color: var(--cipher-text-secondary);">${dateDisplay}${milesDisplay ? ' · ' + milesDisplay : ''}${statusDisplay ? ' · ' + statusDisplay : ''}</span>
+        </div>
+      </div>
+      <button onclick="window.routeOptimizer.cancelEditRoute()" style="
+        background: rgba(231, 76, 60, 0.15);
+        color: #e74c3c;
+        border: 1px solid rgba(231, 76, 60, 0.3);
+        border-radius: 6px;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      ">Cancel Edit</button>
+    `;
+    formSection.insertBefore(banner, formSection.firstChild);
+  }
+
+  /**
+   * Cancel the current edit — clear flags, remove banner, reset form
+   */
+  cancelEditRoute() {
+    this.editingRouteId = null;
+    this.editingRouteDate = null;
+
+    // Remove banner
+    const banner = document.getElementById('editModeBanner');
+    if (banner) banner.remove();
+
+    // Clear form
+    const startInput = document.getElementById('startLocation');
+    if (startInput) startInput.value = '';
+    const destList = document.getElementById('destinationsList');
+    if (destList) destList.innerHTML = '';
+
+    // Clear draft state
+    localStorage.removeItem('cipher_optimizer_draft_state');
+    localStorage.removeItem('cipher_edit_route');
+
+    // Reset route state
+    this.currentRoute = null;
+    this.currentOriginalRoute = null;
+    this.renderEmptyRouteState();
+
+    this.showToast('Edit cancelled.');
+    console.log('📝 Edit cancelled — form and state cleared');
+  }
+
+  /**
+   * Clear edit state after a successful save-update
+   */
+  clearEditState() {
+    this.editingRouteId = null;
+    this.editingRouteDate = null;
+
+    // Remove banner
+    const banner = document.getElementById('editModeBanner');
+    if (banner) banner.remove();
+
+    // Remove stale edit payload
+    localStorage.removeItem('cipher_edit_route');
+
+    // Re-save draft without edit flags
+    this.autoSaveRouteState();
+
+    console.log('📝 Edit state cleared after successful update');
+  }
+
+  /**
+   * Format a YYYY-MM-DD date string for display
+   * @param {string} dateStr - e.g. "2026-02-10"
+   * @returns {string} - e.g. "Feb 10, 2026"
+   */
+  formatEditDate(dateStr) {
+    if (!dateStr) return 'No date';
+    try {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch (e) {
+      return dateStr;
     }
   }
 
@@ -3171,7 +3397,7 @@ class RouteOptimizer {
       return;
     }
 
-    if (!this.currentRoute) {
+    if (!this.currentRoute && !this.editingRouteId) {
       console.log('📁 No route to save');
       return;
     }
@@ -3185,6 +3411,8 @@ class RouteOptimizer {
         days: {},
         route: this.currentRoute,
         originalRoute: this.currentOriginalRoute,
+        editingRouteId: this.editingRouteId || null,
+        editingRouteDate: this.editingRouteDate || null,
         lastUpdated: Date.now()
       };
 
@@ -3234,8 +3462,8 @@ class RouteOptimizer {
       const endAddress = stops.length > 1 ? stops[stops.length - 1] : startAddress;
       const totalMiles = dayData.totalMiles || 0;
 
-      // 1. Save to SessionManager (always)
-      if (window.SessionManager) {
+      // 1. Save to SessionManager (skip during edits — editing updates in-place)
+      if (!this.editingRouteId && window.SessionManager) {
         const sessionRouteData = {
           dayName: dayName,
           startLocation: startAddress,
@@ -3255,8 +3483,31 @@ class RouteOptimizer {
       // Clear start_fresh flag so resume modal can show again next session
       sessionStorage.removeItem('cipher_start_fresh');
 
-      // 2. Persist to Supabase only if a date was provided
-      if (routeDate && window.RouteService) {
+      // 2. Persist to Supabase — edit-update or new-save
+      if (this.editingRouteId && window.RouteService) {
+        // EDIT PATH: update existing row in-place
+        const routeData = {
+          date: routeDate || this.editingRouteDate || null,
+          start_address: startAddress,
+          end_address: endAddress,
+          total_miles: totalMiles
+        };
+
+        const result = await window.RouteService.updateRoute(this.editingRouteId, routeData);
+
+        if (result.success) {
+          this.showToast(`Route updated (${totalMiles} mi).`);
+          console.log(`✅ Route updated in Supabase:`, result.data);
+        } else {
+          console.error('❌ Supabase update failed:', result.error);
+          this.showToast(`Update failed: ${result.error}`);
+        }
+
+        // Clear edit state regardless of outcome
+        this.clearEditState();
+
+      } else if (routeDate && window.RouteService) {
+        // NEW SAVE PATH: create new row + activate
         const routeData = {
           date: routeDate,
           start_address: startAddress,
@@ -3447,11 +3698,16 @@ class RouteOptimizer {
    */
   startFresh() {
     try {
-      // 1. Clear draft and legacy route-related localStorage keys
+      // 1. Clear draft, edit payload, and legacy route-related localStorage keys
       localStorage.removeItem('cipher_optimizer_draft_state');
+      localStorage.removeItem('cipher_edit_route');
       localStorage.removeItem('cc_route_export');
       localStorage.removeItem('cc_route_settings');
       localStorage.removeItem('cc_route_stops');
+
+      // Remove edit banner if present
+      const editBanner = document.getElementById('editModeBanner');
+      if (editBanner) editBanner.remove();
 
       // Archive active session to history via SessionManager
       if (window.SessionManager) {
@@ -3655,7 +3911,19 @@ class RouteOptimizer {
         this.showRouteModal(this.currentRoute, this.currentOriginalRoute);
       }
 
-      this.showToast('Last session restored!');
+      // Restore edit state if draft was an edit-in-progress
+      if (lastRoute.editingRouteId) {
+        this.editingRouteId = lastRoute.editingRouteId;
+        this.editingRouteDate = lastRoute.editingRouteDate || null;
+        this.showEditModeBanner({
+          date: this.editingRouteDate,
+          total_miles: lastRoute.route?.overall?.miles || null,
+          status: null
+        });
+        console.log('📝 Edit state restored from draft:', this.editingRouteId);
+      }
+
+      this.showToast(lastRoute.editingRouteId ? 'Edit session restored!' : 'Last session restored!');
       console.log('📁 Restored last route');
     } catch (error) {
       console.error('📁 Error restoring last route:', error);
@@ -3868,6 +4136,8 @@ class RouteOptimizer {
 
     // Clear editing state
     this.editingDayIndex = null;
+    this.editingRouteId = null;
+    this.editingRouteDate = null;
     this.activeModalDay = 0;
 
     // Clear clustering state
@@ -4052,6 +4322,12 @@ class RouteOptimizer {
         this.saveDayRoute(btn.dataset.day, routeDate);
       });
     });
+
+    // Pre-fill date picker when editing an existing route
+    if (this.editingRouteId && this.editingRouteDate) {
+      const datePicker = document.getElementById('saveDayDatePicker');
+      if (datePicker) datePicker.value = this.editingRouteDate;
+    }
 
     setTimeout(() => {
       modal.classList.add('active');

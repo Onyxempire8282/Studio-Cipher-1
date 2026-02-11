@@ -126,6 +126,48 @@
     }
 
     /**
+     * Update an existing route (draft or active) with new route data.
+     * Used by the Edit Route flow from My Routes.
+     * @param {string} routeId - UUID of the route to update
+     * @param {object} routeData - { date, start_address, end_address, total_miles }
+     * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+     */
+    async function updateRoute(routeId, routeData) {
+        const client = getSupabaseClient();
+        const userId = await getUserId();
+
+        if (!client) {
+            return { success: false, error: 'Supabase not configured' };
+        }
+        if (!userId) {
+            return { success: false, error: 'Not authenticated' };
+        }
+
+        try {
+            const { data, error } = await client
+                .from('routes')
+                .update({
+                    date: routeData.date,
+                    start_address: routeData.start_address,
+                    end_address: routeData.end_address,
+                    total_miles: routeData.total_miles
+                })
+                .eq('id', routeId)
+                .eq('user_id', userId)
+                .in('status', ['draft', 'active'])
+                .select()
+                .single();
+
+            if (error) throw error;
+            if (!data) throw new Error('Route not found or is closed');
+            return { success: true, data };
+        } catch (error) {
+            console.error('RouteService.updateRoute error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
      * Activate a draft route (draft -> active)
      * @param {string} routeId - UUID
      * @returns {Promise<{success: boolean, data?: object, error?: string}>}
@@ -546,6 +588,7 @@
     window.RouteService = {
         // Route operations
         saveRoute,
+        updateRoute,
         activateRoute,
         closeRoute,
         reopenRoute,

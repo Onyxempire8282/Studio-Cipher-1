@@ -459,6 +459,17 @@
   background: rgba(231, 76, 60, 0.2);
 }
 
+.action-btn--edit {
+  background: rgba(52, 152, 219, 0.15);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.action-btn--edit:hover {
+  background: rgba(52, 152, 219, 0.25);
+  transform: translateY(-2px);
+}
+
 .action-btn--disabled {
   opacity: 0.4;
   cursor: not-allowed;
