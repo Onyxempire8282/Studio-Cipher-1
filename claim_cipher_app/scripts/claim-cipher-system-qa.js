@@ -237,6 +237,48 @@
   }
 
   /**
+   * WARN — logged but NOT scored. Does not affect pass/fail totals.
+   * Used when static analysis cannot verify runtime behavior.
+   */
+  function warn(page, category, testName, detail) {
+    return {
+      page,
+      category,
+      testName,
+      status: 'WARN',
+      warnTag: detail.tag || 'static-analysis-limited',
+      whatFailed: detail.what,
+      whyItMatters: detail.why,
+      howToFix: detail.fix,
+      evidence: detail.evidence || '',
+      severity: 'info',
+      weightImpact: 0
+    };
+  }
+
+  /**
+   * Produce a meaningful identifier for an input element.
+   * Returns id, name, type, or trimmed outerHTML — never "anonymous".
+   */
+  function inputEvidence(el) {
+    if (el.id) return '#' + el.id;
+    if (el.getAttribute('name')) return '[name="' + el.getAttribute('name') + '"]';
+    if (el.getAttribute('type')) return '<input type="' + el.getAttribute('type') + '">';
+    var html = el.outerHTML || '';
+    return html.substring(0, 80);
+  }
+
+  /**
+   * Graduated severity for missing accessibility labels.
+   * 1 = minor, 2-3 = major, 4+ = critical
+   */
+  function inputSeverity(count) {
+    if (count >= 4) return 'critical';
+    if (count >= 2) return 'major';
+    return 'minor';
+  }
+
+  /**
    * Fetch a sibling HTML file and parse into a static Document.
    * DOMParser documents support querySelector but NOT getComputedStyle or offsetParent.
    */
@@ -287,19 +329,33 @@
           evidence: btn.id,
           severity: 'critical'
         }));
+      } else if (!isLive) {
+        // STATIC mode: DOMParser docs don't execute scripts, so addEventListener
+        // handlers are undetectable. Only verify via onclick attribute; if absent,
+        // emit WARN (non-scored) instead of FAIL to avoid false negatives.
+        var hasStaticHandler = el.hasAttribute('onclick') ||
+          (el.dataset && el.dataset.action) || el.closest('form');
+        if (!hasStaticHandler) {
+          results.push(warn(page, 'functional', 'Button handler: ' + btn.id, {
+            what: 'Button #' + btn.id + ' has no onclick attribute (STATIC mode — addEventListener not detectable)',
+            why: 'Cannot verify runtime handler attachment in static analysis',
+            fix: 'Run live audit on ' + page + ' to verify handler',
+            evidence: 'id="' + btn.id + '"'
+          }));
+        } else {
+          results.push(pass(page, 'functional', 'Button handler: ' + btn.id));
+        }
       } else {
+        // LIVE mode: full handler detection including runtime-attached listeners
         var hasOnclick = el.hasAttribute('onclick');
-        // On parsed docs, typeof el.onclick won't detect JS-attached handlers
-        var hasListeners = isLive
-          ? (typeof el.onclick === 'function' || hasOnclick)
-          : hasOnclick;
+        var hasListeners = typeof el.onclick === 'function' || hasOnclick;
         if (!hasListeners && !(el.dataset && el.dataset.action) && !el.closest('form')) {
           results.push(fail(page, 'functional', 'Button handler: ' + btn.id, {
             what: 'Button #' + btn.id + ' has no detectable click handler',
             why: 'Button does nothing when clicked — dead control',
             fix: 'Attach event listener or onclick to #' + btn.id,
             evidence: 'id="' + btn.id + '", onclick=' + el.getAttribute('onclick'),
-            severity: isLive ? 'major' : 'minor'
+            severity: 'major'
           }));
         } else {
           results.push(pass(page, 'functional', 'Button handler: ' + btn.id));
@@ -646,31 +702,106 @@
       results.push(pass(page, 'accessibility', 'Button labels'));
     }
 
-    // 2. Inputs without labels
-    var inputs = doc.querySelectorAll('input:not([type="hidden"]), select, textarea');
-    var unlabeledInputs = [];
-    inputs.forEach(function (inp) {
+    // 2. Text inputs without labels
+    var textInputs = doc.querySelectorAll(
+      'input[type="text"], input[type="email"], input[type="tel"], input[type="url"], ' +
+      'input[type="number"], input[type="search"], input[type="password"], input:not([type])'
+    );
+    var unlabeledTextInputs = [];
+    textInputs.forEach(function (inp) {
+      if (inp.getAttribute('type') === 'hidden') return;
       var id = inp.id;
       var ariaLabel = inp.getAttribute('aria-label');
       var placeholder = inp.getAttribute('placeholder');
       var hasLabel = id && doc.querySelector('label[for="' + id + '"]');
       if (!hasLabel && !ariaLabel && !placeholder) {
-        unlabeledInputs.push(id || inp.getAttribute('name') || inp.getAttribute('type') || 'anonymous');
+        unlabeledTextInputs.push(inputEvidence(inp));
       }
     });
-    if (unlabeledInputs.length > 0) {
-      results.push(fail(page, 'accessibility', 'Input labels', {
-        what: unlabeledInputs.length + ' inputs have no label, aria-label, or placeholder',
+    if (unlabeledTextInputs.length > 0) {
+      results.push(fail(page, 'accessibility', 'Text input labels', {
+        what: unlabeledTextInputs.length + ' text inputs have no label, aria-label, or placeholder',
         why: 'Users relying on assistive tech cannot identify the field',
-        fix: 'Add <label for="..."> or aria-label to each input',
-        evidence: unlabeledInputs.slice(0, 5).join(', '),
-        severity: 'major'
+        fix: 'Add <label for="..."> or aria-label to each text input',
+        evidence: unlabeledTextInputs.slice(0, 5).join(', '),
+        severity: inputSeverity(unlabeledTextInputs.length)
       }));
     } else {
-      results.push(pass(page, 'accessibility', 'Input labels'));
+      results.push(pass(page, 'accessibility', 'Text input labels'));
     }
 
-    // 3. Page has lang attribute
+    // 3. Checkbox inputs without labels
+    var checkboxes = doc.querySelectorAll('input[type="checkbox"]');
+    var unlabeledCheckboxes = [];
+    checkboxes.forEach(function (inp) {
+      var id = inp.id;
+      var ariaLabel = inp.getAttribute('aria-label');
+      var hasLabelFor = id && doc.querySelector('label[for="' + id + '"]');
+      var hasWrappingLabel = inp.closest('label');
+      if (!hasLabelFor && !hasWrappingLabel && !ariaLabel) {
+        unlabeledCheckboxes.push(inputEvidence(inp));
+      }
+    });
+    if (unlabeledCheckboxes.length > 0) {
+      results.push(fail(page, 'accessibility', 'Checkbox labels', {
+        what: unlabeledCheckboxes.length + ' checkboxes have no label[for], wrapping <label>, or aria-label',
+        why: 'Checkboxes without labels are invisible to screen readers',
+        fix: 'Wrap in <label> or add label[for] / aria-label to each checkbox',
+        evidence: unlabeledCheckboxes.slice(0, 5).join(', '),
+        severity: inputSeverity(unlabeledCheckboxes.length)
+      }));
+    } else {
+      results.push(pass(page, 'accessibility', 'Checkbox labels'));
+    }
+
+    // 4. Select dropdowns without labels
+    var selects = doc.querySelectorAll('select');
+    var unlabeledSelects = [];
+    selects.forEach(function (sel) {
+      var id = sel.id;
+      var ariaLabel = sel.getAttribute('aria-label');
+      var hasLabel = id && doc.querySelector('label[for="' + id + '"]');
+      if (!hasLabel && !ariaLabel) {
+        unlabeledSelects.push(inputEvidence(sel));
+      }
+    });
+    if (unlabeledSelects.length > 0) {
+      results.push(fail(page, 'accessibility', 'Select labels', {
+        what: unlabeledSelects.length + ' select dropdowns have no label or aria-label',
+        why: 'Users relying on assistive tech cannot identify the dropdown',
+        fix: 'Add <label for="..."> or aria-label to each <select>',
+        evidence: unlabeledSelects.slice(0, 5).join(', '),
+        severity: inputSeverity(unlabeledSelects.length)
+      }));
+    } else {
+      results.push(pass(page, 'accessibility', 'Select labels'));
+    }
+
+    // 5. Textareas without labels
+    var textareas = doc.querySelectorAll('textarea');
+    var unlabeledTextareas = [];
+    textareas.forEach(function (ta) {
+      var id = ta.id;
+      var ariaLabel = ta.getAttribute('aria-label');
+      var placeholder = ta.getAttribute('placeholder');
+      var hasLabel = id && doc.querySelector('label[for="' + id + '"]');
+      if (!hasLabel && !ariaLabel && !placeholder) {
+        unlabeledTextareas.push(inputEvidence(ta));
+      }
+    });
+    if (unlabeledTextareas.length > 0) {
+      results.push(fail(page, 'accessibility', 'Textarea labels', {
+        what: unlabeledTextareas.length + ' textareas have no label, aria-label, or placeholder',
+        why: 'Users relying on assistive tech cannot identify the field',
+        fix: 'Add <label for="..."> or aria-label to each <textarea>',
+        evidence: unlabeledTextareas.slice(0, 5).join(', '),
+        severity: inputSeverity(unlabeledTextareas.length)
+      }));
+    } else {
+      results.push(pass(page, 'accessibility', 'Textarea labels'));
+    }
+
+    // 6. Page has lang attribute
     var lang = doc.documentElement.getAttribute('lang');
     if (!lang) {
       results.push(fail(page, 'accessibility', 'HTML lang attribute', {
@@ -684,7 +815,7 @@
       results.push(pass(page, 'accessibility', 'HTML lang attribute'));
     }
 
-    // 4. Page title exists
+    // 7. Page title exists
     var title = doc.title;
     if (!title || title.length < 3) {
       results.push(fail(page, 'accessibility', 'Page title', {
@@ -902,7 +1033,8 @@
     var categoryScores = {};
 
     Object.keys(CATEGORY_WEIGHTS).forEach(function (cat) {
-      var catResults = allResults.filter(function (r) { return r.category === cat; });
+      // Only PASS and FAIL affect totals — WARN entries are excluded from scoring
+      var catResults = allResults.filter(function (r) { return r.category === cat && r.status !== 'WARN'; });
       if (catResults.length === 0) {
         categoryScores[cat] = { score: 100, passed: 0, total: 0 };
         return;
@@ -1014,6 +1146,19 @@
       });
     }
 
+    // Static analysis limitations
+    var warnEntries = allResults.filter(function (r) { return r.status === 'WARN'; });
+    if (warnEntries.length > 0) {
+      console.log('\n' + divider);
+      console.log('STATIC ANALYSIS LIMITATIONS (' + warnEntries.length + '):');
+      warnEntries.forEach(function (w, i) {
+        console.log('\n  ' + (i + 1) + ') [WARN][' + w.page + '][' + w.category + '] ' + w.testName);
+        console.log('     WHAT: ' + w.whatFailed);
+        console.log('     WHY:  ' + w.whyItMatters);
+        console.log('     FIX:  ' + w.howToFix);
+      });
+    }
+
     // Top priority fixes
     if (scores.failures.length > 0) {
       console.log('\n' + divider);
@@ -1103,6 +1248,15 @@
         console.log('\n    COHERENCE WARNINGS (' + pr.coherenceWarnings.length + '):');
         pr.coherenceWarnings.forEach(function (w, i) {
           console.log('      ' + (i + 1) + ') [' + w.type + '] ' + w.what);
+        });
+      }
+
+      // Static analysis limitations for this page
+      var warnEntries = pr.allResults.filter(function (r) { return r.status === 'WARN'; });
+      if (warnEntries.length > 0) {
+        console.log('\n    STATIC ANALYSIS LIMITATIONS (' + warnEntries.length + '):');
+        warnEntries.forEach(function (w, i) {
+          console.log('      ' + (i + 1) + ') [' + w.category + '] ' + w.testName + ' — ' + w.whatFailed);
         });
       }
 
