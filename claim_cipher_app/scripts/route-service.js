@@ -480,6 +480,7 @@
                 .from('mileage_logs')
                 .select('*')
                 .eq('user_id', userId)
+                .is('voided_at', null)
                 .gte('log_date', dateFrom)
                 .lte('log_date', dateTo)
                 .order('log_date', { ascending: true });
@@ -524,6 +525,79 @@
         }
     }
 
+    /**
+     * Batch-fetch mileage logs for a list of route IDs (includes voided)
+     * Used to display void status on closed routes in My Routes
+     * @param {string[]} routeIds - Array of route UUIDs
+     * @returns {Promise<{success: boolean, data?: object[], error?: string}>}
+     */
+    async function getRouteMileageLogs(routeIds) {
+        const client = getSupabaseClient();
+        const userId = await getUserId();
+
+        if (!client) {
+            return { success: false, error: 'Supabase not configured' };
+        }
+        if (!userId) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        if (!routeIds || routeIds.length === 0) {
+            return { success: true, data: [] };
+        }
+
+        try {
+            const { data, error } = await client
+                .from('mileage_logs')
+                .select('id, route_id, voided_at')
+                .in('route_id', routeIds)
+                .eq('user_id', userId);
+
+            if (error) throw error;
+            return { success: true, data: data || [] };
+        } catch (error) {
+            console.error('RouteService.getRouteMileageLogs error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * Void a mileage log (soft-delete for audit trail)
+     * Sets voided_at timestamp — log is excluded from exports and totals
+     * @param {string} logId - Mileage log UUID
+     * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+     */
+    async function voidMileageLog(logId) {
+        const client = getSupabaseClient();
+        const userId = await getUserId();
+
+        if (!client) {
+            return { success: false, error: 'Supabase not configured' };
+        }
+        if (!userId) {
+            return { success: false, error: 'Not authenticated' };
+        }
+
+        try {
+            const { data, error } = await client
+                .from('mileage_logs')
+                .update({ voided_at: new Date().toISOString() })
+                .eq('id', logId)
+                .eq('user_id', userId)
+                .is('voided_at', null)
+                .select()
+                .single();
+
+            if (error) throw error;
+            if (!data) throw new Error('Mileage log not found or already voided');
+
+            console.log('Mileage log voided:', logId);
+            return { success: true, data };
+        } catch (error) {
+            console.error('RouteService.voidMileageLog error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
     // ========================================
     // DASHBOARD STATS (READ-ONLY METRICS)
     // ========================================
@@ -554,12 +628,13 @@
 
             if (routesError) throw routesError;
 
-            // Miles Counted: ONLY from mileage_logs (authoritative, tax-ready)
+            // Miles Counted: ONLY from non-voided mileage_logs (authoritative, tax-ready)
             // This matches CSV export totals exactly
             const { data: milesData, error: milesError } = await client
                 .from('mileage_logs')
                 .select('total_miles')
-                .eq('user_id', userId);
+                .eq('user_id', userId)
+                .is('voided_at', null);
 
             if (milesError) throw milesError;
 
@@ -599,6 +674,8 @@
         // Mileage log operations
         getMileageLogs,
         getMileageLogForRoute,
+        getRouteMileageLogs,
+        voidMileageLog,
 
         // Dashboard stats (read-only)
         getDashboardStats

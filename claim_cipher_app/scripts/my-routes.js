@@ -10,6 +10,8 @@
   let currentRoutes = [];
   let pendingCloseRouteId = null;
   let pendingCloseRoute = null;
+  let pendingVoidLogId = null;
+  let pendingVoidRoute = null;
   let exportPreviewLogs = [];
 
   /**
@@ -119,8 +121,27 @@
     }
 
     currentRoutes = result.data;
-    renderRoutes(result.data);
-    updateRouteCount(result.data.length);
+
+    // Batch-fetch mileage log void status for closed routes
+    const closedRouteIds = currentRoutes
+      .filter((r) => r.status === "closed")
+      .map((r) => r.id);
+
+    if (closedRouteIds.length > 0 && window.RouteService.getRouteMileageLogs) {
+      const logsResult = await window.RouteService.getRouteMileageLogs(closedRouteIds);
+      if (logsResult.success && logsResult.data) {
+        logsResult.data.forEach((log) => {
+          const route = currentRoutes.find((r) => r.id === log.route_id);
+          if (route) {
+            route._mileageLogId = log.id;
+            route._voided = !!log.voided_at;
+          }
+        });
+      }
+    }
+
+    renderRoutes(currentRoutes);
+    updateRouteCount(currentRoutes.length);
   }
 
   /**
@@ -211,7 +232,7 @@
           <span class="cipher-badge cipher-badge--${getStatusBadgeClass(route.status)}">
             ${route.status}
           </span>
-          ${route.status === 'closed' ? '<span class="export-indicator">Included in export</span>' : ''}
+          ${route.status === 'closed' ? (route._voided ? '<span class="voided-indicator">Voided</span>' : '<span class="export-indicator">Included in export</span>') : ''}
         </div>
         <div class="route-actions">
           ${renderRouteActions(route)}
@@ -229,11 +250,25 @@
    */
   function renderRouteActions(route) {
     if (route.status === "closed") {
+      if (route._voided) {
+        return `
+          <span class="read-only-badge" style="opacity: 0.6;">
+            <span class="badge-icon">🚫</span>
+            Voided
+          </span>
+        `;
+      }
       return `
         <span class="read-only-badge">
           <span class="badge-icon">🔒</span>
           Logged
         </span>
+        ${route._mileageLogId ? `
+          <button class="action-btn action-btn--void" data-action="void" data-route-id="${route.id}">
+            <span class="btn-icon">🚫</span>
+            Void Log
+          </button>
+        ` : ''}
       `;
     }
 
@@ -307,6 +342,9 @@
         break;
       case "delete":
         await handleDelete(routeId);
+        break;
+      case "void":
+        showVoidLogModal(routeId);
         break;
     }
   }
@@ -457,6 +495,119 @@
       await loadRoutes();
     } else {
       notify(result.error || "Failed to close route", "error");
+    }
+  }
+
+  // ========================================
+  // VOID MILEAGE LOG
+  // ========================================
+
+  /**
+   * Show void log confirmation modal
+   */
+  function showVoidLogModal(routeId) {
+    const route = currentRoutes.find((r) => r.id === routeId);
+    if (!route || !route._mileageLogId) {
+      notify("No mileage log found for this route", "error");
+      return;
+    }
+
+    pendingVoidLogId = route._mileageLogId;
+    pendingVoidRoute = route;
+
+    // Build modal in JS (matching close route modal pattern)
+    const existing = document.getElementById("voidLogModal");
+    if (existing) existing.remove();
+
+    const addressDisplay = isRoundTrip(route)
+      ? `<div class="summary-row">
+          <span class="summary-label">Route:</span>
+          <span class="summary-value">Round-trip from ${escapeHtml(route.start_address)}</span>
+        </div>`
+      : `<div class="summary-row">
+          <span class="summary-label">From:</span>
+          <span class="summary-value">${escapeHtml(route.start_address)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">To:</span>
+          <span class="summary-value">${escapeHtml(route.end_address)}</span>
+        </div>`;
+
+    const modalHTML = `
+      <div id="voidLogModal" class="cipher-modal" style="display: flex;">
+        <div class="cipher-modal-content">
+          <div class="cipher-modal-header">
+            <h3>🚫 Void Mileage Log</h3>
+            <button class="close-btn" onclick="window.closeVoidLogModal()">×</button>
+          </div>
+          <div class="cipher-modal-body">
+            <p class="modal-warning" style="border-color: rgba(155, 89, 182, 0.3); background: rgba(155, 89, 182, 0.05);">
+              This removes the mileage log from <strong>exports and totals</strong> but keeps it for audit purposes.
+            </p>
+            <div class="route-summary">
+              <div class="summary-row">
+                <span class="summary-label">Date:</span>
+                <span class="summary-value">${formatDate(route.date)}</span>
+              </div>
+              ${addressDisplay}
+              <div class="summary-row summary-row--highlight">
+                <span class="summary-label">Total Miles:</span>
+                <span class="summary-value">${route.total_miles} miles</span>
+              </div>
+            </div>
+          </div>
+          <div class="cipher-modal-footer">
+            <button class="secondary-btn" onclick="window.closeVoidLogModal()">
+              Cancel
+            </button>
+            <button id="confirmVoidBtn" class="primary-action-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+              <span class="btn-icon">🚫</span>
+              Void Log
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+    document.getElementById("confirmVoidBtn").addEventListener("click", confirmVoidLog);
+  }
+
+  /**
+   * Close the void log modal
+   */
+  function closeVoidLogModal() {
+    const modal = document.getElementById("voidLogModal");
+    if (modal) modal.remove();
+    pendingVoidLogId = null;
+    pendingVoidRoute = null;
+  }
+  window.closeVoidLogModal = closeVoidLogModal;
+
+  /**
+   * Confirm and execute mileage log void
+   */
+  async function confirmVoidLog() {
+    if (!pendingVoidLogId || !pendingVoidRoute) return;
+
+    const route = pendingVoidRoute;
+    const btn = document.getElementById("confirmVoidBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Voiding...';
+
+    const result = await window.RouteService.voidMileageLog(pendingVoidLogId);
+
+    btn.disabled = false;
+    btn.innerHTML = '<span class="btn-icon">🚫</span> Void Log';
+
+    if (result.success) {
+      const dateStr = formatDate(route.date);
+      notify(`Mileage log voided for ${dateStr} (${route.total_miles} mi). Excluded from exports.`, "success");
+      closeVoidLogModal();
+      await loadRoutes();
+    } else {
+      notify(result.error || "Failed to void mileage log", "error");
     }
   }
 
