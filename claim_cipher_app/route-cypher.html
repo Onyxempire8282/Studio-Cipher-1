@@ -817,7 +817,8 @@
               date: routeDate,
               start_address: startLocation,
               end_address: endAddress,
-              total_miles: route.overall?.miles || 0
+              total_miles: route.overall?.miles || 0,
+              stop_count: Math.max(destinations.length, 1)
             };
 
             const result = await window.RouteService.saveRoute(routeData);

@@ -3490,7 +3490,8 @@ class RouteOptimizer {
           date: routeDate || this.editingRouteDate || null,
           start_address: startAddress,
           end_address: endAddress,
-          total_miles: totalMiles
+          total_miles: totalMiles,
+          stop_count: Math.max(stops.length, 1)
         };
 
         const result = await window.RouteService.updateRoute(this.editingRouteId, routeData);
@@ -3512,7 +3513,8 @@ class RouteOptimizer {
           date: routeDate,
           start_address: startAddress,
           end_address: endAddress,
-          total_miles: totalMiles
+          total_miles: totalMiles,
+          stop_count: Math.max(stops.length, 1)
         };
 
         const result = await window.RouteService.saveRoute(routeData);

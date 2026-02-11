@@ -111,7 +111,8 @@
                         status: 'draft',
                         start_address: routeData.start_address,
                         end_address: routeData.end_address,
-                        total_miles: routeData.total_miles
+                        total_miles: routeData.total_miles,
+                        stop_count: routeData.stop_count || 1
                     })
                     .select()
                     .single();
@@ -144,14 +145,19 @@
         }
 
         try {
-            const { data, error } = await client
-                .from('routes')
-                .update({
+            const updateFields = {
                     date: routeData.date,
                     start_address: routeData.start_address,
                     end_address: routeData.end_address,
                     total_miles: routeData.total_miles
-                })
+                };
+            if (routeData.stop_count != null) {
+                updateFields.stop_count = routeData.stop_count;
+            }
+
+            const { data, error } = await client
+                .from('routes')
+                .update(updateFields)
                 .eq('id', routeId)
                 .eq('user_id', userId)
                 .in('status', ['draft', 'active'])
@@ -260,6 +266,7 @@
                     total_miles: route.total_miles,
                     claim_count: claimInfo.claim_count
                         || (claimInfo.claim_ids && claimInfo.claim_ids.length)
+                        || route.stop_count
                         || 1,
                     claim_ids: claimInfo.claim_ids || []
                 })
