@@ -813,26 +813,47 @@
   }
 
   /**
+   * Escape a value for CSV (wrap in quotes if it contains commas, quotes, or newlines)
+   */
+  function csvEscape(value) {
+    const str = String(value == null ? '' : value);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  /**
    * Generate and download CSV file
-   * Summary-first format for IRS mileage logs
    */
   function generateCsv(logs, dateFrom, dateTo) {
-    // Summary-first IRS-friendly columns
     const headers = [
-      "Date",
+      "Log Date",
+      "Route Ref",
+      "Start Address",
+      "End Address",
       "Total Miles",
+      "Stops",
+      "Miles Per Stop",
       "Business Purpose",
-      "Claim Count",
-      "Route ID",
     ];
 
     const rows = logs.map((log) => {
+      const stops = log.claim_count || 0;
+      const milesPerStop = stops > 0
+        ? (parseFloat(log.total_miles) / stops).toFixed(1)
+        : '';
+      const routeRef = log.route_id ? 'R-' + log.route_id.slice(0, 8) : '';
+
       return [
         log.log_date,
+        routeRef,
+        csvEscape(log.start_address || ''),
+        csvEscape(log.end_address || ''),
         log.total_miles,
-        "Business – Claims Inspection",
-        log.claim_count || 0,
-        log.route_id || "",
+        stops,
+        milesPerStop,
+        csvEscape('Business – Claims Inspection'),
       ];
     });
 

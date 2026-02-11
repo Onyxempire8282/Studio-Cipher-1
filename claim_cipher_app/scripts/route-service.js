@@ -258,7 +258,9 @@
                     start_address: route.start_address,
                     end_address: route.end_address,
                     total_miles: route.total_miles,
-                    claim_count: claimInfo.claim_count || 0,
+                    claim_count: claimInfo.claim_count
+                        || (claimInfo.claim_ids && claimInfo.claim_ids.length)
+                        || 1,
                     claim_ids: claimInfo.claim_ids || []
                 })
                 .select()
