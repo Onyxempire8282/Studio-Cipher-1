@@ -97,8 +97,9 @@
       </div>
     `;
 
+    const statusEl = document.getElementById("statusFilter");
     const filters = {
-      status: document.getElementById("statusFilter")?.value || null,
+      status: statusEl ? statusEl.value || null : null,
       dateFrom: document.getElementById("dateFromFilter")?.value || null,
       dateTo: document.getElementById("dateToFilter")?.value || null,
     };
@@ -148,7 +149,8 @@
    * Clear all filters and reload
    */
   function clearFilters() {
-    document.getElementById("statusFilter").value = "";
+    const statusEl = document.getElementById("statusFilter");
+    if (statusEl) statusEl.value = "";
     document.getElementById("dateFromFilter").value = "";
     document.getElementById("dateToFilter").value = "";
     loadRoutes();
@@ -221,6 +223,7 @@
       .map(
         (route) => `
       <div class="route-item ${route.status === 'closed' ? 'route-item--closed' : ''}" data-route-id="${route.id}" data-status="${route.status}">
+        <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
         <div class="route-info">
           <div class="route-date">${formatDate(route.date)}</div>
           ${formatRouteAddresses(route)}
@@ -537,11 +540,11 @@
       <div id="voidLogModal" class="cipher-modal" style="display: flex;">
         <div class="cipher-modal-content">
           <div class="cipher-modal-header">
-            <h3>🚫 Void Mileage Log</h3>
-            <button class="close-btn" onclick="window.closeVoidLogModal()">×</button>
+            <h3>Void Mileage Log</h3>
+            <button class="close-btn" onclick="window.closeVoidLogModal()">&times;</button>
           </div>
           <div class="cipher-modal-body">
-            <p class="modal-warning" style="border-color: rgba(155, 89, 182, 0.3); background: rgba(155, 89, 182, 0.05);">
+            <p class="modal-warning">
               This removes the mileage log from <strong>exports and totals</strong> but keeps it for audit purposes.
             </p>
             <div class="route-summary">
@@ -557,11 +560,10 @@
             </div>
           </div>
           <div class="cipher-modal-footer">
-            <button class="secondary-btn" onclick="window.closeVoidLogModal()">
+            <button class="plate-btn plate-btn--muted" onclick="window.closeVoidLogModal()">
               Cancel
             </button>
-            <button id="confirmVoidBtn" class="primary-action-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
-              <span class="btn-icon">🚫</span>
+            <button id="confirmVoidBtn" class="plate-btn plate-btn--danger">
               Void Log
             </button>
           </div>

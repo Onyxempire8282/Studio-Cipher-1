@@ -7,7 +7,7 @@
    ================================= */
 .route-optimizer-main {
     min-height: 100vh;
-    padding: var(--cipher-space-lg) 0;
+    padding: 0;
 }
 
 .page-header {
@@ -427,7 +427,7 @@
 
 .loading-content {
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
+    backdrop-filter: none;
     padding: var(--cipher-space-xl);
     border-radius: var(--cipher-radius-lg);
     text-align: center;
@@ -520,7 +520,7 @@
 .pac-container {
     z-index: 10001 !important;
     background: var(--cipher-bg-secondary, #1a1a1a) !important;
-    backdrop-filter: blur(20px) !important;
+    backdrop-filter: none !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     border-radius: var(--cipher-radius-md) !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;

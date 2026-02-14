@@ -7,7 +7,10 @@
     
     <!-- Universal System - Base styling -->
     <link rel="stylesheet" href="styles/universal-system.css">
-    
+
+    <!-- Industrial Plate System - Shared visual language -->
+    <link rel="stylesheet" href="styles/industrial-plates.css">
+
     <!-- Page Layout - Command Center specific -->
     <link rel="stylesheet" href="styles/command-center-layout.css">
 </head>
@@ -25,28 +28,38 @@
                     <div class="user-name" id="userName">Professional User</div>
                     <div class="user-role">Claims Specialist</div>
                 </div>
-                <button class="logout-btn cipher-btn cipher-btn--danger" onclick="handleLogout()">Logout</button>
+                <button class="cipher-btn logout-btn" onclick="handleLogout()">
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+                    Logout
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Designer Agent: Main Dashboard -->
-    <div class="dashboard-container">
+    <div class="dashboard-container command-center-scope main-container">
         <!-- Hero Section -->
-        <section class="hero-section">
-            <h1 class="welcome-title">Welcome to Command Center</h1>
-            <p class="welcome-subtitle">Your central hub for route optimization and mileage calculations</p>
-            
+        <section class="hero-section elevation-3">
+            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+            <h1 class="welcome-title" id="welcomeTitle">Welcome back</h1>
+            <p class="welcome-subtitle">Route optimization and mileage operations</p>
+        </section>
+
+        <!-- Status Metrics -->
+        <section class="metrics-section">
             <div class="quick-stats" id="quickStats">
-                <div class="stat-card">
+                <div class="stat-plate">
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
                     <div class="stat-number" id="routesCalculated">0</div>
                     <div class="stat-label">Routes Calculated</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-plate">
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
                     <div class="stat-number" id="milesComputed">0</div>
                     <div class="stat-label">Miles Counted</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-plate">
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
                     <div class="stat-number" id="firmsManaged">0</div>
                     <div class="stat-label">Active Firms</div>
                 </div>
@@ -55,39 +68,27 @@
 
         <!-- Modules Section -->
         <section class="modules-section">
-            <h2 class="section-title">🎯 Main Modules</h2>
+            <h2 class="section-title">OPERATIONS</h2>
             <div class="modules-grid">
                 <!-- Route Optimizer Card -->
                 <div class="module-card route-card" onclick="navigateToModule('route-cypher.html')">
-                    <span class="module-icon">🗺️</span>
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
                     <h3 class="module-title">Route Optimizer</h3>
                     <p class="module-description">Plan optimal routes with Google Maps integration. Multi-stop optimization with day splitting.</p>
-                    <div class="module-actions">
-                        <a href="route-cypher.html" class="action-btn primary-btn">Open Module</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); quickRoute()">Quick Route</button>
-                    </div>
                 </div>
 
                 <!-- Mileage Calculator Card -->
                 <div class="module-card mileage-card" onclick="navigateToModule('mileage-cypher.html')">
-                    <span class="module-icon">🧮</span>
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
                     <h3 class="module-title">Mileage Calculator</h3>
                     <p class="module-description">Calculate billable miles with firm management. Automatic distance calculation and billing.</p>
-                    <div class="module-actions">
-                        <a href="mileage-cypher.html" class="action-btn primary-btn">Open Module</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); quickMileage()">Quick Calc</button>
-                    </div>
                 </div>
 
                 <!-- My Routes Card -->
                 <div class="module-card routes-card" onclick="navigateToModule('my-routes.html')">
-                    <span class="module-icon">📋</span>
+                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
                     <h3 class="module-title">My Routes</h3>
                     <p class="module-description">Manage route lifecycle and close routes to create IRS-ready mileage logs for tax reporting.</p>
-                    <div class="module-actions">
-                        <a href="my-routes.html" class="action-btn primary-btn">Open Module</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); navigateToModule('my-routes.html')">View Routes</button>
-                    </div>
                 </div>
 
                 <!-- DISTRO: Hidden features - do not delete -->
@@ -222,102 +223,16 @@
     </div>
 
     <script>
-        // Designer Agent: Basic initialization for visual elements
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎨 Designer Agent: Command Center layout loaded');
-            
-            // Add some visual feedback for cards
-            document.querySelectorAll('.module-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px) scale(1.02)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-            
-            // Add ripple effect to buttons
-            document.querySelectorAll('.action-btn, .quick-action').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.width = ripple.style.height = size + 'px';
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    ripple.classList.add('ripple');
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => ripple.remove(), 600);
-                });
-            });
-        });
-        
-        // Placeholder functions for Lyricist Agent to implement
+        // Placeholder functions referenced by inline onclick handlers
+        // Real implementations live in command-center.js (CommandCenterManager)
         function navigateToModule(url) {
-            console.log(`🎨 Designer: Navigation to ${url} triggered`);
-            // Lyricist Agent will implement actual navigation logic
-        }
-        
-        function quickRoute() {
-            console.log('🎨 Designer: Quick Route action triggered');
-        }
-        
-        function quickMileage() {
-            console.log('🎨 Designer: Quick Mileage action triggered');
-        }
-        
-        function newJob() {
-            console.log('🎨 Designer: New Job action triggered');
-        }
-        
-        function newTotalLossForm() {
-            console.log('🚗 Total Loss: New Form action triggered');
-            // Navigate to Total Loss forms page
-            window.location.href = 'total-loss-forms.html';
-        }
-        
-        function addFirm() {
-            console.log('🎨 Designer: Add Firm action triggered');
-        }
-        
-        function quickSettings() {
-            console.log('🎨 Designer: Quick Settings action triggered');
-        }
-        
-        function quickTest() {
-            console.log('🎨 Designer: Quick Test action triggered');
-        }
-        
-        function viewRecent() {
-            console.log('🎨 Designer: View Recent action triggered');
-        }
-        
-    </script>
-    
-    <style>
-        /* Ripple effect for buttons */
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(0);
-            animation: rippleAnim 600ms linear;
-            pointer-events: none;
-        }
-        
-        @keyframes rippleAnim {
-            to {
-                transform: scale(4);
-                opacity: 0;
+            if (window.commandCenter) {
+                window.commandCenter.navigateToModule(url);
+            } else {
+                window.location.href = url;
             }
         }
-    </style>
+    </script>
 
     <!-- Supabase JS v2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

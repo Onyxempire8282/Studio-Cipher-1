@@ -246,7 +246,7 @@ class CommandCenterTestSuite {
     }));
 
     return overallPercentage;
-}
+    }
 }
 
 

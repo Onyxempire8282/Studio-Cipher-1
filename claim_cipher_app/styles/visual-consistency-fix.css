@@ -29,7 +29,7 @@ body {
 .command-header,
 .cipher-header {
     background: rgba(26, 26, 26, 0.95) !important;
-    backdrop-filter: blur(20px);
+    backdrop-filter: none;
     border-bottom: 2px solid rgba(255, 215, 0, 0.2) !important;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4) !important;
 }
@@ -77,7 +77,7 @@ h1, h2, h3 {
 .login-cipher-card,
 .cipher-card {
     background: rgba(26, 26, 26, 0.95) !important;
-    backdrop-filter: blur(20px);
+    backdrop-filter: none;
     border: 2px solid rgba(255, 215, 0, 0.2) !important;
     border-radius: 20px;
     box-shadow: 

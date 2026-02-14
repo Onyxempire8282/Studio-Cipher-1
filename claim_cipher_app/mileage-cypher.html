@@ -7,6 +7,9 @@
     <!-- Universal System - Base styling -->
     <link rel="stylesheet" href="styles/universal-system.css" />
 
+    <!-- Industrial Plate System - Shared visual language -->
+    <link rel="stylesheet" href="styles/industrial-plates.css" />
+
     <!-- Page Layout - Mileage Calculator specific -->
     <link rel="stylesheet" href="styles/mileage-cypher-layout.css" />
 
@@ -17,20 +20,20 @@
     <header class="cipher-header">
       <div class="header-content">
         <div class="app-brand">
-          <span class="logo">🎤</span>
+          <span class="logo">CC</span>
           <span>Claim Cipher</span>
         </div>
         <div class="nav-links">
-          <a href="command-center.html">🎯 Dashboard</a>
-          <a href="route-cypher.html">🗺️ Routes</a>
-          <a href="my-routes.html">📋 My Routes</a>
-          <a href="mileage-cypher.html" class="active">🧮 Mileage</a>
+          <a href="command-center.html">Dashboard</a>
+          <a href="route-cypher.html">Routes</a>
+          <a href="mileage-cypher.html" class="active">Mileage</a>
+          <a href="my-routes.html">My Routes</a>
           <!-- DISTRO: Hidden features - do not delete -->
-          <!-- <a href="jobs-studio.html">💼 Jobs</a> -->
-          <!-- <a href="total-loss-forms.html">🚗 Forms</a> -->
-          <!-- <a href="firms-directory.html">🏢 Firms</a> -->
-          <!-- <a href="settings-booth.html">⚙️ Settings</a> -->
-          <!-- <a href="functionality-test.html">🧪 Tests</a> -->
+          <!-- <a href="jobs-studio.html">Jobs</a> -->
+          <!-- <a href="total-loss-forms.html">Forms</a> -->
+          <!-- <a href="firms-directory.html">Firms</a> -->
+          <!-- <a href="settings-booth.html">Settings</a> -->
+          <!-- <a href="functionality-test.html">Tests</a> -->
         </div>
         <div class="user-section">
           <div class="user-info">
@@ -38,9 +41,13 @@
             <div class="user-role">Claims Specialist</div>
           </div>
           <button
-            class="logout-btn cipher-btn cipher-btn--danger"
+            class="cipher-btn logout-btn"
             onclick="handleLogout()"
           >
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             Logout
           </button>
         </div>
@@ -60,26 +67,27 @@
       WHY IT ONLY AFFECTED MILEAGE: Route page had both classes; Mileage only had one.
       WHY THIS FIX IS CORRECT: Normalizes both pages to use the same layout architecture.
     -->
-    <main class="mileage-calculator-main main-content">
+    <main class="mileage-calculator-main main-content main-container">
+      <section class="hero-section elevation-3">
+        <div class="rivet tl"></div>
+        <div class="rivet tr"></div>
+        <div class="rivet bl"></div>
+        <div class="rivet br"></div>
+
+        <h1>Mileage Calculator</h1>
+        <p>Calculate billable mileage for insurance claims</p>
+      </section>
+
       <div class="mileage-container">
         <!-- Calculator Section -->
-        <div class="calculator-section cipher-glass-panel">
-          <div class="section-header">
-            <div class="section-title">
-              <span class="section-icon">🧮</span>
-              <h2>Mileage Calculator</h2>
-            </div>
-            <div class="section-subtitle">
-              Calculate billable mileage for insurance claims
-            </div>
-          </div>
-
+        <div class="calculator-section">
           <div class="calculator-form">
-            <div class="form-section">
-              <h3 class="form-section-title">
-                <span class="form-icon">🏢</span>
-                Insurance Firm Selection
-              </h3>
+            <div class="cipher-plate elevation-2 form-section">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              <h3 class="form-section-title">Insurance Firm Selection</h3>
               <div class="firm-selection-group">
                 <div class="firm-input-group">
                   <label for="firmSelect" class="input-label"
@@ -89,24 +97,25 @@
                     <option value="">Choose insurance firm...</option>
                   </select>
                 </div>
-                <button id="manageFirms" class="secondary-btn">
-                  <span class="btn-icon">⚙️</span>
+                <button id="manageFirmsBtn" class="cipher-btn secondary-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
                   Manage Firms
                 </button>
               </div>
             </div>
 
-            <div class="form-section">
-              <h3 class="form-section-title">
-                <span class="form-icon">🗺️</span>
-                Route Information
-              </h3>
+            <div class="cipher-plate elevation-2 form-section">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              <h3 class="form-section-title">Route Information</h3>
               <div class="route-inputs">
                 <div class="input-group">
-                  <label for="pointA" class="input-label">
-                    <span class="label-icon">🏠</span>
-                    Starting Location
-                  </label>
+                  <label for="pointA" class="input-label">Starting Location</label>
                   <input
                     type="text"
                     id="pointA"
@@ -119,10 +128,7 @@
                 </div>
                 <div class="route-arrow">→</div>
                 <div class="input-group">
-                  <label for="pointB" class="input-label">
-                    <span class="label-icon">📍</span>
-                    Destination
-                  </label>
+                  <label for="pointB" class="input-label">Destination</label>
                   <input
                     type="text"
                     id="pointB"
@@ -133,19 +139,8 @@
                     Distance will be calculated automatically
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h3 class="form-section-title">
-                <span class="form-icon">📏</span>
-                Distance & Options
-              </h3>
-              <div class="distance-options">
                 <div class="input-group distance-input-group">
-                  <label for="distanceMiles" class="input-label"
-                    >Distance (Miles)</label
-                  >
+                  <label for="distanceMiles" class="input-label">Distance (Miles)</label>
                   <div class="distance-input-wrapper">
                     <input
                       type="number"
@@ -156,49 +151,19 @@
                       min="0"
                     />
                     <div class="distance-status" id="distanceStatus">
-                      <span class="status-icon">🎯</span>
                       Auto-calculating...
                     </div>
                   </div>
                 </div>
-                <div class="trip-options">
-                  <div class="checkbox-wrapper">
-                    <label class="modern-checkbox">
-                      <input type="checkbox" id="roundTrip" />
-                      <span class="checkbox-custom"></span>
-                      <span class="checkbox-label-text">
-                        <span class="checkbox-title">Round Trip</span>
-                        <span class="checkbox-subtitle"
-                          >Double the distance for return journey</span
-                        >
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h3 class="form-section-title">
-                <span class="form-icon">📝</span>
-                Additional Information
-              </h3>
-              <div class="input-group">
-                <label for="noteField" class="input-label"
-                  >Notes (Optional)</label
-                >
-                <textarea
-                  id="noteField"
-                  class="notes-input"
-                  placeholder="Add any additional notes or special circumstances..."
-                  rows="2"
-                ></textarea>
               </div>
             </div>
 
             <div class="form-actions">
-              <button id="calculateBtn" class="primary-action-btn">
-                <span class="btn-icon">🧮</span>
+              <button id="calculateBtn" class="cipher-btn primary-action-btn">
+                <div class="rivet tl"></div>
+                <div class="rivet tr"></div>
+                <div class="rivet bl"></div>
+                <div class="rivet br"></div>
                 <span class="btn-text">Calculate Mileage</span>
                 <span class="btn-loading" style="display: none">
                   <span class="loading-spinner"></span>
@@ -209,93 +174,82 @@
           </div>
         </div>
 
-        <!-- Results Section -->
-        <div
-          class="results-section cipher-glass-panel"
-          id="resultsSection"
-          style="display: none"
-        >
-          <div class="section-header">
-            <div class="section-title">
-              <span class="section-icon">💰</span>
-              <h2>Billing Results</h2>
-            </div>
-            <div class="section-subtitle">
-              Your calculated mileage breakdown and billing amount
-            </div>
-          </div>
+      </div>
 
-          <div class="results-content">
-            <div class="breakdown-section">
-              <h3 class="breakdown-title">
-                <span class="breakdown-icon">📊</span>
-                Calculation Breakdown
-              </h3>
-              <div id="breakdownDisplay" class="breakdown-display"></div>
-            </div>
+      <!-- Billing Results Modal -->
+      <div id="billingModal" class="modal-overlay" style="display: none">
+        <div class="cipher-plate elevation-3 billing-modal">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
 
-            <div class="copy-section">
-              <h3 class="copy-title">
-                <span class="copy-icon">📋</span>
-                Copy for Billing
-              </h3>
-              <div class="copy-area">
-                <div class="copy-container">
-                  <textarea
-                    id="copyText"
-                    class="copy-textarea"
-                    readonly
-                    placeholder="Your billing calculation will appear here..."
-                  ></textarea>
-                  <div class="copy-actions">
-                    <button id="copyBtn" class="copy-btn">
-                      <span class="btn-icon">📋</span>
-                      <span class="btn-text">Copy to Clipboard</span>
-                      <span class="btn-success" style="display: none">
-                        <span class="success-icon">✅</span>
-                        Copied!
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div class="copy-hint">
-                  This text is formatted for easy pasting into billing systems
-                </div>
-              </div>
-            </div>
+          <h2 class="plate-engraved-title">Billing Summary</h2>
+          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="window.mileageCalculator.closeBillingModal()">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            ×
+          </button>
 
-            <div class="results-actions">
-              <button id="newCalculation" class="primary-action-btn secondary">
-                <span class="btn-icon">🔄</span>
-                New Calculation
-              </button>
-              <!-- DISTRO: Settings hidden - do not delete -->
-              <!--
-              <a href="settings-booth.html" class="settings-link">
-                <span class="link-icon">⚙️</span>
-                Calculator Settings
-              </a>
-              -->
-            </div>
+          <div id="breakdownDisplay" class="billing-breakdown"></div>
+          <div id="billingTotal" class="cipher-plate elevation-2 total-row"></div>
+
+          <div class="modal-actions">
+            <button id="copyBtn" class="cipher-btn copy-btn">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              <span class="btn-text">Copy for Billing</span>
+              <span class="btn-success" style="display: none">Copied</span>
+            </button>
+
+            <button id="newCalculation" class="cipher-btn primary-action-btn secondary">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              New Calculation
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Firms Management Modal -->
       <div id="firmsModal" class="modal" style="display: none">
-        <div class="modal-content">
+        <div class="cipher-plate elevation-3 modal-content">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
           <div class="modal-header">
-            <h3>🏢 Manage Firms</h3>
-            <button class="close-btn" onclick="closeFirmsModal()">×</button>
+            <h3>Manage Firms</h3>
+            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeFirmsModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              ×
+            </button>
           </div>
 
           <div class="modal-body">
-            <div class="firms-list">
+            <div class="cipher-plate elevation-1 firms-list">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               <h4>Current Firms</h4>
               <div id="firmsList"></div>
             </div>
 
-            <div class="add-firm-section">
+            <div class="cipher-plate elevation-1 add-firm-section">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               <h4>Add New Firm</h4>
               <form id="addFirmForm">
                 <div class="form-row">
@@ -329,7 +283,13 @@
                     Round Trip Default
                   </label>
                 </div>
-                <button type="submit" class="add-btn">➕ Add Firm</button>
+                <button type="submit" class="cipher-btn add-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
+                  Add Firm
+                </button>
               </form>
             </div>
           </div>
@@ -338,21 +298,45 @@
 
       <!-- Import from Route Modal -->
       <div id="routeImportModal" class="modal" style="display: none">
-        <div class="modal-content">
+        <div class="cipher-plate elevation-3 modal-content">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
           <div class="modal-header">
-            <h3>🗺️ Import from Route</h3>
-            <button class="close-btn" onclick="closeRouteImportModal()">
+            <h3>Import from Route</h3>
+            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeRouteImportModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               ×
             </button>
           </div>
           <div class="modal-body">
-            <p>Route data detected! Would you like to import the distance?</p>
-            <div id="routeImportData"></div>
-            <div class="modal-actions">
-              <button id="importRouteBtn" class="import-btn">✅ Import</button>
-              <button onclick="closeRouteImportModal()" class="cancel-btn">
-                ❌ Cancel
-              </button>
+            <div class="cipher-plate elevation-1 modal-inner-plate">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              <p>Route data detected! Would you like to import the distance?</p>
+              <div id="routeImportData"></div>
+              <div class="modal-actions">
+                <button id="importRouteBtn" class="cipher-btn import-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
+                  Import
+                </button>
+                <button onclick="closeRouteImportModal()" class="cipher-btn cancel-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -360,6 +344,10 @@
 
       <!-- Toast notifications -->
       <div id="toastContainer" class="toast-container"></div>
+
+      <div id="resultsSection" style="display:none;"></div>
+      <textarea id="copyText" style="display:none;"></textarea>
+      <input type="checkbox" id="roundTrip" style="display:none;" />
     </main>
 
     <!-- Load API configuration first -->
@@ -404,18 +392,18 @@
         script.async = true;
         script.defer = true;
         script.onload = () => {
-          console.log("🗺️ Google Maps API loaded for Mileage Cypher");
+          console.log("Google Maps API loaded for Mileage Cypher");
           // Initialize Places Autocomplete after API loads
           if (window.mileageCalculator) {
             window.mileageCalculator.initializeGooglePlacesAutocomplete();
           }
         };
         script.onerror = () =>
-          console.error("🗺️ Failed to load Google Maps API");
+          console.error("Failed to load Google Maps API");
         document.head.appendChild(script);
       } else {
         console.log(
-          "🗺️ Google Maps API not configured - manual distance entry only"
+          "Google Maps API not configured - manual distance entry only"
         );
       }
     </script>

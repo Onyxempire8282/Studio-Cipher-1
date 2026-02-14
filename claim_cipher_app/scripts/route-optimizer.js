@@ -730,21 +730,44 @@ class RouteOptimizer {
         // ETA calculated locally from static duration values returned by API
       };
 
+      if (!this.directionsService || typeof this.directionsService.route !== "function") {
+        const message = "Directions service is not initialized.";
+        console.error("Directions service unavailable:", this.directionsService);
+        this.showError(message);
+        reject(new Error(message));
+        return;
+      }
+
       this.directionsService.route(request, (result, status) => {
-        // Defensive guard: check for API failures
-        if (
-          status !== google.maps.DirectionsStatus.OK ||
-          !result ||
-          !result.routes ||
-          result.routes.length === 0
-        ) {
+        const hasValidRoutes =
+          !!result &&
+          Array.isArray(result.routes) &&
+          result.routes.length > 0 &&
+          !!result.routes[0] &&
+          Array.isArray(result.routes[0].legs) &&
+          result.routes[0].legs.length > 0;
+
+        // Defensive guard: check for API failures or empty routes
+        if (status !== google.maps.DirectionsStatus.OK || !hasValidRoutes) {
+          const message =
+            status !== google.maps.DirectionsStatus.OK
+              ? `Directions request failed: ${status}`
+              : "Directions returned no valid routes.";
           console.error("Directions API failed:", status, result);
-          reject(new Error(`Directions request failed: ${status}`));
+          this.showError(message);
+          reject(new Error(message));
           return;
         }
 
-        const optimizedRoute = this.processDirectionsResult(result);
-        resolve(optimizedRoute);
+        try {
+          const optimizedRoute = this.processDirectionsResult(result);
+          resolve(optimizedRoute);
+        } catch (error) {
+          const message = "Directions returned an invalid route payload.";
+          console.error("Directions processing failed:", error, result);
+          this.showError(message);
+          reject(new Error(message));
+        }
       });
     });
   }
@@ -1868,12 +1891,23 @@ class RouteOptimizer {
     // Show first day's timeline
     this.showDayTimeline(0, splitRoute, originalRoute);
 
-    // Initialize modal map
-    this.initializeModalMap(splitRoute, 0);
-
     // Show modal
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
+
+    // Initialize modal map after the modal is visible
+    setTimeout(() => {
+      this.initializeModalMap(splitRoute, 0);
+
+      // Ensure map renders after modal display
+      if (this.modalMap && typeof google !== "undefined" && google.maps?.event) {
+        const center = this.modalMap.getCenter();
+        google.maps.event.trigger(this.modalMap, "resize");
+        if (center) {
+          this.modalMap.setCenter(center);
+        }
+      }
+    }, 50);
   }
 
   showDayTimeline(dayIndex, splitRoute, originalRoute) {
@@ -2010,6 +2044,11 @@ class RouteOptimizer {
 
   initializeModalMap(splitRoute, dayIndex) {
     const modalMapContainer = document.getElementById("modalMap");
+
+    if (!modalMapContainer) {
+      console.error("Modal map container not found.");
+      return;
+    }
 
     // Check if Google Maps is available
     if (typeof google === "undefined" || !google.maps) {

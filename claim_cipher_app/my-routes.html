@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Routes - Claim Cipher</title>
-    <!-- Universal System - Base styling -->
+    <!-- Stack B: Universal base → Industrial plates → Page layout -->
     <link rel="stylesheet" href="styles/universal-system.css" />
-    <!-- Page Layout - My Routes specific -->
+    <link rel="stylesheet" href="styles/industrial-plates.css" />
     <link rel="stylesheet" href="styles/my-routes-layout.css" />
   </head>
   <body class="my-routes-page" style="visibility: hidden">
@@ -17,10 +17,10 @@
           <span>Claim Cipher</span>
         </div>
         <div class="nav-links">
-          <a href="command-center.html">🎯 Dashboard</a>
-          <a href="route-cypher.html">🗺️ Routes</a>
-          <a href="my-routes.html" class="active">📋 My Routes</a>
-          <a href="mileage-cypher.html">🧮 Mileage</a>
+          <a href="command-center.html">Dashboard</a>
+          <a href="route-cypher.html">Routes</a>
+          <a href="mileage-cypher.html">Mileage</a>
+          <a href="my-routes.html" class="active">My Routes</a>
         </div>
         <div class="user-section">
           <div class="user-info">
@@ -28,47 +28,41 @@
             <div class="user-role">Claims Specialist</div>
           </div>
           <button
-            class="logout-btn cipher-btn cipher-btn--danger"
+            class="cipher-btn logout-btn"
             onclick="handleLogout()"
           >
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             Logout
           </button>
         </div>
       </div>
     </header>
 
-    <main class="my-routes-main main-content">
+    <main class="my-routes-main main-content main-container">
       <div class="my-routes-container">
-        <!-- Content Header -->
-        <div class="content-header">
-          <div class="content-title">
-            <span class="content-icon">📋</span>
-            <h1>My Routes</h1>
-          </div>
-          <p class="content-subtitle">
-            Manage route lifecycle and close routes to create tax-ready mileage
-            logs
+        <!-- Hero / Page Title Plate -->
+        <section class="hero-section elevation-3">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
+          <h1 class="hero-title">My Routes</h1>
+          <p class="hero-subtitle">
+            Route lifecycle management and IRS-ready mileage logs
           </p>
-        </div>
+        </section>
 
-        <!-- Filters Section -->
-        <div class="filters-section cipher-glass-panel">
-          <div class="section-header">
-            <div class="section-title">
-              <span class="section-icon">🔍</span>
-              <h2>Filter Routes</h2>
-            </div>
-          </div>
+        <!-- Filter Plate -->
+        <section class="filter-plate steel-plate">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
+          <h3 class="plate-engraved-title">Filter Routes</h3>
           <div class="filters-form">
-            <div class="filter-group">
-              <label for="statusFilter" class="input-label">Status</label>
-              <select id="statusFilter" class="filter-select">
-                <option value="">All Statuses</option>
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="closed">Closed</option>
-              </select>
-            </div>
             <div class="filter-group">
               <label for="dateFromFilter" class="input-label">From Date</label>
               <input type="date" id="dateFromFilter" class="filter-input" />
@@ -77,47 +71,60 @@
               <label for="dateToFilter" class="input-label">To Date</label>
               <input type="date" id="dateToFilter" class="filter-input" />
             </div>
-            <button id="applyFilters" class="secondary-btn">
-              <span class="btn-icon">🔄</span>
-              Apply Filters
+            <button id="applyFilters" class="cipher-btn plate-btn plate-btn--primary">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              Apply Filter
             </button>
-            <button id="clearFilters" class="secondary-btn secondary-btn--muted">
-              <span class="btn-icon">✕</span>
+            <button id="clearFilters" class="cipher-btn plate-btn plate-btn--muted">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               Clear
             </button>
           </div>
-        </div>
+        </section>
 
         <!-- Routes List Section -->
-        <div class="routes-list-section cipher-glass-panel">
-          <div class="section-header">
-            <div class="section-title">
-              <span class="section-icon">📋</span>
-              <h2>Routes</h2>
-              <span id="routeCount" class="route-count"></span>
-            </div>
-            <div class="section-actions">
-              <button id="exportCsvBtn" class="secondary-btn">
-                <span class="btn-icon">📊</span>
-                Export Mileage CSV
-              </button>
-            </div>
+        <section class="routes-section">
+          <div class="routes-header">
+            <h3 class="routes-title">
+              Routes <span id="routeCount" class="route-count"></span>
+            </h3>
+
+            <button id="exportCsvBtn" class="cipher-btn btn-export">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              Export Mileage CSV
+            </button>
           </div>
+
           <div id="routesList" class="routes-list">
             <div class="routes-loading">
               <div class="cipher-spinner"></div>
               <span>Loading routes...</span>
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
       <!-- CSV Export Modal -->
       <div id="exportModal" class="cipher-modal" style="display: none">
         <div class="cipher-modal-content">
           <div class="cipher-modal-header">
-            <h3>📊 Export Mileage Log</h3>
-            <button class="close-btn" onclick="closeExportModal()">×</button>
+            <h3>Export Mileage Log</h3>
+            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeExportModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              ×
+            </button>
           </div>
           <div class="cipher-modal-body">
             <p class="modal-description">
@@ -132,16 +139,21 @@
               <label for="exportDateTo" class="input-label">To Date</label>
               <input type="date" id="exportDateTo" class="filter-input" required />
             </div>
-            <div id="exportSummary" class="export-summary">
-              <!-- Populated by JS with route count and total miles preview -->
-            </div>
+            <div id="exportSummary" class="export-summary"></div>
           </div>
           <div class="cipher-modal-footer">
-            <button class="secondary-btn" onclick="closeExportModal()">
+            <button class="cipher-btn plate-btn plate-btn--muted" onclick="closeExportModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               Cancel
             </button>
-            <button id="confirmExportBtn" class="primary-action-btn">
-              <span class="btn-icon">💾</span>
+            <button id="confirmExportBtn" class="cipher-btn plate-btn plate-btn--primary">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               Download CSV
             </button>
           </div>
@@ -152,24 +164,35 @@
       <div id="closeRouteModal" class="cipher-modal" style="display: none">
         <div class="cipher-modal-content">
           <div class="cipher-modal-header">
-            <h3>🔒 Close Route</h3>
-            <button class="close-btn" onclick="closeCloseRouteModal()">×</button>
+            <h3>Close Route</h3>
+            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeCloseRouteModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              ×
+            </button>
           </div>
           <div class="cipher-modal-body">
             <p class="modal-warning">
               This creates a finalized <strong>mileage log</strong> for tax purposes.
               Logs can be voided later if created in error.
             </p>
-            <div class="route-summary" id="closeRouteSummary">
-              <!-- Populated by JS -->
-            </div>
+            <div class="route-summary" id="closeRouteSummary"></div>
           </div>
           <div class="cipher-modal-footer">
-            <button class="secondary-btn" onclick="closeCloseRouteModal()">
+            <button class="cipher-btn plate-btn plate-btn--muted" onclick="closeCloseRouteModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               Cancel
             </button>
-            <button id="confirmCloseBtn" class="primary-action-btn primary-action-btn--warning">
-              <span class="btn-icon">🔒</span>
+            <button id="confirmCloseBtn" class="cipher-btn plate-btn plate-btn--warning">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               Close Route & Log Mileage
             </button>
           </div>
@@ -182,7 +205,6 @@
     <script src="scripts/supabase-config.js"></script>
     <script src="scripts/supabase-auth.js"></script>
     <script>
-      // Auth protection: keep page hidden until authenticated
       (async function () {
         const allowed = await window.SupabaseAuth.protectPage();
         if (allowed) {

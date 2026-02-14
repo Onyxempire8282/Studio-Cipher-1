@@ -4,27 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Cypher - Claim Cipher</title>
-    <!-- Core CSS first -->
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/main.css">
-    
-    <!-- Page-specific CSS second -->
-    <link rel="stylesheet" href="styles/login-cypher.css">
-    
-    <!-- Universal systems third -->
-    <link rel="stylesheet" href="styles/glassmorphism-universal.css">
-    <link rel="stylesheet" href="styles/mobile-enhancements.css">
-    
-    <!-- Fixes last -->
-    <link rel="stylesheet" href="styles/visual-consistency-fix.css">
-    <link rel="stylesheet" href="styles/universal-header-fixes.css">
+
+    <!-- Stack B: Universal base → Industrial plates → Page layout -->
+    <link rel="stylesheet" href="styles/universal-system.css">
+    <link rel="stylesheet" href="styles/industrial-plates.css">
+    <link rel="stylesheet" href="styles/login-layout.css">
 </head>
 <body class="cipher-dark-theme" style="visibility: hidden;">
 
-
-    <div class="login-cypher-container">
-        
-        <div class="login-cipher-card">
+    <div class="cipher-layout">
+      <div class="cipher-content">
+        <div class="cipher-plate login-plate">
+            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
             <!-- Brand Header: Clear product identification -->
             <div class="auth-brand-header">
                 <h1 class="auth-brand-name">Claim Cipher</h1>
@@ -137,6 +128,7 @@
                 </button>
             </div>
         </div>
+      </div>
     </div>
 
     <!-- Signup Payment Modal -->
@@ -511,6 +503,19 @@
                 openLegalModal('privacy-modal');
             });
         }
+
+        // Password visibility toggles — must run AFTER form cloning above
+        document.querySelectorAll('.password-cipher-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                var input = this.parentElement.querySelector('input');
+                if (!input) return;
+                var isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                this.textContent = isPassword ? '🙈' : '👁️';
+                this.classList.toggle('active', isPassword);
+            });
+        });
     });
 
     // Legal Modal Functions

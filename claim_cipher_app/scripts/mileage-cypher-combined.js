@@ -13,153 +13,63 @@ class MileageCypherCalculator {
     // Tracks: 'google_api' | 'cache_google' | 'user_manual' | null
     this.currentDistanceSource = null;
 
-    this.init();
-  }
-
-  init() {
-    console.log("🧮 Mileage Cypher Calculator initializing...");
-    this.setupEventListeners();
+    this.initializeRuntimeBindings();
     this.loadFirmsToDropdown();
-    this.setupAutoCalculation();
-    this.loadUserHomeLocation();
-    this.initializeGooglePlacesAutocomplete();
-    this.checkForRouteImport();
-
-    // Check for demo mode and initialize if active
-    if (this.isDemoMode()) {
-      setTimeout(() => this.initializeDemoMode(), 300);
-    }
-
-    console.log("🧮 Mileage Cypher Calculator ready!");
   }
 
-  /**
-   * Check if demo mode is active
-   */
-  isDemoMode() {
-    return sessionStorage.getItem('demo_mode') === 'true';
-  }
-
-  initializeSettings() {
-    const defaultSettings = {
-      // User preferences
-      homeLocation: "", // Static starting point for user
-      // API configuration
-      googleMapsApiKey: window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY || "", // Load from config
-      autoCalculateEnabled: true,
-      copyFormat: "detailed", // 'brief', 'detailed', 'custom'
-    };
-
-    const saved = localStorage.getItem("mileage_cypher_settings_v2");
-    const settings = saved
-      ? { ...defaultSettings, ...JSON.parse(saved) }
-      : defaultSettings;
-
-    // Seed FirmStore with defaults if empty (first-time user, no migration data)
-    if (window.FirmStore && window.FirmStore.getAll().length === 0) {
-      const defaultFirms = [
-        { id: "sedgwick", name: "Sedgwick", freeMiles: 50, ratePerMile: 0.67, roundTripDefault: true },
-        { id: "acd", name: "ACD (American Claims & Disposal)", freeMiles: 30, ratePerMile: 0.6, roundTripDefault: false },
-        { id: "crawford", name: "Crawford & Company", freeMiles: 40, ratePerMile: 0.65, roundTripDefault: true },
-      ];
-      defaultFirms.forEach(f => window.FirmStore.save(f));
-      if (!window.FirmStore.getLastSelected()) {
-        window.FirmStore.setLastSelected("sedgwick");
-      }
-    }
-
-    return settings;
+  initializeRuntimeBindings() {
+    this.loadFirmsToDropdown();
+    this.setupEventListeners();
   }
 
   setupEventListeners() {
-    // Firm selection
-    const firmSelect = document.getElementById("firmSelect");
-    if (firmSelect) {
-      firmSelect.addEventListener("change", (e) =>
-        this.onFirmChange(e.target.value)
-      );
-    }
-
-    // Calculate button with loading states
     const calculateBtn = document.getElementById("calculateBtn");
     if (calculateBtn) {
       calculateBtn.addEventListener("click", (e) => {
         e.preventDefault();
-
-        // Show loading state
-        this.showCalculateLoading(true);
-
-        // Check if distance field is empty and try auto-calculation first
-        const distanceInput = document.getElementById("distanceMiles");
-        const distance = parseFloat(distanceInput?.value) || 0;
-        const pointA = document.getElementById("pointA")?.value.trim() || "";
-        const pointB = document.getElementById("pointB")?.value.trim() || "";
-
-        console.log(
-          "🧮 Calculate button clicked - Distance:",
-          distance,
-          "Point A:",
-          pointA,
-          "Point B:",
-          pointB
-        );
-
-        if (distance <= 0 && pointA && pointB) {
-          console.log("🧮 Attempting auto-distance calculation...");
-          this.triggerAutoDistance();
-        } else if (distance > 0) {
-          console.log(
-            "🧮 Distance already set (" +
-              distance +
-              " miles), calculating billing now"
-          );
-          this.performCalculation(false); // false = not silent, show results and errors
-        } else {
-          console.warn("🧮 Missing required data - cannot calculate");
-          this.showNotification("Please enter all required fields", "error");
-          this.showCalculateLoading(false);
-        }
+        this.performCalculation(false);
       });
     }
 
-    // Copy functionality with success states
+    const firmSelect = document.getElementById("firmSelect");
+    if (firmSelect) {
+      firmSelect.addEventListener("change", () => {
+        const firmId = firmSelect.value;
+        if (firmId) {
+          this.onFirmChange(firmId);
+        }
+        this.performCalculation(true);
+      });
+    }
+
     const copyBtn = document.getElementById("copyBtn");
     if (copyBtn) {
-      copyBtn.addEventListener("click", () =>
-        this.copyCalculationToClipboard()
+      copyBtn.addEventListener("click", () => this.handleCopy());
+    }
+
+    const manageFirmsBtn = document.getElementById("manageFirmsBtn");
+    if (manageFirmsBtn) {
+      manageFirmsBtn.addEventListener("click", (e) =>
+        this.handleManageFirms(e)
       );
     }
 
-    // New calculation
     const newCalcBtn = document.getElementById("newCalculation");
     if (newCalcBtn) {
       newCalcBtn.addEventListener("click", () => this.startNewCalculation());
     }
 
-    // Firm management
-    const manageFirmsBtn = document.getElementById("manageFirms");
-    if (manageFirmsBtn) {
-      manageFirmsBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.openFirmsManagementModal();
-      });
-    }
-
-    // Add firm form
     const addFirmForm = document.getElementById("addFirmForm");
     if (addFirmForm) {
       addFirmForm.addEventListener("submit", (e) => this.handleAddFirm(e));
     }
 
-    // Auto-distance calculation triggers
     const pointBInput = document.getElementById("pointB");
     if (pointBInput) {
-      // Trigger on blur (when user clicks away)
       pointBInput.addEventListener("blur", () => {
         setTimeout(() => this.triggerAutoDistance(), 500);
       });
 
-      // Trigger on Enter key
       pointBInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
@@ -167,20 +77,17 @@ class MileageCypherCalculator {
         }
       });
 
-      // Trigger after user stops typing (debounced)
       let typingTimer;
       pointBInput.addEventListener("input", () => {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(() => {
           if (pointBInput.value.trim().length > 5) {
-            // Only if decent length address
             this.triggerAutoDistance();
           }
-        }, 2000); // Wait 2 seconds after user stops typing
+        }, 2000);
       });
     }
 
-    // Distance input for manual entry
     const distanceInput = document.getElementById("distanceMiles");
     if (distanceInput) {
       distanceInput.addEventListener("input", () => {
@@ -190,24 +97,65 @@ class MileageCypherCalculator {
       });
     }
 
-    // Round trip checkbox
-    const roundTripCheckbox = document.getElementById("roundTrip");
-    if (roundTripCheckbox) {
-      roundTripCheckbox.addEventListener("change", () => {
-        if (this.settings.autoCalculateEnabled) {
-          this.debounceAutoCalculate();
-        }
-      });
-    }
+    console.log("Event listeners configured");
+  }
 
-    console.log("🧮 Event listeners configured");
+  handleCalculation(e) {
+    if (e) e.preventDefault();
+
+    // Show loading state
+    this.showCalculateLoading(true);
+
+    // Check if distance field is empty and try auto-calculation first
+    const distanceInput = document.getElementById("distanceMiles");
+    const distance = parseFloat(distanceInput?.value) || 0;
+    const pointA = document.getElementById("pointA")?.value.trim() || "";
+    const pointB = document.getElementById("pointB")?.value.trim() || "";
+
+    console.log(
+      "Calculate button clicked - Distance:",
+      distance,
+      "Point A:",
+      pointA,
+      "Point B:",
+      pointB
+    );
+
+    if (distance <= 0 && pointA && pointB) {
+      console.log("Attempting auto-distance calculation...");
+      this.triggerAutoDistance();
+    } else if (distance > 0) {
+      console.log(
+        "Distance already set (" +
+          distance +
+          " miles), calculating billing now"
+      );
+      this.performCalculation(false); // false = not silent, show results and errors
+    } else {
+      console.warn("Missing required data - cannot calculate");
+      this.showNotification("Please enter all required fields", "error");
+      this.showCalculateLoading(false);
+    }
+  }
+
+  handleCopy() {
+    this.copyCalculationToClipboard();
+  }
+
+  handleManageFirms(e) {
+    if (e) e.preventDefault();
+    this.openFirmsManagementModal();
   }
 
   loadFirmsToDropdown() {
+    this.refreshFirmDropdown();
+  }
+
+  refreshFirmDropdown() {
     const select = document.getElementById("firmSelect");
     if (!select) return;
 
-    select.innerHTML = '<option value="">Select your firm...</option>';
+    select.innerHTML = '<option value="">Choose insurance firm...</option>';
 
     const firms = window.FirmStore ? window.FirmStore.getAll() : [];
     firms.forEach((firm) => {
@@ -217,12 +165,19 @@ class MileageCypherCalculator {
       select.appendChild(option);
     });
 
-    // Restore last selected firm
     const lastSelected = window.FirmStore ? window.FirmStore.getLastSelected() : '';
     if (lastSelected) {
       select.value = lastSelected;
       this.onFirmChange(lastSelected);
     }
+  }
+
+  getSelectedFirm() {
+    const select = document.getElementById("firmSelect");
+    if (!select || select.value === "") return null;
+
+    const firmId = select.value;
+    return window.FirmStore ? window.FirmStore.getById(firmId) : null;
   }
 
   loadUserHomeLocation() {
@@ -242,7 +197,7 @@ class MileageCypherCalculator {
           if (homeAddress && homeAddress !== this.settings.homeLocation) {
             this.settings.homeLocation = homeAddress;
             this.saveSettings();
-            console.log("🧮 Home location saved:", homeAddress);
+            console.log("Home location saved:", homeAddress);
           }
         });
       }
@@ -263,7 +218,7 @@ class MileageCypherCalculator {
         input.addEventListener("input", () => {
           // Reset distance source when address changes (prevents stale data)
           this.currentDistanceSource = null;
-          console.log("🧮 Distance source reset (address changed)");
+          console.log("Distance source reset (address changed)");
 
           if (this.settings.autoCalculateEnabled) {
             this.debounceAutoCalculate();
@@ -276,7 +231,7 @@ class MileageCypherCalculator {
       distanceInput.addEventListener("input", () => {
         // Mark as manual entry when user types in the distance field
         this.currentDistanceSource = 'user_manual';
-        console.log("🧮 Distance source set to: user_manual (manual input)");
+        console.log("Distance source set to: user_manual (manual input)");
 
         if (this.settings.autoCalculateEnabled) {
           this.debounceAutoCalculate();
@@ -284,13 +239,13 @@ class MileageCypherCalculator {
       });
     }
 
-    console.log("🧮 Auto-calculation setup complete");
+    console.log("Auto-calculation setup complete");
   }
 
   initializeGooglePlacesAutocomplete() {
     // Wait for Google Maps API to load
     if (typeof google === "undefined" || !google.maps || !google.maps.places) {
-      console.log("🧮 Google Places not available - autocomplete disabled");
+      console.log("Google Places not available - autocomplete disabled");
       return;
     }
 
@@ -310,11 +265,11 @@ class MileageCypherCalculator {
           // Save as home location
           this.settings.homeLocation = place.formatted_address;
           this.saveSettings();
-          console.log("🧮 Home location updated:", place.formatted_address);
+          console.log("Home location updated:", place.formatted_address);
         }
       });
 
-      console.log("🧮 Google Places Autocomplete enabled for Point A");
+      console.log("Google Places Autocomplete enabled for Point A");
     }
 
     if (pointBInput) {
@@ -327,13 +282,13 @@ class MileageCypherCalculator {
         const place = autocompleteB.getPlace();
         if (place.formatted_address) {
           pointBInput.value = place.formatted_address;
-          console.log("🧮 Destination selected:", place.formatted_address);
+          console.log("Destination selected:", place.formatted_address);
           // Trigger auto-distance calculation
           setTimeout(() => this.triggerAutoDistance(), 300);
         }
       });
 
-      console.log("🧮 Google Places Autocomplete enabled for Point B");
+      console.log("Google Places Autocomplete enabled for Point B");
     }
   }
 
@@ -357,13 +312,9 @@ class MileageCypherCalculator {
 
     // Reset distance source when firm changes (different billing rules may apply)
     this.currentDistanceSource = null;
-    console.log("🧮 Distance source reset (firm changed)");
+    console.log("Distance source reset (firm changed)");
 
     // Set round trip default based on firm preference
-    const roundTripCheckbox = document.getElementById("roundTrip");
-    if (roundTripCheckbox) {
-      roundTripCheckbox.checked = firm.roundTripDefault;
-    }
 
     // Save selection to FirmStore
     if (window.FirmStore) {
@@ -375,7 +326,7 @@ class MileageCypherCalculator {
       this.debounceAutoCalculate();
     }
 
-    console.log(`🧮 Firm changed to: ${firm.name}`);
+    console.log(`Firm changed to: ${firm.name}`);
   }
 
   async triggerAutoDistance() {
@@ -383,20 +334,20 @@ class MileageCypherCalculator {
     const apiKey = window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY;
 
     if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
-      console.log("🧮 Auto-distance skipped: No API key configured");
+      console.log("Auto-distance skipped: No API key configured");
       this.showNotification("Please enter distance manually", "info");
       this.showCalculateLoading(false);
       return;
     }
 
     if (typeof google === "undefined") {
-      console.log("🧮 Auto-distance skipped: Google Maps not loaded yet");
+      console.log("Auto-distance skipped: Google Maps not loaded yet");
       this.showNotification("Please enter distance manually", "info");
       this.showCalculateLoading(false);
       return;
     }
 
-    console.log("🧮 Triggering auto-distance calculation...");
+    console.log("Triggering auto-distance calculation...");
 
     const pointA = document.getElementById("pointA").value.trim();
     const pointB = document.getElementById("pointB").value.trim();
@@ -412,15 +363,15 @@ class MileageCypherCalculator {
       return;
     }
 
-    console.log("🧮 Calculating distance from:", pointA, "to:", pointB);
-    this.updateDistanceStatus("Calculating distance...", "🔄");
+    console.log("Calculating distance from:", pointA, "to:", pointB);
+    this.updateDistanceStatus("Calculating distance...");
 
     try {
       await this.calculateDistanceWithGoogleMaps(pointA, pointB);
-      this.updateDistanceStatus("Distance calculated", "✅");
+      this.updateDistanceStatus("Distance calculated");
     } catch (error) {
-      console.error("🧮 Auto-distance calculation failed:", error);
-      this.updateDistanceStatus("Enter distance manually", "📝");
+      console.error("Auto-distance calculation failed:", error);
+      this.updateDistanceStatus("Enter distance manually");
       this.showNotification(
         "Could not calculate distance - please enter manually",
         "warning"
@@ -477,12 +428,12 @@ class MileageCypherCalculator {
       this.currentDistanceSource = 'google_api';
 
       distanceInput.value = result;
-      console.log("🧮 Distance set to:", result, "miles (source: google_api)");
+      console.log("Distance set to:", result, "miles (source: google_api)");
 
       // Automatically perform the billing calculation
       setTimeout(() => {
-        console.log("🧮 Starting automatic billing calculation...");
-        this.performCalculation(false); // false = not silent, show results
+        console.log("Starting automatic billing calculation...");
+        this.performCalculation(true); // true = auto, no modal
         this.showCalculateLoading(false); // Hide loading state
       }, 1000); // Small delay to let user see the distance notification
     } finally {
@@ -498,22 +449,25 @@ class MileageCypherCalculator {
     }, 1000);
   }
 
-  performCalculation(silentMode = false) {
-    console.log("🧮 performCalculation called, silentMode:", silentMode);
+  performCalculation(auto = false) {
+    console.log("performCalculation called, auto:", auto);
 
     const calculationData = this.gatherCalculationInputs();
-    console.log("🧮 Calculation data gathered:", calculationData);
+    console.log("Calculation data gathered:", calculationData);
 
-    if (!this.validateCalculationInputs(calculationData, silentMode)) {
-      console.log("🧮 Validation failed, aborting calculation");
+    if (!this.validateCalculationInputs(calculationData, auto)) {
+      console.log("Validation failed, aborting calculation");
       return null;
     }
 
-    console.log("🧮 Validation passed, proceeding with calculation");
+    console.log("Validation passed, proceeding with calculation");
 
     try {
       const result = this.calculateMileageBilling(calculationData);
       this.displayCalculationResults(result);
+      if (!auto) {
+        this.openBillingModal();
+      }
       this.currentCalculation = result;
 
       // Add to history (keep last 10)
@@ -525,26 +479,25 @@ class MileageCypherCalculator {
       // Only show success notification for manual calculations (when user clicks button)
       // Auto-calculations don't need success notifications
 
-      console.log("🧮 Calculation completed:", result);
+      console.log("Calculation completed:", result);
       this.showCalculateLoading(false); // Hide loading state
       return result;
     } catch (error) {
-      console.error("🧮 Calculation error:", error);
+      console.error("Calculation error:", error);
       this.showCalculateLoading(false); // Hide loading state
       return null;
     }
   }
 
   gatherCalculationInputs() {
-    const firmId = document.getElementById("firmSelect")?.value || "";
-    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
+    const firm = this.getSelectedFirm();
 
     const pointA = document.getElementById("pointA")?.value?.trim() || "";
     const pointB = document.getElementById("pointB")?.value?.trim() || "";
     const distanceValue =
       document.getElementById("distanceMiles")?.value || "0";
     const distance = parseFloat(distanceValue);
-    const roundTrip = document.getElementById("roundTrip")?.checked || false;
+    const roundTrip = firm?.roundTripDefault || false;
     const note = document.getElementById("noteField")?.value?.trim() || "";
 
     console.log(
@@ -567,7 +520,7 @@ class MileageCypherCalculator {
   validateCalculationInputs(data, silentMode = false) {
     if (!data.firm) {
       if (!silentMode) {
-        console.warn("🧮 Validation failed: No firm selected");
+        console.warn("Validation failed: No firm selected");
         this.showNotification("Please select a firm", "error");
       }
       return false;
@@ -599,7 +552,7 @@ class MileageCypherCalculator {
         );
         // If auto-calculation is enabled, try to trigger it first
         if (this.settings.autoCalculateEnabled && data.pointA && data.pointB) {
-          console.log("🧮 Attempting auto-distance calculation...");
+          console.log("Attempting auto-distance calculation...");
           this.triggerAutoDistance();
         } else {
           this.showNotification("Please enter the distance in miles", "error");
@@ -612,7 +565,7 @@ class MileageCypherCalculator {
     // Block billing if distance source is unknown or not authoritative
     if (!silentMode) {
       if (!this.currentDistanceSource) {
-        console.warn("🧮 Validation failed: Distance source is unknown");
+        console.warn("Validation failed: Distance source is unknown");
         this.showNotification(
           "Distance source unknown. Click 'Calculate Distance' or enter miles manually.",
           "error"
@@ -628,7 +581,7 @@ class MileageCypherCalculator {
           this.currentDistanceSource
         );
         if (!validation.valid) {
-          console.warn("🧮 Billing validation failed:", validation.reason);
+          console.warn("Billing validation failed:", validation.reason);
           this.showNotification(validation.reason, "error");
           this.showCalculateLoading(false);
           return false;
@@ -688,43 +641,43 @@ class MileageCypherCalculator {
 
     const breakdownHtml = `
             <div class="breakdown-item">
-                <span class="label">🗺️ Route:</span>
-                <span class="value">${route.from} → ${route.to}</span>
+              <span class="label">Route:</span>
+              <span class="value">${route.from} → ${route.to}</span>
             </div>
             <div class="breakdown-item">
-                <span class="label">📏 One-way Distance:</span>
-                <span class="value">${distance} miles</span>
+              <span class="label">One-way Distance:</span>
+              <span class="value">${distance} miles</span>
             </div>
             <div class="breakdown-item">
-                <span class="label">🔄 Round Trip:</span>
-                <span class="value">${roundTrip ? "Yes" : "No"}</span>
+              <span class="label">Round Trip:</span>
+              <span class="value">${roundTrip ? "Yes" : "No"}</span>
             </div>
             <div class="breakdown-item">
-                <span class="label">📐 Total Distance:</span>
-                <span class="value">${baseMiles} miles</span>
+              <span class="label">Total Distance:</span>
+              <span class="value">${baseMiles} miles</span>
             </div>
             <div class="breakdown-item">
-                <span class="label">🎁 Free Miles (${firm.name}):</span>
-                <span class="value">${freeMiles} miles</span>
+              <span class="label">Free Miles (${firm.name}):</span>
+              <span class="value">${freeMiles} miles</span>
             </div>
             <div class="breakdown-item highlight">
-                <span class="label">💰 Billable Miles:</span>
-                <span class="value">${billableMiles} miles</span>
+              <span class="label">Billable Miles:</span>
+              <span class="value">${billableMiles} miles</span>
             </div>
             <div class="breakdown-item">
-                <span class="label">💵 Rate per Mile:</span>
-                <span class="value">$${ratePerMile}/mile</span>
+              <span class="label">Rate per Mile:</span>
+              <span class="value">$${ratePerMile}/mile</span>
             </div>
             <div class="breakdown-item total">
-                <span class="label">🧾 Total Billing Fee:</span>
-                <span class="value">$${totalFee}</span>
+              <span class="label">Total Billing Fee:</span>
+              <span class="value">$${totalFee}</span>
             </div>
             ${
               note
                 ? `
             <div class="breakdown-item">
-                <span class="label">📝 Note:</span>
-                <span class="value">${note}</span>
+              <span class="label">Note:</span>
+              <span class="value">${note}</span>
             </div>
             `
                 : ""
@@ -732,40 +685,24 @@ class MileageCypherCalculator {
         `;
 
     const breakdownContainer = document.getElementById("breakdownDisplay");
+    const totalContainer = document.getElementById("billingTotal");
     if (breakdownContainer) {
       breakdownContainer.innerHTML = breakdownHtml;
+    }
+    if (totalContainer) {
+      totalContainer.innerHTML = `
+        <span class="label">Total Billing Fee</span>
+        <span class="value">$${totalFee}</span>
+      `;
     }
 
     // Update copy-ready text
     this.updateCopyReadyText(result);
 
-    // Show results section with animation
-    const resultsSection = document.getElementById("resultsSection");
-    const mileageContainer = document.querySelector(".mileage-container");
-
-    if (resultsSection && mileageContainer) {
-      // Add classes for side-by-side layout
-      mileageContainer.classList.add("has-results");
-      resultsSection.style.display = "block";
-
-      // Trigger animation after a small delay
-      setTimeout(() => {
-        resultsSection.classList.add("show");
-      }, 100);
-
-      // Smooth scroll to view both containers
-      mileageContainer.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest",
-      });
-    }
+    // Results are shown by openBillingModal when triggered manually.
   }
 
   updateCopyReadyText(result) {
-    const copyTextArea = document.getElementById("copyText");
-    if (!copyTextArea) return;
-
     let copyText = "";
 
     switch (this.settings.copyFormat) {
@@ -779,7 +716,7 @@ class MileageCypherCalculator {
         copyText = this.generateDetailedCopyText(result);
     }
 
-    copyTextArea.value = copyText;
+    this.latestCopyText = copyText;
   }
 
   generateBriefCopyText(result) {
@@ -794,27 +731,15 @@ class MileageCypherCalculator {
   }
 
   async copyCalculationToClipboard() {
-    const copyText = document.getElementById("copyText").value;
+    const copyText = this.latestCopyText || "";
+    if (!copyText) return;
 
     try {
       await navigator.clipboard.writeText(copyText);
-      console.log("🧮 Calculation copied to clipboard");
+      console.log("Calculation copied to clipboard");
       this.showCopySuccess();
     } catch (error) {
-      console.error("🧮 Copy failed:", error);
-
-      // Fallback for older browsers
-      const textArea = document.getElementById("copyText");
-      textArea.select();
-      textArea.setSelectionRange(0, 99999);
-
-      try {
-        document.execCommand("copy");
-        console.log("🧮 Calculation copied to clipboard (fallback)");
-        this.showCopySuccess();
-      } catch (fallbackError) {
-        console.error("🧮 Copy failed completely:", fallbackError);
-      }
+      console.error("Copy failed:", error);
     }
   }
 
@@ -828,20 +753,8 @@ class MileageCypherCalculator {
     if (distanceInput) distanceInput.value = "";
     if (noteInput) noteInput.value = "";
 
-    // Reset layout and hide results
-    const resultsSection = document.getElementById("resultsSection");
-    const mileageContainer = document.querySelector(".mileage-container");
-
-    if (resultsSection) {
-      resultsSection.classList.remove("show");
-      setTimeout(() => {
-        resultsSection.style.display = "none";
-      }, 300);
-    }
-
-    if (mileageContainer) {
-      mileageContainer.classList.remove("has-results");
-    }
+    this.closeBillingModal();
+    this.latestCopyText = "";
 
     this.currentCalculation = null;
 
@@ -850,7 +763,7 @@ class MileageCypherCalculator {
       pointBInput.focus();
     }
 
-    console.log("🧮 New calculation started");
+    console.log("New calculation started");
   }
 
   // Firm Management Functions
@@ -887,10 +800,10 @@ class MileageCypherCalculator {
                 <div class="firm-actions">
                     <button class="edit-btn" data-firm-id="${
                       firm.id
-                    }">✏️ Edit</button>
+                    }">Edit</button>
                     <button class="delete-btn" data-firm-id="${
                       firm.id
-                    }">🗑️ Delete</button>
+                    }">Delete</button>
                 </div>
             `;
 
@@ -921,7 +834,7 @@ class MileageCypherCalculator {
         document.getElementById("firmRoundTripDefault")?.checked || false,
     };
 
-    console.log("🧮 Form data collected:", firmData);
+    console.log("Form data collected:", firmData);
 
     if (!this.validateFirmData(firmData)) return;
 
@@ -933,14 +846,14 @@ class MileageCypherCalculator {
       this.loadFirmsListInModal();
       this.loadFirmsToDropdown();
       this.resetAddFirmForm();
-      console.log("🧮 Firm updated:", firmData.name);
+      console.log("Firm updated:", firmData.name);
     } else {
       // Add new firm
       const firmId = this.generateFirmId(firmData.name);
 
       // Check for duplicates
       if (window.FirmStore && window.FirmStore.getById(firmId)) {
-        console.warn("🧮 Duplicate firm name:", firmData.name);
+        console.warn("Duplicate firm name:", firmData.name);
         return;
       }
 
@@ -954,16 +867,16 @@ class MileageCypherCalculator {
       this.loadFirmsToDropdown();
       event.target.reset();
 
-      console.log("🧮 Firm added:", firmData.name);
+      console.log("Firm added:", firmData.name);
     }
   }
 
   editFirm(firmId) {
-    console.log("🧮 Edit firm requested for ID:", firmId);
+    console.log("Edit firm requested for ID:", firmId);
 
     const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) {
-      console.error("🧮 Firm not found:", firmId);
+      console.error("Firm not found:", firmId);
       return;
     }
 
@@ -1004,7 +917,7 @@ class MileageCypherCalculator {
       addFirmSection.scrollIntoView({ behavior: "smooth" });
     }
 
-    console.log("🧮 Edit mode activated for firm:", firmId, firm.name);
+    console.log("Edit mode activated for firm:", firmId, firm.name);
   }
 
   resetAddFirmForm() {
@@ -1023,20 +936,20 @@ class MileageCypherCalculator {
         cancelBtn.style.display = "none";
       }
     }
-    console.log("🧮 Form reset to add mode");
+    console.log("Form reset to add mode");
   }
 
   validateFirmData(data) {
     if (!data.name || data.name.length < 2) {
-      console.warn("🧮 Validation failed: Firm name too short");
+      console.warn("Validation failed: Firm name too short");
       return false;
     }
     if (data.freeMiles < 0 || isNaN(data.freeMiles)) {
-      console.warn("🧮 Validation failed: Invalid free miles");
+      console.warn("Validation failed: Invalid free miles");
       return false;
     }
     if (data.ratePerMile <= 0 || isNaN(data.ratePerMile)) {
-      console.warn("🧮 Validation failed: Invalid rate per mile");
+      console.warn("Validation failed: Invalid rate per mile");
       return false;
     }
     if (data.ratePerMile > 10) {
@@ -1049,17 +962,17 @@ class MileageCypherCalculator {
   }
 
   deleteFirm(firmId) {
-    console.log("🧮 Delete firm requested for ID:", firmId);
+    console.log("Delete firm requested for ID:", firmId);
 
     const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
     if (allFirms.length <= 1) {
-      console.warn("🧮 Cannot delete last firm");
+      console.warn("Cannot delete last firm");
       return;
     }
 
     const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) {
-      console.error("🧮 Firm not found for deletion:", firmId);
+      console.error("Firm not found for deletion:", firmId);
       return;
     }
 
@@ -1091,7 +1004,7 @@ class MileageCypherCalculator {
         this.resetAddFirmForm();
       }
 
-      console.log("🧮 Firm deleted:", firm.name);
+      console.log("Firm deleted:", firm.name);
     }
   }
 
@@ -1108,7 +1021,7 @@ class MileageCypherCalculator {
           localStorage.removeItem("cc_route_export");
         }
       } catch (error) {
-        console.error("🧮 Route import error:", error);
+        console.error("Route import error:", error);
         localStorage.removeItem("cc_route_export");
       }
     }
@@ -1143,7 +1056,7 @@ class MileageCypherCalculator {
     // 1. Recalculates with Google (authoritative)
     // 2. Manually enters/confirms distance (user_manual)
     this.currentDistanceSource = null;
-    console.log("🧮 Route imported - source NOT set (may contain estimates). Recalculate for billing.");
+    console.log("Route imported - source NOT set (may contain estimates). Recalculate for billing.");
 
     // Import route points if available
     if (this.pendingRouteImport.route.days[0]?.stops) {
@@ -1165,7 +1078,7 @@ class MileageCypherCalculator {
     localStorage.removeItem("cc_route_export");
     this.pendingRouteImport = null;
 
-    console.log("🧮 Route data imported successfully");
+    console.log("Route data imported successfully");
   }
 
   closeRouteImportModal() {
@@ -1194,6 +1107,23 @@ class MileageCypherCalculator {
     return address.length <= 40 ? address : address.substring(0, 37) + "...";
   }
 
+  initializeSettings() {
+    try {
+      const saved = localStorage.getItem("mileage_cypher_settings_v2");
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.error("Failed to load settings:", error);
+    }
+
+    return {
+      autoCalculateEnabled: true,
+      homeLocation: "",
+      copyFormat: "detailed"
+    };
+  }
+
   saveSettings() {
     try {
       // Firms are managed by FirmStore, so exclude them from settings
@@ -1202,9 +1132,9 @@ class MileageCypherCalculator {
         "mileage_cypher_settings_v2",
         JSON.stringify(settingsToSave)
       );
-      console.log("🧮 Settings saved to localStorage");
+      console.log("Settings saved to localStorage");
     } catch (error) {
-      console.error("🧮 Failed to save settings:", error);
+      console.error("Failed to save settings:", error);
     }
   }
 
@@ -1245,12 +1175,10 @@ class MileageCypherCalculator {
     }
   }
 
-  updateDistanceStatus(status, icon = "🎯") {
+  updateDistanceStatus(status) {
     const distanceStatus = document.getElementById("distanceStatus");
     if (distanceStatus) {
-      const statusIcon = distanceStatus.querySelector(".status-icon");
-      if (statusIcon) statusIcon.textContent = icon;
-      distanceStatus.innerHTML = `<span class="status-icon">${icon}</span>${status}`;
+      distanceStatus.textContent = status;
     }
   }
 
@@ -1274,8 +1202,43 @@ class MileageCypherCalculator {
       }, 5000);
     } else {
       // Fallback to console if no toast container
-      console.log(`🧮 ${type.toUpperCase()}: ${message}`);
+      console.log(`${type.toUpperCase()}: ${message}`);
     }
+  }
+
+  openBillingModal() {
+    const modal = document.getElementById("billingModal");
+    if (!modal) return;
+
+    if (!modal.classList.contains("modal-overlay")) {
+      modal.classList.add("modal-overlay");
+    }
+
+    modal.style.display = "flex";
+    const modalPanel = modal.querySelector(".billing-modal");
+    if (modalPanel) {
+      if (!modalPanel.classList.contains("cipher-plate")) {
+        modalPanel.classList.add("cipher-plate", "elevation-3");
+      }
+      requestAnimationFrame(() => {
+        modalPanel.classList.add("is-open");
+      });
+    }
+    document.body.style.overflow = "hidden";
+  }
+
+  closeBillingModal() {
+    const modal = document.getElementById("billingModal");
+    if (!modal) return;
+
+    const modalPanel = modal.querySelector(".billing-modal");
+    if (modalPanel) {
+      modalPanel.classList.remove("is-open");
+    }
+    setTimeout(() => {
+      modal.style.display = "none";
+      document.body.style.overflow = "";
+    }, 250);
   }
 
   // =================================
@@ -1286,7 +1249,7 @@ class MileageCypherCalculator {
    * Initialize demo mode with seeded data and locked inputs
    */
   initializeDemoMode() {
-    console.log('🎭 Demo mode detected - initializing demo mileage data');
+    console.log("Demo mode detected - initializing demo mileage data");
 
     // Demo mileage entries - 3 California, 3 Oklahoma
     const demoEntries = [
@@ -1311,7 +1274,6 @@ class MileageCypherCalculator {
     const pointA = document.getElementById('pointA');
     const pointB = document.getElementById('pointB');
     const distanceInput = document.getElementById('distanceMiles');
-    const roundTrip = document.getElementById('roundTrip');
     const noteField = document.getElementById('noteField');
 
     if (pointA) {
@@ -1325,10 +1287,6 @@ class MileageCypherCalculator {
     if (distanceInput) {
       distanceInput.value = demoEntries[0].miles;
       distanceInput.disabled = true;
-    }
-    if (roundTrip) {
-      roundTrip.checked = true;
-      roundTrip.disabled = true;
     }
     if (noteField) {
       noteField.value = 'Demo inspection - San Francisco to Los Angeles';
@@ -1357,7 +1315,7 @@ class MileageCypherCalculator {
       this.performCalculation(false);
     }, 500);
 
-    console.log('🎭 Demo mode initialized with sample mileage data');
+    console.log("Demo mode initialized with sample mileage data");
   }
 
   /**
@@ -1404,11 +1362,11 @@ function closeRouteImportModal() {
 }
 
 async function handleLogout() {
-  console.log("🧮 Logout requested");
+  console.log("Logout requested");
 
   // Demo mode logout - clear demo state and redirect (no Supabase session)
   if (sessionStorage.getItem('demo_mode') === 'true') {
-    console.log('🎭 Demo mode logout - clearing demo state');
+    console.log("Demo mode logout - clearing demo state");
     sessionStorage.removeItem('demo_mode');
     sessionStorage.removeItem('claimCipherAuth');
     if (window.FirmStore) window.FirmStore.clearDemo();
@@ -1432,21 +1390,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiKey = window.MILEAGE_CYPHER_CONFIG.GOOGLE_MAPS_API_KEY;
     if (apiKey !== "YOUR_API_KEY_HERE") {
       console.log(
-        "🧮 Google Maps API key configured for auto-distance calculation"
+        "Google Maps API key configured for auto-distance calculation"
       );
     } else {
       console.warn(
-        "🧮 Google Maps API key needs to be set in config/api-config.js"
+        "Google Maps API key needs to be set in config/api-config.js"
       );
     }
   } else {
-    console.warn("🧮 API configuration not found - manual distance entry only");
+    console.warn("API configuration not found - manual distance entry only");
   }
 
   // Initialize the calculator
   window.mileageCalculator = new MileageCypherCalculator();
 
-  console.log("🧮 Mileage Cypher Calculator fully loaded and ready!");
+  console.log("Mileage Cypher Calculator fully loaded and ready!");
 });
 
 // Export for global access

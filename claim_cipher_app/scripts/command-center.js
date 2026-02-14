@@ -395,11 +395,49 @@ class CommandCenterManager {
     updateUserDisplay() {
         const userSession = this.getUserSession();
         const userNameEl = document.getElementById('userName');
-        
+        const welcomeEl = document.getElementById('welcomeTitle');
+
+        let displayName = 'Professional User';
         if (userSession && userSession.name) {
-            userNameEl.textContent = userSession.name;
-        } else {
-            userNameEl.textContent = 'Professional User';
+            displayName = userSession.name;
+        }
+
+        if (userNameEl) {
+            userNameEl.textContent = displayName;
+        }
+
+        // Set personalized welcome title
+        if (welcomeEl) {
+            const firstName = displayName.split(' ')[0];
+            welcomeEl.textContent = `Welcome back, ${firstName}`;
+        }
+
+        // Also try to get name from Supabase auth
+        this.updateWelcomeFromAuth();
+    }
+
+    async updateWelcomeFromAuth() {
+        if (!window.SupabaseAuth || !window.SupabaseAuth.getCurrentUser) return;
+        try {
+            const { email, metadata } = await window.SupabaseAuth.getCurrentUser();
+            if (!email) return;
+
+            const welcomeEl = document.getElementById('welcomeTitle');
+            const userNameEl = document.getElementById('userName');
+
+            // Prefer metadata name, fall back to email prefix
+            let name = (metadata && (metadata.full_name || metadata.name)) ||
+                       email.split('@')[0];
+            // Capitalize first letter of email prefix if used
+            if (!metadata || (!metadata.full_name && !metadata.name)) {
+                name = name.charAt(0).toUpperCase() + name.slice(1);
+            }
+
+            const firstName = name.split(' ')[0];
+            if (welcomeEl) welcomeEl.textContent = `Welcome back, ${firstName}`;
+            if (userNameEl) userNameEl.textContent = name;
+        } catch (e) {
+            // Silently fail — local session name is already set
         }
     }
     

@@ -7,6 +7,9 @@
     <!-- Universal System - Base styling -->
     <link rel="stylesheet" href="styles/universal-system.css" />
 
+    <!-- Industrial Plate System - Shared visual language -->
+    <link rel="stylesheet" href="styles/industrial-plates.css" />
+
     <!-- Page Layout - Route Cypher specific -->
     <link rel="stylesheet" href="styles/route-cypher-layout.css" />
 
@@ -20,20 +23,20 @@
     <header class="cipher-header">
       <div class="header-content">
         <div class="app-brand">
-          <span class="logo">🎤</span>
+          <span class="logo">CC</span>
           <span>Claim Cipher</span>
         </div>
         <div class="nav-links">
-          <a href="command-center.html">🎯 Dashboard</a>
-          <a href="route-cypher.html" class="active">🗺️ Routes</a>
-          <a href="my-routes.html">📋 My Routes</a>
-          <a href="mileage-cypher.html">🧮 Mileage</a>
+          <a href="command-center.html">Dashboard</a>
+          <a href="route-cypher.html" class="active">Routes</a>
+          <a href="mileage-cypher.html">Mileage</a>
+          <a href="my-routes.html">My Routes</a>
           <!-- DISTRO: Hidden features - do not delete -->
-          <!-- <a href="jobs-studio.html">💼 Jobs</a> -->
-          <!-- <a href="total-loss-forms.html">🚗 Forms</a> -->
-          <!-- <a href="firms-directory.html">🏢 Firms</a> -->
-          <!-- <a href="settings-booth.html">⚙️ Settings</a> -->
-          <!-- <a href="functionality-test.html">🧪 Tests</a> -->
+          <!-- <a href="jobs-studio.html">Jobs</a> -->
+          <!-- <a href="total-loss-forms.html">Forms</a> -->
+          <!-- <a href="firms-directory.html">Firms</a> -->
+          <!-- <a href="settings-booth.html">Settings</a> -->
+          <!-- <a href="functionality-test.html">Tests</a> -->
         </div>
         <div class="user-section">
           <div class="user-info">
@@ -41,40 +44,45 @@
             <div class="user-role">Claims Specialist</div>
           </div>
           <button
-            class="logout-btn cipher-btn cipher-btn--danger"
+            class="cipher-btn logout-btn"
             onclick="handleLogout()"
           >
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             Logout
           </button>
         </div>
       </div>
     </header>
 
-    <main class="route-optimizer-main main-content">
+    <main class="route-optimizer-main main-content main-container">
+      <section class="hero-section elevation-3">
+        <div class="rivet tl"></div>
+        <div class="rivet tr"></div>
+        <div class="rivet bl"></div>
+        <div class="rivet br"></div>
+
+        <h1>Route Optimizer</h1>
+        <p>Plan efficient multi-stop routes with intelligent day splitting</p>
+      </section>
       <div class="route-container">
         <!-- Left Panel: Input + Results -->
         <div class="input-and-results-panel">
           <!-- Route Optimizer Section -->
-          <div class="optimizer-section cipher-glass-panel">
-            <div class="section-header">
-              <div class="section-title">
-                <span class="section-icon">🗺️</span>
-                <h2>Route Optimizer</h2>
-              </div>
-              <div class="section-subtitle">
-                Plan efficient multi-stop routes with intelligent day splitting
-              </div>
-            </div>
-
+          <div class="optimizer-layout">
             <div class="optimizer-form">
-              <div class="form-section">
+              <div class="cipher-plate elevation-2 optimizer-plate form-section">
+                <div class="rivet tl"></div>
+                <div class="rivet tr"></div>
+                <div class="rivet bl"></div>
+                <div class="rivet br"></div>
                 <h3 class="form-section-title">
-                  <span class="form-icon">🎯</span>
                   Starting Location
                 </h3>
                 <div class="input-group">
                   <label for="startLocation" class="input-label">
-                    <span class="label-icon">🏠</span>
                     Starting Point
                   </label>
                   <input
@@ -90,33 +98,46 @@
               </div>
 
               <!-- DISTRO: Dropped Claims section hidden - do not delete (future dispatch integration) -->
-              <div class="form-section drop-zone-section" style="display: none;">
+              <div class="optimizer-section form-section drop-zone-section" style="display: none;">
                 <h3 class="form-section-title">
-                  <span class="form-icon">🎯</span>
                   Dropped Claims
                 </h3>
                 <div id="claimDropZone" class="claim-drop-zone">
                   <div class="drop-zone-empty-state">
-                    <span class="empty-icon">📦</span>
                     <p>Drop claims here from Cipher Dispatch</p>
-                    <button id="pasteClaimsBtn" class="secondary-btn">
-                      <span class="btn-icon">📋</span>
+                    <button id="pasteClaimsBtn" class="cipher-btn secondary-btn">
+                      <div class="rivet tl"></div>
+                      <div class="rivet tr"></div>
+                      <div class="rivet bl"></div>
+                      <div class="rivet br"></div>
                       Paste Claims (Mobile)
                     </button>
                   </div>
                 </div>
                 <div class="drop-zone-actions" style="display: none;">
-                  <button id="clearClaims" class="secondary-btn">Clear All</button>
-                  <button id="routeClaims" class="primary-action-btn" disabled>
-                    <span class="btn-icon">🚀</span>
+                  <button id="clearClaims" class="cipher-btn secondary-btn">
+                    <div class="rivet tl"></div>
+                    <div class="rivet tr"></div>
+                    <div class="rivet bl"></div>
+                    <div class="rivet br"></div>
+                    Clear All
+                  </button>
+                  <button id="routeClaims" class="cipher-btn primary-action-btn" disabled>
+                    <div class="rivet tl"></div>
+                    <div class="rivet tr"></div>
+                    <div class="rivet bl"></div>
+                    <div class="rivet br"></div>
                     <span class="route-claims-text">Route Claims</span>
                   </button>
                 </div>
               </div>
 
-              <div class="form-section">
+              <div class="cipher-plate elevation-2 optimizer-plate form-section">
+                <div class="rivet tl"></div>
+                <div class="rivet tr"></div>
+                <div class="rivet bl"></div>
+                <div class="rivet br"></div>
                 <h3 class="form-section-title">
-                  <span class="form-icon">📍</span>
                   Destinations
                 </h3>
                 <div class="destinations-group">
@@ -124,8 +145,11 @@
                     <div class="destinations-label">
                       Add up to 15 destinations
                     </div>
-                    <button id="addDestination" class="secondary-btn">
-                      <span class="btn-icon">➕</span>
+                    <button id="addDestination" class="cipher-btn secondary-btn">
+                      <div class="rivet tl"></div>
+                      <div class="rivet tr"></div>
+                      <div class="rivet bl"></div>
+                      <div class="rivet br"></div>
                       Add Stop
                     </button>
                   </div>
@@ -137,10 +161,14 @@
                         class="destination-address-input"
                       />
                       <button
-                        class="remove-btn"
+                        class="cipher-btn cipher-btn--small remove-btn"
                         onclick="removeDestination(this)"
                         title="Remove this destination"
                       >
+                        <div class="rivet tl"></div>
+                        <div class="rivet tr"></div>
+                        <div class="rivet bl"></div>
+                        <div class="rivet br"></div>
                         ×
                       </button>
                     </div>
@@ -160,23 +188,28 @@
                 <input type="number" id="timePerAppointment" value="30" />
               </div>
 
-              <div class="form-actions">
-                <button id="optimizeRoute" class="primary-action-btn">
-                  <span class="btn-icon">🚀</span>
+              <div class="control-group">
+                <button id="optimizeRoute" class="cipher-btn primary-control">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
                   <span class="btn-text">Optimize Route</span>
                   <span class="btn-loading" style="display: none">
                     <span class="loading-spinner"></span>
                     Optimizing...
                   </span>
                 </button>
-              </div>
-              <div class="form-actions-secondary" style="margin-top: var(--cipher-space-md); text-align: center;">
                 <button
                   type="button"
                   onclick="window.routeOptimizer && window.routeOptimizer.clearSavedRoutes()"
-                  style="background: transparent; border: none; color: var(--cipher-text-muted); font-size: 0.75rem; cursor: pointer; text-decoration: underline; padding: var(--cipher-space-xs);"
+                  class="cipher-btn secondary-control"
                 >
-                  Clear Saved Routes
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
+                  <span>Clear Saved Routes</span>
                 </button>
               </div>
             </div>
@@ -184,13 +217,16 @@
 
           <!-- Results Section -->
           <div
-            class="results-section cipher-glass-panel"
+            class="results-section cipher-plate elevation-2"
             id="routeResults"
             style="display: none"
           >
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             <div class="section-header">
               <div class="section-title">
-                <span class="section-icon">🎯</span>
                 <h2>Route Analysis & Scheduling</h2>
               </div>
             </div>
@@ -199,44 +235,61 @@
               <div id="routeOutput" class="route-output"></div>
 
               <div class="route-actions">
-                <button id="copyRoute" class="copy-btn">
-                  <span class="btn-icon">📋</span>
+                <button id="copyRoute" class="cipher-btn copy-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
                   Copy
                 </button>
-                <button id="exportMiles" class="secondary-btn">
-                  <span class="btn-icon">📊</span>
+                <button id="exportMiles" class="cipher-btn secondary-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
                   Mileage
                 </button>
-                <button id="saveToMyRoutes" class="primary-action-btn">
-                  <span class="btn-icon">💾</span>
+                <button id="saveToMyRoutes" class="cipher-btn primary-action-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
                   Save to My Routes
                 </button>
               </div>
 
               <div class="calendar-export-section">
                 <h3 class="export-title">
-                  <span class="export-icon">📅</span>
                   Schedule Appointments
                 </h3>
                 <div class="export-actions">
                   <button
                     id="exportGoogleCal"
-                    class="calendar-export-btn"
+                    class="cipher-btn calendar-export-btn"
                     disabled
                   >
-                    <span class="btn-icon">📅</span>
+                    <div class="rivet tl"></div>
+                    <div class="rivet tr"></div>
+                    <div class="rivet bl"></div>
+                    <div class="rivet br"></div>
                     Google Calendar
                   </button>
                   <button
                     id="exportAppleCal"
-                    class="calendar-export-btn"
+                    class="cipher-btn calendar-export-btn"
                     disabled
                   >
-                    <span class="btn-icon">🍎</span>
+                    <div class="rivet tl"></div>
+                    <div class="rivet tr"></div>
+                    <div class="rivet bl"></div>
+                    <div class="rivet br"></div>
                     Apple Calendar
                   </button>
-                  <button id="exportMobileCipher" class="primary-action-btn">
-                    <span class="btn-icon">📱</span>
+                  <button id="exportMobileCipher" class="cipher-btn primary-action-btn">
+                    <div class="rivet tl"></div>
+                    <div class="rivet tr"></div>
+                    <div class="rivet bl"></div>
+                    <div class="rivet br"></div>
                     Mobile Cipher
                   </button>
                 </div>
@@ -253,10 +306,13 @@
         <!-- Right Panel: Map Only -->
         <div class="map-only-panel">
           <!-- Map Container -->
-          <div class="map-section cipher-glass-panel">
+          <div class="map-section cipher-plate elevation-2 map-plate">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             <div class="section-header">
               <div class="section-title">
-                <span class="section-icon">🗺️</span>
                 <h2>Route Visualization</h2>
               </div>
               <div class="section-subtitle">
@@ -269,34 +325,54 @@
           </div>
         </div>
       </div>
+      </div>
 
       <!-- Loading Overlay -->
       <div id="loadingOverlay" class="loading-overlay" style="display: none">
-        <div class="loading-content glass-card">
+        <div class="loading-content cipher-plate elevation-2">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
           <div class="spinner"></div>
-          <p>🎵 Calculating optimal route...</p>
+          <p>Calculating optimal route...</p>
         </div>
       </div>
 
       <!-- Error Display -->
       <div id="errorDisplay" class="error-display" style="display: none">
         <p id="errorMessage"></p>
-        <button onclick="hideError()" class="cipher-btn cipher-btn--sm">
+        <button onclick="hideError()" class="cipher-btn cipher-btn--small">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
           ×
         </button>
       </div>
     </main>
 
     <!-- Route Map Modal -->
-    <div id="routeMapModal" class="route-map-modal">
-      <div class="modal-container">
+    <div id="routeMapModal" class="route-map-modal cipher-modal steel-surface">
+      <div class="cipher-plate elevation-3 steel-surface route-visualization-main">
+        <div class="rivet tl"></div>
+        <div class="rivet tr"></div>
+        <div class="rivet bl"></div>
+        <div class="rivet br"></div>
         <!-- Modal Header -->
-        <div class="modal-header">
-          <div class="modal-title">
-            <span>🗺️</span>
-            <span>Route Visualization</span>
-          </div>
-          <button class="modal-close-btn" onclick="closeRouteModal()">×</button>
+        <div class="modal-header hero-section elevation-3">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
+          <h2>Route Visualization</h2>
+          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="closeRouteModal()">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            ×
+          </button>
         </div>
 
         <!-- Day Tabs -->
@@ -305,44 +381,67 @@
         </div>
 
         <!-- Modal Content -->
-        <div class="modal-content">
+        <div class="modal-content route-visualization-content">
           <!-- Left: Timeline -->
-          <div id="modalTimeline" class="modal-timeline">
-            <!-- Timeline will be generated dynamically -->
+          <div class="route-left-column route-day-column">
+            <div id="modalTimeline" class="modal-timeline stop-list">
+              <!-- Timeline will be generated dynamically -->
+            </div>
           </div>
 
           <!-- Right: Map -->
-          <div class="modal-map-container">
-            <div id="modalMap" class="modal-map"></div>
+          <div class="cipher-plate elevation-2 cipher-plate--map route-visualization-map">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            <div class="modal-map-container">
+              <div id="modalMap" class="modal-map"></div>
+            </div>
           </div>
         </div>
 
         <!-- Modal Footer -->
-        <div class="modal-footer">
-          <div class="modal-stats" id="modalStats">
-            <!-- Stats will be shown here -->
+        <div class="route-footer">
+          <div class="route-metrics cipher-plate elevation-1">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            <div class="modal-stats" id="modalStats">
+              <!-- Stats will be shown here -->
+            </div>
           </div>
-          <div class="modal-actions">
+          <div class="route-actions">
             <button
               id="editDayBtn"
-              class="modal-btn modal-btn-secondary"
+              class="cipher-btn modal-btn modal-btn-secondary"
               onclick="editActiveDay()"
             >
-              <span>📝</span>
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               <span id="editDayBtnText">Edit Day 1</span>
             </button>
             <button
-              class="modal-btn modal-btn-secondary"
+              class="cipher-btn modal-btn modal-btn-secondary"
               onclick="window.routeOptimizer.showSaveDayModal()"
             >
-              <span>💾</span>
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               <span>Save Route</span>
             </button>
             <button
-              class="modal-btn modal-btn-primary"
+              class="cipher-btn modal-btn modal-btn-primary"
               onclick="exportRouteFromModal()"
             >
-              <span>📅</span>
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
               <span>Export Schedule</span>
             </button>
           </div>
@@ -352,10 +451,13 @@
 
     <!-- Cluster Override Modal -->
     <div id="clusterOverrideModal" class="route-map-modal">
-      <div class="cluster-override-container">
+      <div class="cluster-override-container cipher-plate elevation-3">
+        <div class="rivet tl"></div>
+        <div class="rivet tr"></div>
+        <div class="rivet bl"></div>
+        <div class="rivet br"></div>
         <div class="modal-header">
           <div class="modal-title">
-            <span>🗺️</span>
             <span>Route Decision Needed</span>
           </div>
         </div>
@@ -395,7 +497,6 @@
           </div>
 
           <div class="override-recommendation">
-            <span class="recommendation-icon">💡</span>
             <p id="recommendationText">
               Keeping these stops together avoids backtracking and is more efficient.
             </p>
@@ -405,18 +506,24 @@
         <div class="modal-footer override-actions">
           <button
             id="overrideSplitBtn"
-            class="modal-btn modal-btn-secondary"
+            class="cipher-btn modal-btn modal-btn-secondary"
             onclick="window.routeOptimizer.handleClusterOverride('split')"
           >
-            <span>📅</span>
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             <span>Split Into Separate Days</span>
           </button>
           <button
             id="overrideKeepBtn"
-            class="modal-btn modal-btn-primary"
+            class="cipher-btn modal-btn modal-btn-primary"
             onclick="window.routeOptimizer.handleClusterOverride('keepTogether')"
           >
-            <span>🎯</span>
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             <span>Keep Together (More Efficient)</span>
           </button>
         </div>
@@ -425,13 +532,22 @@
 
     <!-- Save to My Routes Modal -->
     <div id="saveRouteModal" class="route-map-modal">
-      <div class="save-route-container">
+      <div class="save-route-container cipher-plate elevation-3">
+        <div class="rivet tl"></div>
+        <div class="rivet tr"></div>
+        <div class="rivet bl"></div>
+        <div class="rivet br"></div>
         <div class="modal-header">
           <div class="modal-title">
-            <span>💾</span>
             <span>Save Route</span>
           </div>
-          <button class="modal-close-btn" onclick="closeSaveRouteModal()">×</button>
+          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="closeSaveRouteModal()">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            ×
+          </button>
         </div>
 
         <div class="save-route-content">
@@ -464,11 +580,18 @@
         </div>
 
         <div class="modal-footer">
-          <button class="modal-btn modal-btn-secondary" onclick="closeSaveRouteModal()">
+          <button class="cipher-btn modal-btn modal-btn-secondary" onclick="closeSaveRouteModal()">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             Cancel
           </button>
-          <button id="confirmSaveRouteBtn" class="modal-btn modal-btn-primary" onclick="confirmSaveRoute()">
-            <span>💾</span>
+          <button id="confirmSaveRouteBtn" class="cipher-btn modal-btn modal-btn-primary" onclick="confirmSaveRoute()">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
             <span>Save Route</span>
           </button>
         </div>

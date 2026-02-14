@@ -187,7 +187,7 @@
    ================================= */
 .process-step {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
     border: 1px solid rgba(255, 215, 0, 0.1);
     border-radius: var(--cipher-radius-lg);
     padding: var(--cipher-space-lg);
@@ -357,7 +357,7 @@
    ================================= */
 .preview-container {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
     border: 1px solid rgba(255, 215, 0, 0.1);
     border-radius: var(--cipher-radius-lg);
     padding: var(--cipher-space-lg);
