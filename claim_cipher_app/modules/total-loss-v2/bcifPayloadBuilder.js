@@ -111,6 +111,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
     const tokens = new Set();
 
     const rules = [
+        // POWER OPTIONS
         { token: "PS", patterns: [/power\s*steering/i] },
         { token: "PB", patterns: [/power\s*brakes?/i] },
         { token: "PW", patterns: [/power\s*windows?/i] },
@@ -123,6 +124,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "PP", patterns: [/power\s*adjustable\s*pedals?/i] },
         { token: "PD", patterns: [/power\s*sliding\s*door/i] },
         { token: "DP", patterns: [/dual\s*power\s*sliding\s*doors?/i] },
+        // DECOR / CONVENIENCE
         { token: "AC", patterns: [/\bair\s*conditioning\b/i, /\bac\b/i] },
         { token: "DA", patterns: [/dual\s*air\s*conditioning/i, /dual\s*a\/c/i] },
         { token: "CL", patterns: [/climate\s*control/i] },
@@ -148,6 +150,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "SV", patterns: [/surround\s*view/i, /360\s*camera/i] },
         { token: "DS", patterns: [/dual\s*screen/i] },
         { token: "HL", patterns: [/home\s*link/i, /homelink/i] },
+        // SEATING
         { token: "CS", patterns: [/cloth\s*seats?/i] },
         { token: "LS", patterns: [/leather\s*seats?/i] },
         { token: "RL", patterns: [/reclining\s*seats?/i, /lounge\s*seats?/i] },
@@ -163,6 +166,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "B4", patterns: [/captain\s*chairs?\s*\(4\)/i, /captain\s*chairs?\s*4/i] },
         { token: "B6", patterns: [/captain\s*chairs?\s*\(6\)/i, /captain\s*chairs?\s*6/i] },
         { token: "VS", patterns: [/ventilated\s*seats?/i] },
+        // RADIO
         { token: "AM", patterns: [/\bam\s*radio\b/i] },
         { token: "FM", patterns: [/\bfm\s*radio\b/i] },
         { token: "ST", patterns: [/stereo/i] },
@@ -175,6 +179,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "TQ", patterns: [/steering\s*wheel\s*touch\s*controls?/i] },
         { token: "M3", patterns: [/aux(iliary)?\s*audio/i, /aux\s*input/i] },
         { token: "EQ", patterns: [/equalizer/i] },
+        // WHEELS
         { token: "AW", patterns: [/aluminum|alloy\s*wheels?/i] },
         { token: "CJ", patterns: [/chrome\s*wheels?/i] },
         { token: "W2", patterns: [/20[\"”]\s*or\s*larger\s*wheels?/i, /20\s*inch\s*wheels?/i] },
@@ -187,6 +192,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "RW", patterns: [/rally\s*wheels?/i] },
         { token: "KW", patterns: [/locking\s*wheels?/i] },
         { token: "LC", patterns: [/locking\s*wheel\s*covers?/i] },
+        // ROOF
         { token: "EG", patterns: [/electric\s*glass\s*roof/i] },
         { token: "ES", patterns: [/electric\s*steel\s*roof/i] },
         { token: "OR", patterns: [/skyview\s*roof/i] },
@@ -204,6 +210,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "LP", patterns: [/padded\s*landau\s*roof/i] },
         { token: "PV", patterns: [/padded\s*vinyl\s*roof/i] },
         { token: "HT", patterns: [/hard\s*top/i] },
+        // SAFETY / BRAKES
         { token: "AG", patterns: [/driver['’]s\s*side\s*air\s*bag/i, /driver\s*air\s*bag/i] },
         { token: "RG", patterns: [/passenger\s*air\s*bag/i] },
         { token: "XG", patterns: [/front\s*side\s*impact\s*air\s*bags?/i] },
@@ -223,6 +230,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "AL", patterns: [/auto\s*level/i, /auto\s*leveling/i] },
         { token: "SAFETY_BD", patterns: [/blind\s*spot/i, /blind\s*spot\s*monitor/i] },
         { token: "LW", patterns: [/lane\s*departure\s*warning/i, /lane\s*departure/i] },
+        // EXTERIOR / PAINT / GLASS
         { token: "RR", patterns: [/roof\s*rack/i, /luggage\s*rack/i] },
         { token: "WG", patterns: [/woodgrain/i] },
         { token: "WP", patterns: [/rear\s*window\s*wiper/i] },
@@ -239,6 +247,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "HM", patterns: [/heated\s*mirrors?/i] },
         { token: "HV", patterns: [/headlamp\s*washers?/i] },
         { token: "MX", patterns: [/signal\s*integrated\s*mirrors?/i] },
+        // OTHER
         { token: "OTHER_BD", patterns: [/running\s*boards?/i, /side\s*steps?/i] },
         { token: "UP", patterns: [/power\s*retractable\s*running\s*boards?/i] },
         { token: "XE", patterns: [/xenon\s*headlamps?/i] },
@@ -262,6 +271,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "EM", patterns: [/california\s*emissions/i] },
         { token: "SG", patterns: [/stone\s*guard/i] },
         { token: "WI", patterns: [/winch/i] },
+        // TRANSMISSION (from template tokens)
         { token: "TRANS_AUTO", patterns: [/automatic\s*transmission/i] },
         { token: "TRANS_OD", patterns: [/overdrive/i] },
         { token: "TRANS_PO", patterns: [/power\s*overdrive/i] },
