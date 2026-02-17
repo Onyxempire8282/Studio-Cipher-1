@@ -76,6 +76,11 @@ export function renderSummaryView(payload) {
                         <div class="rivet tl"></div><div class="rivet tr"></div>
                         <div class="rivet bl"></div><div class="rivet br"></div>
                         <h3 class="cipher-label sv-section-heading">Damage Summary</h3>
+                        <div class="sv-summary-actions">
+                            <button id="tls-copy-summary" class="cipher-btn" type="button">Copy Summary</button>
+                            <button id="tls-download-summary" class="cipher-btn" type="button">Download Summary</button>
+                        </div>
+                        <div id="tls-copy-status" class="tls-copy-status" aria-live="polite"></div>
                         <textarea id="sv-damageSummary" class="cipher-input sv-textarea" readonly>${payload.summary.damageSummary}</textarea>
                     </section>
 

@@ -26,7 +26,8 @@ export function parseCCCText(rawText) {
         acv:                      extractACV(text),
         estimateTimestamp:        extractTimestamp(text),
         oemOnly:                  detectOEMOnly(text),
-        alternativePartsDetected: detectAlternativeParts(text)
+        alternativePartsDetected: detectAlternativeParts(text),
+        options:                  extractOptions(text)
     };
 }
 
@@ -298,6 +299,39 @@ function countAlternatePartsSelected(text) {
     if (!counts) return 0;
 
     return counts.reduce((sum, n) => sum + parseInt(n, 10), 0);
+}
+
+// =========================================
+//  OPTIONS / FEATURES
+// =========================================
+
+function extractOptions(text) {
+    const options = [];
+
+    // The CCC estimate has a features/equipment table between
+    // TRANSMISSION/POWER headers and the line items section.
+    const featureSection = text.match(
+        /TRANSMISSION[\s\S]*?(?=Line\s+Oper|FRONT\s+BUMPER|Subtotal|ALTERNATE\s+PARTS)/i
+    );
+    if (!featureSection) return options;
+
+    const lines = featureSection[0].split("\n").map(l => l.trim()).filter(Boolean);
+
+    const headers = new Set([
+        "TRANSMISSION", "POWER", "SEATS", "WHEELS", "PAINT",
+        "SAFETY", "DECOR", "CONVENIENCE", "RADIO", "OTHER",
+        "ROOF", "TRUCK", "EXTERIOR", "INTERIOR", "BRAKES",
+        "OPTIONS", "EQUIPMENT", "FEATURES"
+    ]);
+
+    for (const line of lines) {
+        if (headers.has(line.toUpperCase())) continue;
+        if (line.length < 3) continue;
+        if (/^\d/.test(line)) continue;
+        options.push(line);
+    }
+
+    return options;
 }
 
 // =========================================

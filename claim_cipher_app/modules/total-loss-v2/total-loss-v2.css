@@ -245,3 +245,18 @@
         padding: var(--cipher-space-xl) var(--cipher-space-md);
     }
 }
+
+/* Summary action buttons (Copy + Download) */
+.sv-summary-actions {
+    display: flex;
+    gap: var(--cipher-space-sm);
+    margin-bottom: var(--cipher-space-xs);
+}
+
+/* Copy Summary status indicator */
+.tls-copy-status {
+    font-size: 0.8rem;
+    color: var(--cipher-text-muted, #9aa0a6);
+    margin-top: 4px;
+    min-height: 1.2em;
+}

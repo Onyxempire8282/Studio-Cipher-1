@@ -2,41 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0;url=route-cypher.html">
     <title>Claim Cipher</title>
-    <!-- Core CSS first -->
-    <link rel="stylesheet" href="styles/cipher-core.css">
-    <link rel="stylesheet" href="styles/main.css">
-    
-    <!-- Universal systems third -->
-    <link rel="stylesheet" href="styles/glassmorphism-universal.css">
-    <link rel="stylesheet" href="styles/mobile-enhancements.css">
-    
-    <!-- Fixes last -->
-    <link rel="stylesheet" href="styles/visual-consistency-fix.css">
-    <link rel="stylesheet" href="styles/universal-header-fixes.css">
 </head>
-<body class="cipher-dark-theme">
-    <div class="loading-stage">
-        <div class="cipher-logo">🎤 Claim Cipher</div>
-        <div class="loading-text">Loading application...</div>
-        <div class="cipher-spinner"></div>
-    </div>
-    
-    <script>
-        // Producer Agent: Smart redirect only for index page access
-        (function() {
-            console.log('🎤 Producer Agent: Index page loaded');
-            
-            // Only redirect if user directly accessed index.html
-            if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
-                console.log('🎤 Redirecting to welcome page...');
-                setTimeout(function() {
-                    window.location.href = './welcome.html';
-                }, 1000);
-            }
-        })();
-    </script>
+<body>
+    <p>Redirecting... <a href="route-cypher.html">Click here</a> if not redirected.</p>
+    <script>window.location.replace('./route-cypher.html');</script>
 </body>
 </html>
-

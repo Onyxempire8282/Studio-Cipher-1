@@ -13,6 +13,7 @@ export function createEmptyBCIFPayload() {
             claimNumber: "",
             policyNumber: "",
             lossType: "",
+            coverage: "",
             dateOfLoss: "",
             dateOfInspection: "",
             lossLocation: ""

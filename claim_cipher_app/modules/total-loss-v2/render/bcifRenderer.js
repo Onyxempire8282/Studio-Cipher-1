@@ -105,16 +105,17 @@ export function renderBCIFPayload(payload) {
 
 function renderClaimTokens(map, payload) {
     const c = payload.claim;
-    map.CLAIM_NUMBER   = c.claimNumber    || "";
-    map.INSURED_NAME   = c.carrier        || "";
-    map.OWNER_NAME     = c.carrier        || "";
-    map.OWNER_PHONE    = "";
-    map.ADJR_NAME      = c.adjuster       || "";
-    map.APPR_NAME      = c.writer         || "";
-    map.DATE_OF_LOSS   = c.dateOfLoss     || "";
-    map.OFFICE_ID      = "";
-    map.LOSS_STATE     = extractState(c.lossLocation);
-    map.LOSS_ZIP_CODE  = "";
+    map.CLAIM_NUMBER    = c.claimNumber    || "";
+    map.CLAIM_NUMBER_P2 = c.claimNumber    || "";
+    map.INSURED_NAME    = c.carrier        || "";
+    map.OWNER_NAME      = c.carrier        || "";
+    map.OWNER_PHONE     = "";
+    map.ADJR_NAME       = c.adjuster       || "";
+    map.APPR_NAME       = c.writer         || "";
+    map.DATE_OF_LOSS    = c.dateOfLoss     || "";
+    map.OFFICE_ID       = "";
+    map.LOSS_STATE      = extractState(c.lossLocation);
+    map.LOSS_ZIP_CODE   = "";
 }
 
 // =========================================
@@ -187,23 +188,19 @@ function renderConditionTokens(map, payload) {
 function renderLossTokens(map, payload) {
     const lossType = (payload.claim.lossType || "").toUpperCase();
 
-    for (const token of COVERAGE_TOKENS) {
-        map[token] = "";
-    }
-
-    if (lossType.includes("COLL")) {
-        map.COVERAGE_COLLISION = "X";
-    } else if (lossType.includes("COMP")) {
-        map.COVERAGE_COMPREHENSIVE = "X";
-    } else if (lossType.includes("LIAB")) {
-        map.COVERAGE_LIABILITY = "X";
-    }
-
+    // Loss type checkboxes — "Theft" or "Other"
     map.LOSS_TYPE_THEFT = lossType.includes("THEFT") ? "X" : "";
-    map.LOSS_TYPE_OTHER = "";
+    map.LOSS_TYPE_OTHER = (lossType && !lossType.includes("THEFT")) ? "X" : "";
 
-    map.LEASED_YES     = "";
-    map.LEASED_NO      = "X";
+    // Coverage — separate from loss type, uses payload.claim.coverage
+    const coverage = (payload.claim.coverage || "").toUpperCase();
+    map.COVERAGE_COLLISION     = coverage.includes("COLL") ? "X" : "";
+    map.COVERAGE_COMPREHENSIVE = coverage.includes("COMP") ? "X" : "";
+    map.COVERAGE_LIABILITY     = coverage.includes("LIAB") ? "X" : "";
+    map.COVERAGE_OTHER         = (!coverage || coverage === "OTHER" || coverage === "UNKNOWN") ? "X" : "";
+
+    map.LEASED_YES      = "";
+    map.LEASED_NO       = "X";
     map.THIRD_PARTY_YES = "";
     map.THIRD_PARTY_NO  = "X";
 }
@@ -219,10 +216,10 @@ function renderOptionTokens(map, payload) {
         map[code] = activeSet.has(code) ? "X" : "";
     }
 
-    map.OTHER_BC  = "";
-    map.OTHER_BD  = "";
-    map.SAFETY_BC = "";
-    map.SAFETY_BD = "";
+    map.OTHER_BC  = activeSet.has("OTHER_BC")  ? "X" : "";
+    map.OTHER_BD  = activeSet.has("OTHER_BD")  ? "X" : "";
+    map.SAFETY_BC = activeSet.has("SAFETY_BC") ? "X" : "";
+    map.SAFETY_BD = activeSet.has("SAFETY_BD") ? "X" : "";
 }
 
 // =========================================

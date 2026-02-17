@@ -6,12 +6,19 @@
 import { parseCCCText } from './engines/cccParser.js';
 import { createEmptyBCIFPayload } from './bcifPayload.js';
 import { mapConditionFromCCC } from './engines/conditionEngine.js';
-import { normalizeOptions } from './engines/optionsEngine.js';
 import { evaluateLossType } from './engines/lossEngine.js';
 import { buildClaimSummary } from './summaryEngine.js';
 import { renderBCIFPayload } from './render/bcifRenderer.js';
 import { renderProcessingView, updateStage } from './ui/processingView.js';
 import { renderSummaryView } from './ui/summaryView.js';
+import { mapEstimateOptionsToBCIF } from './bcifPayloadBuilder.js';
+import { generateBCIFPdf } from './render/bcifPdfGenerator.js';
+
+// =========================================
+//  BCIF SERVER (optional — DOCX fill when running)
+// =========================================
+
+const BCIF_SERVER_BASE = window.BCIF_SERVER_BASE || "http://127.0.0.1:5000";
 
 // =========================================
 //  SHARED STATE
@@ -27,6 +34,9 @@ const state = {
 window.tlsState = state;
 
 const container = document.getElementById('tl-v2-container');
+const ASSET_INDEX_PATH = 'forms/bcif/asset-index.json';
+let assetIndexCache = null;
+let assetIndexPromise = null;
 
 // =========================================
 //  INIT
@@ -115,6 +125,24 @@ function renderDropZone() {
 }
 
 // =========================================
+//  OPTION LINE PRE-FILTER
+//  Keeps only lines that look like vehicle options/features.
+//  Prevents non-option lines from spamming "Unmapped option" warnings.
+// =========================================
+
+const OPTION_KEYWORDS = /\b(power|pwr|air\s*cond|a\/c|cruise|tilt|leather|cloth|alloy|chrome|heated|sunroof|moonroof|roof|airbag|abs|traction|radio|stereo|cd|bluetooth|navigation|nav|keyless|remote|seat|bucket|captain|spoiler|fog|tint|privacy|rack|tonneau|bedliner|running\s*board|tow|xenon|hid|led|sensor|camera|blind\s*spot|lane|parking|alarm|anti.?theft|turbo|diesel|4wd|awd|4x4|dual|premium|deluxe|conv(ertible)?|woodgrain|vinyl|wiper|defog|console|overhead|memory|homelink)\b/i;
+
+const OPTION_REJECT = /^\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\$[\d,.]+|page\s+\d|^\d+$|claim\s*#|policy\s*#|insured|claimant|vehicle\s*identification|preliminary|supplement|estimate\s*total)/i;
+
+function extractOptionLines(rawText) {
+    return rawText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 3 && l.length < 200)
+        .filter(l => OPTION_KEYWORDS.test(l) && !OPTION_REJECT.test(l));
+}
+
+// =========================================
 //  FILE HANDLER — main pipeline
 // =========================================
 
@@ -141,6 +169,23 @@ async function handleFile(file) {
 
         // 2. Parse with CCC parser
         const parsed = parseCCCText(rawText);
+        const assetIndex = await loadAssetIndex();
+
+        // Asset-index extraction (2-char code matching)
+        const assetOptions = extractOptionsFromText(rawText, assetIndex);
+        console.log('[TLS] Asset-index matched codes:', assetOptions);
+
+        // Pattern-based extraction (descriptive text → tokens)
+        const optionLines = extractOptionLines(rawText);
+        console.log(`[TLS] Option lines extracted: ${optionLines.length} of ${rawText.split('\n').length} total`);
+        const patternTokens = mapEstimateOptionsToBCIF(optionLines);
+        console.log('[TLS] Pattern-matched tokens:', patternTokens);
+
+        // Merge both sources (deduplicated)
+        const mergedOptions = [...new Set([...assetOptions, ...patternTokens])];
+        parsed.options = mergedOptions;
+        console.log('[TLS] Raw options (merged):', mergedOptions);
+        console.log(`[TLS] Parsed options count: ${parsed.options.length}`);
 
         if (!parsed.vin && !parsed.claimNumber && !parsed.ownerName) {
             showError('This PDF does not appear to be a CCC Preliminary Estimate. No claim, VIN, or owner data could be identified.');
@@ -214,8 +259,9 @@ function buildPayloadFromParsed(parsed) {
     const condition = mapConditionFromCCC(parsed.conditionRating);
     payload.condition = { ...payload.condition, ...condition };
 
-    // Options
-    payload.options = normalizeOptions(parsed.options || []);
+    // Options — run through pattern matcher to get 2-char BCIF token codes
+    payload.options = mapEstimateOptionsToBCIF(parsed.options || []);
+    console.log('[TLS] Matched tokens:', Array.from(payload.options));
 
     // Loss evaluation → conclusion
     const lossResult = evaluateLossType({
@@ -272,6 +318,16 @@ function attachSummaryListeners() {
     } else {
         console.warn('[TLS] Generate Summary button not found.');
     }
+
+    // --- Copy Summary ---
+
+    document.getElementById('tls-copy-summary')
+        ?.addEventListener('click', handleCopySummary);
+
+    // --- Download Summary (.txt) ---
+
+    document.getElementById('tls-download-summary')
+        ?.addEventListener('click', handleDownloadSummary);
 
     // --- Download ---
 
@@ -363,13 +419,83 @@ function showSummaryStatus(message) {
 }
 
 // =========================================
-//  DOWNLOAD — validates, renders tokens, POSTs
+//  COPY SUMMARY
+// =========================================
+
+function handleCopySummary() {
+    const textarea = document.getElementById('sv-damageSummary');
+    const status = document.getElementById('tls-copy-status');
+
+    if (!textarea || !textarea.value.trim()) {
+        if (status) status.textContent = "Nothing to copy.";
+        return;
+    }
+
+    const text = textarea.value;
+
+    async function copyModern() {
+        await navigator.clipboard.writeText(text);
+    }
+
+    function copyFallback() {
+        textarea.select();
+        document.execCommand('copy');
+    }
+
+    (async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await copyModern();
+            } else {
+                copyFallback();
+            }
+            if (status) {
+                status.textContent = "Copied \u2713";
+                setTimeout(() => status.textContent = "", 1500);
+            }
+        } catch (err) {
+            console.error("[TLS] Copy failed:", err);
+            if (status) status.textContent = "Copy failed.";
+        }
+    })();
+}
+
+// =========================================
+//  DOWNLOAD SUMMARY (.txt)
+// =========================================
+
+function handleDownloadSummary() {
+    const textarea = document.getElementById('sv-damageSummary');
+    const status = document.getElementById('tls-copy-status');
+
+    if (!textarea || !textarea.value.trim()) {
+        if (status) status.textContent = "Nothing to download.";
+        return;
+    }
+
+    const claimNumber = state.bcifPayload?.claim?.claimNumber || 'EXPORT';
+    const fileName = `SUMMARY_${claimNumber}.txt`;
+    const blob = new Blob([textarea.value], { type: 'text/plain' });
+    triggerDownload(blob, fileName);
+
+    if (status) {
+        status.textContent = "Summary downloaded \u2713";
+        setTimeout(() => status.textContent = "", 1500);
+    }
+}
+
+// =========================================
+//  DOWNLOAD — validates, renders tokens, fills form
+//  Priority: DOCX server → client-side PDF → JSON fallback
 // =========================================
 
 async function handleDownload() {
-    if (!state.bcifPayload) return;
+    if (!state.bcifPayload) {
+        console.warn('[TLS] Download aborted: bcifPayload is null');
+        return;
+    }
 
-    console.debug('[TLS] Download clicked');
+    console.log('[TLS] Download clicked');
 
     if (!validateBeforeDownload(state.bcifPayload)) return;
 
@@ -377,51 +503,100 @@ async function handleDownload() {
     if (downloadBtn) downloadBtn.disabled = true;
 
     try {
-        // Build final token map from current state
+        // ── 1. Summary generation (no server dependency) ──
+        console.log('[TLS] Summary generation starting...');
+        state.bcifPayload.summary.damageSummary = buildClaimSummary(
+            state.parsedEstimate,
+            state.bcifPayload
+        );
+        console.log('[TLS] Summary generation complete:', state.bcifPayload.summary.damageSummary.length, 'chars');
+
+        const textarea = document.getElementById('sv-damageSummary');
+        if (textarea) textarea.value = state.bcifPayload.summary.damageSummary;
+
+        // ── 2. Build final token map (no server dependency) ──
         state.tokenMap = renderBCIFPayload(state.bcifPayload);
+        state.tokenMap._DAMAGE_SUMMARY = state.bcifPayload.summary.damageSummary || '';
+
         const tokenKeys = Object.keys(state.tokenMap || {});
-        console.debug(`[TLS] Posting tokenMap keys: ${tokenKeys.length}`);
+        const activeTokens = tokenKeys.filter(k => state.tokenMap[k] !== '' && !k.startsWith('_'));
+        console.log(`[TLS] TokenMap total keys: ${tokenKeys.length}, active (non-empty): ${activeTokens.length}`);
 
-        const response = await fetch('/fill-bcif-docx', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(state.tokenMap)
-        });
+        let downloaded = false;
 
-        console.debug('[TLS] Download response:', response.status, response.headers.get('content-type'));
+        // ── 3a. Try DOCX server fill (if Flask is running) ──
+        try {
+            const bcifUrl = `${BCIF_SERVER_BASE}/fill-bcif-docx`;
+            console.log('[TLS] Attempting DOCX server fill:', bcifUrl);
+            const response = await fetch(bcifUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(state.tokenMap)
+            });
 
-        if (!response.ok) {
-            let msg = `Request failed with status ${response.status}.`;
-            try {
-                const json = await response.json();
-                msg = json.error || JSON.stringify(json);
-            } catch (_) {
-                const text = await response.text();
-                if (text) msg = text;
+            if (response.ok) {
+                const blob = await response.blob();
+                if (blob.size > 0) {
+                    triggerDownload(blob, buildFileName('.docx'));
+                    downloaded = true;
+                    console.log('[TLS] DOCX download complete, size:', blob.size);
+                }
+            } else {
+                console.warn('[TLS] DOCX server responded:', response.status);
             }
-            alert(msg);
-            return;
+        } catch (fetchErr) {
+            console.log('[TLS] DOCX server not available:', fetchErr.message);
         }
 
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
+        // ── 3b. Fallback: client-side PDF via pdf-lib ──
+        if (!downloaded) {
+            try {
+                if (typeof window.PDFLib === 'undefined') {
+                    throw new Error('pdf-lib not loaded.');
+                }
+                console.log('[TLS] Generating BCIF PDF client-side...');
+                const pdfBytes = await generateBCIFPdf(state.tokenMap);
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                console.log('[TLS] PDF generated, size:', blob.size);
+                triggerDownload(blob, buildFileName('.pdf'));
+                downloaded = true;
+            } catch (pdfErr) {
+                console.error('[TLS] Client-side PDF failed:', pdfErr);
+            }
+        }
 
-        const claimNumber = state.bcifPayload.claim.claimNumber || '';
-        const fileName = claimNumber ? `BCIF_${claimNumber}.docx` : 'BCIF_EXPORT.docx';
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        // ── 3c. Last resort: JSON download ──
+        if (!downloaded) {
+            console.log('[TLS] Fallback: JSON download');
+            const jsonStr = JSON.stringify(state.tokenMap, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            triggerDownload(blob, buildFileName('.json'));
+            alert('Form generation failed. Token map saved as JSON.');
+        }
 
     } catch (err) {
+        console.error('[TLS] Download failed:', err);
         alert(err.message || 'Download failed. Please try again.');
     } finally {
         if (downloadBtn) downloadBtn.disabled = false;
     }
+}
+
+function buildFileName(ext) {
+    const claimNumber = state.bcifPayload?.claim?.claimNumber || '';
+    return claimNumber ? `BCIF_${claimNumber}${ext}` : `BCIF_EXPORT${ext}`;
+}
+
+function triggerDownload(blob, fileName) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    console.log('[TLS] Download triggered:', fileName, 'size:', blob.size);
 }
 
 function validateBeforeDownload(payload) {
@@ -484,12 +659,55 @@ function setupOptionsSelect() {
 
     const applySelectedOptions = () => {
         const selectedValues = Array.from(optionsSelect.selectedOptions).map(opt => opt.value);
-        state.bcifPayload.options = normalizeOptions(selectedValues.length ? selectedValues : []);
+        state.bcifPayload.options = mapEstimateOptionsToBCIF(selectedValues.length ? selectedValues : []);
         console.debug('[TLS] Options selected:', state.bcifPayload.options);
     };
 
     applySelectedOptions();
     optionsSelect.addEventListener('change', applySelectedOptions);
+}
+
+async function loadAssetIndex() {
+    if (assetIndexCache) return assetIndexCache;
+    if (assetIndexPromise) return assetIndexPromise;
+
+    assetIndexPromise = fetch(ASSET_INDEX_PATH)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Asset index load failed: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            assetIndexCache = data;
+            return data;
+        })
+        .catch(error => {
+            console.warn('[TLS] Asset index unavailable:', error.message || error);
+            assetIndexCache = null;
+            return null;
+        })
+        .finally(() => {
+            assetIndexPromise = null;
+        });
+
+    return assetIndexPromise;
+}
+
+function extractOptionsFromText(rawText, assetIndex) {
+    const optionList = assetIndex?.schema?.parts?.options || [];
+    if (!rawText || optionList.length === 0) return [];
+
+    const tokens = new Set(
+        rawText
+            .toUpperCase()
+            .replace(/[^A-Z0-9]+/g, ' ')
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean)
+    );
+
+    return optionList.filter(code => tokens.has(String(code).toUpperCase()));
 }
 
 // =========================================
