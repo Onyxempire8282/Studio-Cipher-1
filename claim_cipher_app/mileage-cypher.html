@@ -74,8 +74,8 @@
         <div class="rivet bl"></div>
         <div class="rivet br"></div>
 
-        <h1>Mileage Calculator</h1>
-        <p>Calculate billable mileage for insurance claims</p>
+        <h1 class="cipher-hero-title">Mileage Calculator</h1>
+        <p class="cipher-body">Calculate billable mileage for insurance claims</p>
       </section>
 
       <div class="mileage-container">
@@ -87,10 +87,10 @@
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
               <div class="rivet br"></div>
-              <h3 class="form-section-title">Insurance Firm Selection</h3>
+              <h3 class="form-section-title cipher-section-title">Insurance Firm Selection</h3>
               <div class="firm-selection-group">
                 <div class="firm-input-group">
-                  <label for="firmSelect" class="input-label"
+                  <label for="firmSelect" class="input-label cipher-label"
                     >Select Your Firm</label
                   >
                   <select id="firmSelect" class="primary-select" required>
@@ -112,35 +112,35 @@
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
               <div class="rivet br"></div>
-              <h3 class="form-section-title">Route Information</h3>
+              <h3 class="form-section-title cipher-section-title">Route Information</h3>
               <div class="route-inputs">
                 <div class="input-group">
-                  <label for="pointA" class="input-label">Starting Location</label>
+                  <label for="pointA" class="input-label cipher-label">Starting Location</label>
                   <input
                     type="text"
                     id="pointA"
                     class="route-input"
                     placeholder="Enter your starting address..."
                   />
-                  <div class="input-hint">
+                  <div class="input-hint cipher-body">
                     Your home base location will be saved for future use
                   </div>
                 </div>
                 <div class="route-arrow">→</div>
                 <div class="input-group">
-                  <label for="pointB" class="input-label">Destination</label>
+                  <label for="pointB" class="input-label cipher-label">Destination</label>
                   <input
                     type="text"
                     id="pointB"
                     class="route-input"
                     placeholder="Enter destination address..."
                   />
-                  <div class="input-hint">
+                  <div class="input-hint cipher-body">
                     Distance will be calculated automatically
                   </div>
                 </div>
                 <div class="input-group distance-input-group">
-                  <label for="distanceMiles" class="input-label">Distance (Miles)</label>
+                  <label for="distanceMiles" class="input-label cipher-label">Distance (Miles)</label>
                   <div class="distance-input-wrapper">
                     <input
                       type="number"
@@ -184,7 +184,7 @@
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
 
-          <h2 class="plate-engraved-title">Billing Summary</h2>
+          <h2 class="plate-engraved-title cipher-section-title">Billing Summary</h2>
           <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="window.mileageCalculator.closeBillingModal()">
             <div class="rivet tl"></div>
             <div class="rivet tr"></div>
@@ -225,7 +225,7 @@
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
           <div class="modal-header">
-            <h3>Manage Firms</h3>
+            <h3 class="cipher-section-title">Manage Firms</h3>
             <button class="cipher-btn cipher-btn--small close-btn" onclick="closeFirmsModal()">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
@@ -241,7 +241,7 @@
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
               <div class="rivet br"></div>
-              <h4>Current Firms</h4>
+              <h4 class="cipher-section-title">Current Firms</h4>
               <div id="firmsList"></div>
             </div>
 
@@ -250,7 +250,7 @@
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
               <div class="rivet br"></div>
-              <h4>Add New Firm</h4>
+              <h4 class="cipher-section-title">Add New Firm</h4>
               <form id="addFirmForm">
                 <div class="form-row">
                   <input
@@ -277,7 +277,7 @@
                     step="0.01"
                     required
                   />
-                  <label class="checkbox-label">
+                  <label class="checkbox-label cipher-label">
                     <input type="checkbox" id="firmRoundTripDefault" />
                     <span class="checkmark"></span>
                     Round Trip Default
@@ -304,7 +304,7 @@
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
           <div class="modal-header">
-            <h3>Import from Route</h3>
+            <h3 class="cipher-section-title">Import from Route</h3>
             <button class="cipher-btn cipher-btn--small close-btn" onclick="closeRouteImportModal()">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Total Loss Studio - Claim Cipher</title>
+
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css" />
+
+    <!-- Industrial Plate System - Shared visual language -->
+    <link rel="stylesheet" href="styles/industrial-plates.css" />
+
+    <!-- Total Loss V2 - Scoped layout -->
+    <link rel="stylesheet" href="modules/total-loss-v2/total-loss-v2.css" />
+</head>
+<body style="visibility: hidden;">
+    <header class="cipher-header">
+        <div class="header-content">
+            <div class="app-brand">
+                <span class="logo">CC</span>
+                <span>Claim Cipher</span>
+            </div>
+            <div class="nav-links">
+                <a href="command-center.html">Dashboard</a>
+                <a href="route-cypher.html">Routes</a>
+                <a href="mileage-cypher.html">Mileage</a>
+                <a href="my-routes.html">My Routes</a>
+                <a href="total-loss-studio.html" class="active">Total Loss</a>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Professional User</div>
+                    <div class="user-role">Claims Specialist</div>
+                </div>
+                <button class="cipher-btn logout-btn" onclick="handleLogout()">
+                    <div class="rivet tl"></div>
+                    <div class="rivet tr"></div>
+                    <div class="rivet bl"></div>
+                    <div class="rivet br"></div>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content main-container">
+        <section class="hero-section elevation-3">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            <h1 class="cipher-hero-title">Total Loss Studio</h1>
+            <p class="cipher-body">CCC estimate processing and BCIF form generation</p>
+        </section>
+
+        <section class="cipher-plate elevation-2 tls-workspace">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+
+            <h2 class="section-title cipher-section-title">TOTAL LOSS STUDIO</h2>
+
+            <div id="tl-v2-container" class="total-loss-v2-scope"></div>
+        </section>
+    </main>
+
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <!-- Supabase Page Protection -->
+    <script>
+    (async function() {
+        const allowed = await window.SupabaseAuth.protectPage();
+        if (allowed) {
+            document.body.style.visibility = 'visible';
+        }
+    })();
+    </script>
+
+    <!-- Core Scripts -->
+    <script src="scripts/cipher-core.js"></script>
+
+    <!-- PDF.js — client-side PDF text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+
+    <!-- Total Loss Studio Module -->
+    <script type="module">
+        import { initTotalLossStudio } from './modules/total-loss-v2/total-loss-studio.js';
+        initTotalLossStudio();
+    </script>
+
+    <script src="scripts/claim-cipher-system-qa.js"></script>
+</body>
+</html>

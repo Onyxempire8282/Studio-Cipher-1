@@ -1,0 +1,141 @@
+{
+  "template": "BCIF_AUTOMATION_TEMPLATE_v3.docx",
+  "tokenCount": 309,
+  "schema": {
+    "claim": {
+      "text": [
+        "CLAIM_NUMBER",
+        "INSURED_NAME",
+        "OWNER_NAME",
+        "OWNER_PHONE",
+        "ADJR_NAME",
+        "APPR_NAME",
+        "DATE_OF_LOSS",
+        "OFFICE_ID",
+        "LOSS_STATE",
+        "LOSS_ZIP_CODE"
+      ]
+    },
+    "vehicle": {
+      "text": [
+        "YEAR",
+        "MAKE",
+        "MODEL",
+        "VIN",
+        "MILEAGE",
+        "ENGINE_SIZE",
+        "SPECIAL_FEATURES"
+      ],
+      "checkbox": {
+        "bodyStyle": [
+          "BODY_2DR", "BODY_4DR", "BODY_CONVERTIBLE", "BODY_HATCHBACK",
+          "BODY_PICKUP", "BODY_UTILITY", "BODY_VAN", "BODY_WAGON"
+        ],
+        "truckConfig": [
+          "TRUCK_CAB_CHASSIS", "TRUCK_FENDERSIDE", "TRUCK_FLEETSIDE",
+          "TRUCK_HALF_TON", "TRUCK_LONG_BED", "TRUCK_ONE_TON",
+          "TRUCK_SHORT_BED", "TRUCK_THREE_QUARTER_TON"
+        ],
+        "cylinders": [
+          "CYL_3", "CYL_4", "CYL_5", "CYL_6", "CYL_8", "CYL_10", "CYL_12"
+        ],
+        "transmission": [
+          "TRANS_AUTO", "TRANS_OD", "TRANS_PO",
+          "TRANS_S3", "TRANS_S4", "TRANS_S5", "TRANS_S6", "TRANS_4W"
+        ],
+        "fuelEngine": [
+          "DIESEL", "TURBO"
+        ]
+      }
+    },
+    "condition": {
+      "ratingGroups": {
+        "paint":        { "ratings": ["PAINT_0","PAINT_1","PAINT_2","PAINT_3"],                "comment": "PAINT_COMMENT" },
+        "sheetMetal":   { "ratings": ["SHEET_METAL_0","SHEET_METAL_1","SHEET_METAL_2","SHEET_METAL_3"], "comment": "SHEET_METAL_COMMENT" },
+        "glass":        { "ratings": ["GLASS_0","GLASS_1","GLASS_2","GLASS_3"],                "comment": "GLASS_COMMENT" },
+        "trim":         { "ratings": ["TRIM_0","TRIM_1","TRIM_2","TRIM_3"],                    "comment": "TRIM_COMMENT" },
+        "seats":        { "ratings": ["SEATS_0","SEATS_1","SEATS_2","SEATS_3"],                "comment": "SEATS_COMMENT" },
+        "carpet":       { "ratings": ["CARPET_0","CARPET_1","CARPET_2","CARPET_3"],            "comment": "CARPET_COMMENT" },
+        "dashboard":    { "ratings": ["DASHBOARD_0","DASHBOARD_1","DASHBOARD_2","DASHBOARD_3"],"comment": "DASHBOARD_COMMENT" },
+        "headliner":    { "ratings": ["HEADLINER_0","HEADLINER_1","HEADLINER_2","HEADLINER_3"],"comment": "HEADLINER_COMMENT" },
+        "frontTires":   { "ratings": ["FRONT_TIRES_0","FRONT_TIRES_1","FRONT_TIRES_2","FRONT_TIRES_3"], "comment": "FRONT_TIRES_COMMENT" },
+        "rearTires":    { "ratings": ["REAR_TIRES_0","REAR_TIRES_1","REAR_TIRES_2","REAR_TIRES_3"],     "comment": "REAR_TIRES_COMMENT" },
+        "engine":       { "ratings": ["ENGINE_0","ENGINE_1","ENGINE_2","ENGINE_3"],            "comment": "ENGINE_COMMENT" },
+        "transmission": { "ratings": ["TRANSMISSION_0","TRANSMISSION_1","TRANSMISSION_2","TRANSMISSION_3"], "comment": "TRANSMISSION_COMMENT" }
+      }
+    },
+    "loss": {
+      "checkbox": {
+        "coverage": [
+          "COVERAGE_COLLISION", "COVERAGE_COMPREHENSIVE", "COVERAGE_LIABILITY", "COVERAGE_OTHER"
+        ],
+        "lossType": [
+          "LOSS_TYPE_THEFT", "LOSS_TYPE_OTHER"
+        ],
+        "leased": [
+          "LEASED_YES", "LEASED_NO"
+        ],
+        "thirdParty": [
+          "THIRD_PARTY_YES", "THIRD_PARTY_NO"
+        ]
+      }
+    },
+    "parts": {
+      "text": [
+        "OTHER_BC", "OTHER_BD", "SAFETY_BC", "SAFETY_BD"
+      ],
+      "options": [
+        "2P","2T","3P","3S","5P",
+        "A2","AB","AC","AG","AL","AM","AR","AW",
+        "B2","B4","B6","BG","BL","BN","BS","BY",
+        "C2","CA","CC","CD","CJ","CL","CN","CO","CP","CS",
+        "DA","DB","DC","DE","DG","DM","DP","DT",
+        "EC","EG","EI","EM","EQ","ES",
+        "FC","FL","FM","FR",
+        "GG","GT",
+        "HL","HM","HP","HT","HU","HV",
+        "IB","IC","IP","IW",
+        "KE","KW",
+        "LC","LP","LR","LS","LW",
+        "M3","MC","MG","MM","MP","MS","MX",
+        "NV",
+        "OR",
+        "PA","PB","PC","PD","PG","PJ","PL","PM","PP","PS","PT","PV","PW","PX",
+        "R3","RB","RD","RF","RG","RH","RJ","RL","RM","RR","RW",
+        "SA","SB","SD","SE","SG","SH","SK","SL","SP","SS","ST","SV","SW","SY",
+        "T1","TB","TD","TG","TL","TN","TP","TQ","TT","TW","TX","TZ",
+        "UP","UR",
+        "VP","VR","VS","VZ",
+        "W2","WC","WD","WG","WI","WP","WT","WW",
+        "XE","XG","XM","XT",
+        "ZG"
+      ]
+    },
+    "refurbishment": {
+      "text": [
+        "RESTORED_AMOUNT",
+        "REF_ENGINE_MILEAGE", "REF_ENGINE_PURCHASE_PRICE",
+        "REF_TRANS_MILEAGE", "REF_TRANS_PURCHASE_PRICE",
+        "REF_PAINT_DATE", "REF_PAINT_PURCHASE_PRICE",
+        "REF_INTERIOR_DATE", "REF_INTERIOR_PURCHASE_PRICE",
+        "REF_CARPET_KIT_DATE", "REF_CARPET_KIT_PURCHASE_PRICE",
+        "REF_TIRES_COUNT", "REF_TIRES_PURCHASE_PRICE",
+        "REF_SPECIAL_WHEELS_DATE", "REF_SPECIAL_WHEELS_PURCHASE_PRICE",
+        "REF_CAMPER_SHELL_DATE", "REF_CAMPER_SHELL_PURCHASE_PRICE",
+        "REF_OTHER_DATE", "REF_OTHER_DESCRIPTION", "REF_OTHER_PURCHASE_PRICE"
+      ],
+      "checkbox": [
+        "REF_PAINT_BASIC", "REF_PAINT_STANDARD", "REF_PAINT_CUSTOM",
+        "REF_INTERIOR_VINYL", "REF_INTERIOR_CLOTH", "REF_INTERIOR_LEATHER"
+      ]
+    },
+    "adjustments": {
+      "text": [
+        "PRE_TAX_ADJ1_DESC", "PRE_TAX_ADJ1_ADD", "PRE_TAX_ADJ1_DEDUCT",
+        "PRE_TAX_ADJ2_DESC", "PRE_TAX_ADJ2_ADD", "PRE_TAX_ADJ2_DEDUCT",
+        "POST_TAX_ADJ1_DESC", "POST_TAX_ADJ1_ADD", "POST_TAX_ADJ1_DEDUCT",
+        "POST_TAX_ADJ2_DESC", "POST_TAX_ADJ2_ADD", "POST_TAX_ADJ2_DEDUCT"
+      ]
+    }
+  }
+}

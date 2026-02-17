@@ -24,23 +24,18 @@
 }
 
 .hero-title {
-  font-size: 1.6rem;
   font-weight: var(--cipher-font-weight-medium, 500);
   color: #e8e6e3;
   margin: 0 0 var(--cipher-space-xs, 0.5rem) 0;
-  letter-spacing: 0.3px;
   text-shadow:
     0 1px 3px rgba(0,0,0,0.6),
     0 -1px 0 rgba(255,255,255,0.04);
 }
 
 .hero-subtitle {
-  font-size: 0.85rem;
   color: #6a6a6e;
   margin: 0;
-  letter-spacing: 0.3px;
   text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-  text-transform: uppercase;
   font-weight: var(--cipher-font-weight-medium, 500);
 }
 
@@ -48,12 +43,9 @@
    ENGRAVED PLATE TITLES — used on filter and routes header
    ================================= */
 .plate-title {
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-medium, 500);
   color: #7a7e82;
   margin: 0 0 var(--cipher-space-md, 1.5rem) 0;
-  text-transform: uppercase;
-  letter-spacing: 2px;
   text-shadow:
     0 1px 0 rgba(255,255,255,0.05),
     0 -1px 0 rgba(0,0,0,0.5);
@@ -84,9 +76,6 @@
   display: block;
   color: #6a6a6e;
   font-weight: var(--cipher-font-weight-medium, 500);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .filter-input {
@@ -95,7 +84,6 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   color: #e8e6e3;
-  font-size: 0.9rem;
   transition: border-color 0.2s ease;
   backdrop-filter: none;
 }
@@ -129,11 +117,8 @@
 
 .routes-title {
   margin: 0;
-  font-size: 0.8rem;
   font-weight: 500;
   color: #7a7e82;
-  text-transform: uppercase;
-  letter-spacing: 2px;
   text-shadow:
     0 1px 0 rgba(255,255,255,0.05),
     0 -1px 0 rgba(0,0,0,0.5);
@@ -167,7 +152,6 @@
 
 .route-count {
   color: #5e5e62;
-  font-size: 0.8rem;
   font-weight: normal;
 }
 
@@ -213,18 +197,15 @@
 }
 
 .empty-icon {
-  font-size: 2.5rem;
   margin-bottom: var(--cipher-space-md, 1.5rem);
   opacity: 0.4;
 }
 
 .routes-empty p {
   margin: 0;
-  font-size: 0.95rem;
 }
 
 .empty-hint {
-  font-size: 0.85rem;
   opacity: 0.6;
   margin-top: var(--cipher-space-xs, 0.5rem) !important;
 }
@@ -332,7 +313,6 @@
 .route-date {
   font-weight: var(--cipher-font-weight-bold, 700);
   color: #e8e6e3;
-  font-size: 1rem;
   text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
@@ -340,7 +320,6 @@
   display: flex;
   align-items: center;
   gap: var(--cipher-space-xs, 0.5rem);
-  font-size: 0.85rem;
   color: #6a6a6e;
   overflow: hidden;
 }
@@ -370,10 +349,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 0.65rem;
   font-weight: var(--cipher-font-weight-bold, 700);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
   background: rgba(39, 174, 96, 0.1);
   color: #27ae60;
   border: 1px solid rgba(39, 174, 96, 0.2);
@@ -399,7 +375,6 @@
 .route-miles {
   font-weight: var(--cipher-font-weight-bold, 700);
   color: #e8e6e3;
-  font-size: 1rem;
   text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
@@ -410,7 +385,6 @@
 }
 
 .export-indicator {
-  font-size: 0.7rem;
   color: rgba(39, 174, 96, 0.7);
   font-style: italic;
 }
@@ -420,10 +394,7 @@
   display: inline-block;
   padding: 3px 10px;
   border-radius: 4px;
-  font-size: 0.7rem;
   font-weight: var(--cipher-font-weight-bold, 700);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .cipher-badge--info,
@@ -455,7 +426,6 @@
   padding: 8px 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-medium, 500);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -524,7 +494,6 @@
 
 .voided-indicator {
   color: #5e5e62;
-  font-size: 0.75rem;
   text-decoration: line-through;
   opacity: 0.7;
 }
@@ -535,7 +504,6 @@
 }
 
 .action-hint {
-  font-size: 0.75rem;
   color: #5e5e62;
   font-style: italic;
 }
@@ -548,7 +516,6 @@
   background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
   color: #5e5e62;
-  font-size: 0.8rem;
 }
 
 /* =================================
@@ -600,7 +567,6 @@
 
 .cipher-modal-header h3 {
   margin: 0;
-  font-size: 1.1rem;
   color: #e8e6e3;
   text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
@@ -608,7 +574,6 @@
 .close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
   color: #5e5e62;
   cursor: pointer;
   padding: 0;
@@ -682,7 +647,6 @@
 
 .summary-row--highlight .summary-value {
   color: #B87333;
-  font-size: 1.1rem;
 }
 
 /* =================================
@@ -712,18 +676,15 @@
 }
 
 .preview-stat .stat-value {
-  font-size: 1.5rem;
   font-weight: var(--cipher-font-weight-bold, 700);
   color: #B87333;
 }
 
 .preview-stat .stat-label {
-  font-size: 0.9rem;
   color: #5e5e62;
 }
 
 .preview-divider {
-  font-size: 1.5rem;
   color: #5e5e62;
   opacity: 0.4;
 }
@@ -750,7 +711,6 @@
   text-align: center;
   padding: var(--cipher-space-md, 1.5rem);
   color: #5e5e62;
-  font-size: 0.9rem;
 }
 
 .export-empty,
@@ -765,7 +725,6 @@
 
 .export-empty .empty-icon,
 .export-empty-range .empty-icon {
-  font-size: 2rem;
   margin-bottom: var(--cipher-space-sm, 1rem);
   opacity: 0.4;
 }
@@ -773,11 +732,9 @@
 .export-empty p,
 .export-empty-range p {
   margin: 0;
-  font-size: 0.9rem;
 }
 
 .export-empty .empty-hint {
-  font-size: 0.8rem;
   opacity: 0.6;
   margin-top: var(--cipher-space-xs, 0.5rem);
 }
@@ -786,10 +743,6 @@
    RESPONSIVE
    ================================= */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 1.3rem;
-  }
-
   .filter-plate {
     margin-bottom: 40px;
   }
@@ -835,10 +788,6 @@
 }
 
 @media (max-width: 480px) {
-  .hero-title {
-    font-size: 1.15rem;
-  }
-
   .route-item {
     padding: 16px 20px;
   }

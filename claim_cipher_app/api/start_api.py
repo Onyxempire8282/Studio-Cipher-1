@@ -28,7 +28,8 @@ def check_files():
         'bcif_fill.py',
         'requirements.txt',
         '../config/bcif-mapping.json',
-        '../forms/Fillable_CCC_BCIF.pdf'
+        '../forms/Fillable_CCC_BCIF.pdf',
+        '../forms/bcif/BCIF_AUTOMATION_TEMPLATE_v3.docx'
     ]
     
     missing_files = []

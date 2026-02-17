@@ -82,7 +82,6 @@ main,
 .destinations-label {
   color: var(--cipher-text-secondary);
   font-weight: var(--cipher-font-weight-medium);
-  font-size: 0.95rem;
 }
 
 .destinations-list {
@@ -114,7 +113,6 @@ main,
   border-radius: var(--cipher-radius-sm);
   padding: var(--cipher-space-sm) var(--cipher-space-md);
   color: var(--cipher-text-primary);
-  font-size: 0.95rem;
   transition: all 0.3s ease;
 }
 
@@ -137,7 +135,6 @@ main,
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1.2rem;
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -158,7 +155,6 @@ main,
 }
 
 .form-section-title {
-  font-size: 1rem !important;
   margin-bottom: var(--cipher-space-md) !important;
 }
 
@@ -169,7 +165,6 @@ main,
 }
 
 .section-title h2 {
-  font-size: 1.4rem !important;
 }
 
 /* Softened gold focus for route page inputs */
@@ -190,7 +185,6 @@ main,
 
 .form-actions .primary-action-btn {
   min-width: 280px;
-  font-size: 1.05rem;
 }
 
 /* =================================
@@ -237,16 +231,12 @@ main,
 
 .stat-label {
   display: block;
-  font-size: 0.8rem;
   color: var(--cipher-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   margin-bottom: var(--cipher-space-xs);
 }
 
 .stat-value {
   display: block;
-  font-size: 1.2rem;
   font-weight: var(--cipher-font-weight-bold);
   color: var(--cipher-gold);
   text-shadow: var(--cipher-shadow-glow);
@@ -275,7 +265,6 @@ main,
 
 .day-header h4 {
   color: var(--cipher-electric-blue);
-  font-size: 1.2rem;
   margin: 0;
 }
 
@@ -288,7 +277,6 @@ main,
   color: rgba(34, 197, 94, 0.9);
   padding: var(--cipher-space-xs) var(--cipher-space-sm);
   border-radius: var(--cipher-radius-sm);
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-bold);
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
@@ -304,7 +292,6 @@ main,
   background: rgba(255, 255, 255, 0.05);
   padding: var(--cipher-space-xs) var(--cipher-space-sm);
   border-radius: var(--cipher-radius-sm);
-  font-size: 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -326,7 +313,6 @@ main,
   );
   border-color: rgba(0, 191, 255, 0.2);
   color: var(--cipher-electric-blue);
-  font-size: 0.8rem;
 }
 
 /* =================================
@@ -375,7 +361,6 @@ main,
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-bold);
   flex-shrink: 0;
 }
@@ -387,7 +372,6 @@ main,
     var(--cipher-electric-blue-dark)
   );
   color: white;
-  font-size: 1rem;
   box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
 }
 
@@ -397,7 +381,6 @@ main,
 }
 
 .starting-point-note {
-  font-size: 0.8rem;
   color: var(--cipher-electric-blue);
   font-style: italic;
   padding: var(--cipher-space-xs);
@@ -414,13 +397,10 @@ main,
   color: var(--cipher-electric-blue);
   padding: 2px var(--cipher-space-xs);
   border-radius: var(--cipher-radius-xs);
-  font-size: 0.7rem;
   font-weight: var(--cipher-font-weight-bold);
-  text-transform: uppercase;
 }
 
 .priority-indicator {
-  font-size: 1rem;
   flex-shrink: 0;
   cursor: help;
 }
@@ -445,7 +425,6 @@ main,
   color: var(--cipher-gold);
   padding: 2px var(--cipher-space-xs);
   border-radius: var(--cipher-radius-xs);
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-bold);
 }
 
@@ -454,7 +433,6 @@ main,
   color: var(--cipher-electric-blue);
   padding: 2px var(--cipher-space-xs);
   border-radius: var(--cipher-radius-xs);
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-medium);
 }
 
@@ -492,7 +470,6 @@ main,
 
 .time-label {
   color: var(--cipher-text-secondary);
-  font-size: 0.8rem;
   font-weight: var(--cipher-font-weight-medium);
   min-width: 55px;
   text-align: left;
@@ -505,7 +482,6 @@ main,
   border-radius: var(--cipher-radius-sm);
   color: var(--cipher-text-primary);
   padding: var(--cipher-space-xs) var(--cipher-space-sm);
-  font-size: 0.85rem;
   flex: 1;
   min-width: 110px;
 }
@@ -532,7 +508,6 @@ main,
   border-radius: var(--cipher-radius-sm);
   color: var(--cipher-text-primary);
   padding: var(--cipher-space-xs) var(--cipher-space-sm);
-  font-size: 0.85rem;
   cursor: pointer;
   flex: 1;
   min-width: 85px;
@@ -594,7 +569,6 @@ main,
 .map-day-controls h4 {
   margin: 0 0 var(--cipher-space-md) 0;
   color: var(--cipher-text-primary);
-  font-size: 1rem;
 }
 
 .day-selector {
@@ -609,7 +583,6 @@ main,
   color: var(--cipher-text-secondary);
   padding: var(--cipher-space-xs) var(--cipher-space-sm);
   border-radius: var(--cipher-radius-sm);
-  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -650,7 +623,6 @@ main,
   display: flex;
   align-items: center;
   gap: var(--cipher-space-sm);
-  font-size: 1.1rem;
   font-weight: var(--cipher-font-weight-bold);
   color: var(--cipher-text-primary);
   margin: 0 0 var(--cipher-space-md) 0;
@@ -665,7 +637,6 @@ main,
 
 
 .export-status {
-  font-size: 0.85rem;
   color: var(--cipher-text-muted);
   font-style: italic;
 }
@@ -894,7 +865,6 @@ main,
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
   font-weight: var(--cipher-font-weight-bold);
   background: linear-gradient(
     135deg,
@@ -914,7 +884,6 @@ main,
     var(--cipher-electric-blue-dark)
   );
   box-shadow: 0 4px 12px rgba(0, 191, 255, 0.4);
-  font-size: 1.2rem;
 }
 
 .return-stop .stop-number-badge {
@@ -924,11 +893,9 @@ main,
     var(--cipher-electric-blue-dark)
   );
   box-shadow: 0 4px 12px rgba(0, 191, 255, 0.4);
-  font-size: 1.2rem;
 }
 
 .priority-badge {
-  font-size: 1.1rem;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -964,7 +931,6 @@ main,
 }
 
 .stop-address-main {
-  font-size: 1rem;
   font-weight: var(--cipher-font-weight-medium);
   color: var(--cipher-text-primary);
   flex: 1;
@@ -972,7 +938,6 @@ main,
 }
 
 .arrival-time {
-  font-size: 0.9rem;
   color: var(--cipher-electric-blue);
   font-weight: var(--cipher-font-weight-medium);
   background: rgba(0, 191, 255, 0.1);
@@ -983,7 +948,6 @@ main,
 }
 
 .stop-note {
-  font-size: 0.85rem;
   color: var(--cipher-text-muted);
   font-style: italic;
   margin-top: var(--cipher-space-xs);
@@ -1013,7 +977,6 @@ main,
 }
 
 .input-compact label {
-  font-size: 1rem;
   flex-shrink: 0;
 }
 
@@ -1024,7 +987,6 @@ main,
   border-radius: var(--cipher-radius-xs);
   color: var(--cipher-text-primary);
   padding: 4px 8px;
-  font-size: 0.85rem;
   min-width: 100px;
 }
 
@@ -1048,7 +1010,6 @@ main,
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
-  font-size: 1.1rem;
 }
 
 .approve-btn-compact:hover {
@@ -1105,7 +1066,6 @@ main,
   border: 1px solid rgba(255, 215, 0, 0.3);
   border-radius: var(--cipher-radius-md);
   padding: 6px var(--cipher-space-sm);
-  font-size: 0.9rem;
   font-weight: var(--cipher-font-weight-medium);
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.1);
 }
@@ -1116,7 +1076,6 @@ main,
 }
 
 .travel-icon {
-  font-size: 1rem;
 }
 
 .travel-distance {
@@ -1138,7 +1097,6 @@ main,
 }
 
 .connector-arrow {
-  font-size: 1.2rem;
   color: var(--cipher-gold);
   opacity: 0.6;
   line-height: 1;
@@ -1211,14 +1169,12 @@ main,
   display: flex;
   align-items: center;
   gap: var(--cipher-space-md);
-  font-size: 1.8rem;
   font-weight: var(--cipher-font-weight-bold);
   color: var(--cipher-text-primary);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.6rem;
   font-weight: var(--cipher-font-weight-bold);
   color: var(--cipher-text-primary);
 }
@@ -1244,7 +1200,6 @@ main,
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1.2rem;
   font-weight: 600;
 }
 
@@ -1271,7 +1226,6 @@ main,
   color: var(--cipher-text-secondary);
   padding: var(--cipher-space-sm) var(--cipher-space-lg);
   border-radius: var(--cipher-radius-md) var(--cipher-radius-md) 0 0;
-  font-size: 0.95rem;
   font-weight: var(--cipher-font-weight-medium);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1299,7 +1253,6 @@ main,
   background: rgba(0, 0, 0, 0.3);
   padding: 2px 8px;
   border-radius: var(--cipher-radius-sm);
-  font-size: 0.75rem;
 }
 
 .day-tab.active .day-tab-badge {
@@ -1477,7 +1430,6 @@ main,
 .route-left-column .day-stats .stat {
   position: relative;
   padding: 8px 12px;
-  font-size: 0.85rem;
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
@@ -1611,7 +1563,6 @@ main,
 
   .day-tab {
     padding: var(--cipher-space-xs) var(--cipher-space-md);
-    font-size: 0.85rem;
   }
 }
 
@@ -1656,7 +1607,6 @@ main,
 }
 
 .empty-icon {
-  font-size: 3rem;
   display: block;
   margin-bottom: var(--cipher-space-sm);
   opacity: 0.5;
@@ -1711,16 +1661,13 @@ main,
   color: white;
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 0.75rem;
   font-weight: bold;
-  text-transform: uppercase;
 }
 
 .claim-remove-btn {
   background: transparent;
   border: none;
   color: var(--cipher-danger);
-  font-size: 1.5rem;
   cursor: pointer;
   width: 24px;
   height: 24px;
@@ -1746,13 +1693,11 @@ main,
 }
 
 .claim-address {
-  font-size: 0.875rem;
   color: var(--cipher-text-muted);
   margin-bottom: 4px;
 }
 
 .claim-number {
-  font-size: 0.75rem;
   color: var(--cipher-gold);
   font-family: monospace;
 }
@@ -1770,7 +1715,6 @@ main,
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   color: var(--cipher-text-primary);
-  font-size: 0.875rem;
   cursor: pointer;
 }
 
@@ -1827,12 +1771,10 @@ main,
 .cluster-info h3 {
   color: var(--cipher-gold);
   margin-bottom: var(--cipher-space-xs);
-  font-size: 1.1rem;
 }
 
 .cluster-description {
   color: var(--cipher-text-secondary);
-  font-size: 0.9rem;
   margin-bottom: var(--cipher-space-md);
 }
 
@@ -1847,7 +1789,6 @@ main,
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--cipher-radius-sm);
   margin-bottom: var(--cipher-space-xs);
-  font-size: 0.85rem;
   color: var(--cipher-text-primary);
 }
 
@@ -1861,7 +1802,6 @@ main,
   display: flex;
   justify-content: space-between;
   padding: var(--cipher-space-xs) 0;
-  font-size: 0.9rem;
 }
 
 .overage-stat .stat-label {
@@ -1905,13 +1845,11 @@ main,
 }
 
 .recommendation-icon {
-  font-size: 1.2rem;
   flex-shrink: 0;
 }
 
 .override-recommendation p {
   margin: 0;
-  font-size: 0.9rem;
   color: var(--cipher-text-primary);
   line-height: 1.5;
 }
@@ -1989,7 +1927,6 @@ main,
 .save-route-form .input-label {
   color: var(--cipher-text-secondary);
   font-weight: var(--cipher-font-weight-medium);
-  font-size: 0.9rem;
 }
 
 .save-route-form .filter-input {
@@ -1998,7 +1935,6 @@ main,
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--cipher-radius-md);
   color: var(--cipher-text-primary);
-  font-size: 1rem;
 }
 
 .save-route-form .filter-input:focus {
@@ -2008,7 +1944,6 @@ main,
 }
 
 .save-route-form .input-hint {
-  font-size: 0.8rem;
   color: var(--cipher-text-muted);
   opacity: 0.7;
 }
@@ -2047,7 +1982,6 @@ main,
 
 .route-summary-preview .summary-row--highlight .summary-value {
   color: var(--cipher-gold);
-  font-size: 1.1rem;
 }
 
 /* Mobile adjustments for save route modal */

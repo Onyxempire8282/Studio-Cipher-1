@@ -1,0 +1,247 @@
+/* TOTAL LOSS V2 — Scoped layout styles
+   Visuals come from universal-system.css + industrial-plates.css.
+   This file handles only TL-V2 layout, spacing, and state.
+   All rules scoped under .total-loss-v2-scope.
+*/
+
+/* =================================
+   WORKSPACE — full-width plate container
+   Mirrors command-center .modules-section spacing.
+   ================================= */
+.tls-workspace {
+    padding: 40px var(--cipher-space-lg) 80px;
+}
+
+.tls-workspace .section-title {
+    font-weight: var(--cipher-font-weight-medium);
+    color: #5a5a5e;
+    margin-bottom: var(--cipher-space-lg);
+    text-align: center;
+    text-shadow: none;
+}
+
+/* =================================
+   DROP ZONE — bordered industrial zone (not a plate)
+   ================================= */
+.tls-dropzone {
+    padding: var(--cipher-space-xxl) var(--cipher-space-lg);
+    text-align: center;
+    border: 2px dashed rgba(184, 115, 51, 0.25);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.tls-dropzone:hover {
+    border-color: rgba(184, 115, 51, 0.45);
+    background: rgba(184, 115, 51, 0.02);
+}
+
+.tls-dropzone__icon {
+    margin-bottom: var(--cipher-space-md);
+}
+
+.tls-dropzone__title {
+    color: var(--cipher-text-primary);
+    margin-bottom: var(--cipher-space-xs);
+}
+
+.tls-dropzone__subtitle {
+    color: var(--cipher-text-muted);
+    margin-bottom: var(--cipher-space-md);
+}
+
+/* =================================
+   SCOPE CONTAINER
+   ================================= */
+.total-loss-v2-scope {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: var(--cipher-space-md) var(--cipher-space-md) var(--cipher-space-xl);
+}
+
+/* =================================
+   SUMMARY VERIFICATION — CONTAINER
+   ================================= */
+.total-loss-v2-scope .sv-container {
+    padding: var(--cipher-space-xl) var(--cipher-space-lg);
+}
+
+.total-loss-v2-scope .sv-title {
+    text-align: center;
+    color: var(--cipher-text-primary);
+    margin-bottom: var(--cipher-space-lg);
+    letter-spacing: var(--tracking-wide);
+}
+
+/* =================================
+   SUMMARY VERIFICATION — GRID
+   ================================= */
+.total-loss-v2-scope .sv-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--cipher-space-lg);
+    margin-bottom: var(--cipher-space-lg);
+}
+
+.total-loss-v2-scope .sv-section {
+    padding: var(--cipher-space-md) var(--cipher-space-md);
+}
+
+.total-loss-v2-scope .sv-section--full {
+    grid-column: 1 / -1;
+}
+
+.total-loss-v2-scope .sv-section-heading {
+    color: var(--cipher-accent);
+    margin-bottom: var(--cipher-space-md);
+    padding-bottom: var(--cipher-space-xs);
+    border-bottom: 1px solid rgba(184, 115, 51, 0.15);
+}
+
+/* =================================
+   SUMMARY VERIFICATION — FIELDS
+   ================================= */
+.total-loss-v2-scope .sv-field-group {
+    margin-bottom: var(--cipher-space-sm);
+}
+
+.total-loss-v2-scope .sv-field-group:last-child {
+    margin-bottom: 0;
+}
+
+.total-loss-v2-scope .sv-field-group label {
+    margin-bottom: 4px;
+    font-size: var(--font-body);
+    color: var(--cipher-text-muted);
+}
+
+.total-loss-v2-scope .sv-textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* =================================
+   SUMMARY VERIFICATION — ACTIONS
+   ================================= */
+.total-loss-v2-scope .sv-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--cipher-space-md);
+    padding-top: var(--cipher-space-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* =================================
+   PROCESSING VIEW — CONTAINER
+   ================================= */
+.total-loss-v2-scope .cipher-processing {
+    padding: var(--cipher-space-xxl) var(--cipher-space-lg);
+    text-align: center;
+}
+
+.total-loss-v2-scope .cp-title {
+    color: var(--cipher-text-primary);
+    margin-bottom: var(--cipher-space-xl);
+    letter-spacing: var(--tracking-wide);
+}
+
+/* =================================
+   PROCESSING VIEW — STAGES
+   ================================= */
+.total-loss-v2-scope .cp-stages {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cipher-space-sm);
+}
+
+.total-loss-v2-scope .cp-stage {
+    display: flex;
+    align-items: center;
+    gap: var(--cipher-space-sm);
+    padding: var(--cipher-space-sm) var(--cipher-space-md);
+    opacity: 0.4;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+
+.total-loss-v2-scope .cp-stage.is-active {
+    opacity: 1;
+    border-color: rgba(184, 115, 51, 0.3);
+    border-top-color: rgba(184, 115, 51, 0.3);
+}
+
+.total-loss-v2-scope .cp-stage.is-completed {
+    opacity: 0.7;
+}
+
+/* =================================
+   PROCESSING VIEW — STAGE INDICATOR
+   ================================= */
+.total-loss-v2-scope .cp-stage-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--cipher-text-muted);
+    flex-shrink: 0;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.total-loss-v2-scope .cp-stage.is-active .cp-stage-indicator {
+    border-color: var(--cipher-accent);
+    background: var(--cipher-accent);
+    box-shadow: 0 0 8px rgba(184, 115, 51, 0.3);
+}
+
+.total-loss-v2-scope .cp-stage.is-completed .cp-stage-indicator {
+    border-color: var(--cipher-success);
+    background: var(--cipher-success);
+}
+
+.total-loss-v2-scope .cp-stage-label {
+    color: var(--cipher-text-secondary);
+}
+
+.total-loss-v2-scope .cp-stage.is-active .cp-stage-label {
+    color: var(--cipher-text-primary);
+    font-weight: var(--cipher-font-weight-medium);
+}
+
+/* =================================
+   RESPONSIVE
+   ================================= */
+@media (max-width: 768px) {
+    .tls-workspace {
+        padding: 24px var(--cipher-space-md) 48px;
+    }
+
+    .tls-dropzone {
+        padding: var(--cipher-space-xl) var(--cipher-space-md);
+    }
+
+    .total-loss-v2-scope {
+        padding: var(--cipher-space-sm);
+    }
+
+    .total-loss-v2-scope .sv-container {
+        padding: var(--cipher-space-lg) var(--cipher-space-md);
+    }
+
+    .total-loss-v2-scope .sv-grid {
+        grid-template-columns: 1fr;
+        gap: var(--cipher-space-md);
+    }
+
+    .total-loss-v2-scope .sv-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .total-loss-v2-scope .cipher-processing {
+        padding: var(--cipher-space-xl) var(--cipher-space-md);
+    }
+}

@@ -22,6 +22,9 @@ from bcif_fill_enhanced import apply_text_mapping, apply_post_processing, collec
 app = Flask(__name__)
 CORS(app)  # Enable CORS for browser requests
 
+# Register DOCX endpoint
+import bcif_docx_fill  # noqa: F401
+
 # Configuration
 UPLOAD_FOLDER = Path(tempfile.gettempdir()) / 'bcif_uploads'
 UPLOAD_FOLDER.mkdir(exist_ok=True)

@@ -1,0 +1,897 @@
+Focused scan on TL/BCIF/CCC functional code + related docs (per scope choice).
+
+📌 File: claim_cipher_app/scripts/total-loss-forms.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: 140-220)
+```javascript
+    async startExtractionProcess(file) {
+        console.log('🔍 Starting automatic extraction process...');
+
+        // Show processing status
+        this.updateStepStatus('uploadStep', 'processing', 'Processing...');
+        this.updatePreviewStatus('Processing PDF...', 'processing');
+
+        try {
+            // Call your CCC PDF extraction system
+            this.extractedData = await this.callYourExtractionAPI(file);
+
+            // The extraction now returns professional format, use directly or map as needed
+            if (this.extractedData.textFields && this.extractedData.checkboxFields) {
+                // Professional format - use directly
+                this.bcifData = {
+                    textFields: this.extractedData.textFields || {},
+                    checkboxFields: this.extractedData.checkboxFields || {},
+                    conditionRatings: this.extractedData.conditionRatings || {}
+                };
+            } else {
+                // Legacy format - map with field mapper
+                this.bcifData = this.fieldMapper.mapToBCIF(this.extractedData);
+            }
+
+            // Validate mapped data
+            const validation = this.fieldMapper.validateMappedData(this.bcifData);
+            if (!validation.valid) {
+                throw new Error(`Data validation failed: ${validation.errors.join(', ')}`);
+            }
+```
+
+=== Keep Section ===
+(lines: 220-520)
+```javascript
+    async generateBCIFForm() {
+        console.log('📄 Generating BCIF form using Python API...');
+        
+        this.showProcessingModal('Generating CCC BCIF form via server...');
+        this.updateStepStatus('previewStep', 'processing', 'Generating...');
+
+        try {
+            // Use Python API for reliable form filling
+            this.filledPDF = await this.fillBCIFFormViaAPI();
+            ...
+            console.log('✅ BCIF form generated successfully via Python API');
+```
+
+(lines: 520-900)
+```javascript
+    createInteractiveBCIFPreview() {
+        if (!this.bcifData) return '<p>No form data available</p>';
+        
+        const textFields = this.bcifData.textFields || {};
+        const checkboxFields = this.bcifData.checkboxFields || [];
+        
+        // Create a form-like preview with the actual BCIF structure
+        return `
+            <div class="bcif-form-preview">
+                <!-- Header Section -->
+                <div class="form-section">
+                    <h3>🏢 Insurance Information</h3>
+                    ...
+                </div>
+
+                <!-- Vehicle Options (Interactive Checkboxes) -->
+                <div class="form-section">
+                    <h3>⚙️ Vehicle Options & Features</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--cipher-text-secondary);">
+                        ✓ = Auto-detected | Click to add/remove options
+                    </p>
+                    ${this.createInteractiveCheckboxGrid(checkboxFields)}
+                </div>
+```
+
+(lines: 900-1120)
+```javascript
+    async downloadPDF() {
+        if (!this.filledPDF) {
+            this.showError('No form available to download');
+            return;
+        }
+
+        try {
+            // Create download link
+            const blob = new Blob([this.filledPDF], { type: 'application/pdf' });
+            ...
+            const filename = `CCC_BCIF_${claimNumber}_${timestamp}.pdf`;
+```
+
+=== Meta Summary ===
+Total Loss references found: 2
+BCIF references found: 20
+CCC references found: 6
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/scripts/total-loss-field-mapping.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-240)
+```javascript
+/* 🚗 TOTAL LOSS FORMS - Field Mapping Configuration */
+/* Maps extracted CCC data to BCIF form fields */
+
+class BCIFFieldMapper {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        // Required field mappings from CCC extraction to BCIF form
+        this.requiredFields = {
+            // Basic Information
+            'officeId': 'Office ID Number',
+            'company': 'Company',
+            'claimNumber': 'Claim Number',
+            'policyNumber': 'Policy Number',
+            'vin': 'VIN',
+            ...
+        };
+
+        // Checkbox field mappings for vehicle options
+        this.checkboxFields = {
+            // Body Style Options
+            bodyStyle: {
+                '2dr': '2DR',
+                '4dr': '4DR',
+                ...
+            },
+            ...
+        };
+```
+
+(lines: 240-425)
+```javascript
+    mapToBCIF(extractedData) {
+        const bcifData = {
+            textFields: {},
+            checkboxFields: {},
+            conditionRatings: {},
+            packages: {}
+        };
+
+        // Map text fields
+        for (const [cccField, bcifField] of Object.entries(this.requiredFields)) {
+            if (extractedData[cccField]) {
+                bcifData.textFields[bcifField] = extractedData[cccField];
+            }
+        }
+
+        // Map checkbox fields based on vehicle options
+        if (extractedData.vehicleOptions) {
+            this.mapVehicleOptions(extractedData.vehicleOptions, bcifData.checkboxFields);
+        }
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 6
+CCC references found: 3
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/scripts/ccc-pdf-extractor.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-240)
+```javascript
+/* 🔍 CCC PDF EXTRACTOR - Coordinate-Based Extraction System */
+/* Precise field extraction using PDF coordinates and text positioning */
+
+class CCCPDFExtractor {
+    constructor() {
+        this.extractionZones = null;
+        this.professionalMapper = null;
+        this.initialized = false;
+        this.initPromise = this.init();
+    }
+
+    async init() {
+        console.log('🔍 CCC PDF Extractor initializing...');
+        this.setupCoordinateZones();
+        
+        // Initialize professional mapper for pattern-based extraction
+        this.professionalMapper = new BCIFProfessionalMapper();
+        await this.professionalMapper.init();
+        
+        this.initialized = true;
+        console.log('✅ CCC PDF Extractor ready with professional mapping');
+    }
+```
+
+(lines: 240-440)
+```javascript
+    extractVehicleOptionsFromZones(pdfData) {
+        console.log('🚗 Extracting vehicle options from zones...');
+        
+        const detectedOptions = [];
+        
+        // Check each vehicle option zone (transmission, power, convenience, etc.)
+        for (const [zoneName, keywords] of Object.entries(this.vehicleOptionsKeywords)) {
+            ...
+            if (zoneTextLower.includes(keywordLower) || 
+                this.fuzzyMatch(keywordLower, zoneTextLower)) {
+                const normalizedOption = keyword.toLowerCase()
+                    .replace(/[^a-z0-9]/g, '_')
+                    .replace(/_{2,}/g, '_')
+                    .replace(/^_|_$/g, '');
+                detectedOptions.push(normalizedOption);
+```
+
+(lines: 440-700)
+```javascript
+    mergeExtractionResults(professionalData, coordinateData) {
+        console.log('🔄 Merging extraction results...');
+        
+        const merged = {
+            // Start with coordinate data as base
+            ...coordinateData,
+            // Override with professional data (higher quality)
+            ...professionalData.textFields,
+            // Add vehicle options from both sources
+            vehicleOptions: [
+                ...(coordinateData.vehicleOptions || []),
+                ...Object.keys(professionalData.checkboxFields || {})
+            ],
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 4
+CCC references found: 9
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/scripts/bcif-professional-mapper.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-240)
+```javascript
+/* 🏢 BCIF PROFESSIONAL MAPPER - Advanced Pattern-Based Extraction */
+/* Based on professional BCIF mapping configuration v1 */
+
+class BCIFProfessionalMapper {
+    constructor() {
+        this.mapping = null;
+        this.init();
+    }
+
+    async init() {
+        console.log('🏢 BCIF Professional Mapper initializing...');
+        
+        // Load the professional mapping configuration
+        await this.loadMappingConfig();
+        
+        console.log('✅ BCIF Professional Mapper ready');
+    }
+```
+
+(lines: 240-393)
+```javascript
+    collectCheckboxStates(text, checkboxRules) {
+        const enabledFields = new Set();
+
+        for (const rule of checkboxRules.rules || []) {
+            const fieldName = rule.field;
+            if (!fieldName) continue;
+
+            const patterns = rule.match_any || [];
+            const found = patterns.some(pattern => {
+                try {
+                    // Convert Python regex to JavaScript
+                    const jsPattern = this.convertPythonRegexToJS(pattern);
+                    const regex = new RegExp(jsPattern, 'gi');
+                    return regex.test(text);
+                } catch (error) {
+                    console.warn(`Skipping invalid checkbox pattern: ${pattern}`, error);
+                    return false;
+                }
+            });
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 8
+CCC references found: 0
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/total-loss-forms.html
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: 300-360)
+```html
+    <!-- DISTRO: Feature hidden - redirect to main app -->
+    <script>
+    // This feature is hidden for distribution - redirect to Route Optimizer
+    window.location.href = 'route-cypher.html';
+    </script>
+```
+
+=== Keep Section ===
+(lines: 1-220)
+```html
+<div class="total-loss-header">
+    <h1>🚗 Total Loss Auto Forms</h1>
+    <p>Upload CCC PDF, extract data, and generate CCC BCIF forms</p>
+</div>
+...
+<section class="process-step" id="previewStep">
+    <h2 class="step-title">Review CCC BCIF Form</h2>
+    ...
+    <button class="cipher-btn cipher-btn--primary" id="generateFormBtn" disabled>
+        📄 Generate CCC BCIF Form
+    </button>
+```
+
+=== Meta Summary ===
+Total Loss references found: 5
+BCIF references found: 7
+CCC references found: 7
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/styles/total-loss-forms.css
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-200)
+```css
+/* 🚗 TOTAL LOSS FORMS - Dedicated styling for CCC PDF processing */
+/* Responsive multi-step form layout with progress tracking */
+```
+
+(lines: 600-820)
+```css
+/* =================================
+   BCIF FORM PREVIEW ENHANCEMENTS
+   ================================= */
+
+.interactive-pdf-preview {
+    max-height: 70vh;
+    overflow-y: auto;
+    ...
+}
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 2
+CCC references found: 1
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/scripts/total-loss-security.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-120)
+```javascript
+// Total Loss Security Validation
+class TotalLossSecurityValidator {
+    constructor() {
+        this.requiredFields = [
+            'officeId', 'claimNumber', 'year', 'make', 'model',
+            'adjusterLastName', 'insuredLastName', 'ownerLastName',
+            'lossZipCode', 'lossState', 'dateOfLoss', 'typeOfLoss',
+            'lossCategory', 'odometer', 'transmission'
+        ];
+        this.init();
+    }
+
+    init() {
+        console.log('🔒 Total Loss Security Validator initialized');
+        console.log('🛡️ Ready to validate CCC form data');
+    }
+```
+
+=== Meta Summary ===
+Total Loss references found: 2
+BCIF references found: 0
+CCC references found: 1
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/test-extraction.html
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: 1-120)
+```html
+<title>Test CCC PDF Extraction</title>
+...
+<h1>🧪 Test CCC PDF Extraction</h1>
+...
+<script src="scripts/bcif-professional-mapper.js"></script>
+<script src="scripts/ccc-pdf-extractor.js"></script>
+```
+
+=== Keep Section ===
+(lines: none)
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 1
+CCC references found: 4
+Old mapping found: 0
+Old UI components found: 1
+
+
+📌 File: claim_cipher_app/config/bcif-mapping.json
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-140)
+```json
+{
+  "meta": {
+    "name": "bcif_generic_mapping_v1",
+    "created": "2025-08-18 05:03:03",
+    "pdf_template": "Fillable_CCC_BCIF.pdf",
+    "notes": [
+      "Set ALL checkboxes OFF first, then enable checkboxes whose tokens match.",
+      "Regex are case-insensitive. Prefer 4DR over 2DR when both detected.",
+      "If multiple matches occur, use the first non-empty capture."
+    ]
+  },
+  "text_fields": {
+    "Company": {
+      "patterns": [
+        "(?m)^For:\\s*([^\\n]+)$",
+        "(?m)^Company:\\s*([^\\n]+)$"
+      ]
+    },
+```
+
+(lines: 520-700)
+```json
+  "post_processing": {
+    "doors_priority": {
+      "prefer": "4DR"
+    },
+    "cylinder_format": {
+      "if_only_displacement_found_assume": "4"
+    },
+    "zip_selection": "first_five_digits",
+    "make_mapping": {
+      "CHEV": "Chevrolet",
+      "CHEVR": "Chevrolet",
+      "FORD": "Ford",
+      ...
+    },
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 4
+CCC references found: 1
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/api/bcif_api.py
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-220)
+```python
+"""
+BCIF Form Filling API
+Uses the proven bcif_fill.py logic to fill PDF forms server-side
+"""
+...
+@app.route('/fill-bcif', methods=['POST'])
+def fill_bcif_form():
+    """
+    Fill BCIF form using extracted text data
+    
+    Expected JSON payload:
+    {
+        "extracted_text": "full text from CCC PDF",
+        "template_name": "Fillable_CCC_BCIF.pdf" (optional)
+    }
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 9
+CCC references found: 4
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/api/bcif_fill.py
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-220)
+```python
+def apply_text_mapping(text: str, spec: Dict[str, Any]) -> Dict[str, str]:
+    ...
+def collect_checkbox_states(text: str, checkbox_rules: Dict[str,Any]) -> List[str]:
+    ...
+def fill_pdf(template: Path, text_fields: Dict[str,str], on_fields: List[str], output: Path) -> None:
+    ...
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 5
+CCC references found: 0
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/api/bcif_fill_enhanced.py
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: 1-40)
+```python
+try:
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import NameObject, TextStringObject
+    print("Using pypdf (newer version)")
+except ImportError:
+    try:
+        from PyPDF2 import PdfReader, PdfWriter
+        from PyPDF2.generic import NameObject, TextStringObject
+        print("Using PyPDF2 (legacy version)")
+```
+
+=== Keep Section ===
+(lines: 80-200)
+```python
+def apply_text_mapping(text: str, spec: Dict[str, Any]) -> Dict[str, str]:
+    ...
+def collect_checkbox_states(text: str, checkbox_rules: Dict[str,Any]) -> List[str]:
+    ...
+def fill_pdf(template: Path, text_fields: Dict[str,str], on_fields: List[str], output: Path, flatten: bool = True) -> None:
+    ...
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 6
+CCC references found: 2
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/api/bcif_merge_and_fill.py
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-340)
+```python
+def deep_merge_mappings(base: Dict[str, Any], patch: Dict[str, Any]) -> Dict[str, Any]:
+    ...
+ap = argparse.ArgumentParser(description="Merge mapping JSONs and fill BCIF using merged spec")
+...
+text_fields = apply_text_mapping(text, merged.get("text_fields", {}), merged.get("post_processing", {}))
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 5
+CCC references found: 0
+Old mapping found: 1
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/api/start_api.py
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 1-120)
+```python
+"""
+Startup script for BCIF API
+Ensures dependencies are installed and starts the Flask server
+"""
+...
+required_files = [
+    'bcif_fill.py',
+    'requirements.txt',
+    '../config/bcif-mapping.json',
+    '../forms/Fillable_CCC_BCIF.pdf'
+]
+```
+
+=== Meta Summary ===
+Total Loss references found: 0
+BCIF references found: 4
+CCC references found: 1
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/welcome.html
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 160-200)
+```html
+<a href="total-loss-forms.html" class="module-container">
+  <div class="module-icon">🚗</div>
+  <div class="module-title">Total Loss Forms</div>
+  <div class="module-description">Process total loss claims</div>
+</a>
+```
+
+=== Meta Summary ===
+Total Loss references found: 2
+BCIF references found: 0
+CCC references found: 0
+Old mapping found: 0
+Old UI components found: 1
+
+
+📌 File: claim_cipher_app/command-center.html
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: 100-135)
+```html
+<!-- DISTRO: Hidden features - do not delete -->
+<!--
+<div class="module-card total-loss-card" onclick="navigateToModule('total-loss-forms.html')">
+    <span class="module-icon">🚗</span>
+    <h3 class="module-title">Total Loss Auto Forms</h3>
+    <p class="module-description">CCC-compatible form processing with comprehensive vehicle data capture and PDF generation.</p>
+    ...
+</div>
+-->
+```
+
+=== Keep Section ===
+(lines: none)
+
+=== Meta Summary ===
+Total Loss references found: 2
+BCIF references found: 0
+CCC references found: 1
+Old mapping found: 0
+Old UI components found: 1
+
+
+📌 File: claim_cipher_app/scripts/supabase-auth.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 210-245)
+```javascript
+const protectedPages = [
+    'command-center.html',
+    'settings-booth.html',
+    'route-cypher.html',
+    'mileage-cypher.html',
+    'jobs-studio.html',
+    'firms-directory.html',
+    'total-loss-forms.html',
+    'functionality-test.html'
+];
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 0
+CCC references found: 0
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: claim_cipher_app/scripts/login-cypher.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 930-965)
+```javascript
+const navigationPages = [
+    'command-center.html',
+    'route-cypher.html', 
+    'mileage-cypher.html',
+    'jobs-studio.html',
+    'total-loss-forms.html',
+    'firms-directory.html',
+    'settings-booth.html',
+    'functionality-test.html'
+];
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 0
+CCC references found: 0
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: switch-config.js
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 8-30)
+```javascript
+const htmlFiles = [
+    'claim_cipher_app/total-loss-forms.html',
+    'claim_cipher_app/route-cypher.html',
+    'claim_cipher_app/mileage-cypher.html',
+    // Add other HTML files that use the API config
+];
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 0
+CCC references found: 0
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: FINAL-STEPS.md
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 33-55)
+```markdown
+https://onyxempire8282.github.io/Studio-Cipher-1/total-loss-forms.html
+
+**Users worldwide can:**
+- ✅ Process CCC PDFs to BCIF forms
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 1
+CCC references found: 1
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: GITHUB-PAGES-SETUP.md
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 96-112)
+```markdown
+https://onyxempire8282.github.io/Studio-Cipher-1/total-loss-forms.html
+https://onyxempire8282.github.io/Studio-Cipher-1/mileage-cypher.html
+https://onyxempire8282.github.io/Studio-Cipher-1/route-cypher.html
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 0
+CCC references found: 0
+Old mapping found: 0
+Old UI components found: 0
+
+
+📌 File: VISUAL_DESIGN_MISSION_COMPLETE.md
+
+=== Deprecated Section ===
+(lines: none)
+
+=== Needs Review Section ===
+(lines: none)
+
+=== Keep Section ===
+(lines: 36-52)
+```markdown
+7. ✅ `total-loss-forms.html` - Consistent theming
+```
+
+=== Meta Summary ===
+Total Loss references found: 1
+BCIF references found: 0
+CCC references found: 0
+Old mapping found: 0
+Old UI components found: 0
+
+
+=== GLOBAL SUMMARY ===
+Total files scanned: 22
+Total deprecated found: 0
+Total needs review: 5
+Total keep: 17

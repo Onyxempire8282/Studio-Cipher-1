@@ -29,6 +29,12 @@
     --cipher-font-weight-normal: 400;
     --cipher-font-weight-medium: 500;
     --cipher-font-weight-bold: 700;
+    --font-hero: 1.75rem;
+    --font-section: 1.4rem;
+    --font-subsection: 1.1rem;
+    --font-body: 0.95rem;
+    --tracking-tight: 0.02em;
+    --tracking-wide: 0.08em;
     
     /* Spacing System */
     --cipher-space-xs: 0.5rem;
@@ -263,6 +269,28 @@ h3, .h3 { font-size: 1.5rem; }
 h4, .h4 { font-size: 1.25rem; }
 h5, .h5 { font-size: 1.1rem; }
 h6, .h6 { font-size: 1rem; }
+
+.cipher-hero-title {
+    font-size: var(--font-hero);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tight);
+}
+
+.cipher-section-title {
+    font-size: var(--font-section);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tight);
+}
+
+.cipher-label {
+    font-size: var(--font-subsection);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.cipher-body {
+    font-size: var(--font-body);
+}
 
 p, span, div, label,
 .text, .description, .subtitle {

@@ -27,19 +27,16 @@
 }
 
 .section-title h2 {
-  font-size: 1.8rem;
   font-weight: var(--cipher-font-weight-bold);
   color: #B87333;
   margin: 0;
 }
 
 .section-icon {
-  font-size: 1.5rem;
 }
 
 .section-subtitle {
   color: var(--cipher-text-secondary);
-  font-size: 0.95rem;
   margin: 0;
   margin-left: 2.5rem;
 }
@@ -61,7 +58,6 @@
   display: flex;
   align-items: center;
   gap: var(--cipher-space-sm);
-  font-size: 1.2rem;
   font-weight: var(--cipher-font-weight-bold);
   color: var(--cipher-text-primary);
   margin: 0 0 var(--cipher-space-lg) 0;
@@ -70,7 +66,6 @@
 }
 
 .form-icon {
-  font-size: 1.1rem;
 }
 
 /* =================================
@@ -86,14 +81,10 @@
   gap: var(--cipher-space-xs);
   color: var(--cipher-text-secondary);
   font-weight: var(--cipher-font-weight-medium);
-  font-size: 0.95rem;
   margin-bottom: var(--cipher-space-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .label-icon {
-  font-size: 0.9rem;
 }
 
 .route-input,
@@ -111,7 +102,6 @@
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--cipher-radius-lg);
   color: var(--cipher-text-primary);
-  font-size: 1rem;
   font-weight: var(--cipher-font-weight-medium);
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -151,7 +141,6 @@
 }
 
 .input-hint {
-  font-size: 0.8rem;
   color: var(--cipher-text-muted);
   margin-top: var(--cipher-space-xs);
   font-style: italic;
@@ -168,7 +157,6 @@
 }
 
 .route-arrow {
-  font-size: 1.5rem;
   color: #B87333;
   font-weight: bold;
   align-self: center;
@@ -188,7 +176,6 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--cipher-text-muted);
-  font-size: 0.85rem;
   pointer-events: none;
 }
 
@@ -212,7 +199,6 @@
 }
 
 .checkbox-subtitle {
-  font-size: 0.85rem;
   color: var(--cipher-text-muted);
 }
 
@@ -280,7 +266,6 @@
 }
 
 .btn-icon {
-  font-size: 1rem;
 }
 
 .form-actions {
@@ -307,7 +292,6 @@
   display: flex;
   align-items: center;
   gap: var(--cipher-space-sm);
-  font-size: 1.2rem;
   font-weight: var(--cipher-font-weight-bold);
   color: var(--cipher-text-primary);
   margin: 0 0 var(--cipher-space-lg) 0;
@@ -317,7 +301,6 @@
 
 .breakdown-icon,
 .copy-icon {
-  font-size: 1.1rem;
 }
 
 /* =================================
@@ -338,7 +321,6 @@
   border-radius: var(--cipher-radius-md);
   color: var(--cipher-text-primary);
   font-family: "Courier New", monospace;
-  font-size: 0.9rem;
   padding: var(--cipher-space-md);
   resize: vertical;
   margin-bottom: var(--cipher-space-md);
@@ -376,7 +358,6 @@
 
 .copy-hint {
   text-align: center;
-  font-size: 0.85rem;
   color: var(--cipher-text-muted);
   margin-top: var(--cipher-space-sm);
   font-style: italic;
@@ -412,7 +393,6 @@
 }
 
 .link-icon {
-  font-size: 0.9rem;
 }
 
 /* =================================
@@ -486,7 +466,6 @@
   }
 
   .section-title h2 {
-    font-size: 1.5rem;
   }
 
   .results-actions {

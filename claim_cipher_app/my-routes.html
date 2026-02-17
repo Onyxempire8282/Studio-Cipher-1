@@ -49,8 +49,8 @@
           <div class="rivet tr"></div>
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
-          <h1 class="hero-title">My Routes</h1>
-          <p class="hero-subtitle">
+          <h1 class="hero-title cipher-hero-title">My Routes</h1>
+          <p class="hero-subtitle cipher-body">
             Route lifecycle management and IRS-ready mileage logs
           </p>
         </section>
@@ -61,14 +61,14 @@
           <div class="rivet tr"></div>
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
-          <h3 class="plate-engraved-title">Filter Routes</h3>
+          <h3 class="plate-engraved-title cipher-section-title">Filter Routes</h3>
           <div class="filters-form">
             <div class="filter-group">
-              <label for="dateFromFilter" class="input-label">From Date</label>
+              <label for="dateFromFilter" class="input-label cipher-label">From Date</label>
               <input type="date" id="dateFromFilter" class="filter-input" />
             </div>
             <div class="filter-group">
-              <label for="dateToFilter" class="input-label">To Date</label>
+              <label for="dateToFilter" class="input-label cipher-label">To Date</label>
               <input type="date" id="dateToFilter" class="filter-input" />
             </div>
             <button id="applyFilters" class="cipher-btn plate-btn plate-btn--primary">
@@ -91,7 +91,7 @@
         <!-- Routes List Section -->
         <section class="routes-section">
           <div class="routes-header">
-            <h3 class="routes-title">
+            <h3 class="routes-title cipher-section-title">
               Routes <span id="routeCount" class="route-count"></span>
             </h3>
 
@@ -117,7 +117,7 @@
       <div id="exportModal" class="cipher-modal" style="display: none">
         <div class="cipher-modal-content">
           <div class="cipher-modal-header">
-            <h3>Export Mileage Log</h3>
+            <h3 class="cipher-section-title">Export Mileage Log</h3>
             <button class="cipher-btn cipher-btn--small close-btn" onclick="closeExportModal()">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
@@ -127,16 +127,16 @@
             </button>
           </div>
           <div class="cipher-modal-body">
-            <p class="modal-description">
+            <p class="modal-description cipher-body">
               Export closed route mileage logs for IRS tax reporting. Only
               closed routes with mileage logs are included.
             </p>
             <div class="form-group">
-              <label for="exportDateFrom" class="input-label">From Date</label>
+              <label for="exportDateFrom" class="input-label cipher-label">From Date</label>
               <input type="date" id="exportDateFrom" class="filter-input" required />
             </div>
             <div class="form-group">
-              <label for="exportDateTo" class="input-label">To Date</label>
+              <label for="exportDateTo" class="input-label cipher-label">To Date</label>
               <input type="date" id="exportDateTo" class="filter-input" required />
             </div>
             <div id="exportSummary" class="export-summary"></div>
@@ -164,7 +164,7 @@
       <div id="closeRouteModal" class="cipher-modal" style="display: none">
         <div class="cipher-modal-content">
           <div class="cipher-modal-header">
-            <h3>Close Route</h3>
+            <h3 class="cipher-section-title">Close Route</h3>
             <button class="cipher-btn cipher-btn--small close-btn" onclick="closeCloseRouteModal()">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
@@ -174,7 +174,7 @@
             </button>
           </div>
           <div class="cipher-modal-body">
-            <p class="modal-warning">
+            <p class="modal-warning cipher-body">
               This creates a finalized <strong>mileage log</strong> for tax purposes.
               Logs can be voided later if created in error.
             </p>
