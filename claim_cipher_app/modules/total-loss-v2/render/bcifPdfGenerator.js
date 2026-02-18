@@ -292,7 +292,7 @@ export async function generateBCIFPdf(tokenMap) {
 
         const items = section.codes.map(code => {
             const label = code + " " + (OL[code] || "");
-            return [label, tokenMap[code] === "X"];
+            return [label, tokenMap[code] === "\u2611"];
         });
         chkRow(c, items, 4);
         c.y -= 4;

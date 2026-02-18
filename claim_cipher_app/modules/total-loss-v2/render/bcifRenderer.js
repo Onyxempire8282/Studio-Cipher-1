@@ -1,8 +1,12 @@
 // Converts bcifPayload into a flat token map matching every {{TOKEN}}
-// in BCIF_AUTOMATION_TEMPLATE_v3.docx (309 tokens).
+// in BCIF_AUTOMATION_TEMPLATE_v4.docx (310 tokens).
 //
-// Checkbox tokens → "X" or ""
+// Checkbox tokens → "☑" (U+2611) or "☐" (U+2610)
 // Text tokens     → string value or ""
+
+function checkbox(isSelected) {
+    return isSelected ? "\u2611" : "\u2610";
+}
 
 // =========================================
 //  ALL 196 OPTION CODES from template
@@ -108,14 +112,14 @@ function renderClaimTokens(map, payload) {
     map.CLAIM_NUMBER    = c.claimNumber    || "";
     map.CLAIM_NUMBER_P2 = c.claimNumber    || "";
     map.INSURED_NAME    = c.carrier        || "";
-    map.OWNER_NAME      = c.carrier        || "";
-    map.OWNER_PHONE     = "";
+    map.OWNER_NAME      = c.ownerName      || c.carrier || "";
+    map.OWNER_PHONE     = c.ownerPhone     || "";
     map.ADJR_NAME       = c.adjuster       || "";
     map.APPR_NAME       = c.writer         || "";
     map.DATE_OF_LOSS    = c.dateOfLoss     || "";
     map.OFFICE_ID       = "";
     map.LOSS_STATE      = extractState(c.lossLocation);
-    map.LOSS_ZIP_CODE   = "";
+    map.LOSS_ZIP_CODE   = c.lossZip        || "";
 }
 
 // =========================================
@@ -141,25 +145,25 @@ function renderVehicleCheckboxTokens(map, payload) {
     const bodyNorm = normalizeBodyStyle(payload.vehicle.bodyStyle);
 
     for (const token of BODY_STYLES) {
-        map[token] = token === bodyNorm ? "X" : "";
+        map[token] = checkbox(token === bodyNorm);
     }
 
     for (const token of TRUCK_CONFIGS) {
-        map[token] = "";
+        map[token] = checkbox(false);
     }
 
     const cyls = parseCylinders(payload.vehicle.engine);
     for (const token of CYLINDER_TOKENS) {
-        map[token] = token === cyls ? "X" : "";
+        map[token] = checkbox(token === cyls);
     }
 
     const trans = parseTransmission(payload.vehicle.engine);
     for (const token of TRANS_TOKENS) {
-        map[token] = token === trans ? "X" : "";
+        map[token] = checkbox(token === trans);
     }
 
-    map.DIESEL = "";
-    map.TURBO  = "";
+    map.DIESEL = checkbox(false);
+    map.TURBO  = checkbox(false);
 }
 
 // =========================================
@@ -174,7 +178,7 @@ function renderConditionTokens(map, payload) {
         const rating = cond[group.key] ?? cond.overall ?? 1;
 
         for (let i = 0; i <= 3; i++) {
-            map[`${group.prefix}_${i}`] = i === rating ? "X" : "";
+            map[`${group.prefix}_${i}`] = checkbox(i === rating);
         }
 
         map[`${group.prefix}_COMMENT`] = comments[group.key] || "";
@@ -189,20 +193,20 @@ function renderLossTokens(map, payload) {
     const lossType = (payload.claim.lossType || "").toUpperCase();
 
     // Loss type checkboxes — "Theft" or "Other"
-    map.LOSS_TYPE_THEFT = lossType.includes("THEFT") ? "X" : "";
-    map.LOSS_TYPE_OTHER = (lossType && !lossType.includes("THEFT")) ? "X" : "";
+    map.LOSS_TYPE_THEFT = checkbox(lossType.includes("THEFT"));
+    map.LOSS_TYPE_OTHER = checkbox(lossType && !lossType.includes("THEFT"));
 
     // Coverage — separate from loss type, uses payload.claim.coverage
     const coverage = (payload.claim.coverage || "").toUpperCase();
-    map.COVERAGE_COLLISION     = coverage.includes("COLL") ? "X" : "";
-    map.COVERAGE_COMPREHENSIVE = coverage.includes("COMP") ? "X" : "";
-    map.COVERAGE_LIABILITY     = coverage.includes("LIAB") ? "X" : "";
-    map.COVERAGE_OTHER         = (!coverage || coverage === "OTHER" || coverage === "UNKNOWN") ? "X" : "";
+    map.COVERAGE_COLLISION     = checkbox(coverage.includes("COLL"));
+    map.COVERAGE_COMPREHENSIVE = checkbox(coverage.includes("COMP"));
+    map.COVERAGE_LIABILITY     = checkbox(coverage.includes("LIAB"));
+    map.COVERAGE_OTHER         = checkbox(!coverage || coverage === "OTHER" || coverage === "UNKNOWN");
 
-    map.LEASED_YES      = "";
-    map.LEASED_NO       = "X";
-    map.THIRD_PARTY_YES = "";
-    map.THIRD_PARTY_NO  = "X";
+    map.LEASED_YES      = checkbox(false);
+    map.LEASED_NO       = checkbox(true);
+    map.THIRD_PARTY_YES = checkbox(false);
+    map.THIRD_PARTY_NO  = checkbox(true);
 }
 
 // =========================================
@@ -213,13 +217,13 @@ function renderOptionTokens(map, payload) {
     const activeSet = new Set(payload.options || []);
 
     for (const code of OPTION_CODES) {
-        map[code] = activeSet.has(code) ? "X" : "";
+        map[code] = checkbox(activeSet.has(code));
     }
 
-    map.OTHER_BC  = activeSet.has("OTHER_BC")  ? "X" : "";
-    map.OTHER_BD  = activeSet.has("OTHER_BD")  ? "X" : "";
-    map.SAFETY_BC = activeSet.has("SAFETY_BC") ? "X" : "";
-    map.SAFETY_BD = activeSet.has("SAFETY_BD") ? "X" : "";
+    map.OTHER_BC  = checkbox(activeSet.has("OTHER_BC"));
+    map.OTHER_BD  = checkbox(activeSet.has("OTHER_BD"));
+    map.SAFETY_BC = checkbox(activeSet.has("SAFETY_BC"));
+    map.SAFETY_BD = checkbox(activeSet.has("SAFETY_BD"));
 }
 
 // =========================================
@@ -251,7 +255,7 @@ function renderRefurbishmentTokens(map) {
     ];
 
     for (const token of refCheckboxTokens) {
-        map[token] = "";
+        map[token] = checkbox(false);
     }
 }
 

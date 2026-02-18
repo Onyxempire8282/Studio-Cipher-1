@@ -17,6 +17,7 @@ Template:
     Uses ../claim_cipher_app/forms/bcif/BCIF_AUTOMATION_TEMPLATE_v3.docx
 """
 
+import json
 import os
 import re
 import sys
@@ -37,12 +38,19 @@ except ImportError:
 SCRIPT_DIR = Path(__file__).parent
 INPUT_DIR = SCRIPT_DIR / "input"
 OUTPUT_DIR = SCRIPT_DIR / "output"
-TEMPLATE_PATH = SCRIPT_DIR.parent / "claim_cipher_app" / "forms" / "bcif" / "BCIF_AUTOMATION_TEMPLATE_v3.docx"
+TEMPLATE_PATH = SCRIPT_DIR.parent / "claim_cipher_app" / "forms" / "bcif" / "BCIF_AUTOMATION_TEMPLATE_v4.docx"
 
 INPUT_DIR.mkdir(exist_ok=True)
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # No TOKEN_TO_FIELD map needed — the template uses {{TOKEN}} text placeholders directly.
+
+# Checkbox symbols — ☑ (selected) / ☐ (not selected)
+CHK_ON  = "\u2611"  # ☑
+CHK_OFF = "\u2610"  # ☐
+
+def checkbox(is_selected: bool) -> str:
+    return CHK_ON if is_selected else CHK_OFF
 
 # ─────────────────────────────────────────────────────────
 #  1. PDF TEXT EXTRACTION
@@ -63,15 +71,31 @@ def extract_text(pdf_path: str) -> str:
 #  2. CCC ESTIMATE PARSER (ported from cccParser.js)
 # ─────────────────────────────────────────────────────────
 
+# Make abbreviation map — CCC uses 4-char short codes
+MAKE_ABBREV = {
+    "HOND": "HONDA", "CHEV": "CHEVROLET", "TOYT": "TOYOTA",
+    "NISS": "NISSAN", "HYUN": "HYUNDAI", "MITS": "MITSUBISHI",
+    "MERZ": "MERCEDES-BENZ", "BENZ": "MERCEDES-BENZ",
+    "MERC": "MERCURY", "LINC": "LINCOLN", "CADI": "CADILLAC",
+    "BUIC": "BUICK", "PONT": "PONTIAC", "OLDS": "OLDSMOBILE",
+    "CHRY": "CHRYSLER", "DODG": "DODGE", "JEEP": "JEEP",
+    "SUBA": "SUBARU", "MAZD": "MAZDA", "VOLV": "VOLVO",
+    "SATU": "SATURN", "ACUR": "ACURA", "LEXU": "LEXUS",
+    "INFI": "INFINITI", "SCION": "SCION", "MASE": "MASERATI",
+    "JAGU": "JAGUAR", "LNDR": "LAND ROVER", "ROVE": "LAND ROVER",
+    "PORS": "PORSCHE", "AUDI": "AUDI", "SAAB": "SAAB",
+    "SUZU": "SUZUKI", "ISUZ": "ISUZU", "VOLK": "VOLKSWAGEN",
+    "FORD": "FORD", "GMC": "GMC", "BMW": "BMW", "KIA": "KIA",
+    "MINI": "MINI", "FIAT": "FIAT", "RAM": "RAM",
+    "TSLA": "TESLA", "TELA": "TESLA", "RIVE": "RIVIAN",
+    "GENI": "GENESIS", "ALFA": "ALFA ROMEO",
+}
+
+
 def normalize_ws(text: str) -> str:
     text = text.replace("\r\n", "\n").replace("\r", "\n").replace("\t", " ")
     text = text.replace("\u00A0", " ")
     return re.sub(r" {2,}", " ", text)
-
-
-def extract_field(text, pattern):
-    m = re.search(pattern, text, re.IGNORECASE)
-    return m.group(1).strip() if m else ""
 
 
 def extract_field_same_line(text, anchor_pattern):
@@ -109,14 +133,61 @@ def extract_vehicle_desc_line(text):
     return m.group(1).strip() if m else ""
 
 
+def clean_name(raw):
+    if not raw:
+        return ""
+    name = raw.strip()
+    # Remove trailing phone numbers
+    name = re.sub(r"\s*\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}.*$", "", name)
+    # Remove trailing addresses
+    name = re.sub(r"\s*\d+\s+[A-Z].*$", "", name)
+    # LASTNAME, FIRSTNAME → Firstname Lastname
+    if "," in name:
+        parts = [p.strip() for p in name.split(",")]
+        if len(parts) == 2 and len(parts[0]) > 1 and len(parts[1]) > 1:
+            name = parts[1].capitalize() + " " + parts[0].capitalize()
+    return name.strip()
+
+
 def extract_owner(text):
-    m = re.search(r"Owner\s*:\s*([A-Z][A-Za-z',.\- ]+)", text)
-    return m.group(1).strip() if m else ""
+    """Owner name: bounded between 'Owner:' and 'Job Number' (or end of line)."""
+    m = re.search(r"Owner\s*:\s*([\s\S]*?)(?=Job\s*Number|Written\s*By|\n\s*\n)", text, re.IGNORECASE)
+    if not m:
+        return ""
+    first_line = m.group(1).split("\n")[0].strip()
+    return clean_name(first_line)
 
 
 def extract_insured(text):
-    m = re.search(r"Insured\s*:\s*([A-Z][A-Za-z',.\- ]+)", text)
-    return m.group(1).strip() if m else ""
+    """Insured name: multiline, bounded between 'Insured:' and 'Policy #:' or 'Claim #:'.
+    Also checks for continuation lines after Claim # on the next line."""
+    m = re.search(r"Insured\s*:\s*([\s\S]*?)(?=Policy\s*#|Claim\s*#)", text, re.IGNORECASE)
+    if not m:
+        return ""
+    first_part = m.group(1).strip()
+
+    # Check for continuation: scan the line(s) after the Insured/Policy/Claim line
+    # for text that looks like a name continuation (not a field label)
+    after_pos = m.end()
+    # Skip past "Policy #: ... Claim #: ..." on the same line
+    rest = text[after_pos:]
+    # Find end of current line (past Policy/Claim fields)
+    eol = rest.find("\n")
+    if eol != -1:
+        continuation_lines = rest[eol + 1:eol + 200].split("\n")
+        for cline in continuation_lines:
+            cline = cline.strip()
+            if not cline:
+                break
+            # Stop if it's a known label
+            if re.match(r"^(Type\s+of\s+Loss|Date\s+of\s+Loss|Point\s+of\s+Impact|Owner|Written|Adjuster|Inspection|VEHICLE)", cline, re.IGNORECASE):
+                break
+            # If it looks like a name continuation (short, no colons, not a number)
+            if len(cline) < 60 and ":" not in cline and not re.match(r"^\d", cline):
+                first_part = first_part + " " + cline
+            break  # Only check first continuation line
+
+    return first_part.strip()
 
 
 def extract_carrier(text):
@@ -128,17 +199,71 @@ def extract_carrier(text):
     return ""
 
 
+def extract_owner_phone(text):
+    """Owner phone: from Inspection Location block, not owner header."""
+    idx = re.search(r"Inspection\s+Location\s*:", text, re.IGNORECASE)
+    if not idx:
+        return ""
+    window = text[idx.start():idx.start() + 600]
+    m = re.search(r"\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}", window)
+    if not m:
+        return ""
+    digits = re.sub(r"\D", "", m.group(0))
+    if len(digits) == 10:
+        return f"({digits[:3]}) {digits[3:6]}-{digits[6:]}"
+    return m.group(0).strip()
+
+
+def extract_loss_type(text):
+    """Loss type: bounded between 'Type of Loss:' and 'Date of Loss:'."""
+    m = re.search(r"Type\s+of\s+Loss\s*:\s*([\s\S]*?)(?=Date\s+of\s+Loss)", text, re.IGNORECASE)
+    if not m:
+        return ""
+    return m.group(1).split("\n")[0].strip()
+
+
+def extract_date_of_loss(text):
+    m = re.search(
+        r"Date\s+of\s+Loss\s*:\s*(\d{1,2}/\d{1,2}/\d{4}(?:\s+\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))?)",
+        text, re.IGNORECASE
+    )
+    return m.group(1).strip() if m else ""
+
+
+def extract_loss_zip(text):
+    """ZIP from Inspection Location block (NOT owner address)."""
+    idx = re.search(r"Inspection\s+Location\s*:", text, re.IGNORECASE)
+    if not idx:
+        return ""
+    window = text[idx.start():idx.start() + 400]
+    m = re.search(r"[A-Za-z]+,?\s+[A-Z]{2}\s+(\d{5})", window)
+    return m.group(1) if m else ""
+
+
 def extract_location(text):
     idx = re.search(r"Inspection\s+Location\s*:", text, re.IGNORECASE)
     if not idx:
         return ""
     window = text[idx.end():idx.end() + 400]
     lines = [l.strip() for l in window.split("\n") if l.strip()]
-    for line in lines:
+
+    street_addr = ""
+    street_idx = -1
+
+    for i, line in enumerate(lines):
         if re.match(r"^\d+\s+[A-Za-z]", line):
-            return line
+            street_addr = line
+            street_idx = i
+            break
         if re.match(r"^[A-Za-z]+,?\s+[A-Z]{2}\s+\d{5}", line):
             return line
+
+    if street_addr:
+        for j in range(street_idx + 1, min(street_idx + 5, len(lines))):
+            if re.match(r"^[A-Za-z]+,?\s+[A-Z]{2}\s+\d{5}", lines[j]):
+                return street_addr + ", " + lines[j]
+        return street_addr
+
     return ""
 
 
@@ -186,29 +311,113 @@ def extract_options(text):
     return options
 
 
+def parse_vehicle_line(text):
+    """Parse vehicle description line for body, cylinders, engine size, transmission."""
+    desc = extract_vehicle_desc_line(text)
+    result = {
+        "year": "", "make": "", "model": "",
+        "bodyStyle": "", "cylinders": "", "engineSize": "", "transmission": "",
+    }
+    if not desc:
+        return result
+
+    # Year
+    ym = re.match(r"^(\d{4})\b", desc)
+    if ym:
+        result["year"] = ym.group(1)
+
+    # Make (normalized)
+    mm = re.match(r"^\d{4}\s+([A-Za-z]+)", desc)
+    if mm:
+        raw_make = mm.group(1).upper()
+        result["make"] = MAKE_ABBREV.get(raw_make, raw_make)
+
+    # Model
+    mdl = re.match(r"^\d{4}\s+\S+\s+(\S+)", desc)
+    if mdl:
+        result["model"] = mdl.group(1)
+
+    # Body style
+    d = desc.upper()
+    if re.search(r"\b4D\b", d) or "SEDAN" in d or re.search(r"\bSED\b", d):
+        result["bodyStyle"] = "BODY_4DR"
+    elif re.search(r"\b2D\b", d) or "COUPE" in d or re.search(r"\bCPE\b", d):
+        result["bodyStyle"] = "BODY_2DR"
+    elif "CONVERT" in d or re.search(r"\bCNV\b", d):
+        result["bodyStyle"] = "BODY_CONVERTIBLE"
+    elif "HATCH" in d or re.search(r"\bHBK\b", d):
+        result["bodyStyle"] = "BODY_HATCHBACK"
+    elif "PICKUP" in d or re.search(r"\bPKP\b", d):
+        result["bodyStyle"] = "BODY_PICKUP"
+    elif "UTIL" in d or "SUV" in d:
+        result["bodyStyle"] = "BODY_UTILITY"
+    elif "VAN" in d or "MINIVAN" in d:
+        result["bodyStyle"] = "BODY_VAN"
+    elif "WAGON" in d or re.search(r"\bWGN\b", d) or "ESTATE" in d:
+        result["bodyStyle"] = "BODY_WAGON"
+
+    # Cylinders + Engine size: "4-1.8L" pattern
+    ce = re.search(r"(\d+)-([\d.]+L)", desc, re.IGNORECASE)
+    if ce:
+        result["cylinders"] = f"CYL_{ce.group(1)}"
+        result["engineSize"] = ce.group(2)
+    else:
+        vm = re.search(r"[VvIi](\d+)", desc)
+        if vm:
+            result["cylinders"] = f"CYL_{vm.group(1)}"
+        sm = re.search(r"(\d+\.\d+L)", desc, re.IGNORECASE)
+        if sm:
+            result["engineSize"] = sm.group(1)
+
+    # Transmission
+    if re.search(r"Continuously\s+Variable", desc, re.IGNORECASE):
+        result["transmission"] = "TRANS_AUTO"
+    elif "AUTOMATIC" in d:
+        result["transmission"] = "TRANS_AUTO"
+    elif "CVT" in d:
+        result["transmission"] = "TRANS_AUTO"
+    elif re.search(r"\b6[\s-]*SP", d):
+        result["transmission"] = "TRANS_S6"
+    elif re.search(r"\b5[\s-]*SP", d):
+        result["transmission"] = "TRANS_S5"
+    elif re.search(r"\b4[\s-]*SP", d):
+        result["transmission"] = "TRANS_S4"
+    elif re.search(r"\b3[\s-]*SP", d):
+        result["transmission"] = "TRANS_S3"
+    elif "4WD" in d or "4X4" in d or "AWD" in d:
+        result["transmission"] = "TRANS_4W"
+    elif "OVERDRIVE" in d or "O/D" in d:
+        result["transmission"] = "TRANS_OD"
+
+    return result
+
+
 def parse_ccc_text(raw_text: str) -> dict:
     """Parse a CCC Preliminary Estimate from raw text."""
     text = normalize_ws(raw_text)
-    desc = extract_vehicle_desc_line(text)
-    year_m = re.match(r"^(\d{4})\b", desc) if desc else None
-    make_m = re.match(r"^\d{4}\s+(\S+)", desc) if desc else None
-    model_m = re.match(r"^\d{4}\s+\S+\s+(\S+)", desc) if desc else None
+    veh = parse_vehicle_line(text)
 
     return {
         "ownerName": extract_owner(text),
         "insuredName": extract_insured(text),
+        "ownerPhone": extract_owner_phone(text),
         "carrierName": extract_carrier(text),
         "claimNumber": extract_field_same_line(text, r"claim\s*#\s*:?"),
         "policyNumber": extract_field_same_line(text, r"policy\s*#\s*:?"),
-        "dateOfLoss": extract_field(text, r"date\s+of\s+loss\s*:?\s*(.+)"),
+        "dateOfLoss": extract_date_of_loss(text),
+        "lossType": extract_loss_type(text),
+        "lossZip": extract_loss_zip(text),
         "inspectionLocation": extract_location(text),
-        "year": year_m.group(1) if year_m else "",
-        "make": make_m.group(1) if make_m else "",
-        "model": model_m.group(1) if model_m else "",
+        "year": veh["year"],
+        "make": veh["make"],
+        "model": veh["model"],
+        "bodyStyle": veh["bodyStyle"],
+        "cylinders": veh["cylinders"],
+        "engineSize": veh["engineSize"],
+        "transmission": veh["transmission"],
         "vin": extract_vin(text),
         "mileage": extract_mileage(text),
         "conditionRating": extract_condition(text),
-        "lossType": extract_field(text, r"type\s+of\s+loss\s*:?\s*(.+)"),
         "estimateTotal": extract_estimate_total(text),
         "options": extract_options(text),
     }
@@ -438,13 +647,13 @@ def build_token_map(parsed: dict) -> dict:
     m["CLAIM_NUMBER_P2"] = parsed.get("claimNumber", "")
     m["INSURED_NAME"] = parsed.get("insuredName", "") or parsed.get("carrierName", "")
     m["OWNER_NAME"] = parsed.get("ownerName", "") or parsed.get("carrierName", "")
-    m["OWNER_PHONE"] = ""
+    m["OWNER_PHONE"] = parsed.get("ownerPhone", "")
     m["ADJR_NAME"] = ""
     m["APPR_NAME"] = ""
     m["DATE_OF_LOSS"] = parsed.get("dateOfLoss", "")
     m["OFFICE_ID"] = ""
     m["LOSS_STATE"] = extract_state(parsed.get("inspectionLocation", ""))
-    m["LOSS_ZIP_CODE"] = ""
+    m["LOSS_ZIP_CODE"] = parsed.get("lossZip", "")
 
     # Vehicle text fields
     m["YEAR"] = str(parsed.get("year", ""))
@@ -452,50 +661,50 @@ def build_token_map(parsed: dict) -> dict:
     m["MODEL"] = parsed.get("model", "")
     m["VIN"] = parsed.get("vin", "")
     m["MILEAGE"] = parsed.get("mileage", "")
-    m["ENGINE_SIZE"] = ""
+    m["ENGINE_SIZE"] = parsed.get("engineSize", "")
     m["SPECIAL_FEATURES"] = ""
 
     # Loss type
     lt = (parsed.get("lossType", "") or "").upper()
-    m["LOSS_TYPE_THEFT"] = "X" if "THEFT" in lt else ""
-    m["LOSS_TYPE_OTHER"] = "X" if (lt and "THEFT" not in lt) else ""
+    m["LOSS_TYPE_THEFT"] = checkbox("THEFT" in lt)
+    m["LOSS_TYPE_OTHER"] = checkbox(bool(lt) and "THEFT" not in lt)
 
     # Coverage — default to OTHER since CCC estimates don't usually specify coverage
-    m["COVERAGE_COLLISION"] = ""
-    m["COVERAGE_COMPREHENSIVE"] = ""
-    m["COVERAGE_LIABILITY"] = ""
-    m["COVERAGE_OTHER"] = "X"
+    m["COVERAGE_COLLISION"] = checkbox(False)
+    m["COVERAGE_COMPREHENSIVE"] = checkbox(False)
+    m["COVERAGE_LIABILITY"] = checkbox(False)
+    m["COVERAGE_OTHER"] = checkbox(True)
 
     # Leased / Third party defaults
-    m["LEASED_YES"] = ""
-    m["LEASED_NO"] = "X"
-    m["THIRD_PARTY_YES"] = ""
-    m["THIRD_PARTY_NO"] = "X"
+    m["LEASED_YES"] = checkbox(False)
+    m["LEASED_NO"] = checkbox(True)
+    m["THIRD_PARTY_YES"] = checkbox(False)
+    m["THIRD_PARTY_NO"] = checkbox(True)
 
-    # Body style
-    desc = extract_vehicle_desc_line(normalize_ws(
-        extract_text.__doc__ or ""  # dummy — we'll use the raw text later
-    )) if False else ""
+    # Body style — use pre-parsed token from parseVehicleLine
     body_styles = ["BODY_2DR", "BODY_4DR", "BODY_CONVERTIBLE", "BODY_HATCHBACK",
                    "BODY_PICKUP", "BODY_UTILITY", "BODY_VAN", "BODY_WAGON"]
-    body = normalize_body(f"{parsed.get('year','')} {parsed.get('make','')} {parsed.get('model','')}")
+    body = parsed.get("bodyStyle", "")
     for bs in body_styles:
-        m[bs] = "X" if bs == body else ""
+        m[bs] = checkbox(bs == body)
 
-    # Truck config — empty defaults
+    # Truck config
     for tc in ["TRUCK_HALF_TON", "TRUCK_THREE_QUARTER_TON", "TRUCK_ONE_TON",
-               "TRUCK_SHORT_BED", "TRUCK_LONG_BED", "TRUCK_CAB_CHASSIS", "TRUCK_FLEETSIDE"]:
-        m[tc] = ""
+               "TRUCK_SHORT_BED", "TRUCK_LONG_BED", "TRUCK_CAB_CHASSIS",
+               "TRUCK_FLEETSIDE", "TRUCK_FENDERSIDE"]:
+        m[tc] = checkbox(False)
 
-    # Cylinders — empty defaults
+    # Cylinders — use pre-parsed token (e.g. "CYL_4")
+    cyl_token = parsed.get("cylinders", "")
     for c in ["CYL_3", "CYL_4", "CYL_5", "CYL_6", "CYL_8", "CYL_10", "CYL_12"]:
-        m[c] = ""
+        m[c] = checkbox(c == cyl_token)
 
-    # Transmission — empty defaults
-    for t in ["TRANS_AUTO", "TRANS_OD", "TRANS_S3", "TRANS_S4", "TRANS_S5", "TRANS_S6", "TRANS_4W"]:
-        m[t] = ""
-    m["DIESEL"] = ""
-    m["TURBO"] = ""
+    # Transmission — use pre-parsed token (e.g. "TRANS_AUTO")
+    trans_token = parsed.get("transmission", "")
+    for t in ["TRANS_AUTO", "TRANS_OD", "TRANS_S3", "TRANS_S4", "TRANS_S5", "TRANS_S6", "TRANS_4W", "TRANS_PO"]:
+        m[t] = checkbox(t == trans_token)
+    m["DIESEL"] = checkbox(False)
+    m["TURBO"] = checkbox(False)
 
     # Condition ratings — apply overall rating to all categories
     rating = condition_rating_to_int(parsed.get("conditionRating", ""))
@@ -505,7 +714,7 @@ def build_token_map(parsed: dict) -> dict:
     ]
     for prefix in cond_groups:
         for i in range(4):
-            m[f"{prefix}_{i}"] = "X" if i == rating else ""
+            m[f"{prefix}_{i}"] = checkbox(i == rating)
         m[f"{prefix}_COMMENT"] = ""
 
     # Options
@@ -537,12 +746,12 @@ def build_token_map(parsed: dict) -> dict:
         "ZG",
     ]
     for code in all_option_codes:
-        m[code] = "X" if code in option_tokens else ""
+        m[code] = checkbox(code in option_tokens)
     # Multi-char option tokens
-    m["OTHER_BC"] = "X" if "OTHER_BC" in option_tokens else ""
-    m["OTHER_BD"] = "X" if "OTHER_BD" in option_tokens else ""
-    m["SAFETY_BC"] = "X" if "SAFETY_BC" in option_tokens else ""
-    m["SAFETY_BD"] = "X" if "SAFETY_BD" in option_tokens else ""
+    m["OTHER_BC"] = checkbox("OTHER_BC" in option_tokens)
+    m["OTHER_BD"] = checkbox("OTHER_BD" in option_tokens)
+    m["SAFETY_BC"] = checkbox("SAFETY_BC" in option_tokens)
+    m["SAFETY_BD"] = checkbox("SAFETY_BD" in option_tokens)
 
     # Refurbishment — empty defaults
     ref_text = [
@@ -564,7 +773,7 @@ def build_token_map(parsed: dict) -> dict:
         "REF_INTERIOR_VINYL", "REF_INTERIOR_CLOTH", "REF_INTERIOR_LEATHER",
     ]
     for t in ref_chk:
-        m[t] = ""
+        m[t] = checkbox(False)
 
     # Adjustments — empty defaults
     adj = [
@@ -630,7 +839,8 @@ def fill_tokens_in_xml(xml: str, token_map: dict) -> tuple:
 
         # Extract all <w:t> elements with their positions relative to p_inner
         # We need to find runs (<w:r>) and their <w:t> children
-        t_pattern = re.compile(r'(<w:t[^>]*>)(.*?)(</w:t>)', re.DOTALL)
+        # (?=[\s>]) ensures we match <w:t> or <w:t ...> but NOT <w:tabs>, <w:tab/> etc.
+        t_pattern = re.compile(r'(<w:t(?=[\s>])[^>]*>)(.*?)(</w:t>)', re.DOTALL)
         t_matches = list(t_pattern.finditer(p_inner))
 
         if not t_matches:
@@ -726,7 +936,7 @@ def process_pdf(pdf_path: str):
 
     # 3. Build token map
     token_map = build_token_map(parsed)
-    active = {k: v for k, v in token_map.items() if v and v != ""}
+    active = {k: v for k, v in token_map.items() if v and v != "" and v != CHK_OFF}
     print(f"  Token map: {len(token_map)} total, {len(active)} active")
 
     # Show active option tokens
@@ -753,6 +963,11 @@ def process_pdf(pdf_path: str):
     size_kb = output_path.stat().st_size / 1024
     print(f"  Tokens filled: {filled_count}")
     print(f"  OUTPUT: {output_path} ({size_kb:.1f} KB)")
+
+    # Save token map as JSON sidecar for --verify
+    sidecar = output_path.with_suffix(".json")
+    sidecar.write_text(json.dumps(token_map, indent=2), encoding="utf-8")
+    print(f"  Token map saved: {sidecar.name}")
     print(f"  SUCCESS")
 
 
@@ -786,12 +1001,13 @@ TOKEN_SECTIONS = [
     ]),
     ("Truck Config", [
         "TRUCK_HALF_TON", "TRUCK_THREE_QUARTER_TON", "TRUCK_ONE_TON",
-        "TRUCK_SHORT_BED", "TRUCK_LONG_BED", "TRUCK_CAB_CHASSIS", "TRUCK_FLEETSIDE",
+        "TRUCK_SHORT_BED", "TRUCK_LONG_BED", "TRUCK_CAB_CHASSIS",
+        "TRUCK_FLEETSIDE", "TRUCK_FENDERSIDE",
     ]),
     ("Engine / Trans", [
         "CYL_3", "CYL_4", "CYL_5", "CYL_6", "CYL_8", "CYL_10", "CYL_12",
         "TURBO", "DIESEL",
-        "TRANS_AUTO", "TRANS_OD", "TRANS_S3", "TRANS_S4", "TRANS_S5", "TRANS_S6", "TRANS_4W",
+        "TRANS_AUTO", "TRANS_OD", "TRANS_S3", "TRANS_S4", "TRANS_S5", "TRANS_S6", "TRANS_4W", "TRANS_PO",
     ]),
     ("Condition — Exterior", [
         "PAINT_0", "PAINT_1", "PAINT_2", "PAINT_3", "PAINT_COMMENT",
@@ -926,13 +1142,13 @@ def generate_html_report(docx_path: str, token_map: dict = None) -> str:
                 unfilled_count  # already counted
             elif token_map and token in token_map:
                 val = token_map[token]
-                if val and val.strip():
+                if val and val.strip() and val != CHK_OFF:
                     css = "filled"
-                    display_val = val if val != "X" else "&#10003;"  # checkmark for X
+                    display_val = val
                     filled_count += 1
                 else:
                     css = "blank"
-                    display_val = "(blank)"
+                    display_val = val if val in (CHK_OFF,) else "(blank)"
                     empty_count += 1
             else:
                 css = "blank"
@@ -1107,6 +1323,17 @@ def run_verify(docx_path: str = None, token_map: dict = None):
             print("No .docx files found in output/. Run a fill test first.")
             sys.exit(1)
         docx_path = str(docx_files[0])
+
+    # Try to load the JSON sidecar (token map saved during fill)
+    if not token_map:
+        sidecar = Path(docx_path).with_suffix(".json")
+        if sidecar.exists():
+            token_map = json.loads(sidecar.read_text(encoding="utf-8"))
+            print(f"Token map: {sidecar.name} ({len(token_map)} tokens)")
+        else:
+            print(f"WARNING: No token map sidecar found at {sidecar.name}")
+            print(f"  Report will show blank vs unfilled only (no filled values).")
+            print(f"  Re-run the fill test to generate the sidecar JSON.")
 
     print(f"Verifying: {docx_path}")
     report_path = generate_html_report(docx_path, token_map)

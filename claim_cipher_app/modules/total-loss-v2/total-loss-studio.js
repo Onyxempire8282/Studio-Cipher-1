@@ -248,12 +248,19 @@ function buildPayloadFromParsed(parsed) {
     payload.claim.dateOfLoss   = parsed.dateOfLoss          || '';
     payload.claim.lossLocation = parsed.inspectionLocation  || '';
 
+    // New parsed fields → claim
+    payload.claim.ownerName    = parsed.ownerName            || '';
+    payload.claim.ownerPhone   = parsed.ownerPhone           || '';
+    payload.claim.lossZip      = parsed.lossZip              || '';
+
     // Vehicle
     payload.vehicle.year       = String(parsed.year || '');
     payload.vehicle.make       = parsed.make                || '';
     payload.vehicle.model      = parsed.model               || '';
     payload.vehicle.vin        = parsed.vin                 || '';
     payload.vehicle.odometer   = parsed.mileage             || '';
+    payload.vehicle.bodyStyle  = parsed.bodyStyle            || '';
+    payload.vehicle.engine     = buildEngineString(parsed);
 
     // Condition
     const condition = mapConditionFromCCC(parsed.conditionRating);
@@ -274,6 +281,37 @@ function buildPayloadFromParsed(parsed) {
         : 'Vehicle appears repairable based on current estimate data.';
 
     return payload;
+}
+
+function buildEngineString(parsed) {
+    // Compose an engine description string compatible with bcifRenderer's
+    // parseCylinders() and parseTransmission() helpers.
+    // e.g. "4 cylinder 1.8L Auto"
+    const parts = [];
+
+    // Cylinders: "CYL_4" → "4 cylinder"
+    if (parsed.cylinders) {
+        const n = parsed.cylinders.replace(/^CYL_/, '');
+        if (n) parts.push(`${n} cylinder`);
+    }
+
+    // Engine size: "1.8L"
+    if (parsed.engineSize) parts.push(parsed.engineSize);
+
+    // Transmission: "TRANS_AUTO" → "Auto", "TRANS_S5" → "5-Speed"
+    if (parsed.transmission) {
+        const t = parsed.transmission;
+        if (t === 'TRANS_AUTO') parts.push('Auto');
+        else if (t === 'TRANS_S3') parts.push('3-Speed');
+        else if (t === 'TRANS_S4') parts.push('4-Speed');
+        else if (t === 'TRANS_S5') parts.push('5-Speed');
+        else if (t === 'TRANS_S6') parts.push('6-Speed');
+        else if (t === 'TRANS_4W') parts.push('4WD');
+        else if (t === 'TRANS_OD') parts.push('Overdrive');
+        else if (t === 'TRANS_PO') parts.push('Power Overdrive');
+    }
+
+    return parts.join(' ') || '';
 }
 
 // =========================================

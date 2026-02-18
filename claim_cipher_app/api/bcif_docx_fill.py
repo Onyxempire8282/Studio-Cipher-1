@@ -17,7 +17,7 @@ from flask import request, jsonify, send_file
 
 from bcif_api import app
 
-TEMPLATE_PATH = Path(__file__).parent.parent / "forms" / "bcif" / "BCIF_AUTOMATION_TEMPLATE_v3.docx"
+TEMPLATE_PATH = Path(__file__).parent.parent / "forms" / "bcif" / "BCIF_AUTOMATION_TEMPLATE_v4.docx"
 
 
 def _xml_escape(text: str) -> str:
@@ -50,7 +50,8 @@ def _fill_tokens_in_xml(xml: str, token_map: dict) -> tuple:
         p_inner = para_match.group(2)
         p_close = para_match.group(3)
 
-        t_pattern = re.compile(r'(<w:t[^>]*>)(.*?)(</w:t>)', re.DOTALL)
+        # (?=[\s>]) ensures we match <w:t> or <w:t ...> but NOT <w:tabs>, <w:tab/> etc.
+        t_pattern = re.compile(r'(<w:t(?=[\s>])[^>]*>)(.*?)(</w:t>)', re.DOTALL)
         t_matches = list(t_pattern.finditer(p_inner))
         if not t_matches:
             return para_match.group(0)

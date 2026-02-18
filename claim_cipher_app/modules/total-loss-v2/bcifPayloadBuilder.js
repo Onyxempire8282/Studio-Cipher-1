@@ -85,7 +85,7 @@ function setText(map, token, value) {
 
 function setCheck(map, token) {
     if (token in map) {
-        map[token] = "X";
+        map[token] = "\u2611"; // ☑
     }
 }
 

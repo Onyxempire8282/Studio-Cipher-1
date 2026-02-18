@@ -172,6 +172,12 @@ header {
     justify-self: start;
 }
 
+.sidebar-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
 .user-section {
     display: flex;
     align-items: center;

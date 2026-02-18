@@ -3,25 +3,90 @@
 // anchor-based pattern matching. No reliance on file names,
 // insured names, or fixed line numbers.
 
+// =========================================
+//  MAKE ABBREVIATION MAP
+// =========================================
+
+const MAKE_ABBREV = {
+    "HOND": "HONDA",
+    "CHEV": "CHEVROLET",
+    "TOYT": "TOYOTA",
+    "NISS": "NISSAN",
+    "HYUN": "HYUNDAI",
+    "MITS": "MITSUBISHI",
+    "MERZ": "MERCEDES-BENZ",
+    "BENZ": "MERCEDES-BENZ",
+    "MERC": "MERCURY",
+    "LINC": "LINCOLN",
+    "CADI": "CADILLAC",
+    "BUIC": "BUICK",
+    "PONT": "PONTIAC",
+    "OLDS": "OLDSMOBILE",
+    "CHRY": "CHRYSLER",
+    "DODG": "DODGE",
+    "JEEP": "JEEP",
+    "SUBA": "SUBARU",
+    "MAZD": "MAZDA",
+    "VOLV": "VOLVO",
+    "SATU": "SATURN",
+    "ACUR": "ACURA",
+    "LEXU": "LEXUS",
+    "INFI": "INFINITI",
+    "SCION": "SCION",
+    "MASE": "MASERATI",
+    "JAGU": "JAGUAR",
+    "LNDR": "LAND ROVER",
+    "ROVE": "LAND ROVER",
+    "PORS": "PORSCHE",
+    "AUDI": "AUDI",
+    "SAAB": "SAAB",
+    "SUZU": "SUZUKI",
+    "ISUZ": "ISUZU",
+    "VOLK": "VOLKSWAGEN",
+    "FORD": "FORD",
+    "GMC":  "GMC",
+    "BMW":  "BMW",
+    "KIA":  "KIA",
+    "MINI": "MINI",
+    "FIAT": "FIAT",
+    "RAM":  "RAM",
+    "TSLA": "TESLA",
+    "TELA": "TESLA",
+    "RIVE": "RIVIAN",
+    "GENI": "GENESIS",
+    "ALFA": "ALFA ROMEO",
+};
+
+// =========================================
+//  PUBLIC API
+// =========================================
+
 export function parseCCCText(rawText) {
     const text = normalizeWhitespace(rawText);
+    const veh = parseVehicleLine(text);
 
     return {
         ownerName:                extractOwnerName(text),
         insuredName:              extractInsured(text),
+        ownerPhone:               extractOwnerPhone(text),
         carrierName:              extractCarrier(text),
         claimNumber:              extractFieldSameLine(text, /claim\s*#\s*:?/i),
         policyNumber:             extractFieldSameLine(text, /policy\s*#\s*:?/i),
-        dateOfLoss:               extractField(text, /date\s+of\s+loss\s*:?\s*(.+)/i),
+        dateOfLoss:               extractDateOfLoss(text),
+        lossType:                 extractLossType(text),
+        lossZip:                  extractLossZip(text),
         inspectionLocation:       extractInspectionLocation(text),
-        year:                     extractVehicleYear(text),
-        make:                     extractVehicleMake(text),
-        model:                    extractVehicleModel(text),
+        year:                     veh.year,
+        make:                     veh.make,
+        model:                    veh.model,
+        bodyStyle:                veh.bodyStyle,
+        cylinders:                veh.cylinders,
+        engineSize:               veh.engineSize,
+        transmission:             veh.transmission,
         vin:                      extractVIN(text),
         mileage:                  extractMileage(text),
         conditionRating:          extractCondition(text),
         pointOfImpact:            extractPointOfImpact(text),
-        lossType:                 extractField(text, /type\s+of\s+loss\s*:?\s*(.+)/i),
         estimateTotal:            extractEstimateTotal(text),
         acv:                      extractACV(text),
         estimateTimestamp:        extractTimestamp(text),
@@ -36,20 +101,45 @@ export function parseCCCText(rawText) {
 // =========================================
 
 function extractOwnerName(text) {
-    // First "Owner:" on page 1 header area (before VEHICLE block)
-    const match = text.match(/Owner\s*:\s*([A-Z][A-Za-z',.\- ]+)/);
-    return match ? cleanName(match[1]) : "";
+    // "Owner: Shingleton, Julia Job Number:"
+    // Bounded: capture between "Owner:" and "Job Number" (or end of line).
+    const match = text.match(/Owner\s*:\s*([\s\S]*?)(?=Job\s*Number|Written\s*By|\n\s*\n)/i);
+    if (!match) return "";
+    // Take only first line of match (in case multiline captured)
+    const firstLine = match[1].split("\n")[0].trim();
+    return cleanName(firstLine);
 }
 
 function extractInsured(text) {
-    const match = text.match(/Insured\s*:\s*([A-Z][A-Za-z',.\- ]+)/);
-    return match ? cleanName(match[1]) : "";
+    // "Insured: Spartan Fire & Emergency Policy #: Claim #: 10382231"
+    // "Apparatus, Inc"
+    // Bounded: capture between "Insured:" and "Policy #:" or "Claim #:"
+    const match = text.match(/Insured\s*:\s*([\s\S]*?)(?=Policy\s*#|Claim\s*#)/i);
+    if (!match) return "";
+
+    let firstPart = match[1].trim();
+
+    // Check for continuation line after the Claim #/Policy # on the next line
+    const afterPos = match.index + match[0].length;
+    const rest = text.substring(afterPos);
+    const eol = rest.indexOf("\n");
+    if (eol !== -1) {
+        const contLines = rest.substring(eol + 1, eol + 200).split("\n");
+        for (const cline of contLines) {
+            const trimmed = cline.trim();
+            if (!trimmed) break;
+            if (/^(Type\s+of\s+Loss|Date\s+of\s+Loss|Point\s+of\s+Impact|Owner|Written|Adjuster|Inspection|VEHICLE)/i.test(trimmed)) break;
+            if (trimmed.length < 60 && !trimmed.includes(":") && !/^\d/.test(trimmed)) {
+                firstPart = firstPart + " " + trimmed;
+            }
+            break; // Only check first continuation line
+        }
+    }
+
+    return firstPart.trim();
 }
 
 function extractCarrier(text) {
-    // Priority 1: Look for known carrier keywords (INSURANCE, MUTUAL, etc.)
-    // in the header area before the first "Preliminary Estimate" line.
-    // This avoids picking up the appraisal company from "For:" field.
     const headerArea = text.split(/Preliminary\s+Estimate/i)[0] || text;
     const headerLines = headerArea.split("\n").map(l => l.trim()).filter(Boolean);
     for (const line of headerLines) {
@@ -58,20 +148,14 @@ function extractCarrier(text) {
         }
     }
 
-    // Priority 2: "For:" block — scan all lines between "For:" and
-    // "Preliminary Estimate", skipping the appraisal company name that
-    // often appears on the first line immediately after "For:".
     const forBlock = text.match(/For\s*:\s*\n([\s\S]*?)(?=Preliminary\s+Estimate)/i);
     if (forBlock) {
         const lines = forBlock[1].split("\n").map(l => l.trim()).filter(Boolean);
-        // Return the first line that contains a carrier keyword
         for (const line of lines) {
             if (/INSURANCE|MUTUAL|INDEMNITY|CASUALTY|ASSURANCE/i.test(line)) {
                 return line;
             }
         }
-        // If no keyword match, return the last non-empty line before header
-        // (carrier is typically listed below the appraisal company)
         if (lines.length > 1) return lines[lines.length - 1];
         if (lines.length === 1) return lines[0];
     }
@@ -79,26 +163,65 @@ function extractCarrier(text) {
     return "";
 }
 
-function extractInspectionLocation(text) {
-    // CCC multi-column layout flattens Inspection Location / Repair Facility
-    // headers together, with address data below. Strategy:
-    // 1. Find the "Inspection Location:" anchor
-    // 2. Scan the next ~300 chars for address-like content
-    // 3. Skip lines that are other field headers or person names only
+function extractOwnerPhone(text) {
+    // Phone lives in the Inspection Location block, NOT the owner header.
+    // Layout:
+    //   Inspection Location:    Repair Facility:
+    //   Name                    Name
+    //   123 Street              123 Street
+    //   City, ST ZIP            City, ST ZIP
+    //   (555) 123-4567 Business Home
+    const anchorIdx = text.search(/Inspection\s+Location\s*:/i);
+    if (anchorIdx === -1) return "";
 
+    // Scan a window after the anchor for a phone number
+    const window = text.substring(anchorIdx, anchorIdx + 600);
+    const phoneMatch = window.match(/\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/);
+    if (!phoneMatch) return "";
+
+    // Clean: strip "Business", "Home", leading/trailing whitespace
+    let phone = phoneMatch[0].trim();
+    // Normalize to (XXX) XXX-XXXX format
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length === 10) {
+        phone = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    }
+    return phone;
+}
+
+function extractLossType(text) {
+    // Bounded: between "Type of Loss:" and "Date of Loss:"
+    const match = text.match(/Type\s+of\s+Loss\s*:\s*([\s\S]*?)(?=Date\s+of\s+Loss)/i);
+    if (!match) return "";
+    // Take first line only, trim
+    return match[1].split("\n")[0].trim();
+}
+
+function extractDateOfLoss(text) {
+    // Bounded: after "Date of Loss:" capture the date value
+    const match = text.match(/Date\s+of\s+Loss\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4}(?:\s+\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))?)/i);
+    return match ? match[1].trim() : "";
+}
+
+function extractLossZip(text) {
+    // ZIP from Inspection Location block (NOT owner address block).
+    const anchorIdx = text.search(/Inspection\s+Location\s*:/i);
+    if (anchorIdx === -1) return "";
+
+    const window = text.substring(anchorIdx, anchorIdx + 400);
+    // Look for City, ST ZZZZZ pattern
+    const zipMatch = window.match(/[A-Za-z]+,?\s+[A-Z]{2}\s+(\d{5})/);
+    return zipMatch ? zipMatch[1] : "";
+}
+
+function extractInspectionLocation(text) {
     const anchorIdx = text.search(/Inspection\s+Location\s*:/i);
     if (anchorIdx === -1) return "";
 
     const window = text.substring(anchorIdx, anchorIdx + 400);
     const lines = window.split("\n").map(l => l.trim()).filter(Boolean);
+    lines.shift(); // skip anchor line
 
-    // Skip the anchor line itself
-    lines.shift();
-
-    // Look for a street address line (digits + words)
-    // In multi-column CCC layouts, the city/state/zip may not be the
-    // very next line (repair facility address may interleave).
-    // So find the first street address, then scan ahead for matching city/state/zip.
     let streetAddr = "";
     let streetIdx = -1;
 
@@ -108,14 +231,12 @@ function extractInspectionLocation(text) {
             streetIdx = i;
             break;
         }
-        // City, ST ZIP on its own (no street line)
         if (/^[A-Za-z]+,?\s+[A-Z]{2}\s+\d{5}/.test(lines[i])) {
             return lines[i];
         }
     }
 
     if (streetAddr) {
-        // Scan the next few lines for a city, ST ZIP pattern
         for (let j = streetIdx + 1; j < Math.min(streetIdx + 5, lines.length); j++) {
             if (/^[A-Za-z]+,?\s+[A-Z]{2}\s+\d{5}/.test(lines[j])) {
                 return streetAddr + ", " + lines[j];
@@ -124,7 +245,6 @@ function extractInspectionLocation(text) {
         return streetAddr;
     }
 
-    // Fallback: first line after anchor that isn't another header
     for (const line of lines) {
         if (/^(Repair|Owner|VEHICLE|Phone|Insured)\b/i.test(line)) continue;
         if (line.length > 3) return line;
@@ -134,34 +254,99 @@ function extractInspectionLocation(text) {
 }
 
 // =========================================
-//  VEHICLE FIELDS
+//  VEHICLE LINE PARSER
 // =========================================
 
-function extractVehicleYear(text) {
+function parseVehicleLine(text) {
+    const result = {
+        year: "",
+        make: "",
+        model: "",
+        bodyStyle: "",
+        cylinders: "",
+        engineSize: "",
+        transmission: "",
+    };
+
     const desc = extractVehicleDescLine(text);
-    if (desc) {
-        const yearMatch = desc.match(/^(\d{4})\b/);
-        if (yearMatch) return yearMatch[1];
+    if (!desc) return result;
+
+    // Year: first 4 digits
+    const yearMatch = desc.match(/^(\d{4})\b/);
+    if (yearMatch) result.year = yearMatch[1];
+
+    // Make: next word after year, normalized
+    const makeMatch = desc.match(/^\d{4}\s+([A-Za-z]+)/);
+    if (makeMatch) {
+        const rawMake = makeMatch[1].toUpperCase();
+        result.make = MAKE_ABBREV[rawMake] || rawMake;
     }
+
+    // Model: next word(s) after make, before trim/body/engine markers
+    const modelMatch = desc.match(/^\d{4}\s+\S+\s+(\S+)/);
+    if (modelMatch) result.model = modelMatch[1];
+
+    // Body style: look for "2D"/"4D" patterns or keyword
+    const bodyToken = parseBodyFromDesc(desc);
+    result.bodyStyle = bodyToken;
+
+    // Cylinders + Engine size: pattern like "4-1.8L" or "6-3.5L"
+    const cylEngMatch = desc.match(/(\d+)-([\d.]+L)/i);
+    if (cylEngMatch) {
+        result.cylinders = `CYL_${cylEngMatch[1]}`;
+        result.engineSize = cylEngMatch[2];
+    } else {
+        // Fallback: look for "V6", "V8", "I4" etc.
+        const vMatch = desc.match(/[VvIi](\d+)/);
+        if (vMatch) result.cylinders = `CYL_${vMatch[1]}`;
+
+        // Fallback engine size: "X.XL" pattern
+        const sizeMatch = desc.match(/(\d+\.\d+L)/i);
+        if (sizeMatch) result.engineSize = sizeMatch[1];
+    }
+
+    // Transmission
+    result.transmission = parseTransFromDesc(desc);
+
+    return result;
+}
+
+function parseBodyFromDesc(desc) {
+    const d = desc.toUpperCase();
+
+    // CCC uses "4D SED", "2D CPE", "4D SUV", "4D HBK", "2D CNV" etc.
+    if (/\b4D\b/.test(d) || /\bSEDAN\b/.test(d) || /\bSED\b/.test(d)) return "BODY_4DR";
+    if (/\b2D\b/.test(d) || /\bCOUPE\b/.test(d) || /\bCPE\b/.test(d)) return "BODY_2DR";
+    if (/\bCONVERT/.test(d) || /\bCNV\b/.test(d)) return "BODY_CONVERTIBLE";
+    if (/\bHATCH/.test(d) || /\bHBK\b/.test(d)) return "BODY_HATCHBACK";
+    if (/\bPICKUP\b/.test(d) || /\bPKP\b/.test(d)) return "BODY_PICKUP";
+    if (/\bUTIL/.test(d) || /\bSUV\b/.test(d)) return "BODY_UTILITY";
+    if (/\bVAN\b/.test(d) || /\bMINIVAN\b/.test(d)) return "BODY_VAN";
+    if (/\bWAGON\b/.test(d) || /\bWGN\b/.test(d) || /\bESTATE\b/.test(d)) return "BODY_WAGON";
+
     return "";
 }
 
-function extractVehicleMake(text) {
-    const desc = extractVehicleDescLine(text);
-    if (desc) {
-        const parts = desc.match(/^\d{4}\s+(\S+)/);
-        if (parts) return parts[1];
-    }
-    return "";
-}
+function parseTransFromDesc(desc) {
+    const d = desc.toUpperCase();
 
-function extractVehicleModel(text) {
-    const desc = extractVehicleDescLine(text);
-    if (desc) {
-        // Pattern: YEAR MAKE Model [trim] [drivetrain] [body] [engine...]
-        const parts = desc.match(/^\d{4}\s+\S+\s+(\S+)/);
-        if (parts) return parts[1];
-    }
+    // CVT / Automatic
+    if (/CONTINUOUSLY\s+VARIABLE/i.test(desc)) return "TRANS_AUTO";
+    if (/\bAUTOMATIC\b/.test(d)) return "TRANS_AUTO";
+    if (/\bCVT\b/.test(d)) return "TRANS_AUTO";
+
+    // Manual speeds
+    if (/\b6[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S6";
+    if (/\b5[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S5";
+    if (/\b4[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S4";
+    if (/\b3[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S3";
+
+    // 4WD/AWD
+    if (/\b4WD\b/.test(d) || /\b4X4\b/.test(d) || /\bAWD\b/.test(d)) return "TRANS_4W";
+
+    // Overdrive
+    if (/\bOVERDRIVE\b/.test(d) || /\bO\/D\b/.test(d)) return "TRANS_OD";
+
     return "";
 }
 
@@ -200,7 +385,6 @@ function extractPointOfImpact(text) {
     if (!match) return "";
 
     let poi = match[1].trim();
-    // CCC often prefixes with a numeric code like "29 Vandalism" or "01 Front"
     poi = poi.replace(/^\d+\s*/, "");
     return poi;
 }
@@ -210,15 +394,12 @@ function extractPointOfImpact(text) {
 // =========================================
 
 function extractEstimateTotal(text) {
-    // "Total Cost of Repairs" is the gross total before deductible
     const totalRepairs = text.match(/Total\s+Cost\s+of\s+Repairs\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
     if (totalRepairs) return parseFloat(totalRepairs[1].replace(/,/g, ""));
 
-    // Fallback: "Net Cost of Repairs"
     const netRepairs = text.match(/Net\s+Cost\s+of\s+Repairs\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
     if (netRepairs) return parseFloat(netRepairs[1].replace(/,/g, ""));
 
-    // Fallback: generic "Subtotal"
     const subtotal = text.match(/Subtotal\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
     if (subtotal) return parseFloat(subtotal[1].replace(/,/g, ""));
 
@@ -226,11 +407,9 @@ function extractEstimateTotal(text) {
 }
 
 function extractACV(text) {
-    // "Actual Cash Value" or "ACV"
     const acvMatch = text.match(/(?:Actual\s+Cash\s+Value|ACV)\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
     if (acvMatch) return parseFloat(acvMatch[1].replace(/,/g, ""));
 
-    // "Fair Market Value"
     const fmvMatch = text.match(/Fair\s+Market\s+Value\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
     if (fmvMatch) return parseFloat(fmvMatch[1].replace(/,/g, ""));
 
@@ -242,59 +421,37 @@ function extractACV(text) {
 // =========================================
 
 function detectOEMOnly(text) {
-    // The ALTERNATE PARTS USAGE table is the authoritative source.
-    // Flags like "*AFTERMARKET PARTS USED (Y)" only indicate that
-    // alternate parts were *listed as available*, not actually selected.
     const tableSelected = countAlternatePartsSelected(text);
-
-    // Table found and shows actual selections → not OEM-only
     if (tableSelected > 0) return false;
-
-    // Table found and shows 0 selections → OEM-only regardless of flags
     if (tableSelected === 0) return true;
 
-    // No table found — fall back to flag-based detection
     const hasRecycled = /RECYCLED\s+PARTS\s+USED\s*\(Y\)/i.test(text);
     const hasAftermarket = /AFTERMARKET\s+PARTS\s+USED\s*\(Y\)/i.test(text);
 
     if (!hasRecycled && !hasAftermarket) return true;
-
     return false;
 }
 
 function detectAlternativeParts(text) {
-    // The ALTERNATE PARTS USAGE table is authoritative over flags.
     const tableSelected = countAlternatePartsSelected(text);
-
-    // Table found — trust the actual count
     if (tableSelected !== null) return tableSelected > 0;
 
-    // No table — fall back to flags
     if (/AFTERMARKET\s+PARTS\s+USED\s*\(Y\)/i.test(text)) return true;
     if (/RECYCLED\s+PARTS\s+USED\s*\(Y\)/i.test(text)) return true;
-
     return false;
 }
 
 function countAlternatePartsSelected(text) {
-    // Returns total # of alternate parts selected from the table,
-    // or null if the table was not found.
     const section = text.match(/ALTERNATE\s+PARTS\s+USAGE[\s\S]{0,600}/i);
     if (!section) return null;
 
     const selected = section[0].match(/#\s*Of\s+Parts\s+Selected[\s\S]{0,300}/i);
     if (!selected) return null;
 
-    // Trim the window at the first page footer (timestamp or "Page N")
-    // to avoid counting footer numbers like "476348" or page numbers.
     let window = selected[0];
     window = window.split(/\d{1,2}\/\d{1,2}\/\d{4}/)[0] || window;
     window = window.split(/\bPage\s+\d/i)[0] || window;
 
-    // Each alternate parts row (Aftermarket, Optional OEM, Reconditioned, Recycled)
-    // has two numeric values: "# notified" and "# selected".
-    // We only want the "# selected" column — every 2nd number per row group.
-    // Simplest approach: sum all small digits found (0-9 range rows).
     const counts = window.match(/^(\d+)\s*$/gm);
     if (!counts) return 0;
 
@@ -308,8 +465,6 @@ function countAlternatePartsSelected(text) {
 function extractOptions(text) {
     const options = [];
 
-    // The CCC estimate has a features/equipment table between
-    // TRANSMISSION/POWER headers and the line items section.
     const featureSection = text.match(
         /TRANSMISSION[\s\S]*?(?=Line\s+Oper|FRONT\s+BUMPER|Subtotal|ALTERNATE\s+PARTS)/i
     );
@@ -339,7 +494,6 @@ function extractOptions(text) {
 // =========================================
 
 function extractTimestamp(text) {
-    // CCC footer timestamps: "8/15/2025 5:43:23 PM"
     const match = text.match(/(\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}:\d{2}\s*(?:AM|PM))/i);
     return match ? match[1] : "";
 }
@@ -348,30 +502,18 @@ function extractTimestamp(text) {
 //  HELPERS
 // =========================================
 
-function extractField(text, pattern) {
-    const match = text.match(pattern);
-    if (!match) return "";
-    return match[1].trim();
-}
-
 function extractFieldSameLine(text, anchorPattern) {
-    // Find the anchor (e.g. "Policy #:"), then capture remaining text on
-    // the SAME line only. If nothing remains on the anchor line, grab the
-    // next non-empty line — but only if it doesn't look like another header.
     const anchorMatch = text.match(anchorPattern);
     if (!anchorMatch) return "";
 
     const afterAnchor = text.substring(anchorMatch.index + anchorMatch[0].length);
 
-    // Same-line content (up to the next newline)
     const sameLine = afterAnchor.match(/^[^\n]*\S[^\n]*/);
     if (sameLine) return sameLine[0].trim();
 
-    // Next non-empty line
     const nextLine = afterAnchor.match(/\n[ \t]*(\S[^\n]*)/);
     if (nextLine) {
         const candidate = nextLine[1].trim();
-        // Skip if it looks like another field header (e.g. "Claim #:", "Type of Loss:")
         if (/^[A-Za-z].*[#:]/.test(candidate)) return "";
         return candidate;
     }
@@ -381,13 +523,12 @@ function extractFieldSameLine(text, anchorPattern) {
 
 function normalizeWhitespace(text) {
     if (!text) return "";
-    // Normalize various whitespace but preserve newlines for anchor matching
     return text
         .replace(/\r\n/g, "\n")
         .replace(/\r/g, "\n")
         .replace(/\t/g, " ")
-        .replace(/\u00A0/g, " ")   // non-breaking space
-        .replace(/ {2,}/g, " ");   // collapse multiple spaces
+        .replace(/\u00A0/g, " ")
+        .replace(/ {2,}/g, " ");
 }
 
 function cleanName(raw) {
