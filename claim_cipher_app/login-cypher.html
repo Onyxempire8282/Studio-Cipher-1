@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Cypher - Claim Cipher</title>
+    <link rel="icon" href="/public/branding/icons/favicon.ico">
 
     <!-- Stack B: Universal base → Industrial plates → Page layout -->
     <link rel="stylesheet" href="styles/universal-system.css">
@@ -12,23 +13,23 @@
 </head>
 <body class="cipher-dark-theme" style="visibility: hidden;">
 
-    <div class="cipher-layout">
+    <div class="auth-container">
       <div class="cipher-content">
         <div class="cipher-plate login-plate">
             <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
             <!-- Brand Header: Clear product identification -->
             <div class="auth-brand-header">
-                <h1 class="auth-brand-name">Claim Cipher</h1>
-                <p class="auth-brand-tagline">Insurance appraisal workflow</p>
+                <img src="../branding/logo/claimcipher-full.png" alt="Claim Cipher" class="login-logo" />
             </div>
-
-            <div id="error-cypher" class="error-cypher"></div>
+            <div class="auth-brand-divider" aria-hidden="true"></div>
 
             <!-- Login/Signup Toggle -->
             <div class="auth-cipher-toggle">
                 <button class="toggle-cipher active" id="login-toggle">Drop In</button>
                 <button class="toggle-cipher" id="signup-toggle">Sign Up</button>
             </div>
+
+            <div id="error-cypher" class="error-cypher"></div>
             
             <!-- Login Cypher Form -->
             <form id="login-cypher-form">
@@ -39,10 +40,13 @@
                 
                 <div class="form-cipher-group">
                     <label class="form-cipher-label" for="login-password">Password</label>
-                    <div class="password-cipher-group">
+                    <div class="password-wrapper">
                         <input type="password" autocomplete="current-password" class="form-cipher-input" id="login-password" required autocomplete="current-password">
-                        <button type="button" class="password-cipher-toggle" id="password-toggle" aria-label="Toggle password visibility">
-                            👁️
+                        <button type="button" class="password-toggle" id="password-toggle" aria-label="Toggle password visibility">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -56,14 +60,14 @@
                 </div>
                 
                 <button type="submit" class="cipher-btn cipher-btn--primary cipher-btn--full" id="login-btn">
-                    <span class="btn-text">🎤 Drop In</span>
+                    <span class="btn-text">Drop In</span>
                     <div class="loading-cipher-state" id="login-loading-state">
                         <div class="cipher-spinner"></div>
                         <span>Dropping in...</span>
                     </div>
                 </button>
                 
-                <button type="button" class="cipher-link" id="forgot-password-link">
+                <button type="button" class="cipher-link forgot-password" id="forgot-password-link">
                     Forgot your cipher?
                 </button>
             </form>
@@ -88,10 +92,13 @@
                 
                 <div class="form-cipher-group">
                     <label class="form-cipher-label" for="signup-password">Password</label>
-                    <div class="password-cipher-group">
+                    <div class="password-wrapper">
                         <input type="password" autocomplete="current-password" class="form-cipher-input" id="signup-password" required>
-                        <button type="button" class="password-cipher-toggle" id="signup-password-toggle" aria-label="Toggle password visibility">
-                            👁️
+                        <button type="button" class="password-toggle" id="signup-password-toggle" aria-label="Toggle password visibility">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -119,7 +126,7 @@
             
             <!-- Demo Cypher Section -->
             <div class="demo-cipher-section">
-                <div class="demo-cipher-title">🎯 Try Demo Mode</div>
+                <div class="demo-cipher-title">Try Demo Mode</div>
                 <div class="demo-cipher-description">
                     Preview Claim Cipher with sample data
                 </div>
@@ -129,6 +136,29 @@
             </div>
         </div>
       </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="reset-password-modal" class="cipher-modal" style="display: none;">
+        <div class="cipher-modal-content">
+            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+            <div class="cipher-modal-header">
+                <h2>Password Reset</h2>
+                <button class="cipher-modal-close" type="button" aria-label="Close reset modal" onclick="closeResetModal()">&times;</button>
+            </div>
+            <div class="cipher-modal-body">
+                <form id="reset-request-form">
+                    <div class="form-cipher-group">
+                        <label class="form-cipher-label" for="reset-email">Email</label>
+                        <input type="email" autocomplete="email" spellcheck="false" class="form-cipher-input" id="reset-email" required>
+                    </div>
+                    <button type="submit" class="cipher-btn cipher-btn--primary cipher-btn--full" id="reset-submit-btn">
+                        Send Reset Link
+                    </button>
+                </form>
+                <div id="reset-message" class="reset-message" aria-live="polite"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Signup Payment Modal -->
@@ -322,6 +352,9 @@
         const signupForm = document.getElementById('signup-cypher-form');
         const errorDisplay = document.getElementById('error-cypher');
         const demoCipherBtn = document.getElementById('demo-cipher-btn');
+        const resetForm = document.getElementById('reset-request-form');
+        const resetEmail = document.getElementById('reset-email');
+        const resetMessage = document.getElementById('reset-message');
 
         // Helper to show error/success messages
         function showMessage(message, isError = true) {
@@ -483,6 +516,65 @@
         });
 
         console.log('Supabase Auth: Login page ready');
+            const eyeSvg = `
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            `;
+            const eyeOffSvg = `
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                </svg>
+            `;
+
+            document.querySelectorAll('.password-toggle').forEach(function(toggle) {
+                const input = toggle.parentElement.querySelector('input');
+                if (!input) return;
+                toggle.innerHTML = eyeSvg;
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    toggle.innerHTML = isPassword ? eyeOffSvg : eyeSvg;
+                });
+            });
+
+        function setResetMessage(message, isError = false) {
+            if (!resetMessage) return;
+            resetMessage.textContent = message;
+            resetMessage.classList.toggle('is-error', isError);
+            resetMessage.classList.toggle('is-success', !isError);
+        }
+
+        if (resetForm) {
+            resetForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const email = resetEmail?.value?.trim();
+                if (!email) {
+                    setResetMessage('Please enter your email address.', true);
+                    return;
+                }
+
+                const client = window.SupabaseAuth?.init?.();
+                if (!client) {
+                    setResetMessage('If an account exists, a reset link has been sent.', false);
+                    return;
+                }
+
+                const redirectTo = `${window.location.origin}/reset-password.html`;
+                const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+
+                if (error) {
+                    console.warn('Password reset request error:', error.message);
+                }
+
+                setResetMessage('If an account exists, a reset link has been sent.', false);
+            });
+        }
 
         // Legal Modal Handlers
         const termsLink = document.getElementById('terms-link');
@@ -504,18 +596,6 @@
             });
         }
 
-        // Password visibility toggles — must run AFTER form cloning above
-        document.querySelectorAll('.password-cipher-toggle').forEach(function(toggle) {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                var input = this.parentElement.querySelector('input');
-                if (!input) return;
-                var isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                this.textContent = isPassword ? '🙈' : '👁️';
-                this.classList.toggle('active', isPassword);
-            });
-        });
     });
 
     // Legal Modal Functions
@@ -529,6 +609,35 @@
 
     function closeLegalModal(modalId) {
         const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Reset Modal Functions
+    function openResetModal() {
+        const modal = document.getElementById('reset-password-modal');
+        const resetForm = document.getElementById('reset-request-form');
+        const resetMessage = document.getElementById('reset-message');
+
+        if (resetMessage) {
+            resetMessage.textContent = '';
+            resetMessage.classList.remove('is-error', 'is-success');
+        }
+
+        if (resetForm) {
+            resetForm.reset();
+        }
+
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeResetModal() {
+        const modal = document.getElementById('reset-password-modal');
         if (modal) {
             modal.style.display = 'none';
             document.body.style.overflow = '';

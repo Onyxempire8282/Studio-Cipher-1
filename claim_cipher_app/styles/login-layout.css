@@ -8,17 +8,30 @@
 /* =================================
    PAGE LAYOUT — centered plate
    ================================= */
-.cipher-layout {
-    min-height: 100vh;
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.auth-container {
+    height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 2rem 1rem;
+    padding-top: 60px;
+    box-sizing: border-box;
 }
 
 .cipher-content {
     width: 100%;
     max-width: 420px;
+}
+
+.forgot-password {
+    display: block;
+    margin: 20px auto 0 auto;
+    text-align: center;
 }
 
 /* =================================
@@ -29,8 +42,8 @@
 .login-plate {
     position: relative;
     max-width: 420px;
-    margin: 120px auto;
-    padding: 48px 40px;
+    margin: 0 auto;
+    padding: 36px 40px 48px;
     border-radius: 8px;
     min-height: 580px;
     animation: plateReveal 0.5s ease-out;
@@ -75,9 +88,21 @@
    ================================= */
 .auth-brand-header {
     text-align: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(184, 115, 51, 0.2);
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.auth-brand-divider {
+    height: 1px;
+    background: rgba(184, 115, 51, 0.2);
+    margin: 8px 0 12px 0;
+}
+
+.login-logo {
+    width: 340px;
+    height: auto;
+    display: block;
+    margin: 0 auto 14px auto;
 }
 
 .auth-brand-name {
@@ -92,15 +117,6 @@
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
     background-clip: unset;
-}
-
-.auth-brand-tagline {
-    font-size: 0.8rem;
-    color: #6a6a6e;
-    margin: 0;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
 }
 
 /* =================================
@@ -256,39 +272,57 @@
 /* =================================
    PASSWORD GROUP
    ================================= */
-.password-cipher-group {
+.password-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.password-cipher-group .form-cipher-input {
-    padding-right: 44px;
+.password-wrapper .form-cipher-input {
+    padding-right: 40px;
 }
 
-.password-cipher-toggle {
+.password-toggle {
     position: absolute;
-    right: 12px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: var(--cipher-text-muted, #999);
+    box-shadow: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-size: 1.1rem;
-    line-height: 1;
-    z-index: 10;
-    padding: 4px;
-    transition: color 0.2s ease;
 }
 
-.password-cipher-toggle:hover {
-    color: #B87333;
+.password-toggle:focus,
+.password-toggle:active {
+    outline: none;
+    box-shadow: none;
+    transform: translateY(-50%);
 }
 
-.password-cipher-toggle:focus {
-    outline: 2px solid var(--cipher-focus, rgba(184, 115, 51, 0.4));
-    outline-offset: 2px;
+.password-toggle svg {
+    width: 18px;
+    height: 18px;
+    stroke: #8a8f98;
+    fill: none;
+    stroke-width: 1.6;
+    transition: stroke 0.15s ease;
+}
+
+.password-toggle:hover svg {
+    stroke: #c47a2c;
+}
+
+.password-wrapper input[type="password"] {
+    padding-right: 40px;
 }
 
 /* =================================
@@ -680,8 +714,10 @@
 }
 
 /* =================================
-   SIGNUP PAYMENT MODAL
+   PASSWORD RESET / SIGNUP MODALS
+   Steel plate aesthetic matching login
    ================================= */
+
 .cipher-modal {
     display: none;
     position: fixed;
@@ -689,65 +725,235 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.88);
     z-index: 10000;
     justify-content: center;
     align-items: center;
     padding: 1rem;
 }
 
+/* Fade + scale entrance */
+.cipher-modal[style*="flex"] {
+    animation: modalReveal 0.3s ease-out;
+}
+
+@keyframes modalReveal {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalPlateReveal {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .cipher-modal-content {
+    position: relative;
+
+    /* Steel plate gradient — matches .login-plate */
     background: linear-gradient(
         160deg,
-        #3a3f44 0%,
-        #2a2f33 40%,
-        #1e2226 100%
+        #4a4f55 0%,
+        #353a3f 20%,
+        #252a2e 55%,
+        #1a1e22 100%
     );
+
+    /* Border system — matches .login-plate */
     border: 1px solid #15191d;
-    border-top-color: #5e646a;
+    border-top-color: #62686e;
+    border-bottom-color: #0d1013;
     border-radius: 8px;
-    max-width: 600px;
+
+    max-width: 420px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
+
+    /* Industrial depth — matches .login-plate elevation */
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
+        inset 0 2px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+        0 2px 0 #1a1e22,
         0 4px 0 #15191d,
-        0 8px 0 #101417,
-        0 12px 24px rgba(0,0,0,0.65);
+        0 6px 0 #101417,
+        0 8px 0 #0c0f12,
+        0 10px 0 #080a0d,
+        0 14px 24px rgba(0, 0, 0, 0.65),
+        0 28px 56px rgba(0, 0, 0, 0.35);
+
+    animation: modalPlateReveal 0.3s ease-out;
 }
+
+/* --- Modal Header --- */
 
 .cipher-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid rgba(184, 115, 51, 0.15);
+    padding: 1.5rem 1.5rem 0 1.5rem;
 }
 
 .cipher-modal-header h2 {
     margin: 0;
-    font-size: 1.2rem;
-    color: #e8e6e3;
-    font-weight: 600;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #B87333;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
+
+/* --- Close (X) — bare icon, no container --- */
 
 .cipher-modal-close {
     background: none;
     border: none;
-    color: #6a6a6e;
-    font-size: 1.5rem;
+    box-shadow: none;
+    outline: none;
+    color: #C47A2C;
+    font-size: 18px;
     cursor: pointer;
     padding: 0;
+    margin: 0;
     line-height: 1;
+    transition: none;
+    transform: none;
 }
 
 .cipher-modal-close:hover {
-    color: #e8e6e3;
+    color: #d98e3f;
 }
 
+.cipher-modal-close:focus,
+.cipher-modal-close:active {
+    outline: none;
+    box-shadow: none;
+    transform: none;
+}
+
+/* --- Copper Divider (beneath header) --- */
+
 .cipher-modal-body {
-    padding: 1.5rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.cipher-modal-body::before {
+    content: "";
+    display: block;
+    height: 1px;
+    background: rgba(184, 115, 51, 0.2);
+    margin: 12px 0 20px 0;
+}
+
+/* --- Email Input — matches login .form-cipher-input --- */
+
+.cipher-modal .form-cipher-input {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(14, 17, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    color: #e8e6e3;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.cipher-modal .form-cipher-input:focus {
+    border-color: rgba(184, 115, 51, 0.5);
+    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.12);
+    background: rgba(14, 17, 20, 0.8);
+}
+
+.cipher-modal .form-cipher-input:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* --- Reset Button — matches Drop In / .cipher-btn--primary --- */
+
+.cipher-modal .cipher-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.cipher-modal .cipher-btn--primary {
+    background: linear-gradient(135deg, #B87333, #96572a);
+    color: #0a0c0e;
+    border: 1px solid rgba(184, 115, 51, 0.3);
+}
+
+.cipher-modal .cipher-btn--primary:hover {
+    background: linear-gradient(135deg, #96572a, #7a4620);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(184, 115, 51, 0.25);
+}
+
+.cipher-modal .cipher-btn--primary:active {
+    transform: translateY(1px);
+}
+
+.cipher-modal .cipher-btn--primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.4);
+}
+
+/* --- Success / Error Messages --- */
+
+.reset-message {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: #7a7a7e;
+    text-align: center;
+}
+
+.reset-message.is-error {
+    color: var(--cipher-danger, #e74c3c);
+}
+
+.reset-message.is-success {
+    color: #c47a2c;
+}
+
+/* --- Reset Page Header (standalone reset page) --- */
+
+.reset-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.reset-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #B87333;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.reset-subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #7a7a7e;
 }
 
 /* Payment options */

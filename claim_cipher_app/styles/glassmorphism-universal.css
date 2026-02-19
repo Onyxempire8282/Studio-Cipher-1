@@ -207,8 +207,7 @@ p, span, div, label,
 /* Universal Glassmorphism Branding */
 .app-brand,
 .cipher-logo,
-.brand-text,
-.logo {
+.brand-text {
     color: rgba(255, 215, 0, 1) !important;
     text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3) !important;
 }

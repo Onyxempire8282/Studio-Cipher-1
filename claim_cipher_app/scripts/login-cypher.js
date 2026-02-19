@@ -426,23 +426,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // LYRICIST FIX 5: Password toggle functionality
     function setupPasswordToggles() {
         console.log('🎵 LYRICIST: Setting up password visibility toggles');
-        
-        const toggles = document.querySelectorAll('.password-cipher-toggle');
+        const eyeSvg = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        `;
+        const eyeOffSvg = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="3" y1="3" x2="21" y2="21"></line>
+            </svg>
+        `;
+
+        const toggles = document.querySelectorAll('.password-toggle');
         toggles.forEach(toggle => {
+            const wrapper = toggle.closest('.password-wrapper');
+            const passwordInput = wrapper ? wrapper.querySelector('input') : null;
+
+            if (passwordInput) {
+                toggle.innerHTML = eyeSvg;
+            }
+
             toggle.addEventListener('click', function(e) {
                 e.preventDefault();
-                const passwordInput = this.parentElement.querySelector('input[type="password"], input[type="text"]');
-                
-                if (passwordInput) {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        this.textContent = '🙈';
-                    } else {
-                        passwordInput.type = 'password';
-                        this.textContent = '👁️';
-                    }
-                    console.log('🎵 LYRICIST: Password visibility toggled');
+
+                if (!passwordInput) {
+                    return;
                 }
+
+                const isHidden = passwordInput.type === 'password';
+                passwordInput.type = isHidden ? 'text' : 'password';
+                this.innerHTML = isHidden ? eyeOffSvg : eyeSvg;
+                console.log('🎵 LYRICIST: Password visibility toggled');
             });
         });
     }
@@ -601,19 +618,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
     }, 300);
-    
-    // LOOP 6 ADDITION: Global click handler for debugging
-    document.addEventListener('click', function(e) {
-        console.log('🎵 LYRICIST SIGNUP LOOP 4: Element clicked:', e.target.tagName, e.target.id, e.target.className);
-        
-        // Special handling for signup toggle
-        if (e.target.id === 'signup-toggle') {
-            console.log('🎵 LYRICIST SIGNUP LOOP 4: Signup toggle clicked detected - forcing form switch');
-            e.preventDefault();
-            e.stopPropagation();
-            showForm('signup');
-        }
-    });
     
     // LOOP 6 ADDITION: Global keypress handler for debugging
     document.addEventListener('keydown', function(e) {
@@ -1282,7 +1286,6 @@ window.productionReadinessTest = function() {
     window.onerror = function(msg, url, line) {
         console.log('✅ Global Error Handler: Active');
         productionReadiness.errorHandling = true;
-        return true;
     };
     
     // PRODUCTION TEST 2: Console Logging
@@ -1454,7 +1457,6 @@ window.securityHardeningTest = function() {
     }
     
     console.log('🔒 SECURITY HARDENING COMPLETE: All security measures enhanced');
-    return true;
 };
 
 // ⚡ PERFORMANCE QA ROUND 3: Advanced optimization
@@ -1492,19 +1494,6 @@ window.performanceOptimizationTest = function() {
         console.log('⚠️ PERFORMANCE: Consider combining CSS files');
         optimizations.push('CSS file consolidation recommended');
     }
-    
-    // OPTIMIZATION 4: Event Delegation
-    function implementEventDelegation() {
-        // Remove individual button listeners and use delegation
-        document.body.addEventListener('click', function(e) {
-            if (e.target.matches('.cipher-btn, button')) {
-                console.log('⚡ PERFORMANCE: Event delegation handling click on', e.target.className);
-            }
-        });
-        optimizations.push('Event delegation implemented');
-    }
-    
-    implementEventDelegation();
     
     // OPTIMIZATION 5: Memory Management
     function optimizeMemory() {
@@ -1798,5 +1787,18 @@ window.producerQATest = function() {
     
     return testResults;
 };
+
+document.addEventListener('click', function (e) {
+    const forgotBtn = e.target.closest('.forgot-password');
+    if (!forgotBtn) return;
+
+    e.preventDefault();
+
+    if (typeof openResetModal === 'function') {
+        openResetModal();
+    } else {
+        console.error('openResetModal not defined');
+    }
+});
 
 console.log('🎵 LYRICIST SIGNUP LOOP 7: JavaScript file loaded with signup emergency override');

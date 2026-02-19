@@ -1,0 +1,539 @@
+/* ==========================================
+   CLAIM CIPHER — MARKETING PAGE
+   Industrial aesthetic. No SaaS fluff.
+   ========================================== */
+
+/* ----- Variables ----- */
+:root {
+    --bg-primary: #0B0F14;
+    --bg-section: #111821;
+    --bg-plate: #1a1e24;
+    --bg-plate-light: #22272e;
+
+    --copper: #C47A2C;
+    --copper-dark: #96572a;
+    --copper-dim: rgba(196, 122, 44, 0.15);
+
+    --text-primary: #e8e6e3;
+    --text-secondary: #9a9a9e;
+    --text-muted: #6a6a6e;
+
+    --border-steel: #2a2f35;
+    --border-steel-light: #3a3f46;
+
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    --container-max: 1080px;
+    --container-padding: 1.5rem;
+}
+
+/* ----- Reset ----- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-stack);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ----- Container ----- */
+.container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    font-family: var(--font-stack);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--copper);
+    color: #0a0c0e;
+    border: 1px solid rgba(196, 122, 44, 0.4);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btn-primary:hover {
+    background: var(--copper-dark);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 4px 16px rgba(196, 122, 44, 0.2);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-steel-light);
+}
+
+.btn-outline:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+.btn-full {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+/* ==========================================
+   SECTION 1 — HERO
+   ========================================== */
+.hero {
+    padding: 120px 0 80px;
+    text-align: center;
+}
+
+.hero-headline {
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    max-width: 780px;
+    margin: 0 auto 24px;
+}
+
+.hero-subline {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 40px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+}
+
+/* Hero Video Placeholder */
+.hero-video {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.hero-video-placeholder {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    background: var(--bg-section);
+    border: 1px solid var(--border-steel);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.hero-video-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ==========================================
+   SECTION 2 — THE REALITY
+   ========================================== */
+.reality {
+    padding: 80px 0 0;
+    text-align: center;
+}
+
+.reality-lines {
+    margin-bottom: 40px;
+}
+
+.reality-lines p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.reality-emphasis {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--copper);
+    letter-spacing: -0.01em;
+    margin-bottom: 64px;
+}
+
+.copper-divider {
+    height: 1px;
+    background: rgba(196, 122, 44, 0.2);
+    max-width: var(--container-max);
+    margin: 0 auto;
+}
+
+/* ==========================================
+   SECTION 3 — WHAT THIS IS
+   ========================================== */
+.definition {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.definition-negations {
+    margin-bottom: 40px;
+}
+
+.definition-negations p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.definition-statement {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+/* ==========================================
+   SECTION 4 — THE SYSTEM
+   ========================================== */
+.system {
+    padding: 80px 0;
+    background: var(--bg-section);
+}
+
+.section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--copper);
+    text-align: center;
+    margin-bottom: 48px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.system-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* Steel Plate Cards */
+.system-plate {
+    position: relative;
+    padding: 32px;
+    border-radius: 6px;
+
+    background: linear-gradient(
+        160deg,
+        #2a2f35 0%,
+        #1e2228 40%,
+        #161a1f 100%
+    );
+
+    border: 1px solid #1a1e24;
+    border-top-color: #3a3f46;
+    border-bottom-color: #0d1013;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+        0 2px 0 #14181c,
+        0 4px 0 #101317,
+        0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.plate-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+}
+
+.plate-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Plate Rivets */
+.plate-rivet {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    z-index: 1;
+    background: radial-gradient(
+        circle at 35% 35%,
+        #6a7076 0%,
+        #454a50 40%,
+        #2a2f34 75%,
+        #14181c 100%
+    );
+    box-shadow:
+        inset 0 1px 1px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.06),
+        0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.plate-rivet::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 55%;
+    height: 1px;
+    background: linear-gradient(90deg, #0e1114, #1b2025, #0e1114);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.plate-rivet-tl { top: 10px; left: 10px; }
+.plate-rivet-tr { top: 10px; right: 10px; }
+.plate-rivet-bl { bottom: 10px; left: 10px; }
+.plate-rivet-br { bottom: 10px; right: 10px; }
+
+/* ==========================================
+   SECTION 5 — PRICING
+   ========================================== */
+.pricing {
+    padding: 80px 0;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 720px;
+    margin: 0 auto 32px;
+}
+
+.pricing-card {
+    position: relative;
+    padding: 36px 32px;
+    border-radius: 6px;
+    text-align: center;
+
+    background: linear-gradient(
+        160deg,
+        #2a2f35 0%,
+        #1e2228 40%,
+        #161a1f 100%
+    );
+
+    border: 1px solid #1a1e24;
+    border-top-color: #3a3f46;
+    border-bottom-color: #0d1013;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+        0 2px 0 #14181c,
+        0 4px 0 #101317,
+        0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.pricing-card--founders {
+    border-top-color: rgba(196, 122, 44, 0.3);
+}
+
+.pricing-tier {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+}
+
+.pricing-card--founders .pricing-tier {
+    color: var(--copper);
+}
+
+.pricing-amount {
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.pricing-dollar {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.pricing-period {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.pricing-lock {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    min-height: 1.3em;
+}
+
+.pricing-card--founders .pricing-lock {
+    color: var(--copper);
+    font-weight: 500;
+}
+
+.pricing-note {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+.site-footer {
+    padding: 48px 0;
+    border-top: 1px solid var(--border-steel);
+    text-align: center;
+}
+
+.footer-wordmark {
+    height: 28px;
+    width: auto;
+    margin: 0 auto 12px;
+    opacity: 0.6;
+}
+
+.footer-copy {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+    .hero {
+        padding: 80px 0 60px;
+    }
+
+    .hero-headline {
+        font-size: 2rem;
+    }
+
+    .hero-subline {
+        font-size: 1rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 48px;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+
+    .system-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+
+    .reality-emphasis {
+        font-size: 1.15rem;
+    }
+
+    .definition-statement {
+        font-size: 1.2rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    :root {
+        --container-padding: 1.25rem;
+    }
+
+    .hero {
+        padding: 60px 0 48px;
+    }
+
+    .hero-headline {
+        font-size: 1.65rem;
+    }
+
+    .hero-subline {
+        font-size: 0.95rem;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+    }
+
+    .system-plate {
+        padding: 24px;
+    }
+
+    .pricing-card {
+        padding: 28px 24px;
+    }
+
+    .pricing-dollar {
+        font-size: 2.2rem;
+    }
+}
