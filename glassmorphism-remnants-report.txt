@@ -1,0 +1,4221 @@
+FILE: claim_cipher_app/modules/total-loss-v2/engines/conditionEngine.js
+LINE: 13
+CODE:         glass:        { rating, comment: "" },
+CONTEXT:
+        sheetMetal:   { rating, comment: "" },
+        glass:        { rating, comment: "" },
+        trim:         { rating, comment: "" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifFormFieldMap.js
+LINE: 135
+CODE:     // ======== EXTERIOR / PAINT / GLASS (checkboxes) ========
+CONTEXT:
+
+    // ======== EXTERIOR / PAINT / GLASS (checkboxes) ========
+    RR: "Check182",  WG: "Check183",  WP: "Check184",  "2T": "Check185",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifFormFieldMap.js
+LINE: 172
+CODE:     GLASS_0: "Check102 Copy 1", GLASS_1: "Check103",        GLASS_2: "Check104 Copy 1", GLASS_3: "Check105 Copy 1",
+CONTEXT:
+
+    GLASS_0: "Check102 Copy 1", GLASS_1: "Check103",        GLASS_2: "Check104 Copy 1", GLASS_3: "Check105 Copy 1",
+    GLASS_COMMENT: "Text50",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifFormFieldMap.js
+LINE: 173
+CODE:     GLASS_COMMENT: "Text50",
+CONTEXT:
+    GLASS_0: "Check102 Copy 1", GLASS_1: "Check103",        GLASS_2: "Check104 Copy 1", GLASS_3: "Check105 Copy 1",
+    GLASS_COMMENT: "Text50",
+
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifPdfGenerator.js
+LINE: 25
+CODE:     EG:"Elec Glass Roof",ES:"Elec Steel Roof",OR:"Skyview Roof",SD:"Dual Sunroof",
+CONTEXT:
+    WC:"Wire Whl Covers",RW:"Rally Wheels",KW:"Locking Wheels",LC:"Locking Covers",
+    EG:"Elec Glass Roof",ES:"Elec Steel Roof",OR:"Skyview Roof",SD:"Dual Sunroof",
+    MS:"Manual Steel Roof",MG:"Manual Glass Roof",FR:"Flip Roof",TT:"T-Top",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifPdfGenerator.js
+LINE: 26
+CODE:     MS:"Manual Steel Roof",MG:"Manual Glass Roof",FR:"Flip Roof",TT:"T-Top",
+CONTEXT:
+    EG:"Elec Glass Roof",ES:"Elec Steel Roof",OR:"Skyview Roof",SD:"Dual Sunroof",
+    MS:"Manual Steel Roof",MG:"Manual Glass Roof",FR:"Flip Roof",TT:"T-Top",
+    GT:"Glass T-Top",VP:"Pwr Conv Roof",RM:"Detachable Roof",VR:"Vinyl Roof",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifPdfGenerator.js
+LINE: 27
+CODE:     GT:"Glass T-Top",VP:"Pwr Conv Roof",RM:"Detachable Roof",VR:"Vinyl Roof",
+CONTEXT:
+    MS:"Manual Steel Roof",MG:"Manual Glass Roof",FR:"Flip Roof",TT:"T-Top",
+    GT:"Glass T-Top",VP:"Pwr Conv Roof",RM:"Detachable Roof",VR:"Vinyl Roof",
+    RF:"Cabriolet Roof",LR:"Landau Roof",LP:"Padded Landau",PV:"Padded Vinyl Roof",HT:"Hard Top",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifPdfGenerator.js
+LINE: 36
+CODE:     TG:"Tinted Glass",DT:"Privacy Glass",BN:"Body Moldings",DM:"Dual Mirrors",
+CONTEXT:
+    IP:"Clearcoat Paint",MP:"Metallic Paint",SL:"Rear Spoiler",FL:"Fog Lamps",
+    TG:"Tinted Glass",DT:"Privacy Glass",BN:"Body Moldings",DM:"Dual Mirrors",
+    HM:"Heated Mirrors",HV:"Headlamp Washers",MX:"Signal Mirrors",XE:"Xenon Headlamps",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifPdfGenerator.js
+LINE: 54
+CODE:     { title:"EXTERIOR / PAINT / GLASS", codes:["RR","WG","WP","2T","HP","IP","MP","SL","FL","TG","DT","BN","DM","HM","HV","MX","XE"] },
+CONTEXT:
+    { title:"SAFETY / BRAKES", codes:["AG","RG","XG","ZG","DG","TD","VZ","IC","PJ","PX","AB","A2","DB","RB","TX","T1","AL","LW","SAFETY_BC","SAFETY_BD"] },
+    { title:"EXTERIOR / PAINT / GLASS", codes:["RR","WG","WP","2T","HP","IP","MP","SL","FL","TG","DT","BN","DM","HM","HV","MX","XE"] },
+    { title:"OTHER / TRUCK", codes:["OTHER_BC","OTHER_BD","UP","AR","BL","BY","CP","GG","SB","SS","SW","PG","TB","TN","TZ","TP","WD","XT","BG","EM","SG","WI","DE"] }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifPdfGenerator.js
+LINE: 59
+CODE:     ["Paint","PAINT"],["Sheet Metal","SHEET_METAL"],["Glass","GLASS"],["Trim","TRIM"],
+CONTEXT:
+const COND_ROWS = [
+    ["Paint","PAINT"],["Sheet Metal","SHEET_METAL"],["Glass","GLASS"],["Trim","TRIM"],
+    ["Seats","SEATS"],["Carpet","CARPET"],["Dashboard","DASHBOARD"],["Headliner","HEADLINER"],
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/render/bcifRenderer.js
+LINE: 49
+CODE:     glass:        { prefix: "GLASS" },
+CONTEXT:
+    sheetMetal:   { prefix: "SHEET_METAL" },
+    glass:        { prefix: "GLASS" },
+    trim:         { prefix: "TRIM" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/ui/summaryView.js
+LINE: 159
+CODE:             { key: 'glass', label: 'Glass' },
+CONTEXT:
+            { key: 'paint', label: 'Paint' },
+            { key: 'glass', label: 'Glass' },
+            { key: 'seats', label: 'Seats' },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayload.js
+LINE: 36
+CODE:             glass:        { rating: 2, comment: "" },
+CONTEXT:
+            sheetMetal:   { rating: 2, comment: "" },
+            glass:        { rating: 2, comment: "" },
+            trim:         { rating: 2, comment: "" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 11
+CODE:     "GLASS_0","GLASS_1","GLASS_2","GLASS_3","GLASS_COMMENT",
+CONTEXT:
+    "SHEET_METAL_0","SHEET_METAL_1","SHEET_METAL_2","SHEET_METAL_3","SHEET_METAL_COMMENT",
+    "GLASS_0","GLASS_1","GLASS_2","GLASS_3","GLASS_COMMENT",
+    "TRIM_0","TRIM_1","TRIM_2","TRIM_3","TRIM_COMMENT",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 200
+CODE:     "EG":         { label: "Electric Glass Roof",              category: "Roof" },
+CONTEXT:
+    // Roof
+    "EG":         { label: "Electric Glass Roof",              category: "Roof" },
+    "ES":         { label: "Electric Steel Roof",              category: "Roof" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 205
+CODE:     "MG":         { label: "Manual Glass Roof",                category: "Roof" },
+CONTEXT:
+    "MS":         { label: "Manual Steel Roof",                category: "Roof" },
+    "MG":         { label: "Manual Glass Roof",                category: "Roof" },
+    "FR":         { label: "Flip Roof",                        category: "Roof" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 208
+CODE:     "GT":         { label: "Glass T-Top",                      category: "Roof" },
+CONTEXT:
+    "TT":         { label: "T-Top",                            category: "Roof" },
+    "GT":         { label: "Glass T-Top",                      category: "Roof" },
+    "VP":         { label: "Power Convertible Roof",           category: "Roof" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 238
+CODE:     // Exterior / Truck Accessories — Exterior / Paint / Glass
+CONTEXT:
+    "LW":         { label: "Lane Departure Warning",           category: "Safety" },
+    // Exterior / Truck Accessories — Exterior / Paint / Glass
+    "RR":         { label: "Roof Rack",                        category: "Exterior / Truck Accessories" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 248
+CODE:     "TG":         { label: "Tinted Glass",                     category: "Exterior / Truck Accessories" },
+CONTEXT:
+    "FL":         { label: "Fog Lamps",                        category: "Exterior / Truck Accessories" },
+    "TG":         { label: "Tinted Glass",                     category: "Exterior / Truck Accessories" },
+    "DT":         { label: "Privacy Glass",                    category: "Exterior / Truck Accessories" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 249
+CODE:     "DT":         { label: "Privacy Glass",                    category: "Exterior / Truck Accessories" },
+CONTEXT:
+    "TG":         { label: "Tinted Glass",                     category: "Exterior / Truck Accessories" },
+    "DT":         { label: "Privacy Glass",                    category: "Exterior / Truck Accessories" },
+    "BN":         { label: "Body Side Moldings",               category: "Exterior / Truck Accessories" },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 303
+CODE:         { token: "RD", patterns: [/rear\s*defogger/i, /rear\s*defroster/i] },
+CONTEXT:
+        { token: "CL", patterns: [/climate\s*control/i] },
+        { token: "RD", patterns: [/rear\s*defogger/i, /rear\s*defroster/i] },
+        { token: "IW", patterns: [/intermittent\s*wipers?/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 368
+CODE:         { token: "EG", patterns: [/electric\s*glass\s*roof/i] },
+CONTEXT:
+        // ROOF
+        { token: "EG", patterns: [/electric\s*glass\s*roof/i] },
+        { token: "ES", patterns: [/electric\s*steel\s*roof/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 373
+CODE:         { token: "MG", patterns: [/manual\s*glass\s*roof/i] },
+CONTEXT:
+        { token: "MS", patterns: [/manual\s*steel\s*roof/i] },
+        { token: "MG", patterns: [/manual\s*glass\s*roof/i] },
+        { token: "FR", patterns: [/flip\s*roof/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 376
+CODE:         { token: "GT", patterns: [/glass\s*t-?top/i] },
+CONTEXT:
+        { token: "TT", patterns: [/t-?top/i] },
+        { token: "GT", patterns: [/glass\s*t-?top/i] },
+        { token: "VP", patterns: [/power\s*convertible\s*roof/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 405
+CODE:         // EXTERIOR / PAINT / GLASS
+CONTEXT:
+        { token: "LW", patterns: [/lane\s*departure\s*warning/i, /lane\s*departure/i] },
+        // EXTERIOR / PAINT / GLASS
+        { token: "RR", patterns: [/roof\s*rack/i, /luggage\s*rack/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 415
+CODE:         { token: "TG", patterns: [/tinted\s*glass/i] },
+CONTEXT:
+        { token: "FL", patterns: [/fog\s*lamps?/i] },
+        { token: "TG", patterns: [/tinted\s*glass/i] },
+        { token: "DT", patterns: [/privacy\s*glass/i, /dark\s*tint/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 416
+CODE:         { token: "DT", patterns: [/privacy\s*glass/i, /dark\s*tint/i] },
+CONTEXT:
+        { token: "TG", patterns: [/tinted\s*glass/i] },
+        { token: "DT", patterns: [/privacy\s*glass/i, /dark\s*tint/i] },
+        { token: "BN", patterns: [/body\s*side\s*moldings?/i] },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 601
+CODE:     applyRating(tokenMap, "GLASS", ratings.glass);
+CONTEXT:
+    applyRating(tokenMap, "SHEET_METAL", ratings.sheetMetal);
+    applyRating(tokenMap, "GLASS", ratings.glass);
+    applyRating(tokenMap, "TRIM", ratings.trim);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/bcifPayloadBuilder.js
+LINE: 615
+CODE:     setText(tokenMap, "GLASS_COMMENT", comments.glass);
+CONTEXT:
+    setText(tokenMap, "SHEET_METAL_COMMENT", comments.sheetMetal);
+    setText(tokenMap, "GLASS_COMMENT", comments.glass);
+    setText(tokenMap, "TRIM_COMMENT", comments.trim);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-studio.js
+LINE: 855
+CODE:     glass: {
+CONTEXT:
+    },
+    glass: {
+        0: "Cracks or significant damage affecting integrity.",
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-studio.js
+LINE: 859
+CODE:         3: "Glass clear. No cracks or defects observed."
+CONTEXT:
+        2: "Light wear or minor pitting. No structural cracks.",
+        3: "Glass clear. No cracks or defects observed."
+    },
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 43
+CODE:         inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+CONTEXT:
+        inset 0 8px 18px rgba(0, 0, 0, 0.85),
+        inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+        0 20px 40px rgba(0, 0, 0, 0.55),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 553
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+    padding: var(--cipher-space-md) var(--cipher-space-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 674
+CODE:     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+CONTEXT:
+    padding: var(--cipher-space-lg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 678
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+.tls-summary .sv-accordion.is-open .sv-accordion-toggle {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 806
+CODE:     border-top: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+    padding-top: var(--cipher-space-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 1071
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+CONTEXT:
+    padding-bottom: var(--cipher-space-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 1117
+CODE:     border-color: rgba(255, 255, 255, 0.4);
+CONTEXT:
+.total-loss-v2-scope .option-detected input[type="checkbox"] {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 1125
+CODE:     border: 1px solid rgba(255, 255, 255, 0.2);
+CONTEXT:
+    height: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/modules/total-loss-v2/total-loss-v2.css
+LINE: 1127
+CODE:     background: rgba(255, 255, 255, 0.04);
+CONTEXT:
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/ccc-pdf-extractor.js
+LINE: 80
+CODE:                 'Intelligent Cruise', 'Dual Mirrors', 'Privacy Glass', 'Console/Storage',
+CONTEXT:
+                'Navigation System', 'Backup Camera', 'Parking Sensors', 'Remote Starter',
+                'Intelligent Cruise', 'Dual Mirrors', 'Privacy Glass', 'Console/Storage',
+                'Air Conditioning'
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/ccc-pdf-extractor.js
+LINE: 571
+CODE:             body_glass_condition: 1,
+CONTEXT:
+            rear_tires_condition: 2,
+            body_glass_condition: 1,
+            interior_condition: 2
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/command-center-security.js
+LINE: 262
+CODE:             border-left: 4px solid rgba(255, 255, 255, 0.3);
+CONTEXT:
+            transition: transform 0.3s ease;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/command-center-tests.js
+LINE: 59
+CODE:             glassmorphism: document.querySelector('.hero-section') && 
+CONTEXT:
+            gradient_background: getComputedStyle(document.body).background.includes('gradient'),
+            glassmorphism: document.querySelector('.hero-section') && 
+                          getComputedStyle(document.querySelector('.hero-section')).backdropFilter.includes('blur'),
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 1
+CODE: /* 🌟 GLASSMORPHISM VALIDATION SYSTEM */
+CONTEXT:
+
+/* 🌟 GLASSMORPHISM VALIDATION SYSTEM */
+/* Ensures universal frosted glass effects are applied correctly */
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 2
+CODE: /* Ensures universal frosted glass effects are applied correctly */
+CONTEXT:
+/* 🌟 GLASSMORPHISM VALIDATION SYSTEM */
+/* Ensures universal frosted glass effects are applied correctly */
+
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 4
+CODE: console.log('🌟 GLASSMORPHISM VALIDATION INITIATED');
+CONTEXT:
+
+console.log('🌟 GLASSMORPHISM VALIDATION INITIATED');
+console.log('=====================================');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 7
+CODE: function validateGlassmorphism() {
+CONTEXT:
+
+function validateGlassmorphism() {
+    const testResults = {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 12
+CODE:         glassElements: 0
+CONTEXT:
+        issues: [],
+        glassElements: 0
+    };
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 15
+CODE:     // Test 1: Check for backdrop-filter support and usage
+CONTEXT:
+
+    // Test 1: Check for backdrop-filter support and usage
+    const glassElements = document.querySelectorAll('*');
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 16
+CODE:     const glassElements = document.querySelectorAll('*');
+CONTEXT:
+    // Test 1: Check for backdrop-filter support and usage
+    const glassElements = document.querySelectorAll('*');
+    let backdropFilterCount = 0;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 19
+CODE:     glassElements.forEach(el => {
+CONTEXT:
+    
+    glassElements.forEach(el => {
+        const styles = window.getComputedStyle(el);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 26
+CODE:     testResults.glassElements = backdropFilterCount;
+CONTEXT:
+
+    testResults.glassElements = backdropFilterCount;
+    
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 30
+CODE:         console.log(`✨ PASS: ${backdropFilterCount} glassmorphism elements detected`);
+CONTEXT:
+        testResults.passed++;
+        console.log(`✨ PASS: ${backdropFilterCount} glassmorphism elements detected`);
+    } else {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 33
+CODE:         testResults.issues.push('❌ FAIL: No glassmorphism effects detected');
+CONTEXT:
+        testResults.failed++;
+        testResults.issues.push('❌ FAIL: No glassmorphism effects detected');
+    }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 36
+CODE:     // Test 2: Check for frosted glass cards
+CONTEXT:
+
+    // Test 2: Check for frosted glass cards
+    const cards = document.querySelectorAll('.module-card, .cipher-card, .login-cipher-card');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 38
+CODE:     let glassCardCount = 0;
+CONTEXT:
+    const cards = document.querySelectorAll('.module-card, .cipher-card, .login-cipher-card');
+    let glassCardCount = 0;
+    
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 44
+CODE:             glassCardCount++;
+CONTEXT:
+            styles.background.includes('rgba')) {
+            glassCardCount++;
+        }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 48
+CODE:     if (glassCardCount > 0 || cards.length === 0) {
+CONTEXT:
+
+    if (glassCardCount > 0 || cards.length === 0) {
+        testResults.passed++;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 50
+CODE:         console.log(`✨ PASS: ${glassCardCount} frosted glass cards detected`);
+CONTEXT:
+        testResults.passed++;
+        console.log(`✨ PASS: ${glassCardCount} frosted glass cards detected`);
+    } else {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 53
+CODE:         testResults.issues.push('❌ FAIL: Glass cards not properly styled');
+CONTEXT:
+        testResults.failed++;
+        testResults.issues.push('❌ FAIL: Glass cards not properly styled');
+    }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 56
+CODE:     // Test 3: Check for glassmorphism headers
+CONTEXT:
+
+    // Test 3: Check for glassmorphism headers
+    const headers = document.querySelectorAll('.command-header, .cipher-header, .top-nav, header');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 58
+CODE:     let glassHeaderCount = 0;
+CONTEXT:
+    const headers = document.querySelectorAll('.command-header, .cipher-header, .top-nav, header');
+    let glassHeaderCount = 0;
+    
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 63
+CODE:             glassHeaderCount++;
+CONTEXT:
+        if (styles.backdropFilter.includes('blur')) {
+            glassHeaderCount++;
+        }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 67
+CODE:     if (glassHeaderCount > 0 || headers.length === 0) {
+CONTEXT:
+
+    if (glassHeaderCount > 0 || headers.length === 0) {
+        testResults.passed++;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 69
+CODE:         console.log(`✨ PASS: ${glassHeaderCount} frosted glass headers detected`);
+CONTEXT:
+        testResults.passed++;
+        console.log(`✨ PASS: ${glassHeaderCount} frosted glass headers detected`);
+    } else {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 72
+CODE:         testResults.issues.push('❌ FAIL: Glass headers not properly styled');
+CONTEXT:
+        testResults.failed++;
+        testResults.issues.push('❌ FAIL: Glass headers not properly styled');
+    }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 75
+CODE:     // Test 4: Check for glassmorphism forms
+CONTEXT:
+
+    // Test 4: Check for glassmorphism forms
+    const forms = document.querySelectorAll('.form-cipher-container, .login-form, input');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 77
+CODE:     let glassFormCount = 0;
+CONTEXT:
+    const forms = document.querySelectorAll('.form-cipher-container, .login-form, input');
+    let glassFormCount = 0;
+    
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 82
+CODE:             glassFormCount++;
+CONTEXT:
+        if (styles.backdropFilter && styles.backdropFilter !== 'none') {
+            glassFormCount++;
+        }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 86
+CODE:     if (glassFormCount > 0 || forms.length === 0) {
+CONTEXT:
+
+    if (glassFormCount > 0 || forms.length === 0) {
+        testResults.passed++;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 88
+CODE:         console.log(`✨ PASS: ${glassFormCount} frosted glass form elements detected`);
+CONTEXT:
+        testResults.passed++;
+        console.log(`✨ PASS: ${glassFormCount} frosted glass form elements detected`);
+    } else {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 91
+CODE:         testResults.issues.push('❌ FAIL: Glass form elements not properly styled');
+CONTEXT:
+        testResults.failed++;
+        testResults.issues.push('❌ FAIL: Glass form elements not properly styled');
+    }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 94
+CODE:     // Test 5: Check for proper glassmorphism background
+CONTEXT:
+
+    // Test 5: Check for proper glassmorphism background
+    const bodyStyles = window.getComputedStyle(document.body);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 99
+CODE:         console.log('✨ PASS: Glassmorphism background gradient detected');
+CONTEXT:
+        testResults.passed++;
+        console.log('✨ PASS: Glassmorphism background gradient detected');
+    } else {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 102
+CODE:         testResults.issues.push('❌ FAIL: Glassmorphism background not applied');
+CONTEXT:
+        testResults.failed++;
+        testResults.issues.push('❌ FAIL: Glassmorphism background not applied');
+    }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 106
+CODE:     console.log('\n🌟 GLASSMORPHISM VALIDATION RESULTS:');
+CONTEXT:
+    // Display Results
+    console.log('\n🌟 GLASSMORPHISM VALIDATION RESULTS:');
+    console.log(`✨ Tests Passed: ${testResults.passed}`);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 109
+CODE:     console.log(`🔮 Total Glass Elements: ${testResults.glassElements}`);
+CONTEXT:
+    console.log(`❌ Tests Failed: ${testResults.failed}`);
+    console.log(`🔮 Total Glass Elements: ${testResults.glassElements}`);
+    
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 116
+CODE:     const glassScore = (testResults.passed / (testResults.passed + testResults.failed)) * 100;
+CONTEXT:
+
+    const glassScore = (testResults.passed / (testResults.passed + testResults.failed)) * 100;
+    console.log(`\n🏆 GLASSMORPHISM SCORE: ${glassScore.toFixed(1)}%`);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 117
+CODE:     console.log(`\n🏆 GLASSMORPHISM SCORE: ${glassScore.toFixed(1)}%`);
+CONTEXT:
+    const glassScore = (testResults.passed / (testResults.passed + testResults.failed)) * 100;
+    console.log(`\n🏆 GLASSMORPHISM SCORE: ${glassScore.toFixed(1)}%`);
+
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 119
+CODE:     if (glassScore >= 90) {
+CONTEXT:
+
+    if (glassScore >= 90) {
+        console.log('🌟 EXCELLENT! Perfect glassmorphism implementation!');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 120
+CODE:         console.log('🌟 EXCELLENT! Perfect glassmorphism implementation!');
+CONTEXT:
+    if (glassScore >= 90) {
+        console.log('🌟 EXCELLENT! Perfect glassmorphism implementation!');
+        if (testResults.glassElements >= 10) {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 121
+CODE:         if (testResults.glassElements >= 10) {
+CONTEXT:
+        console.log('🌟 EXCELLENT! Perfect glassmorphism implementation!');
+        if (testResults.glassElements >= 10) {
+            console.log('🔮 BONUS: Rich glassmorphism density achieved!');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 122
+CODE:             console.log('🔮 BONUS: Rich glassmorphism density achieved!');
+CONTEXT:
+        if (testResults.glassElements >= 10) {
+            console.log('🔮 BONUS: Rich glassmorphism density achieved!');
+        }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 125
+CODE:     } else if (glassScore >= 70) {
+CONTEXT:
+        return true;
+    } else if (glassScore >= 70) {
+        console.log('✨ GOOD! Minor glassmorphism improvements needed.');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 126
+CODE:         console.log('✨ GOOD! Minor glassmorphism improvements needed.');
+CONTEXT:
+    } else if (glassScore >= 70) {
+        console.log('✨ GOOD! Minor glassmorphism improvements needed.');
+        return false;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 129
+CODE:         console.log('🚨 CRITICAL! Glassmorphism effects not properly implemented.');
+CONTEXT:
+    } else {
+        console.log('🚨 CRITICAL! Glassmorphism effects not properly implemented.');
+        return false;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 134
+CODE: // Auto-run glassmorphism validation
+CONTEXT:
+
+// Auto-run glassmorphism validation
+document.addEventListener('DOMContentLoaded', function() {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 136
+CODE:     setTimeout(validateGlassmorphism, 1500); // Allow all styles to load
+CONTEXT:
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(validateGlassmorphism, 1500); // Allow all styles to load
+});
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 140
+CODE: window.validateGlassmorphism = validateGlassmorphism;
+CONTEXT:
+// Export for manual testing
+window.validateGlassmorphism = validateGlassmorphism;
+
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 142
+CODE: // Visual glassmorphism indicator
+CONTEXT:
+
+// Visual glassmorphism indicator
+function addGlassmorphismIndicator() {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 143
+CODE: function addGlassmorphismIndicator() {
+CONTEXT:
+// Visual glassmorphism indicator
+function addGlassmorphismIndicator() {
+    const indicator = document.createElement('div');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 145
+CODE:     indicator.innerHTML = '🌟 Glassmorphism Active';
+CONTEXT:
+    const indicator = document.createElement('div');
+    indicator.innerHTML = '🌟 Glassmorphism Active';
+    indicator.style.cssText = `
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 150
+CODE:         background: rgba(255, 255, 255, 0.1);
+CONTEXT:
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 151
+CODE:         backdrop-filter: blur(10px);
+CONTEXT:
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 159
+CODE:         animation: glassPulse 2s ease-in-out infinite;
+CONTEXT:
+        z-index: 9999;
+        animation: glassPulse 2s ease-in-out infinite;
+    `;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 165
+CODE:         @keyframes glassPulse {
+CONTEXT:
+    style.textContent = `
+        @keyframes glassPulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 177
+CODE: // Add indicator when glassmorphism loads
+CONTEXT:
+
+// Add indicator when glassmorphism loads
+document.addEventListener('DOMContentLoaded', function() {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/glassmorphism-validator.js
+LINE: 179
+CODE:     setTimeout(addGlassmorphismIndicator, 500);
+CONTEXT:
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(addGlassmorphismIndicator, 500);
+});
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 681
+CODE:     }; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); cursor: grab;">
+CONTEXT:
+      isCompact ? "1rem" : "1.5rem"
+    }; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); cursor: grab;">
+        <div class="job-cipher-header" style="margin-bottom: ${
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 686
+CODE:     }; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+CONTEXT:
+      isCompact ? "0.75rem" : "1rem"
+    }; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+          <h4 style="margin: 0; font-size: ${
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 754
+CODE:         }; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+CONTEXT:
+          isCompact ? "0.75rem" : "1rem"
+        }; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+          ${this.getJobActionButtons(job)}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 830
+CODE:         }s; margin-bottom: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+CONTEXT:
+          index * 0.1
+        }s; margin-bottom: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+                    <div class="job-cipher-header" style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 831
+CODE:                     <div class="job-cipher-header" style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+CONTEXT:
+        }s; margin-bottom: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+                    <div class="job-cipher-header" style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                        <h4 style="margin: 0; font-size: 1.25rem; color: var(--cipher-primary);">${
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 890
+CODE:                     <div class="job-cipher-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+CONTEXT:
+                    </div>
+                    <div class="job-cipher-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                        ${this.getJobActionButtons(job)}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1079
+CODE:                     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+CONTEXT:
+                    <h5 style="color: var(--cipher-text-primary); margin-bottom: 1rem;">📞 Contact Information</h5>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+                        <div style="display: grid; gap: 0.75rem;">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1100
+CODE:                     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+CONTEXT:
+                    <h5 style="color: var(--cipher-text-primary); margin-bottom: 1rem;">📋 Policy Information</h5>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+                        <div style="display: grid; gap: 0.75rem;">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1138
+CODE:                         })" style="border: 2px dashed rgba(255,255,255,0.3);">
+CONTEXT:
+                          job.id
+                        })" style="border: 2px dashed rgba(255,255,255,0.3);">
+                            <div style="text-align: center; color: var(--cipher-text-muted);">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1150
+CODE:                     <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 8px;">
+CONTEXT:
+                    <h5 style="color: var(--cipher-text-primary); margin-bottom: 1rem;">📸 Photos</h5>
+                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 8px;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📷</div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1162
+CODE:                     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+CONTEXT:
+                    <h5 style="color: var(--cipher-text-primary); margin-bottom: 1rem;">📝 Notes</h5>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+                        <div style="color: var(--cipher-text-secondary); line-height: 1.6;">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1172
+CODE:                     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+CONTEXT:
+                    <h5 style="color: var(--cipher-text-primary); margin-bottom: 1rem;">⏰ Timeline</h5>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1rem;">
+                        <div style="display: grid; gap: 0.75rem;">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1221
+CODE:                 <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+CONTEXT:
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    ${
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1410
+CODE:                                     style="flex: 1; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="CLM-2024-XXX"
+                                    style="flex: 1; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                                <button type="button" onclick="jobsStudio.generateClaimNumber()" class="cipher-btn cipher-btn--secondary" style="padding: 0.75rem 1rem; white-space: nowrap;">
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1423
+CODE:                                 style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                placeholder="John Doe"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                        </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1432
+CODE:                                 style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                placeholder="Insurance Company Name"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                        </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1441
+CODE:                                 style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                placeholder="123 Main St"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                        </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1451
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="Atlanta"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1460
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem; text-transform: uppercase;">
+CONTEXT:
+                                    maxlength="2"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem; text-transform: uppercase;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1469
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    maxlength="10"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1480
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="(555) 123-4567"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1488
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="email@example.com"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1504
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                <select id="priority" name="priority" required
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                                    <option value="low">Low</option>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1515
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                <select id="status" name="status"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                                    <option value="NEW" selected>New</option>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1527
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                <select id="claim-type" name="claimType" required
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                                    <option value="Property Damage">Property Damage</option>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1544
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                <input type="datetime-local" id="scheduled-date" name="scheduledDate"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1553
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    value="2 hours"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1563
+CODE:                                 style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                placeholder="Inspector name (leave blank for unassigned)"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                        </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1579
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="POL-2024-XXXX"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1587
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="$1,000"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1595
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="Full Coverage"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1612
+CODE:                                 style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem; text-transform: uppercase;">
+CONTEXT:
+                                maxlength="17"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem; text-transform: uppercase;">
+                        </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1623
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    maxlength="4"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1631
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="Honda"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1639
+CODE:                                     style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+CONTEXT:
+                                    placeholder="Accord"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem;">
+                            </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1652
+CODE:                         style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem; resize: vertical; font-family: inherit;"></textarea>
+CONTEXT:
+                        placeholder="Additional notes, instructions, or details about this job..."
+                        style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--cipher-text-primary); font-size: 1rem; resize: vertical; font-family: inherit;"></textarea>
+                </div>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/jobs-studio.js
+LINE: 1656
+CODE:                 <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+CONTEXT:
+                <!-- Form Actions -->
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <button type="button" class="cipher-btn cipher-btn--ghost" onclick="jobsStudio.closeModal()">Cancel</button>
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 290
+CODE:                     this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+CONTEXT:
+                } else {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                }
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 827
+CODE:                 checkmark.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+CONTEXT:
+                checkmark.style.backgroundColor = 'transparent';
+                checkmark.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+            }
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 843
+CODE:                     checkmark.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+CONTEXT:
+                    checkmark.style.backgroundColor = 'transparent';
+                    checkmark.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+                }
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 992
+CODE:         glassmorphism: false,
+CONTEXT:
+    const designChecks = {
+        glassmorphism: false,
+        responsiveness: false,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 999
+CODE:     // Check 1: Glassmorphism effects
+CONTEXT:
+    
+    // Check 1: Glassmorphism effects
+    const loginCard = document.querySelector('.login-cipher-card');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 1004
+CODE:             designChecks.glassmorphism = true;
+CONTEXT:
+        if (cardStyles.backdropFilter && cardStyles.backdropFilter !== 'none') {
+            designChecks.glassmorphism = true;
+            console.log('✅ DESIGNER: Glassmorphism effects present');
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 1005
+CODE:             console.log('✅ DESIGNER: Glassmorphism effects present');
+CONTEXT:
+            designChecks.glassmorphism = true;
+            console.log('✅ DESIGNER: Glassmorphism effects present');
+        } else {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/login-cypher.js
+LINE: 1007
+CODE:             console.log('❌ DESIGNER: Glassmorphism effects missing');
+CONTEXT:
+        } else {
+            console.log('❌ DESIGNER: Glassmorphism effects missing');
+        }
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/total-loss-field-mapping.js
+LINE: 159
+CODE:                 'electric_glass_roof': 'EG',
+CONTEXT:
+            roof: {
+                'electric_glass_roof': 'EG',
+                'electric_steel_roof': 'ES',
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/total-loss-field-mapping.js
+LINE: 164
+CODE:                 'manual_glass_roof': 'MG',
+CONTEXT:
+                'manual_steel_roof': 'MS',
+                'manual_glass_roof': 'MG',
+                'flip_roof': 'FR',
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/total-loss-field-mapping.js
+LINE: 201
+CODE:             // Exterior/Paint/Glass
+CONTEXT:
+
+            // Exterior/Paint/Glass
+            exterior: {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/total-loss-field-mapping.js
+LINE: 206
+CODE:                 'tinted_glass': 'TG',
+CONTEXT:
+                'body_side_moldings': 'BN',
+                'tinted_glass': 'TG',
+                'aftermarket_tint': 'AF',
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/total-loss-field-mapping.js
+LINE: 208
+CODE:                 'privacy_glass': 'DT',
+CONTEXT:
+                'aftermarket_tint': 'AF',
+                'privacy_glass': 'DT',
+                'rear_window_wiper': 'WP',
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/scripts/total-loss-field-mapping.js
+LINE: 281
+CODE:             'body_glass_condition': 'Body/Glass',
+CONTEXT:
+            'rear_tires_condition': 'Rear Tires',
+            'body_glass_condition': 'Body/Glass',
+            'interior_condition': 'Interior'
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/command-center-layout.css
+LINE: 32
+CODE:         0 -1px 0 rgba(255,255,255,0.04);
+CONTEXT:
+        0 1px 3px rgba(0,0,0,0.6),
+        0 -1px 0 rgba(255,255,255,0.04);
+    background: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/command-center-layout.css
+LINE: 94
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    ) !important;
+    backdrop-filter: none !important;
+    box-shadow:
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/command-center-layout.css
+LINE: 131
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+    padding: var(--cipher-space-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 1
+CODE: /* 🌟 UNIVERSAL GLASSMORPHISM DESIGN SYSTEM - APPLIED TO ALL HTML PAGES */
+CONTEXT:
+
+/* 🌟 UNIVERSAL GLASSMORPHISM DESIGN SYSTEM - APPLIED TO ALL HTML PAGES */
+/* Hip-hop professional aesthetic with frosted glass effects */
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 2
+CODE: /* Hip-hop professional aesthetic with frosted glass effects */
+CONTEXT:
+/* 🌟 UNIVERSAL GLASSMORPHISM DESIGN SYSTEM - APPLIED TO ALL HTML PAGES */
+/* Hip-hop professional aesthetic with frosted glass effects */
+
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 4
+CODE: /* Universal Body Glassmorphism */
+CONTEXT:
+
+/* Universal Body Glassmorphism */
+body {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 13
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    ) !important;
+    backdrop-filter: none !important;
+    min-height: 100vh;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 18
+CODE: /* Universal Glassmorphism Card System */
+CONTEXT:
+
+/* Universal Glassmorphism Card System */
+.module-card,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 34
+CODE:     background: rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+.total-loss-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 35
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 36
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 40
+CODE:         0 0 0 1px rgba(255, 255, 255, 0.05),
+CONTEXT:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 41
+CODE:         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 45
+CODE: /* Enhanced Hover Effects for Glass Cards */
+CONTEXT:
+
+/* Enhanced Hover Effects for Glass Cards */
+.module-card:hover,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 53
+CODE:     background: rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+.dashboard-card:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 215, 0, 0.3) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 59
+CODE:         inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+CONTEXT:
+        0 0 0 1px rgba(255, 215, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 62
+CODE: /* Universal Glassmorphism Headers */
+CONTEXT:
+
+/* Universal Glassmorphism Headers */
+.command-header,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 71
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(15, 15, 15, 0.85) !important;
+    backdrop-filter: none !important;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 76
+CODE: /* Universal Glassmorphism Navigation */
+CONTEXT:
+
+/* Universal Glassmorphism Navigation */
+.cipher-sidebar,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 81
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(15, 15, 15, 0.9) !important;
+    backdrop-filter: none !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 82
+CODE:     border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 85
+CODE: /* Universal Glassmorphism Forms */
+CONTEXT:
+
+/* Universal Glassmorphism Forms */
+.form-cipher-container,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 90
+CODE:     background: rgba(255, 255, 255, 0.03) !important;
+CONTEXT:
+.signup-form {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 91
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 92
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 15px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 97
+CODE: /* Universal Glassmorphism Input Fields */
+CONTEXT:
+
+/* Universal Glassmorphism Input Fields */
+.form-cipher-input,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 106
+CODE:     background: rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 107
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 108
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 110
+CODE:     color: rgba(255, 255, 255, 0.9) !important;
+CONTEXT:
+    border-radius: 12px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 15px 20px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 119
+CODE:     background: rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+textarea:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 125
+CODE: /* Universal Glassmorphism Buttons */
+CONTEXT:
+
+/* Universal Glassmorphism Buttons */
+.action-btn,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 137
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    ) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 159
+CODE: /* Secondary Glassmorphism Buttons */
+CONTEXT:
+
+/* Secondary Glassmorphism Buttons */
+.secondary-btn,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 163
+CODE:     background: rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+.cancel-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 164
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 165
+CODE:     border: 1px solid rgba(255, 255, 255, 0.2) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 167
+CODE:     color: rgba(255, 255, 255, 0.9) !important;
+CONTEXT:
+    border-radius: 12px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 173
+CODE:     background: rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+.cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 174
+CODE:     border-color: rgba(255, 255, 255, 0.3) !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 177
+CODE: /* Universal Glassmorphism Stats/Metrics */
+CONTEXT:
+
+/* Universal Glassmorphism Stats/Metrics */
+.stat-item,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 182
+CODE:     background: rgba(255, 255, 255, 0.04) !important;
+CONTEXT:
+.info-card {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 183
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 184
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 189
+CODE: /* Universal Glassmorphism Text Colors */
+CONTEXT:
+
+/* Universal Glassmorphism Text Colors */
+h1, h2, h3, h4, h5, h6,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 198
+CODE:     color: rgba(255, 255, 255, 0.85) !important;
+CONTEXT:
+.text, .description, .subtitle {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 204
+CODE:     color: rgba(255, 255, 255, 0.6) !important;
+CONTEXT:
+.help-text {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 207
+CODE: /* Universal Glassmorphism Branding */
+CONTEXT:
+
+/* Universal Glassmorphism Branding */
+.app-brand,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 215
+CODE: /* Universal Glassmorphism Icons */
+CONTEXT:
+
+/* Universal Glassmorphism Icons */
+.module-icon,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 222
+CODE: /* Universal Glassmorphism Tables */
+CONTEXT:
+
+/* Universal Glassmorphism Tables */
+table,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 226
+CODE:     background: rgba(255, 255, 255, 0.03) !important;
+CONTEXT:
+.data-table {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 227
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 228
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 236
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 215, 0, 0.1) !important;
+    backdrop-filter: none !important;
+    color: rgba(255, 215, 0, 0.9) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 242
+CODE:     background: rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+.table-row:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 245
+CODE: /* Universal Glassmorphism Modals */
+CONTEXT:
+
+/* Universal Glassmorphism Modals */
+.modal,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 251
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(15, 15, 15, 0.95) !important;
+    backdrop-filter: none !important;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 256
+CODE:     background: rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+.dialog-content {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 257
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 258
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 262
+CODE: /* Universal Glassmorphism Alerts/Notifications */
+CONTEXT:
+
+/* Universal Glassmorphism Alerts/Notifications */
+.alert,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 267
+CODE:     background: rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+.message {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 268
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 269
+CODE:     border: 1px solid rgba(255, 255, 255, 0.15) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 278
+CODE: /* Universal Glassmorphism Scrollbars */
+CONTEXT:
+
+/* Universal Glassmorphism Scrollbars */
+::-webkit-scrollbar {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 285
+CODE:     background: rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 4px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 295
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    border-radius: 4px !important;
+    backdrop-filter: none !important;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 305
+CODE: /* Universal Mobile Glassmorphism Responsiveness */
+CONTEXT:
+
+/* Universal Mobile Glassmorphism Responsiveness */
+@media (max-width: 768px) {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/glassmorphism-universal.css
+LINE: 334
+CODE:     color: rgba(255, 255, 255, 1) !important;
+CONTEXT:
+    background: rgba(255, 215, 0, 0.3) !important;
+    color: rgba(255, 255, 255, 1) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 50
+CODE:         inset 0 -1px 1px rgba(255,255,255,0.06),
+CONTEXT:
+        inset 0 1px 1px rgba(0,0,0,0.6),
+        inset 0 -1px 1px rgba(255,255,255,0.06),
+        0 1px 2px rgba(0,0,0,0.5);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 63
+CODE:     box-shadow: 0 1px 0 rgba(255,255,255,0.04);
+CONTEXT:
+    transform: translate(-50%, -50%);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 78
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(6, 8, 10, 0.96) !important;
+    backdrop-filter: none !important;
+    border-bottom: 2px solid rgba(184,115,51,0.22) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 81
+CODE:         inset 0 1px 0 rgba(255,255,255,0.04),
+CONTEXT:
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        inset 0 -1px 0 rgba(0,0,0,0.4),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 242
+CODE:         inset 0 2px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 0 rgba(0,0,0,0.4),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 256
+CODE:         inset 0 2px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 0 rgba(0,0,0,0.4),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 309
+CODE:         inset 0 1px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -1px 0 rgba(0,0,0,0.35),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 369
+CODE:         inset 0 2px 0 rgba(255,255,255,0.12),
+CONTEXT:
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.12),
+        inset 0 -2px 0 rgba(0,0,0,0.5),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 395
+CODE:         inset 0 2px 0 rgba(255,255,255,0.15),
+CONTEXT:
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.15),
+        inset 0 -2px 0 rgba(0,0,0,0.55),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 425
+CODE:         0 -1px 0 rgba(255,255,255,0.04);
+CONTEXT:
+        0 1px 0 #0c0f12,
+        0 -1px 0 rgba(255,255,255,0.04);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 436
+CODE:         0 -1px 0 rgba(255,255,255,0.03);
+CONTEXT:
+        0 1px 2px rgba(0,0,0,0.5),
+        0 -1px 0 rgba(255,255,255,0.03);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/industrial-plates.css
+LINE: 440
+CODE:     color: rgba(255,255,255,0.6);
+CONTEXT:
+.module-description {
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-cypher.css
+LINE: 39
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: none;
+    border-radius: 20px;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/login-cypher.css
+LINE: 46
+CODE:         inset 0 1px 0 rgba(255, 255, 255, 0.1);
+CONTEXT:
+        0 0 0 1px rgba(255, 215, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-cypher.css
+LINE: 105
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: none;
+    z-index: 10000;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/login-cypher.css
+LINE: 377
+CODE:     border: 2px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-cypher.css
+LINE: 424
+CODE:     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+CONTEXT:
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-cypher.css
+LINE: 957
+CODE:     background: rgba(255, 255, 255, 0.2);
+CONTEXT:
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 5
+CODE:    Accent: copper #B87333 only. No gold. No blue. No glass. No blur.
+CONTEXT:
+   This file: login-specific layout, spacing, form styling.
+   Accent: copper #B87333 only. No gold. No blue. No glass. No blur.
+*/
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 64
+CODE:         inset 0 2px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 0 rgba(0,0,0,0.4),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 154
+CODE:     border: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+    background: rgba(20, 24, 28, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 182
+CODE:     background: rgba(255, 255, 255, 0.04);
+CONTEXT:
+    color: #e8e6e3;
+    background: rgba(255, 255, 255, 0.04);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 228
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+    background: rgba(14, 17, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 235
+CODE:     backdrop-filter: none;
+CONTEXT:
+    outline: none;
+    backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 245
+CODE:     border-color: rgba(255, 255, 255, 0.15);
+CONTEXT:
+.form-cipher-input:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 366
+CODE:     border: 2px solid rgba(255, 255, 255, 0.12);
+CONTEXT:
+    background: rgba(14, 17, 20, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 440
+CODE:     background: rgba(255, 255, 255, 0.04);
+CONTEXT:
+.login-plate .cipher-btn--secondary {
+    background: rgba(255, 255, 255, 0.04);
+    color: #9a9a9e;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 442
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    color: #9a9a9e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 446
+CODE:     background: rgba(255, 255, 255, 0.08);
+CONTEXT:
+.login-plate .cipher-btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e8e6e3;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 448
+CODE:     border-color: rgba(255, 255, 255, 0.2);
+CONTEXT:
+    color: #e8e6e3;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 505
+CODE:     background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 606
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+    background: rgba(14, 17, 20, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 6px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 634
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: none;
+    z-index: 10000;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 657
+CODE:         inset 0 1px 0 rgba(255,255,255,0.06),
+CONTEXT:
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 4px 0 #15191d,
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 794
+CODE:         inset 0 2px 0 rgba(255, 255, 255, 0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 873
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+    background: rgba(14, 17, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 889
+CODE:     border-color: rgba(255, 255, 255, 0.15);
+CONTEXT:
+.cipher-modal .form-cipher-input:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 985
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+    background: rgba(14, 17, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 1032
+CODE:     border: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+    background: rgba(14, 17, 20, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/login-layout.css
+LINE: 1045
+CODE:     border-top: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+.price-row.total {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: 0.5rem;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 58
+CODE:     background: rgba(255,255,255,0.1);
+CONTEXT:
+.nav-links a:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 255
+CODE:     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+CONTEXT:
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: loading-shimmer 1.5s infinite;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 410
+CODE:     background: rgba(255, 255, 255, 0.95);
+CONTEXT:
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 411
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+    border-radius: 16px;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 417
+CODE:     border: 1px solid rgba(255, 255, 255, 0.3);
+CONTEXT:
+    max-width: 400px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 428
+CODE:     background: rgba(255, 255, 255, 0.9);
+CONTEXT:
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 441
+CODE:     background: rgba(255, 255, 255, 1);
+CONTEXT:
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    background: rgba(255, 255, 255, 1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/main.css
+LINE: 447
+CODE:     background: rgba(255, 255, 255, 1);
+CONTEXT:
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 187
+CODE:     border: 2px solid rgba(255, 255, 255, 0.3);
+CONTEXT:
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 191
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 192
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 266
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+    padding: var(--cipher-space-sm) var(--cipher-space-md);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 267
+CODE:     background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 326
+CODE:     border-top: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    padding-top: var(--cipher-space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 345
+CODE:     background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+    color: #B87333;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(184, 115, 51, 0.35);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 360
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: none;
+    display: flex;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 396
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.close-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 397
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--cipher-text-muted);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 466
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: #1a1e22;
+    backdrop-filter: none;
+    border: 1px solid #2f343a;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/mileage-cypher-layout.css
+LINE: 595
+CODE:     background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+.cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(184, 115, 51, 0.35);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/mobile-enhancements.css
+LINE: 110
+CODE:     background: rgba(255, 255, 255, 0.1);
+CONTEXT:
+.cipher-table-responsive::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 32
+CODE:     0 -1px 0 rgba(255,255,255,0.04);
+CONTEXT:
+    0 1px 3px rgba(0,0,0,0.6),
+    0 -1px 0 rgba(255,255,255,0.04);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 50
+CODE:     0 1px 0 rgba(255,255,255,0.05),
+CONTEXT:
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.05),
+    0 -1px 0 rgba(0,0,0,0.5);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 84
+CODE:   border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  background: rgba(14, 17, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 88
+CODE:   backdrop-filter: none;
+CONTEXT:
+  transition: border-color 0.2s ease;
+  backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 92
+CODE:   border-color: rgba(255, 255, 255, 0.15);
+CONTEXT:
+.filter-input:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 123
+CODE:     0 1px 0 rgba(255,255,255,0.05),
+CONTEXT:
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.05),
+    0 -1px 0 rgba(0,0,0,0.5);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 178
+CODE:   border: 3px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top-color: #B87333;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 252
+CODE:     inset 0 1px 0 rgba(255,255,255,0.07),
+CONTEXT:
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 266
+CODE:     inset 0 1px 0 rgba(255,255,255,0.09),
+CONTEXT:
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 427
+CODE:   border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 432
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03);
+  color: #7a7e82;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 437
+CODE:   background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e8e6e3;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 439
+CODE:   border-color: rgba(255, 255, 255, 0.15);
+CONTEXT:
+  color: #e8e6e3;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 477
+CODE:   border-color: rgba(255, 255, 255, 0.08);
+CONTEXT:
+  color: #7a7e82;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 487
+CODE:   border-color: rgba(255, 255, 255, 0.08);
+CONTEXT:
+  color: #7a7e82;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 516
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 535
+CODE:   backdrop-filter: none;
+CONTEXT:
+  z-index: var(--cipher-z-modal, 1100);
+  backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 553
+CODE:     inset 0 1px 0 rgba(255,255,255,0.06),
+CONTEXT:
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 4px 0 #15191d,
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 565
+CODE:   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+  padding: var(--cipher-space-lg, 2rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 616
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+  padding: var(--cipher-space-lg, 2rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  justify-content: flex-end;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 623
+CODE:   border: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+  background: rgba(14, 17, 20, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 632
+CODE:   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+CONTEXT:
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/my-routes-layout.css
+LINE: 658
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.06);
+CONTEXT:
+  padding-top: var(--cipher-space-md, 1.5rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 7
+CODE: .cipher-glass-panel {
+CONTEXT:
+   ================================= */
+.cipher-glass-panel {
+  background: none;
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 98
+CODE:     rgba(255, 255, 255, 0.08) 0%,
+CONTEXT:
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 99
+CODE:     rgba(255, 255, 255, 0.04) 100%
+CONTEXT:
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 101
+CODE:   backdrop-filter: none;
+CONTEXT:
+  );
+  backdrop-filter: none;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 102
+CODE:   border: 2px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  backdrop-filter: none;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--cipher-radius-lg);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 238
+CODE:   --cipher-btn-hover-bg: rgba(255, 255, 255, 0.04);
+CONTEXT:
+  --cipher-btn-text: #b87333;
+  --cipher-btn-hover-bg: rgba(255, 255, 255, 0.04);
+  --cipher-btn-hover-border: rgba(184, 115, 51, 0.45);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 241
+CODE:   --cipher-btn-active-bg: rgba(255, 255, 255, 0.08);
+CONTEXT:
+  --cipher-btn-hover-text: #b87333;
+  --cipher-btn-active-bg: rgba(255, 255, 255, 0.08);
+  --cipher-btn-active-border: rgba(184, 115, 51, 0.6);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 247
+CODE:   background: rgba(255, 255, 255, 0.08);
+CONTEXT:
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cipher-text-secondary);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 249
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  color: var(--cipher-text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: var(--cipher-space-sm) var(--cipher-space-lg);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 262
+CODE:   background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #B87333;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 275
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding-top: var(--cipher-space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 310
+CODE:   background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+.copy-area {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 311
+CODE:   border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--cipher-radius-lg);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 320
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 374
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding-top: var(--cipher-space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 391
+CODE:   background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+  color: #B87333;
+  background: rgba(255, 255, 255, 0.06);
+  transform: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/professional-calculator.css
+LINE: 404
+CODE:   border: 2px solid rgba(255, 255, 255, 0.3);
+CONTEXT:
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid var(--cipher-text-primary);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 98
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 99
+CODE:   border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 105
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.destination-input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(212, 170, 0, 0.2);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 111
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 112
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 249
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.day-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 250
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-lg);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 292
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.day-stats .stat {
+  background: rgba(255, 255, 255, 0.05);
+  padding: var(--cipher-space-xs) var(--cipher-space-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 295
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  border-radius: var(--cipher-radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 332
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding: var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 333
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 347
+CODE:   background: rgba(255, 255, 255, 0.06);
+CONTEXT:
+.stop-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 215, 0, 0.2);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 447
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding-top: var(--cipher-space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 448
+CODE:   background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 480
+CODE:   background: rgba(255, 255, 255, 0.08);
+CONTEXT:
+.appt-time-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 481
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 500
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 501
+CODE:   border-color: rgba(255, 255, 255, 0.1);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 506
+CODE:   background: rgba(255, 255, 255, 0.08);
+CONTEXT:
+.duration-select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 507
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 524
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 525
+CODE:   border-color: rgba(255, 255, 255, 0.1);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 564
+CODE:   background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+  padding: var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 565
+CODE:   border: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 581
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.day-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 582
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--cipher-text-secondary);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 619
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  padding-top: var(--cipher-space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 655
+CODE: .optimizer-section .cipher-glass-panel {
+CONTEXT:
+
+.optimizer-section .cipher-glass-panel {
+  padding-bottom: var(--cipher-space-xl);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 668
+CODE: .results-section .cipher-glass-panel {
+CONTEXT:
+
+.results-section .cipher-glass-panel {
+  padding: var(--cipher-space-xl);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 690
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 691
+CODE:   background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 710
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding-top: var(--cipher-space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 830
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+  padding: var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 831
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 838
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.timeline-stop:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 215, 0, 0.3);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 959
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  padding-top: var(--cipher-space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 973
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+  gap: var(--cipher-space-xs);
+  background: rgba(255, 255, 255, 0.05);
+  padding: var(--cipher-space-xs);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 976
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  border-radius: var(--cipher-radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 985
+CODE:   background: rgba(255, 255, 255, 0.08);
+CONTEXT:
+.input-compact select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 986
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-xs);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1120
+CODE:   backdrop-filter: none;
+CONTEXT:
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: none;
+  z-index: 9999;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1377
+CODE:   border: 1px solid rgba(255,255,255,0.06);
+CONTEXT:
+  background: linear-gradient(145deg, #2e343b, #242a30);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1392
+CODE:   border-color: rgba(255,255,255,0.08);
+CONTEXT:
+  background: linear-gradient(145deg, #2e343b, #242a30);
+  border-color: rgba(255,255,255,0.08);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1398
+CODE:   border-color: rgba(255,255,255,0.06);
+CONTEXT:
+  background: linear-gradient(145deg, #2e343b, #242a30);
+  border-color: rgba(255,255,255,0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1437
+CODE:   border: 1px solid rgba(255,255,255,0.08);
+CONTEXT:
+  background: linear-gradient(160deg, #3a3f45 0%, #1f2429 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1455
+CODE:   border-color: rgba(255,255,255,0.08);
+CONTEXT:
+  background: linear-gradient(160deg, #3a3f45 0%, #1f2429 100%);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--cipher-text-primary);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1461
+CODE:   border: 1px solid rgba(255,255,255,0.08);
+CONTEXT:
+  background: linear-gradient(160deg, #3a3f45 0%, #1f2429 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1580
+CODE:   background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+  min-height: 120px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px dashed rgba(255, 215, 0, 0.3);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1598
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+.claim-drop-zone.has-claims {
+  background: rgba(255, 255, 255, 0.03);
+  border-style: solid;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1617
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.claim-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1618
+CODE:   backdrop-filter: none;
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1619
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1638
+CODE:   background: rgba(255, 255, 255, 0.08);
+CONTEXT:
+.claim-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 215, 0, 0.3);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1648
+CODE:   0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+CONTEXT:
+@keyframes duplicateFlash {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+  50% { border-color: rgba(255, 99, 71, 0.8); }
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1706
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+.claim-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--cipher-space-xs);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1714
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1715
+CODE:   border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1789
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding: var(--cipher-space-xs) var(--cipher-space-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1817
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+.overage-stat.highlight {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--cipher-space-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1862
+CODE:   border-top: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+  padding: var(--cipher-space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1934
+CODE:   background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding: var(--cipher-space-sm) var(--cipher-space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1935
+CODE:   border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1952
+CODE:   background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+.route-summary-preview {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1953
+CODE:   border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 1962
+CODE:   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+  padding: var(--cipher-space-xs) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 2111
+CODE:   backdrop-filter: none;
+CONTEXT:
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 2117
+CODE:   backdrop-filter: none;
+CONTEXT:
+.save-route-container {
+  backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 2135
+CODE:     inset 0 2px 0 rgba(255,255,255,0.12),
+CONTEXT:
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 0 rgba(0,0,0,0.5),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 2150
+CODE:     inset 0 2px 0 rgba(255,255,255,0.15),
+CONTEXT:
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.15),
+    inset 0 -2px 0 rgba(0,0,0,0.55),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cipher-professional.css
+LINE: 2171
+CODE:   border-bottom: 1px solid rgba(255,255,255,0.06);
+CONTEXT:
+  padding: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 109
+CODE:     background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+.destination-input:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 252
+CODE:     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    padding-bottom: var(--cipher-space-md);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 271
+CODE:     color: rgba(255, 255, 255, 0.9);
+CONTEXT:
+    margin: var(--cipher-space-xs) 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 281
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 287
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+    padding: var(--cipher-space-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 288
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.1rem;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 297
+CODE:     background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+    padding: var(--cipher-space-md);
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 298
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 303
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.stat {
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--cipher-space-xs) var(--cipher-space-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 308
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    color: var(--cipher-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 324
+CODE:     background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+    margin-bottom: var(--cipher-space-xs);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 326
+CODE:     border: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+    border-radius: var(--cipher-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 363
+CODE:     border-top: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    padding-top: var(--cipher-space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 403
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    height: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 429
+CODE:     background: rgba(255, 255, 255, 0.95);
+CONTEXT:
+.loading-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 430
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+    padding: var(--cipher-space-xl);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 435
+CODE:     border: 1px solid rgba(255, 255, 255, 0.2);
+CONTEXT:
+    max-width: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 441
+CODE:     border: 4px solid rgba(255, 255, 255, 0.3);
+CONTEXT:
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid var(--cipher-gold);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 510
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 511
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 523
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: var(--cipher-bg-secondary, #1a1a1a) !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 524
+CODE:     border: 1px solid rgba(255, 255, 255, 0.15) !important;
+CONTEXT:
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: var(--cipher-radius-md) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 532
+CODE:     border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+CONTEXT:
+    background: transparent !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 8px 12px !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/route-cypher-layout.css
+LINE: 537
+CODE:     background: rgba(255, 255, 255, 0.08) !important;
+CONTEXT:
+.pac-item:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 53
+CODE:     background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+    padding: var(--cipher-space-lg);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 54
+CODE:     border: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--cipher-radius-lg);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 56
+CODE:     backdrop-filter: none;
+CONTEXT:
+    border-radius: var(--cipher-radius-lg);
+    backdrop-filter: none;
+}
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 105
+CODE:     border-top: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+    padding: var(--cipher-space-xl) var(--cipher-space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: var(--cipher-space-xl);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 140
+CODE:         rgba(255, 255, 255, 0.1) 0%,
+CONTEXT:
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 141
+CODE:         rgba(255, 255, 255, 0.05) 100%
+CONTEXT:
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 144
+CODE:     border: 1px solid rgba(255, 255, 255, 0.15);
+CONTEXT:
+    color: var(--cipher-text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: var(--cipher-space-lg) var(--cipher-space-xl);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 243
+CODE:     backdrop-filter: none;
+CONTEXT:
+    );
+    backdrop-filter: none;
+    border-radius: var(--cipher-radius-lg);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/settings-booth-professional.css
+LINE: 248
+CODE:         0 0 0 1px rgba(255, 255, 255, 0.05);
+CONTEXT:
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    z-index: 10000;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 189
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.process-step {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 190
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+    border: 1px solid rgba(255, 215, 0, 0.1);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 218
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    padding-bottom: var(--cipher-space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 340
+CODE:     border: 1px solid rgba(255, 255, 255, 0.2);
+CONTEXT:
+    padding: var(--cipher-space-sm);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 342
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--cipher-text-primary);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 359
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.preview-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 360
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: none;
+    border: 1px solid rgba(255, 215, 0, 0.1);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 373
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    padding-bottom: var(--cipher-space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 391
+CODE:     background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 392
+CODE:     border: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 406
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+CONTEXT:
+    padding: var(--cipher-space-xs) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 424
+CODE:     background: rgba(255, 255, 255, 0.1);
+CONTEXT:
+.form-thumbnail {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 469
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+.file-details {
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--cipher-space-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 574
+CODE:     border: 2px solid rgba(255, 255, 255, 0.3);
+CONTEXT:
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 725
+CODE:     border: 1px solid rgba(255, 255, 255, 0.2);
+CONTEXT:
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--cipher-radius-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 727
+CODE:     background: rgba(255, 255, 255, 0.02);
+CONTEXT:
+    border-radius: var(--cipher-radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    padding: var(--cipher-space-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 739
+CODE:     background: rgba(255, 255, 255, 0.05);
+CONTEXT:
+    border-radius: var(--cipher-radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--cipher-accent);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 774
+CODE:     background: rgba(255, 255, 255, 0.1);
+CONTEXT:
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 789
+CODE:     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+CONTEXT:
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/total-loss-forms.css
+LINE: 812
+CODE:     background: rgba(255, 255, 255, 0.1);
+CONTEXT:
+.interactive-checkbox:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-header-fixes.css
+LINE: 30
+CODE:     backdrop-filter: none !important;
+CONTEXT:
+    background: rgba(15, 15, 15, 0.95) !important;
+    backdrop-filter: none !important;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/universal-header-fixes.css
+LINE: 63
+CODE:     color: rgba(255, 255, 255, 0.8) !important;
+CONTEXT:
+.page-header p {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-header-fixes.css
+LINE: 79
+CODE:     color: rgba(255, 255, 255, 0.8) !important;
+CONTEXT:
+.header-nav a {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-header-fixes.css
+LINE: 116
+CODE:     color: rgba(255, 255, 255, 0.7) !important;
+CONTEXT:
+.cipher-subtitle {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.8rem !important;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-header-fixes.css
+LINE: 134
+CODE:     color: rgba(255, 255, 255, 0.9) !important;
+CONTEXT:
+    gap: 10px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 97
+CODE: .glass-card,
+CONTEXT:
+/* Card Reset — page layouts provide their own card treatment */
+.glass-card,
+.cipher-card,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 104
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: none;
+    backdrop-filter: none;
+    border: none;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 112
+CODE: .glass-card:hover,
+CONTEXT:
+/* Card hover reset — page layouts handle hover states */
+.glass-card:hover,
+.cipher-card:hover,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 122
+CODE: .glass-input,
+CONTEXT:
+/* Secondary panel reset */
+.glass-input,
+.glass-button-secondary,
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 123
+CODE: .glass-button-secondary,
+CONTEXT:
+.glass-input,
+.glass-button-secondary,
+.glass-panel {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 124
+CODE: .glass-panel {
+CONTEXT:
+.glass-button-secondary,
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 125
+CODE:     background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 126
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 127
+CODE:     border: 1px solid rgba(255, 255, 255, 0.08);
+CONTEXT:
+    backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--cipher-radius-sm);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 145
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: none;
+    border-bottom: 1px solid rgba(184, 115, 51, 0.25);
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 227
+CODE:     background: rgba(255, 255, 255, 0.03);
+CONTEXT:
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: none;
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 228
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: none;
+    white-space: nowrap;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 255
+CODE:     border-right: 1px solid rgba(255, 255, 255, 0.1);
+CONTEXT:
+    margin-right: var(--cipher-space-md);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: var(--cipher-space-md);
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 367
+CODE:         inset 0 1px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -3px 6px rgba(0,0,0,0.6),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 391
+CODE:         inset 0 1px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -3px 6px rgba(0,0,0,0.6),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 401
+CODE:         inset 0 1px 0 rgba(255,255,255,0.08),
+CONTEXT:
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.7),
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/universal-system.css
+LINE: 677
+CODE:     .glass-card,
+CONTEXT:
+    
+    .glass-card,
+    .cipher-card {
+RECOMMENDATION: Replace glass/frost naming and styling with plate/steel equivalents.
+---
+FILE: claim_cipher_app/styles/visual-consistency-fix.css
+LINE: 32
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: none;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.2) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/visual-consistency-fix.css
+LINE: 80
+CODE:     backdrop-filter: none;
+CONTEXT:
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: none;
+    border: 2px solid rgba(255, 215, 0, 0.2) !important;
+RECOMMENDATION: Remove backdrop-filter/blur.
+---
+FILE: claim_cipher_app/styles/visual-consistency-fix.css
+LINE: 86
+CODE:         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+        0 0 0 1px rgba(255, 215, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---
+FILE: claim_cipher_app/styles/visual-consistency-fix.css
+LINE: 96
+CODE:         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+CONTEXT:
+        0 0 0 1px rgba(0, 191, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+RECOMMENDATION: Replace translucent rgba whites with solid industrial panel colors.
+---

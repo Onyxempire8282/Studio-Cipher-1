@@ -1,0 +1,67 @@
+CSS architecture audit (claim_cipher_app)
+Generated from link/load analysis + CSS content scan.
+
+1) HTML -> CSS load order
+- claim_cipher_app/command-center.html
+  1. styles/universal-system.css
+  2. styles/industrial-plates.css
+  3. styles/command-center-layout.css
+- claim_cipher_app/index.html
+  (no linked stylesheets detected)
+- claim_cipher_app/login-cypher.html
+  1. styles/universal-system.css
+  2. styles/industrial-plates.css
+  3. styles/login-layout.css
+- claim_cipher_app/mileage-cypher.html
+  1. styles/universal-system.css
+  2. styles/industrial-plates.css
+  3. styles/mileage-cypher-layout.css
+  4. styles/professional-calculator.css
+- claim_cipher_app/my-routes.html
+  1. styles/universal-system.css
+  2. styles/industrial-plates.css
+  3. styles/my-routes-layout.css
+- claim_cipher_app/reset-password.html
+  1. claim_cipher_app/styles/universal-system.css
+  2. claim_cipher_app/styles/industrial-plates.css
+  3. claim_cipher_app/styles/login-layout.css
+- claim_cipher_app/route-cypher.html
+  1. styles/universal-system.css
+  2. styles/industrial-plates.css
+  3. styles/route-cypher-layout.css
+  4. styles/professional-calculator.css
+  5. styles/route-cipher-professional.css
+- claim_cipher_app/total-loss-studio.html
+  1. styles/universal-system.css
+  2. styles/industrial-plates.css
+  3. modules/total-loss-v2/total-loss-v2.css
+
+2) Orphaned CSS (present in repo, not linked by any HTML)
+- claim_cipher_app/styles/cipher-core.css
+- claim_cipher_app/styles/glassmorphism-universal.css
+- claim_cipher_app/styles/login-cypher.css
+- claim_cipher_app/styles/main.css
+- claim_cipher_app/styles/mobile-enhancements.css
+- claim_cipher_app/styles/settings-booth-professional.css
+- claim_cipher_app/styles/total-loss-forms.css
+- claim_cipher_app/styles/universal-header-fixes.css
+- claim_cipher_app/styles/visual-consistency-fix.css
+
+3) Global selectors and resets (duplicates)
+- :root in: cipher-core.css, universal-system.css
+- html in: cipher-core.css, universal-system.css, login-layout.css, route-cipher-professional.css, universal-header-fixes.css
+- body in: glassmorphism-universal.css, industrial-plates.css, main.css, route-cipher-professional.css, total-loss-v2.css, universal-header-fixes.css, visual-consistency-fix.css
+- * in: cipher-core.css, glassmorphism-universal.css, main.css, universal-header-fixes.css, universal-system.css
+- font-family declared in most files (login-cypher.css, command-center-layout.css, total-loss-v2.css, route-cipher-professional.css, mileage-cypher-layout.css, professional-calculator.css, total-loss-forms.css, universal-system.css, main.css, etc.)
+
+4) CSS role classification (keyword-based)
+- Layout-heavy: total-loss-v2.css, glassmorphism-universal.css, main.css, mobile-enhancements.css, my-routes-layout.css, route-cypher-layout.css, universal-header-fixes.css, universal-system.css, visual-consistency-fix.css
+- Header/Nav-heavy: total-loss-v2.css, cipher-core.css, command-center-layout.css, glassmorphism-universal.css, industrial-plates.css, login-cypher.css, login-layout.css, main.css, mileage-cypher-layout.css, my-routes-layout.css, professional-calculator.css, route-cipher-professional.css, route-cypher-layout.css, settings-booth-professional.css, total-loss-forms.css, universal-header-fixes.css, universal-system.css, visual-consistency-fix.css
+- Card-heavy: total-loss-v2.css, cipher-core.css, command-center-layout.css, glassmorphism-universal.css, industrial-plates.css, login-layout.css, main.css, universal-system.css, visual-consistency-fix.css
+- Background-heavy: nearly all CSS files (broad overlap across the stack)
+- Typography-heavy: nearly all CSS files (broad overlap across the stack)
+
+5) Notable inconsistencies
+- claim_cipher_app/index.html has no linked stylesheet.
+- claim_cipher_app/reset-password.html uses paths prefixed with "claim_cipher_app/" while other pages use "styles/..."; likely a broken relative path.
+- Base/global rules are spread across multiple files (universal-system.css, cipher-core.css, main.css, glassmorphism-universal.css, universal-header-fixes.css), which increases cascade ambiguity and raises risk of regression when modifying global typography or resets.
