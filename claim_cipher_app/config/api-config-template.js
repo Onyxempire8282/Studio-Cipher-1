@@ -44,7 +44,7 @@ window.MILEAGE_CYPHER_CONFIG = {
         
         // Add callback if we're on the route cipher page
         if (window.location.pathname.includes('route-cypher.html') || window.location.pathname.includes('route-cipher.html')) {
-            apiUrl += '&callback=initRouteOptimizer';
+            apiUrl += '&callback=initRouteCipher';
         }
         
         // Create and load script
@@ -59,17 +59,17 @@ window.MILEAGE_CYPHER_CONFIG = {
             console.log('🗺️ Google object available:', typeof google !== 'undefined');
             
             // Update mileage calculator settings if it exists
-            if (window.mileageCalculator) {
-                window.mileageCalculator.settings.googleMapsApiKey = config.GOOGLE_MAPS_API_KEY;
+            if (window.mileageCipher) {
+                window.mileageCipher.settings.googleMapsApiKey = config.GOOGLE_MAPS_API_KEY;
                 console.log('🗺️ API key updated in calculator settings');
             }
             
             // Initialize route optimizer if we're on route cipher page and callback wasn't used
             if ((window.location.pathname.includes('route-cypher.html') || window.location.pathname.includes('route-cipher.html')) 
-                && typeof initRouteOptimizer === 'function' 
+                && typeof initRouteCipher === 'function' 
                 && !apiUrl.includes('callback=')) {
-                console.log('🗺️ Manually initializing Route Optimizer');
-                initRouteOptimizer();
+                console.log('🗺️ Manually initializing Route Cipher');
+                initRouteCipher();
             }
         };
         

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Cipher — My Routes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plate:      #0e0f11;
+  --steel:      #161a1d;
+  --steel-mid:  #1e2328;
+  --steel-lift: #252b31;
+  --input-bg:   #0a0c0e;
+  --rivet:      #2e353d;
+  --rivet-hi:   #3d464f;
+  --amber:      #e8952a;
+  --amber-dim:  rgba(232,149,42,0.12);
+  --amber-line: rgba(232,149,42,0.35);
+  --white:      #edeae4;
+  --text:       #8f9399;
+  --text-hi:    #b8bdc2;
+  --muted:      #4a5058;
+  --green:      #4caf6e;
+  --green-dim:  rgba(76,175,110,0.12);
+  --red:        #c0392b;
+  --red-dim:    rgba(192,57,43,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--plate);
+  color: var(--text-hi);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 56px;
+  background: rgba(14,15,17,0.98);
+  border-bottom: 1px solid var(--rivet);
+  box-shadow: 0 1px 0 rgba(232,149,42,0.07);
+  flex-shrink: 0;
+}
+.nav-logo { font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; color: var(--white); text-decoration: none; }
+.nav-logo span { color: var(--amber); }
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab { display: flex; align-items: center; padding: 0 20px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-right: 1px solid var(--rivet); border-left: 1px solid transparent; transition: all 0.2s; text-decoration: none; }
+.nav-tab:first-child { border-left: 1px solid var(--rivet); }
+.nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+.nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.nav-user strong { color: var(--white); display: block; font-size: 12px; }
+.nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
+.nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background:
+    radial-gradient(ellipse 60% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
+    var(--steel);
+  border-bottom: 1px solid var(--rivet);
+  padding: 24px 40px;
+  position: relative; z-index: 1; flex-shrink: 0;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.page-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+.page-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.06em; color: var(--white); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.header-badge { display: flex; gap: 3px; }
+.hbadge { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--rivet); color: var(--muted); background: var(--steel-mid); }
+.hbadge span { color: var(--amber); }
+.hbadge.green span { color: var(--green); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 28px 40px 80px;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+}
+.filter-bar::before, .filter-bar::after {
+  content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+}
+.filter-bar::before { top: 10px; right: 12px; }
+.filter-bar::after  { bottom: 10px; right: 12px; }
+
+.filter-header {
+  padding: 12px 20px; background: var(--steel-mid); border-bottom: 1px solid var(--rivet);
+  display: flex; align-items: center; gap: 10px;
+}
+.filter-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+.filter-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+
+.filter-body {
+  padding: 18px 20px;
+  display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+}
+.filter-field { display: flex; flex-direction: column; gap: 5px; }
+.filter-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.filter-input {
+  background: var(--input-bg); border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
+  padding: 9px 12px; color: var(--white); font-size: 13px;
+  font-family: 'Barlow', sans-serif; outline: none;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  transition: border-color 0.2s; min-width: 160px;
+}
+.filter-input:focus { border-color: var(--amber); }
+.filter-input::-webkit-calendar-picker-indicator { filter: invert(0.4); }
+
+.filter-sep {
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+  padding-bottom: 10px; letter-spacing: 0.1em;
+}
+
+/* status filter pills */
+.filter-pills { display: flex; gap: 3px; }
+.pill {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 9px 14px;
+  border: 1px solid var(--rivet); background: var(--steel-mid);
+  color: var(--muted); cursor: pointer; transition: all 0.2s;
+}
+.pill:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+.pill.active-all { border-color: var(--amber-line); background: var(--amber-dim); color: var(--amber); }
+.pill.active-open { border-color: rgba(232,149,42,0.3); background: rgba(232,149,42,0.08); color: var(--amber); }
+.pill.active-closed { border-color: rgba(76,175,110,0.3); background: var(--green-dim); color: var(--green); }
+.pill.active-void { border-color: rgba(192,57,43,0.3); background: var(--red-dim); color: var(--red); }
+
+.filter-btns { display: flex; gap: 6px; margin-left: auto; }
+.f-btn {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 9px 18px; cursor: pointer; transition: all 0.2s; border: none;
+}
+.f-btn-apply { background: var(--amber); color: #000; font-weight: 600; }
+.f-btn-apply:hover { background: #f0a030; }
+.f-btn-clear { background: var(--steel-lift); border: 1px solid var(--rivet-hi); color: var(--muted); }
+.f-btn-clear:hover { color: var(--text-hi); border-color: var(--rivet-hi); }
+
+/* ── ROUTES HEADER ROW ── */
+.routes-header-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 4px;
+}
+.routes-count {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.routes-count span { color: var(--amber); }
+
+.export-btn {
+  background: var(--steel-lift); border: 1px solid var(--rivet-hi);
+  color: var(--text-hi); font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 9px 18px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.export-btn:hover { border-color: var(--amber-line); color: var(--amber); }
+
+/* ── ROUTE CARD ── */
+.route-card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+  transition: border-left-color 0.2s, background 0.2s;
+}
+.route-card::before, .route-card::after {
+  content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+}
+.route-card::before { top: 10px; right: 12px; }
+.route-card::after  { bottom: 10px; right: 12px; }
+.route-card.status-closed { border-left-color: var(--green); }
+.route-card.status-open   { border-left-color: var(--amber); }
+.route-card.status-void   { border-left-color: var(--red); opacity: 0.6; }
+.route-card:hover { background: var(--steel-mid); }
+
+.route-card-inner {
+  display: flex; align-items: center;
+  padding: 18px 20px; gap: 20px;
+}
+
+/* Left info */
+.route-date-block { min-width: 140px; }
+.route-date {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+  color: var(--white); font-weight: 500; margin-bottom: 6px;
+}
+.route-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tag {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 8px; border: 1px solid;
+}
+.tag-round { border-color: rgba(232,149,42,0.3); color: var(--amber); background: var(--amber-dim); }
+.tag-split { border-color: rgba(184,189,194,0.2); color: var(--muted); background: var(--steel-mid); }
+
+/* Destination */
+.route-dest {
+  flex: 1; font-size: 13px; color: var(--text-hi);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.route-dest-main { color: var(--text-hi); }
+.route-dest-stops { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+/* Miles */
+.route-miles-block { text-align: right; min-width: 110px; }
+.route-miles {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; color: var(--white); letter-spacing: 0.02em; line-height: 1;
+}
+.route-miles span { color: var(--amber); font-size: 16px; }
+.route-miles-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+/* Status + actions */
+.route-actions {
+  display: flex; align-items: center; gap: 6px; min-width: 220px; justify-content: flex-end;
+}
+
+.status-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 5px 12px; border: 1px solid;
+}
+.status-closed { border-color: rgba(76,175,110,0.35); color: var(--green); background: var(--green-dim); }
+.status-open   { border-color: var(--amber-line); color: var(--amber); background: var(--amber-dim);
+  animation: pulse-badge 2s ease-in-out infinite; }
+@keyframes pulse-badge { 0%,100%{box-shadow:none}50%{box-shadow:0 0 8px rgba(232,149,42,0.3)} }
+.status-void   { border-color: rgba(192,57,43,0.3); color: var(--red); background: var(--red-dim); }
+
+.route-action-btn {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 7px 12px;
+  border: 1px solid var(--rivet); color: var(--muted);
+  background: transparent; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.route-action-btn:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+.route-action-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+.route-action-btn.danger:hover { border-color: rgba(192,57,43,0.4); color: var(--red); background: var(--red-dim); }
+
+/* Export note */
+.export-note {
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--green);
+  letter-spacing: 0.08em; padding: 6px 20px 10px;
+  border-top: 1px solid rgba(76,175,110,0.08);
+  display: flex; align-items: center; gap: 6px;
+}
+.export-note::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); opacity: 0.7; flex-shrink: 0; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  padding: 60px 20px; text-align: center;
+  border: 1px dashed var(--rivet); background: var(--steel);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.empty-icon { font-size: 32px; opacity: 0.3; }
+.empty-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.empty-sub { font-size: 12px; color: var(--muted); }
+
+/* ── TOTAL STRIP ── */
+.total-strip {
+  background: var(--steel-mid);
+  border: 1px solid var(--rivet);
+  border-top: 2px solid rgba(232,149,42,0.2);
+  display: grid; grid-template-columns: repeat(4,1fr);
+}
+.total-cell { padding: 16px 20px; border-right: 1px solid var(--rivet); }
+.total-cell:last-child { border-right: none; }
+.total-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.total-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--white); letter-spacing: 0.02em; line-height: 1; }
+.total-val span { color: var(--amber); }
+.total-val.green { color: var(--green); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo"><span>CLAIM</span>CIPHER</a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="#">Dashboard</a>
+    <a class="nav-tab" href="#">Routes</a>
+    <a class="nav-tab" href="#">Mileage</a>
+    <a class="nav-tab active" href="#">My Routes</a>
+    <a class="nav-tab" href="#">Total Loss</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><strong>Jay</strong>Claims Specialist</div>
+    <button class="nav-logout">Logout</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-label">My Routes</div>
+      <div class="page-title">Route Lifecycle</div>
+      <div class="page-sub">Route management and IRS-ready mileage log exports</div>
+    </div>
+    <div class="header-badge">
+      <div class="hbadge">Total Routes <span id="hTotal">8</span></div>
+      <div class="hbadge green">Closed <span id="hClosed">7</span></div>
+      <div class="hbadge">Open <span id="hOpen">1</span></div>
+      <div class="hbadge">Total Miles <span id="hMiles">873.6</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-header">
+      <div class="filter-title">Filter Routes</div>
+      <div class="filter-line"></div>
+    </div>
+    <div class="filter-body">
+      <div class="filter-field">
+        <div class="filter-label">From Date</div>
+        <input class="filter-input" type="date">
+      </div>
+      <div class="filter-sep">→</div>
+      <div class="filter-field">
+        <div class="filter-label">To Date</div>
+        <input class="filter-input" type="date">
+      </div>
+
+      <div class="filter-field">
+        <div class="filter-label">Status</div>
+        <div class="filter-pills">
+          <div class="pill active-all" onclick="setPill(this,'all')">All</div>
+          <div class="pill" onclick="setPill(this,'open')">Open</div>
+          <div class="pill" onclick="setPill(this,'closed')">Closed</div>
+          <div class="pill" onclick="setPill(this,'void')">Void</div>
+        </div>
+      </div>
+
+      <div class="filter-btns">
+        <button class="f-btn f-btn-clear" onclick="clearFilter()">Clear</button>
+        <button class="f-btn f-btn-apply">Apply Filter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTES HEADER ROW -->
+  <div class="routes-header-row">
+    <div class="routes-count">Routes <span id="routeCount">(8)</span></div>
+    <button class="export-btn" onclick="exportCSV()">↓ Export Mileage CSV</button>
+  </div>
+
+  <!-- ROUTE CARDS -->
+  <div id="routesList" style="display:flex;flex-direction:column;gap:3px">
+
+    <!-- Open route -->
+    <div class="route-card status-open">
+      <div class="route-card-inner">
+        <div class="route-date-block">
+          <div class="route-date">Fri, Feb 20, 2026</div>
+          <div class="route-tags">
+            <div class="tag tag-round">Round Trip</div>
+          </div>
+        </div>
+        <div class="route-dest">
+          <div class="route-dest-main">715 Sandhill Dr, Dudley, NC 28333</div>
+          <div class="route-dest-stops">1 stop · In progress</div>
+        </div>
+        <div class="route-miles-block">
+          <div class="route-miles">130<span>mi</span></div>
+          <div class="route-miles-label">Logged miles</div>
+        </div>
+        <div class="route-actions">
+          <div class="status-badge status-open">Open</div>
+          <button class="route-action-btn" onclick="closeRoute(this)">🔒 Close Route</button>
+          <button class="route-action-btn danger" onclick="voidRoute(this)">Void</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closed routes -->
+    <div class="route-card status-closed">
+      <div class="route-card-inner">
+        <div class="route-date-block">
+          <div class="route-date">Thu, Feb 19, 2026</div>
+          <div class="route-tags"><div class="tag tag-round">Round Trip</div></div>
+        </div>
+        <div class="route-dest">
+          <div class="route-dest-main">715 Sandhill Dr, Dudley, NC 28333</div>
+          <div class="route-dest-stops">1 stop · Closed</div>
+        </div>
+        <div class="route-miles-block">
+          <div class="route-miles">130<span>mi</span></div>
+          <div class="route-miles-label">Total miles</div>
+        </div>
+        <div class="route-actions">
+          <div class="status-badge status-closed">Closed</div>
+          <button class="route-action-btn" disabled>🔒 Logged</button>
+          <button class="route-action-btn danger" onclick="voidRoute(this)">Void</button>
+        </div>
+      </div>
+      <div class="export-note">Included in export</div>
+    </div>
+
+    <div class="route-card status-closed">
+      <div class="route-card-inner">
+        <div class="route-date-block">
+          <div class="route-date">Wed, Feb 18, 2026</div>
+          <div class="route-tags"><div class="tag tag-round">Round Trip</div></div>
+        </div>
+        <div class="route-dest">
+          <div class="route-dest-main">715 Sandhill Dr, Dudley, NC 28333</div>
+          <div class="route-dest-stops">1 stop · Closed</div>
+        </div>
+        <div class="route-miles-block">
+          <div class="route-miles">130<span>mi</span></div>
+          <div class="route-miles-label">Total miles</div>
+        </div>
+        <div class="route-actions">
+          <div class="status-badge status-closed">Closed</div>
+          <button class="route-action-btn" disabled>🔒 Logged</button>
+          <button class="route-action-btn danger" onclick="voidRoute(this)">Void</button>
+        </div>
+      </div>
+      <div class="export-note">Included in export</div>
+    </div>
+
+    <div class="route-card status-closed">
+      <div class="route-card-inner">
+        <div class="route-date-block">
+          <div class="route-date">Tue, Feb 17, 2026</div>
+          <div class="route-tags">
+            <div class="tag tag-round">Round Trip</div>
+            <div class="tag tag-split">Day Split</div>
+          </div>
+        </div>
+        <div class="route-dest">
+          <div class="route-dest-main">Multiple — Wake County Circuit</div>
+          <div class="route-dest-stops">6 stops · Split across 2 days</div>
+        </div>
+        <div class="route-miles-block">
+          <div class="route-miles">155<span>.5 mi</span></div>
+          <div class="route-miles-label">Total miles</div>
+        </div>
+        <div class="route-actions">
+          <div class="status-badge status-closed">Closed</div>
+          <button class="route-action-btn" disabled>🔒 Logged</button>
+          <button class="route-action-btn danger" onclick="voidRoute(this)">Void</button>
+        </div>
+      </div>
+      <div class="export-note">Included in export</div>
+    </div>
+
+    <div class="route-card status-closed">
+      <div class="route-date-block" style="padding:18px 0 18px 20px">
+        <div class="route-date" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--white);font-weight:500;margin-bottom:6px">Mon, Feb 16, 2026</div>
+      </div>
+      <div class="route-card-inner" style="padding-top:0;padding-bottom:18px">
+        <div class="route-date-block" style="visibility:hidden;min-width:140px"></div>
+        <div class="route-dest">
+          <div class="route-dest-main">715 Sandhill Dr, Dudley, NC 28333</div>
+          <div class="route-dest-stops">1 stop · Closed</div>
+        </div>
+        <div class="route-miles-block">
+          <div class="route-miles">218<span>.1 mi</span></div>
+          <div class="route-miles-label">Total miles</div>
+        </div>
+        <div class="route-actions">
+          <div class="status-badge status-closed">Closed</div>
+          <button class="route-action-btn" disabled>🔒 Logged</button>
+          <button class="route-action-btn danger" onclick="voidRoute(this)">Void</button>
+        </div>
+      </div>
+      <div class="export-note">Included in export</div>
+    </div>
+
+  </div>
+
+  <!-- TOTALS STRIP -->
+  <div class="total-strip">
+    <div class="total-cell">
+      <div class="total-label">Total Routes</div>
+      <div class="total-val">8</div>
+    </div>
+    <div class="total-cell">
+      <div class="total-label">Total Miles</div>
+      <div class="total-val">873<span>.6</span></div>
+    </div>
+    <div class="total-cell">
+      <div class="total-label">Closed / Export Ready</div>
+      <div class="total-val green">7</div>
+    </div>
+    <div class="total-cell">
+      <div class="total-label">Avg Miles / Route</div>
+      <div class="total-val">109<span>.2</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function setPill(el, type) {
+  document.querySelectorAll('.pill').forEach(p => p.className = 'pill');
+  el.classList.add('active-' + type);
+}
+
+function clearFilter() {
+  document.querySelectorAll('.filter-input').forEach(i => i.value = '');
+  document.querySelectorAll('.pill').forEach(p => p.className = 'pill');
+  document.querySelector('.pill').classList.add('active-all');
+}
+
+function closeRoute(btn) {
+  const card = btn.closest('.route-card');
+  card.classList.remove('status-open');
+  card.classList.add('status-closed');
+
+  const badge = card.querySelector('.status-badge');
+  badge.className = 'status-badge status-closed';
+  badge.textContent = 'Closed';
+
+  btn.textContent = '🔒 Logged';
+  btn.disabled = true;
+
+  const destStops = card.querySelector('.route-dest-stops');
+  if (destStops) destStops.textContent = destStops.textContent.replace('In progress', 'Closed');
+
+  if (!card.querySelector('.export-note')) {
+    const note = document.createElement('div');
+    note.className = 'export-note';
+    note.textContent = 'Included in export';
+    card.appendChild(note);
+  }
+
+  // Update header
+  const open   = parseInt(document.getElementById('hOpen').textContent);
+  const closed = parseInt(document.getElementById('hClosed').textContent);
+  document.getElementById('hOpen').textContent   = Math.max(0, open - 1);
+  document.getElementById('hClosed').textContent = closed + 1;
+}
+
+function voidRoute(btn) {
+  if (!confirm('Void this route? It will be removed from exports.')) return;
+  const card = btn.closest('.route-card');
+  card.classList.remove('status-open','status-closed');
+  card.classList.add('status-void');
+  const badge = card.querySelector('.status-badge');
+  badge.className = 'status-badge status-void';
+  badge.textContent = 'Void';
+  btn.closest('.route-actions').querySelectorAll('button').forEach(b => b.disabled = true);
+  const note = card.querySelector('.export-note');
+  if (note) note.remove();
+}
+
+function exportCSV() {
+  const btn = event.target;
+  const orig = btn.textContent;
+  btn.textContent = '✓ Exported';
+  btn.style.borderColor = 'rgba(76,175,110,0.4)';
+  btn.style.color = 'var(--green)';
+  setTimeout(() => {
+    btn.textContent = orig;
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }, 2000);
+}
+</script>
+
+</body>
+</html>

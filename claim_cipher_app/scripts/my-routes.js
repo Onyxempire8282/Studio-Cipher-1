@@ -213,7 +213,7 @@
         <div class="routes-empty">
           <span class="empty-icon">📭</span>
           <p>No routes found</p>
-          <p class="empty-hint">Routes will appear here when you save them from the Route Optimizer</p>
+          <p class="empty-hint">Routes will appear here when you save them from the Route Cipher</p>
         </div>
       `;
       return;
@@ -357,7 +357,7 @@
   // ========================================
 
   /**
-   * Handle route edit - store payload and redirect to Route Optimizer
+   * Handle route edit - store payload and redirect to Route Cipher
    */
   function handleEditRoute(routeId) {
     const route = currentRoutes.find((r) => r.id === routeId);

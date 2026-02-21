@@ -1051,7 +1051,7 @@ class MileageCypherCalculator {
     }
 
     // IMPORTANT: Do NOT set currentDistanceSource for imports
-    // Route Optimizer may have used heuristic estimates for some legs.
+    // Route Cipher may have used heuristic estimates for some legs.
     // Source remains null, which will block billing until user either:
     // 1. Recalculates with Google (authoritative)
     // 2. Manually enters/confirms distance (user_manual)
@@ -1356,8 +1356,8 @@ function closeFirmsModal() {
 }
 
 function closeRouteImportModal() {
-  if (window.mileageCalculator) {
-    window.mileageCalculator.closeRouteImportModal();
+  if (window.mileageCipher) {
+    window.mileageCipher.closeRouteImportModal();
   }
 }
 
@@ -1402,7 +1402,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Initialize the calculator
-  window.mileageCalculator = new MileageCypherCalculator();
+  window.mileageCipher = new MileageCypherCalculator();
 
   console.log("Mileage Cypher Calculator fully loaded and ready!");
 });

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Cipher — Route Cipher</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plate:      #0e0f11;
+  --steel:      #161a1d;
+  --steel-mid:  #1e2328;
+  --steel-lift: #252b31;
+  --input-bg:   #0a0c0e;
+  --rivet:      #2e353d;
+  --rivet-hi:   #3d464f;
+  --amber:      #e8952a;
+  --amber-dim:  rgba(232,149,42,0.12);
+  --amber-line: rgba(232,149,42,0.35);
+  --white:      #edeae4;
+  --text:       #8f9399;
+  --text-hi:    #b8bdc2;
+  --muted:      #4a5058;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--plate);
+  color: var(--text-hi);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 56px;
+  background: rgba(14,15,17,0.98);
+  border-bottom: 1px solid var(--rivet);
+  box-shadow: 0 1px 0 rgba(232,149,42,0.07);
+  flex-shrink: 0;
+}
+.nav-logo {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--white); text-decoration: none;
+}
+.nav-logo span { color: var(--amber); }
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab {
+  display: flex; align-items: center; padding: 0 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer;
+  border-right: 1px solid var(--rivet);
+  border-left: 1px solid transparent;
+  transition: all 0.2s; text-decoration: none;
+}
+.nav-tab:first-child { border-left: 1px solid var(--rivet); }
+.nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+.nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.nav-user strong { color: var(--white); display: block; font-size: 12px; }
+.nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
+.nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background:
+    radial-gradient(ellipse 60% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
+    var(--steel);
+  border-bottom: 1px solid var(--rivet);
+  padding: 24px 40px;
+  position: relative; z-index: 1; flex-shrink: 0;
+}
+.page-header-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.page-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+.page-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.06em; color: var(--white); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.header-badge {
+  display: flex; gap: 3px;
+}
+.hbadge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 14px; border: 1px solid var(--rivet); color: var(--muted);
+  background: var(--steel-mid);
+}
+.hbadge span { color: var(--amber); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 32px 40px 100px;
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 3px;
+  align-items: start;
+}
+
+/* ── CARD SYSTEM ── */
+.card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+}
+.card.accent { border-left-color: var(--amber); }
+.card::before, .card::after {
+  content: ''; position: absolute;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+}
+.card::before { top: 10px; right: 12px; }
+.card::after  { bottom: 10px; right: 12px; }
+
+.card-header {
+  padding: 14px 20px; border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+.card-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+.card-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.card-body { padding: 24px; }
+
+/* ── LEFT COLUMN ── */
+.left-col { display: flex; flex-direction: column; gap: 3px; }
+
+/* ── FIELD ── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.field-input {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
+  padding: 11px 14px; color: var(--white); font-size: 13px;
+  font-family: 'Barlow', sans-serif; outline: none; width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.field-input:focus {
+  border-color: var(--amber);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+}
+.field-input::placeholder { color: var(--muted); }
+.field-hint { font-size: 11px; color: var(--muted); font-style: italic; }
+
+/* ── STOP ROW ── */
+.stops-list { display: flex; flex-direction: column; gap: 3px; }
+
+.stop-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--steel-mid); border: 1px solid var(--rivet);
+  padding: 0; transition: border-color 0.2s;
+}
+.stop-row:hover { border-color: var(--rivet-hi); }
+
+.stop-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+  padding: 0 14px; min-width: 44px; text-align: center;
+  background: var(--steel-lift); border-right: 1px solid var(--rivet);
+  align-self: stretch; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.stop-num.active-num { color: var(--amber); background: var(--amber-dim); border-right-color: var(--amber-line); }
+
+.stop-input {
+  flex: 1; background: transparent; border: none;
+  padding: 12px 12px; color: var(--white); font-size: 13px;
+  font-family: 'Barlow', sans-serif; outline: none;
+}
+.stop-input::placeholder { color: var(--muted); }
+
+.stop-remove {
+  width: 36px; height: 36px;
+  background: transparent; border: none; border-left: 1px solid var(--rivet);
+  color: var(--muted); cursor: pointer; font-size: 14px;
+  display: grid; place-items: center; flex-shrink: 0;
+  transition: all 0.2s; align-self: stretch;
+}
+.stop-remove:hover { background: rgba(192,57,43,0.1); color: #c0392b; border-left-color: rgba(192,57,43,0.3); }
+
+/* ── ADD STOP BTN ── */
+.add-stop-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border: 1px dashed var(--rivet);
+  cursor: pointer; transition: all 0.2s;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  width: 100%;
+}
+.add-stop-row:hover { border-color: var(--amber-line); color: var(--amber); background: var(--amber-dim); }
+.add-stop-plus {
+  width: 20px; height: 20px; border: 1px solid var(--rivet);
+  display: grid; place-items: center; font-size: 14px; flex-shrink: 0;
+  transition: all 0.2s;
+}
+.add-stop-row:hover .add-stop-plus { border-color: var(--amber-line); color: var(--amber); }
+
+/* Stop limit bar */
+.stop-limit {
+  display: flex; align-items: center; gap: 10px; margin-top: 8px;
+}
+.stop-limit-bar { flex: 1; height: 2px; background: var(--rivet); }
+.stop-limit-fill { height: 100%; background: var(--amber); transition: width 0.3s; }
+.stop-limit-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; white-space: nowrap; }
+.stop-limit-text span { color: var(--amber); }
+
+/* ── DAY SPLIT TOGGLE ── */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--rivet);
+  margin-bottom: 14px;
+}
+.toggle-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.toggle-label { font-size: 13px; color: var(--text-hi); }
+.toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.toggle {
+  position: relative; width: 40px; height: 22px; flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: var(--rivet); border: 1px solid var(--rivet-hi);
+  cursor: pointer; transition: all 0.2s;
+}
+.toggle-thumb {
+  position: absolute; left: 3px; top: 3px;
+  width: 14px; height: 14px;
+  background: var(--muted); transition: all 0.2s;
+}
+.toggle input:checked + .toggle-track { background: var(--amber-dim); border-color: var(--amber-line); }
+.toggle input:checked ~ .toggle-thumb { background: var(--amber); left: 21px; box-shadow: 0 0 6px rgba(232,149,42,0.5); }
+
+/* ── RIGHT PANEL ── */
+.right-col { display: flex; flex-direction: column; gap: 3px; position: sticky; top: 72px; }
+
+/* Route preview map placeholder */
+.map-preview {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  height: 220px;
+  position: relative; overflow: hidden;
+  display: grid; place-items: center;
+}
+/* fake grid map */
+.map-preview::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.map-preview-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+  position: relative; z-index: 1; text-align: center;
+}
+.map-preview-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* ── ROUTE SUMMARY ── */
+.summary-rows { display: flex; flex-direction: column; }
+.summary-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 20px; border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-key { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.summary-val { font-size: 13px; color: var(--text-hi); font-weight: 400; }
+.summary-val.amber { color: var(--amber); font-family: 'DM Mono', monospace; }
+
+/* ── ACTION FOOTER ── */
+.action-footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(14,15,17,0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--rivet);
+  box-shadow: 0 -1px 0 rgba(232,149,42,0.1), 0 -8px 32px rgba(0,0,0,0.5);
+  padding: 14px 40px; z-index: 100;
+}
+.action-footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.footer-info { display: flex; flex-direction: column; gap: 2px; }
+.footer-info-main { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--amber); letter-spacing: 0.1em; }
+.footer-info-sub { font-size: 11px; color: var(--muted); }
+
+.action-btns { display: flex; gap: 10px; }
+.btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 28px; border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.btn-ghost { background: transparent; border: 1px solid var(--rivet); color: var(--muted); }
+.btn-ghost:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+.btn-steel { background: var(--steel-lift); border: 1px solid var(--rivet-hi); color: var(--text-hi); }
+.btn-steel:hover { border-color: var(--amber-line); color: var(--white); }
+.btn-primary { background: var(--amber); color: #000; font-weight: 600; border: 1px solid var(--amber); box-shadow: 0 0 20px rgba(232,149,42,0.25); }
+.btn-primary:hover { background: #f0a030; box-shadow: 0 0 28px rgba(232,149,42,0.4); transform: translateY(-1px); }
+
+/* Stop count badge */
+#stopCountBadge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; background: var(--amber-dim); border: 1px solid var(--amber-line);
+  color: var(--amber); padding: 2px 8px; letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo"><span>CLAIM</span>CIPHER</a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="#">Dashboard</a>
+    <a class="nav-tab active" href="#">Routes</a>
+    <a class="nav-tab" href="#">Mileage</a>
+    <a class="nav-tab" href="#">My Routes</a>
+    <a class="nav-tab" href="#">Total Loss</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><strong>Professional User</strong>Claims Specialist</div>
+    <button class="nav-logout">Logout</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-label">Route Cipher</div>
+      <div class="page-title">Plan Your Route</div>
+      <div class="page-sub">Multi-stop optimization with intelligent day splitting</div>
+    </div>
+    <div class="header-badge">
+      <div class="hbadge">Max Stops <span>15</span></div>
+      <div class="hbadge">Stops Added <span id="stopCountBadge">1</span></div>
+      <div class="hbadge">Status <span>Ready</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left-col">
+
+    <!-- Starting Location -->
+    <div class="card accent">
+      <div class="card-header">
+        <div class="card-title">Starting Location</div>
+        <div class="card-line"></div>
+        <div class="card-meta">Saved between sessions</div>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <div class="field-label">Starting Point</div>
+          <input class="field-input" type="text" placeholder="Enter your starting address...">
+          <div class="field-hint">Your starting location will be saved for future use</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Destinations -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Destinations</div>
+        <div class="card-line"></div>
+        <div class="card-meta" id="stopCountLabel">1 / 15 stops</div>
+      </div>
+      <div class="card-body">
+
+        <div class="stops-list" id="stopsList">
+          <div class="stop-row">
+            <div class="stop-num active-num">01</div>
+            <input class="stop-input" type="text" placeholder="Enter destination address">
+            <button class="stop-remove" onclick="removeStop(this)">✕</button>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <button class="add-stop-row" onclick="addStop()" id="addStopBtn">
+            <div class="add-stop-plus">+</div>
+            Add Stop
+          </button>
+        </div>
+
+        <div class="stop-limit" style="margin-top:12px">
+          <div class="stop-limit-bar">
+            <div class="stop-limit-fill" id="limitFill" style="width:6.67%"></div>
+          </div>
+          <div class="stop-limit-text"><span id="limitCount">1</span> / 15 stops used</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Route Options</div>
+        <div class="card-line"></div>
+      </div>
+      <div class="card-body">
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Intelligent Day Splitting</div>
+            <div class="toggle-sub">Automatically split stops across multiple days</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="daySplit" onchange="updateSummary()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Return to Start</div>
+            <div class="toggle-sub">Add return trip to starting location</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="returnStart" onchange="updateSummary()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Avoid Highways</div>
+            <div class="toggle-sub">Route via local roads only</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /left-col -->
+
+  <!-- RIGHT -->
+  <div class="right-col">
+
+    <!-- Map Preview -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Route Preview</div>
+        <div class="card-line"></div>
+      </div>
+      <div class="map-preview">
+        <div>
+          <div class="map-preview-label">Map Preview</div>
+          <div class="map-preview-sub">Appears after optimization</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Route Summary -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Route Summary</div>
+        <div class="card-line"></div>
+      </div>
+      <div class="summary-rows">
+        <div class="summary-row">
+          <div class="summary-key">Total Stops</div>
+          <div class="summary-val amber" id="sumStops">1</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-key">Est. Distance</div>
+          <div class="summary-val" id="sumDistance">— mi</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-key">Est. Drive Time</div>
+          <div class="summary-val" id="sumTime">—</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-key">Days Required</div>
+          <div class="summary-val" id="sumDays">1</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-key">Day Split</div>
+          <div class="summary-val" id="sumSplit">Off</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-key">Return to Start</div>
+          <div class="summary-val" id="sumReturn">No</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Starting Points -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Saved Starts</div>
+        <div class="card-line"></div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px rgba(232,149,42,0.5);flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;color:var(--text-hi)">Home Office</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px">123 Main St, Greenville NC</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Use →</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--rivet-hi);flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;color:var(--text-hi)">Field Office</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px">456 Oak Ave, Raleigh NC</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Use →</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /right-col -->
+
+</div><!-- /main -->
+
+<!-- FIXED ACTION FOOTER -->
+<div class="action-footer">
+  <div class="action-footer-inner">
+    <div class="footer-info">
+      <div class="footer-info-main" id="footerMain">Route Cipher — Ready to Optimize</div>
+      <div class="footer-info-sub" id="footerSub">Add your stops and hit Optimize Route</div>
+    </div>
+    <div class="action-btns">
+      <button class="btn btn-ghost" onclick="clearAll()">⟳ Clear All</button>
+      <button class="btn btn-steel" onclick="saveRoute()">Save Draft</button>
+      <button class="btn btn-primary" onclick="optimize()">Optimize Route →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let stopCount = 1;
+const MAX_STOPS = 15;
+
+function updateUI() {
+  // Badge
+  document.getElementById('stopCountBadge').textContent = stopCount;
+  document.getElementById('stopCountLabel').textContent = `${stopCount} / ${MAX_STOPS} stops`;
+  document.getElementById('limitCount').textContent = stopCount;
+  document.getElementById('limitFill').style.width = (stopCount / MAX_STOPS * 100) + '%';
+
+  // Summary
+  document.getElementById('sumStops').textContent = stopCount;
+
+  // Renumber
+  const rows = document.querySelectorAll('.stop-row');
+  rows.forEach((row, i) => {
+    const num = row.querySelector('.stop-num');
+    num.textContent = String(i + 1).padStart(2, '0');
+    num.className = 'stop-num' + (i === 0 ? ' active-num' : '');
+  });
+
+  // Footer
+  document.getElementById('footerMain').textContent = `Route Cipher — ${stopCount} stop${stopCount !== 1 ? 's' : ''} loaded`;
+  document.getElementById('footerSub').textContent = stopCount > 1
+    ? 'Ready to optimize. Check your options then hit Optimize Route.'
+    : 'Add more stops to build your route.';
+
+  // Add btn
+  document.getElementById('addStopBtn').style.opacity = stopCount >= MAX_STOPS ? '0.4' : '1';
+  document.getElementById('addStopBtn').style.pointerEvents = stopCount >= MAX_STOPS ? 'none' : 'auto';
+}
+
+function updateSummary() {
+  const split = document.getElementById('daySplit').checked;
+  const ret   = document.getElementById('returnStart').checked;
+  document.getElementById('sumSplit').textContent  = split ? 'On'  : 'Off';
+  document.getElementById('sumReturn').textContent = ret   ? 'Yes' : 'No';
+  document.getElementById('sumDays').textContent   = split && stopCount > 6 ? Math.ceil(stopCount / 6) : '1';
+}
+
+function addStop() {
+  if (stopCount >= MAX_STOPS) return;
+  stopCount++;
+  const list = document.getElementById('stopsList');
+  const row = document.createElement('div');
+  row.className = 'stop-row';
+  row.innerHTML = `
+    <div class="stop-num">${String(stopCount).padStart(2,'0')}</div>
+    <input class="stop-input" type="text" placeholder="Enter destination address">
+    <button class="stop-remove" onclick="removeStop(this)">✕</button>
+  `;
+  list.appendChild(row);
+  updateUI(); updateSummary();
+  row.querySelector('input').focus();
+}
+
+function removeStop(btn) {
+  if (stopCount <= 1) return;
+  btn.closest('.stop-row').remove();
+  stopCount--;
+  updateUI(); updateSummary();
+}
+
+function clearAll() {
+  const list = document.getElementById('stopsList');
+  list.innerHTML = `
+    <div class="stop-row">
+      <div class="stop-num active-num">01</div>
+      <input class="stop-input" type="text" placeholder="Enter destination address">
+      <button class="stop-remove" onclick="removeStop(this)">✕</button>
+    </div>`;
+  stopCount = 1;
+  updateUI(); updateSummary();
+}
+
+function saveRoute() {
+  const btn = event.target;
+  btn.textContent = '✓ Saved';
+  setTimeout(() => btn.textContent = 'Save Draft', 2000);
+}
+
+function optimize() {
+  const btn = event.target;
+  btn.textContent = 'Optimizing...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    // Simulate result
+    document.getElementById('sumDistance').textContent = (stopCount * 18.4).toFixed(1) + ' mi';
+    document.getElementById('sumTime').textContent = Math.round(stopCount * 22) + ' min';
+    btn.textContent = 'Optimize Route →';
+    btn.style.opacity = '1';
+    document.getElementById('footerMain').textContent = 'Route optimized — ' + (stopCount * 18.4).toFixed(1) + ' mi total';
+  }, 1800);
+}
+
+updateUI();
+</script>
+
+</body>
+</html>

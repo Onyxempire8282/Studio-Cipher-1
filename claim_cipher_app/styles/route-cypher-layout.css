@@ -5,7 +5,7 @@
 /* =================================
    MAIN LAYOUT STRUCTURE
    ================================= */
-.route-optimizer-main {
+.route-cipher-main {
     min-height: 100vh;
     padding: 0;
 }
@@ -29,7 +29,7 @@
 /* =================================
    ROUTE OPTIMIZER CONTAINER
    ================================= */
-.route-optimizer-container {
+.route-cipher-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--cipher-space-md);
@@ -553,7 +553,7 @@
    RESPONSIVE LAYOUT
    ================================= */
 @media (max-width: 768px) {
-    .route-optimizer-container {
+    .route-cipher-container {
         grid-template-columns: 1fr;
         gap: var(--cipher-space-md);
     }
@@ -590,7 +590,7 @@
 }
 
 @media (max-width: 480px) {
-    .route-optimizer-main {
+    .route-cipher-main {
         padding: var(--cipher-space-md) 0;
     }
     

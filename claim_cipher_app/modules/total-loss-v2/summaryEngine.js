@@ -1,146 +1,141 @@
 // Builds Claim Cipher standardized summary text from parsedEstimate + bcifPayload
-import { internalToSummaryText } from "./ratingMap.js";
 
 export function buildClaimSummary(parsedEstimate, payload) {
     const est = parsedEstimate || {};
-    const conditionText = internalToSummaryText[payload.condition.overall] || "condition consistent with age and mileage";
 
-    const header = buildHeaderBlock(est, payload, conditionText);
-    const inspection = buildInspectionSection(est, payload);
-    const damage = buildDamageSection(est);
-    const parts = buildPartsSection(est);
-    const conclusion = buildConclusionSection(est, payload);
+    const poiRaw   = est.pointOfImpact || "";
+    const poiCode  = parseInt(poiRaw);
+    const poiLabel = extractPOILabel(poiRaw);
 
-    return [header, inspection, damage, parts, conclusion]
-        .filter(Boolean)
-        .join("\n\n");
+    const estimateTotalNum = toNumber(est.estimateTotal);
+    const deductibleNum    = toNumber(est.deductible);
+
+    const data = {
+        claimNumber:   est.claimNumber  || payload.claim.claimNumber || "",
+        ownerName:     est.ownerName    || "",
+        ownerAddress:  "",
+        ownerPhone:    est.ownerPhone   || "",
+        ownerEmail:    "",
+        adjusterName:  payload.claim.adjuster || "",
+        adjusterPhone: "",
+        adjusterEmail: "",
+        year:          est.year         || payload.vehicle.year   || "",
+        make:          est.make         || payload.vehicle.make   || "",
+        model:         est.model        || payload.vehicle.model  || "",
+        vin:           est.vin          || payload.vehicle.vin    || "",
+        mileage:       formatNumberWithCommas(est.mileage || payload.vehicle.odometer || ""),
+        poiLabel,
+        damageAreas:   poiLabel         || "documented areas per estimate",
+        estimateTotal: estimateTotalNum ? formatCurrency(estimateTotalNum) : "",
+        deductible:    deductibleNum    ? formatCurrency(deductibleNum)    : "",
+    };
+
+    const header          = buildSummaryHeader(data);
+    const narrative       = routeNarrative(data, poiCode);
+    const estimateSummary = buildEstimateSummary(data);
+
+    return [header, narrative, estimateSummary].filter(Boolean).join("\n\n");
+}
+
+// =========================================
+//  POI HELPER
+// =========================================
+
+function extractPOILabel(poiRaw) {
+    if (!poiRaw) return "";
+    return poiRaw.replace(/^\d+\s*/, "").trim();
+}
+
+// =========================================
+//  NARRATIVE ROUTING
+// =========================================
+
+function routeNarrative(data, poiCode) {
+    if (poiCode === 15) {
+        return buildTotalLossSummary(data);
+    }
+    if ([16, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29].includes(poiCode)) {
+        return buildSpecialEventSummary(data);
+    }
+    if ([17, 18, 19].includes(poiCode)) {
+        return buildComplexCollisionSummary(data);
+    }
+    return buildStandardCollisionSummary(data);
 }
 
 // =========================================
 //  HEADER BLOCK
 // =========================================
 
-function buildHeaderBlock(est, payload, conditionText) {
-    const owner = est.ownerName || "";
-    const carrier = est.carrierName || payload.claim.carrier || "";
-    const claimNumber = est.claimNumber || payload.claim.claimNumber || "";
-    const dateOfLoss = formatDate(est.dateOfLoss || payload.claim.dateOfLoss || "");
-    const inspectionDate = formatDate(est.estimateTimestamp || est.inspectionDate || payload.claim.dateOfInspection || "");
-    const inspectionLocation = est.inspectionLocation || payload.claim.lossLocation || "";
+function buildSummaryHeader(data) {
+    const lines = [];
 
-    const year = est.year || payload.vehicle.year || "";
-    const make = est.make || payload.vehicle.make || "";
-    const model = est.model || payload.vehicle.model || "";
-    const vehicle = [year, make, model].filter(Boolean).join(" ");
-    const vin = est.vin || payload.vehicle.vin || "";
-    const odometer = formatNumberWithCommas(est.mileage || est.odometer || payload.vehicle.odometer || "");
-    const condition = capitalizeFirst(conditionText);
+    if (data.claimNumber)  lines.push(`Claim Number: ${data.claimNumber}`);
+    if (data.ownerName)    lines.push(`Insured: ${data.ownerName}`);
+    if (data.ownerAddress) lines.push(`Address: ${data.ownerAddress}`);
+    if (data.ownerPhone)   lines.push(`Phone: ${data.ownerPhone}`);
+    if (data.ownerEmail)   lines.push(`Email: ${data.ownerEmail}`);
 
-    const lines = [
-        `Owner: ${owner}`,
-        `Carrier: ${carrier}`,
-        `Claim Number: ${claimNumber}`,
-        `Date of Loss: ${dateOfLoss}`,
-        `Inspection Date: ${inspectionDate}`,
-        `Inspection Location: ${inspectionLocation}`,
-        "",
-        `Vehicle: ${vehicle}`,
-        `VIN: ${vin}`,
-        `Odometer: ${odometer}`,
-        `Condition: ${condition}`
-    ];
+    const hasAdjuster = data.adjusterName || data.adjusterPhone || data.adjusterEmail;
+    if (hasAdjuster) {
+        if (lines.length) lines.push("");
+        if (data.adjusterName)  lines.push(`Carrier / Adjuster: ${data.adjusterName}`);
+        if (data.adjusterPhone) lines.push(`Adjuster Phone: ${data.adjusterPhone}`);
+        if (data.adjusterEmail) lines.push(`Adjuster Email: ${data.adjusterEmail}`);
+    }
 
-    return lines.join("\n");
-}
-
-// =========================================
-//  INSPECTION
-// =========================================
-
-function buildInspectionSection(est, payload) {
-    const location = est.inspectionLocation || payload.claim.lossLocation || "";
-    const inspectionDate = formatDate(est.estimateTimestamp || est.inspectionDate || payload.claim.dateOfInspection || "");
-
-    const year = est.year || payload.vehicle.year || "";
-    const make = est.make || payload.vehicle.make || "";
-    const model = est.model || payload.vehicle.model || "";
-    const vehicle = [year, make, model].filter(Boolean).join(" ");
-    const vin = est.vin || payload.vehicle.vin || "";
-
-    const lines = ["INSPECTION"];
-
-    const locationPart = location ? ` at ${location}` : "";
-    const datePart = inspectionDate ? ` on ${inspectionDate}` : "";
-    lines.push(`Vehicle inspected${locationPart}${datePart}.`);
-
-    if (vehicle || vin) {
-        const vinPart = vin ? `, VIN ${vin}` : "";
-        lines.push(`Vehicle identified as a ${vehicle}${vinPart}.`);
+    const vehicle    = [data.year, data.make, data.model].filter(Boolean).join(" ");
+    const hasVehicle = vehicle || data.vin || data.mileage || data.poiLabel;
+    if (hasVehicle) {
+        if (lines.length) lines.push("");
+        if (vehicle)       lines.push(`Vehicle: ${vehicle}`);
+        if (data.vin)      lines.push(`VIN: ${data.vin}`);
+        if (data.mileage)  lines.push(`Odometer: ${data.mileage}`);
+        if (data.poiLabel) lines.push(`Primary Point of Impact: ${data.poiLabel}`);
     }
 
     return lines.join("\n");
 }
 
 // =========================================
-//  DAMAGE OBSERVATION
+//  ESTIMATE FOOTER
 // =========================================
 
-function buildDamageSection(est) {
-    const poi = est.pointOfImpact || "";
-    const lossType = est.lossType || "";
-
-    const lines = ["DAMAGE OBSERVATION"];
-
-    if (poi) {
-        lines.push(`Damages observed primarily in the ${poi} region as outlined in the uploaded estimate.`);
-    } else {
-        lines.push("Damages documented as outlined in the uploaded estimate.");
-    }
-
-    if (lossType) {
-        lines.push(`Loss type listed as ${lossType}.`);
-    }
-
+function buildEstimateSummary(data) {
+    const lines = [];
+    if (data.estimateTotal) lines.push(`Estimate Total: ${data.estimateTotal}`);
+    if (data.deductible)    lines.push(`Deductible: ${data.deductible}`);
     return lines.join("\n");
 }
 
 // =========================================
-//  PARTS & VERIFICATION
+//  NARRATIVE BUILDERS
 // =========================================
 
-function buildPartsSection(est) {
-    const lines = ["PARTS & VERIFICATION"];
+function buildStandardCollisionSummary(data) {
+    return `The vehicle sustained collision-related damage primarily to the ${data.damageAreas} as reflected by the CCC point of impact classification.
 
-    lines.push("Parts availability verified with suppliers within a 150-mile radius.");
-    lines.push("According to the insured and estimate documentation, part selection is consistent with current market availability.");
+Visible damage includes: ${data.damageAreas}.
 
-    const isOemOnly = est.oemOnly === true || est.alternativePartsDetected === false;
-
-    if (isOemOnly) {
-        lines.push("If alternative components were unavailable, OEM parts were selected accordingly.");
-    }
-
-    return lines.join("\n");
+Based on the current inspection and estimate documentation, the vehicle appears repairable within economic guidelines. Final repair costs may be subject to supplemental findings following teardown.`.trim();
 }
 
-// =========================================
-//  CONCLUSION
-// =========================================
+function buildTotalLossSummary(data) {
+    return `The point of impact classification within the CCC estimating platform is designated as ${data.poiLabel}.
 
-function buildConclusionSection(est, payload) {
-    const lines = ["CONCLUSION"];
+Based on the severity threshold reached within CCC, the amount of visible structural and mechanical damage meets total loss criteria and is not considered economically repairable.`.trim();
+}
 
-    const estimateTotal = toNumber(est.estimateTotal);
-    const acv = toNumber(est.acv);
-    const isTotalLoss = acv > 0 && estimateTotal > 0 && (estimateTotal / acv) >= 0.75;
+function buildSpecialEventSummary(data) {
+    return `The vehicle sustained damage consistent with a special event loss classification as reflected by the CCC point of impact designation.
 
-    if (isTotalLoss) {
-        lines.push(`Based on the estimate total of ${formatCurrency(estimateTotal)} compared to ACV of ${formatCurrency(acv)}, the vehicle is declared a total loss.`);
-    } else {
-        lines.push("Vehicle appears repairable based on current valuation thresholds.");
-    }
+Damages documented to the ${data.damageAreas} are consistent with the reported loss type. Based on current documentation, the vehicle is subject to further review pending final valuation.`.trim();
+}
 
-    return lines.join("\n");
+function buildComplexCollisionSummary(data) {
+    return `The vehicle sustained complex collision damage as reflected by the CCC point of impact classification.
+
+Damage observed includes ${data.damageAreas}. Given the nature and distribution of the damage, a supplemental assessment may be required following initial teardown.`.trim();
 }
 
 // =========================================
@@ -164,23 +159,8 @@ function formatCurrency(value) {
     });
 }
 
-function formatDate(value) {
-    if (!value) return "";
-    const d = new Date(value);
-    if (isNaN(d.getTime())) return String(value);
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    const yyyy = d.getFullYear();
-    return `${mm}/${dd}/${yyyy}`;
-}
-
 function toNumber(value) {
     if (value == null || value === "") return 0;
     const num = Number(value);
     return isNaN(num) ? 0 : num;
-}
-
-function capitalizeFirst(str) {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
 }

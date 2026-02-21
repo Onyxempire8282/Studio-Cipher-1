@@ -1,7 +1,7 @@
 /**
  * FirmStore - Shared firm storage module
  * Reads/writes cipher_user_firms localStorage key.
- * Used by both Mileage Calculator and Route Optimizer.
+ * Used by both Mileage Cipher and Route Cipher.
  */
 (function () {
   const STORAGE_KEY = 'cipher_user_firms';

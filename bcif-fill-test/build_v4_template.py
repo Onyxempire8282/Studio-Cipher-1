@@ -4,7 +4,7 @@ Build BCIF_AUTOMATION_TEMPLATE_v4.docx with table-based layout.
 
 Takes v3 as the base (preserving styles, fonts, headers, footers, images)
 and replaces document.xml with a clean table-structured layout where every
-{{TOKEN}} lives in its own table cell — no split runs, no flowing text.
+{{TOKEN}} lives in its own table cell G�� no split runs, no flowing text.
 """
 
 import zipfile
@@ -15,7 +15,7 @@ SCRIPT_DIR = Path(__file__).parent
 V3_PATH = SCRIPT_DIR.parent / "claim_cipher_app" / "forms" / "bcif" / "BCIF_AUTOMATION_TEMPLATE_v3.docx"
 V4_PATH = SCRIPT_DIR.parent / "claim_cipher_app" / "forms" / "bcif" / "BCIF_AUTOMATION_TEMPLATE_v4.docx"
 
-# ─── XML helpers ───────────────────────────────────────────
+# G��G��G�� XML helpers G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
 NS_DECL = (
     'xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" '
@@ -56,11 +56,12 @@ NS_DECL = (
     'mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh w16sdtfl w16du wp14"'
 )
 
-# Font: Arial Narrow, 8pt (16 half-points). Bold labels use <w:b/>
-FONT = "Arial Narrow"
-SZ = "16"       # 8pt
-SZ_TITLE = "22" # 11pt
-SZ_SM = "14"    # 7pt for dense checkbox grids
+# Font: Calibri with explicit black text. Sizes are half-points.
+FONT = "Calibri"
+SZ_BODY = "26"      # 13pt default body text
+SZ_TITLE = "30"     # 15pt section headers
+SZ_CHECKBOX = "28"  # 14pt checkbox symbols
+SZ_SM = "26"        # 13pt small labels to match body size
 
 
 def _esc(text):
@@ -68,13 +69,21 @@ def _esc(text):
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
-def run(text, bold=False, sz=SZ, font=FONT):
+def run(text, bold=False, sz=SZ_BODY, font=FONT, color="000000"):
     """Create a single <w:r> with one <w:t> — guaranteed no split."""
-    rpr = f'<w:rPr><w:rFonts w:ascii="{font}" w:hAnsi="{font}"/>{"<w:b/>" if bold else ""}<w:sz w:val="{sz}"/><w:szCs w:val="{sz}"/></w:rPr>'
+    rpr = (
+        f'<w:rPr><w:rFonts w:ascii="{font}" w:hAnsi="{font}"/>'
+        f'{"<w:b/>" if bold else ""}<w:color w:val="{color}"/>'
+        f'<w:sz w:val="{sz}"/><w:szCs w:val="{sz}"/></w:rPr>'
+    )
     # Escape label text but preserve {{TOKEN}} curly braces
     safe = _esc(text).replace("&amp;amp;", "&amp;").replace("{{", "{{").replace("}}", "}}")
     return f'<w:r>{rpr}<w:t xml:space="preserve">{safe}</w:t></w:r>'
 
+
+def run_checkbox(text):
+    """Run for checkbox symbols only: heavier weight and larger size."""
+    return run(text, bold=True, sz=SZ_CHECKBOX, color="000000")
 
 def para(content, jc=None, spacing_after="0", spacing_before="0"):
     """Wrap run(s) in a paragraph."""
@@ -115,12 +124,12 @@ def table(rows_xml, col_widths, borders=True):
     if borders:
         bdr = (
             '<w:tblBorders>'
-            '<w:top w:val="single" w:sz="4" w:space="0" w:color="999999"/>'
-            '<w:left w:val="single" w:sz="4" w:space="0" w:color="999999"/>'
-            '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="999999"/>'
-            '<w:right w:val="single" w:sz="4" w:space="0" w:color="999999"/>'
-            '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="999999"/>'
-            '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="999999"/>'
+            '<w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
+            '<w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
+            '<w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
+            '<w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
+            '<w:insideH w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
+            '<w:insideV w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
             '</w:tblBorders>'
         )
     else:
@@ -150,7 +159,7 @@ def table(rows_xml, col_widths, borders=True):
     )
 
 
-# ─── Section builders ─────────────────────────────────────
+# G��G��G�� Section builders G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
 def section_title(text):
     """Dark background section header spanning full width."""
@@ -160,7 +169,7 @@ def section_title(text):
 def label_value_row(label, token, label_w=2700, value_w=8100):
     """Two-column row: bold label | {{TOKEN}} placeholder."""
     return row(
-        cell(para(run(label, bold=True)), width=label_w, shading="F2F2F2"),
+        cell(para(run(label, bold=True)), width=label_w),
         cell(para(run("{{" + token + "}}")), width=value_w),
     )
 
@@ -186,11 +195,10 @@ def checkbox_grid(title, items, cols=4):
 
     # Title row spanning all columns
     title_cell = cell(
-        para(run(title, bold=True, sz=SZ)),
+        para(run(title, bold=True, sz=SZ_BODY)),
         width=total_w,
-        shading="E8E8E8",
     )
-    # We need to merge across columns — use gridSpan
+    # We need to merge across columns G�� use gridSpan
     title_cell = title_cell.replace(
         '</w:tcPr>',
         f'<w:gridSpan w:val="{cols}"/></w:tcPr>'
@@ -202,12 +210,11 @@ def checkbox_grid(title, items, cols=4):
         chunk = items[i:i+cols]
         cells = []
         for token, label in chunk:
-            # Format: {{TOKEN}} Label  — the token becomes X or blank
-            txt = "{{" + token + "}} " + label
-            cells.append(cell(para(run(txt, sz=SZ_SM)), width=col_w))
+            content = run_checkbox("{{" + token + "}}") + run(" " + label, sz=SZ_BODY)
+            cells.append(cell(para(content), width=col_w))
         # Pad if last row is short
         while len(cells) < cols:
-            cells.append(cell(para(run("", sz=SZ_SM)), width=col_w))
+            cells.append(cell(para(run("", sz=SZ_BODY)), width=col_w))
         rows_xml.append(row(*cells))
 
     return table(rows_xml, [col_w] * cols)
@@ -231,24 +238,23 @@ def condition_table(groups):
     hcells = []
     for i, h in enumerate(headers):
         hcells.append(cell(
-            para(run(h, bold=True, sz=SZ_SM), jc="center"),
+            para(run(h, bold=True, sz=SZ_BODY), jc="center"),
             width=widths[i],
-            shading="E8E8E8",
         ))
     rows_xml.append(row(*hcells))
 
     for label, prefix in groups:
         rcells = [
-            cell(para(run(label, bold=True, sz=SZ_SM)), width=label_w, shading="F8F8F8"),
+            cell(para(run(label, bold=True, sz=SZ_BODY)), width=label_w),
         ]
         for i in range(4):
             token = f"{prefix}_{i}"
             rcells.append(cell(
-                para(run("{{" + token + "}}", sz=SZ_SM), jc="center"),
+                para(run_checkbox("{{" + token + "}}"), jc="center"),
                 width=rating_w,
             ))
         rcells.append(cell(
-            para(run("{{" + prefix + "_COMMENT}}", sz=SZ_SM)),
+            para(run("{{" + prefix + "_COMMENT}}", sz=SZ_BODY)),
             width=comment_w,
         ))
         rows_xml.append(row(*rcells))
@@ -270,19 +276,19 @@ def adjustment_table(prefix_pairs):
     rows_xml = []
     # Header
     hcells = [
-        cell(para(run("", bold=True, sz=SZ_SM)), width=label_w, shading="E8E8E8"),
-        cell(para(run("Description", bold=True, sz=SZ_SM), jc="center"), width=desc_w, shading="E8E8E8"),
-        cell(para(run("Add (+)", bold=True, sz=SZ_SM), jc="center"), width=add_w, shading="E8E8E8"),
-        cell(para(run("Deduct (-)", bold=True, sz=SZ_SM), jc="center"), width=ded_w, shading="E8E8E8"),
+        cell(para(run("", bold=True, sz=SZ_BODY)), width=label_w),
+        cell(para(run("Description", bold=True, sz=SZ_BODY), jc="center"), width=desc_w),
+        cell(para(run("Add (+)", bold=True, sz=SZ_BODY), jc="center"), width=add_w),
+        cell(para(run("Deduct (-)", bold=True, sz=SZ_BODY), jc="center"), width=ded_w),
     ]
     rows_xml.append(row(*hcells))
 
     for label, desc_tok, add_tok, ded_tok in prefix_pairs:
         rcells = [
-            cell(para(run(label, bold=True, sz=SZ_SM)), width=label_w, shading="F8F8F8"),
-            cell(para(run("{{" + desc_tok + "}}", sz=SZ_SM)), width=desc_w),
-            cell(para(run("{{" + add_tok + "}}", sz=SZ_SM)), width=add_w),
-            cell(para(run("{{" + ded_tok + "}}", sz=SZ_SM)), width=ded_w),
+            cell(para(run(label, bold=True, sz=SZ_BODY)), width=label_w),
+            cell(para(run("{{" + desc_tok + "}}", sz=SZ_BODY)), width=desc_w),
+            cell(para(run("{{" + add_tok + "}}", sz=SZ_BODY)), width=add_w),
+            cell(para(run("{{" + ded_tok + "}}", sz=SZ_BODY)), width=ded_w),
         ]
         rows_xml.append(row(*rcells))
 
@@ -294,14 +300,14 @@ def spacer():
     return '<w:p><w:pPr><w:spacing w:before="60" w:after="60"/></w:pPr></w:p>'
 
 
-# ─── Build the full document ──────────────────────────────
+# G��G��G�� Build the full document G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
 def build_document_xml():
     parts = []
 
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
     #  PAGE 1: CLAIM INFO + VEHICLE + LOSS/COVERAGE
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
     parts.append(section_title("BASE CLAIM INFORMATION FORM"))
 
@@ -415,9 +421,9 @@ def build_document_xml():
         ("TRANS_PO", "Power"),
     ], cols=4))
 
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
     #  PAGE 2: OPTIONS
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
     # Page break
     parts.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
@@ -615,9 +621,9 @@ def build_document_xml():
         ("WI", "Winch"),
     ], cols=4))
 
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
     #  PAGE 3: CONDITION + REFURBISHMENT + ADJUSTMENTS
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
     parts.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
 
@@ -660,7 +666,7 @@ def build_document_xml():
     parts.append(spacer())
     parts.append(section_title("REFURBISHMENT"))
 
-    # Refurbishment — label/value pairs
+    # Refurbishment G�� label/value pairs
     parts.append(header_table([
         ("Engine Price:", "REF_ENGINE_PURCHASE_PRICE"),
         ("Engine Mileage:", "REF_ENGINE_MILEAGE"),
@@ -723,13 +729,13 @@ def build_document_xml():
         ("Post-Tax Adj 2", "POST_TAX_ADJ2_DESC", "POST_TAX_ADJ2_ADD", "POST_TAX_ADJ2_DEDUCT"),
     ]))
 
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
     #  Assemble full document
-    # ═══════════════════════════════════════════════════════
+    # G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
     body = '\n'.join(parts)
 
-    # Section properties — match v3 page size/margins + header/footer refs
+    # Section properties G�� match v3 page size/margins + header/footer refs
     sect_pr = (
         '<w:sectPr>'
         '<w:headerReference w:type="default" r:id="rId7"/>'
@@ -754,7 +760,53 @@ def build_document_xml():
     )
 
 
-# ─── Main ─────────────────────────────────────────────────
+def update_styles_xml(xml_bytes):
+    """Update Normal style and doc defaults to Calibri 13pt black."""
+    from xml.etree import ElementTree as ET
+
+    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    root = ET.fromstring(xml_bytes)
+
+    def ensure_rpr(parent):
+        rpr = parent.find("w:rPr", ns)
+        if rpr is None:
+            rpr = ET.SubElement(parent, f"{{{ns['w']}}}rPr")
+        return rpr
+
+    def set_rpr(rpr):
+        rfonts = rpr.find("w:rFonts", ns)
+        if rfonts is None:
+            rfonts = ET.SubElement(rpr, f"{{{ns['w']}}}rFonts")
+        rfonts.set(f"{{{ns['w']}}}ascii", FONT)
+        rfonts.set(f"{{{ns['w']}}}hAnsi", FONT)
+
+        color = rpr.find("w:color", ns)
+        if color is None:
+            color = ET.SubElement(rpr, f"{{{ns['w']}}}color")
+        color.set(f"{{{ns['w']}}}val", "000000")
+
+        for tag in ("sz", "szCs"):
+            el = rpr.find(f"w:{tag}", ns)
+            if el is None:
+                el = ET.SubElement(rpr, f"{{{ns['w']}}}{tag}")
+            el.set(f"{{{ns['w']}}}val", SZ_BODY)
+
+    doc_defaults = root.find("w:docDefaults", ns)
+    if doc_defaults is not None:
+        rpr_default = doc_defaults.find("w:rPrDefault", ns)
+        if rpr_default is None:
+            rpr_default = ET.SubElement(doc_defaults, f"{{{ns['w']}}}rPrDefault")
+        set_rpr(ensure_rpr(rpr_default))
+
+    for style in root.findall("w:style", ns):
+        if style.get(f"{{{ns['w']}}}styleId") == "Normal":
+            set_rpr(ensure_rpr(style))
+            break
+
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True)
+
+
+# G��G��G�� Main G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
 def main():
     if not V3_PATH.exists():
@@ -787,6 +839,9 @@ def main():
             for item in zin.infolist():
                 if item.filename == "word/document.xml":
                     zout.writestr(item, new_doc_xml)
+                elif item.filename == "word/styles.xml":
+                    styles_xml = zin.read(item.filename)
+                    zout.writestr(item, update_styles_xml(styles_xml))
                 else:
                     zout.writestr(item, zin.read(item.filename))
 

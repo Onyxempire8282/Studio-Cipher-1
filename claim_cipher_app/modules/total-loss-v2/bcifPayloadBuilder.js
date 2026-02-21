@@ -105,6 +105,178 @@ function validateTokenIntegrity(tokenMap) {
     }
 }
 
+export const TOKEN_META = {
+    // Power / Convenience — Power Options
+    "PS":         { label: "Power Steering",                   category: "Power / Convenience" },
+    "PB":         { label: "Power Brakes",                     category: "Power / Convenience" },
+    "PW":         { label: "Power Windows",                    category: "Power / Convenience" },
+    "PL":         { label: "Power Locks",                      category: "Power / Convenience" },
+    "SP":         { label: "Power Driver Seat",                category: "Power / Convenience" },
+    "PC":         { label: "Power Passenger Seat",             category: "Power / Convenience" },
+    "PA":         { label: "Power Antenna",                    category: "Power / Convenience" },
+    "PM":         { label: "Power Mirrors",                    category: "Power / Convenience" },
+    "PT":         { label: "Power Trunk / Liftgate",           category: "Power / Convenience" },
+    "PP":         { label: "Power Adjustable Pedals",          category: "Power / Convenience" },
+    "PD":         { label: "Power Sliding Door",               category: "Power / Convenience" },
+    "DP":         { label: "Dual Power Sliding Doors",         category: "Power / Convenience" },
+    // Power / Convenience — Decor / Convenience
+    "AC":         { label: "Air Conditioning",                 category: "Power / Convenience" },
+    "DA":         { label: "Dual Air Conditioning",            category: "Power / Convenience" },
+    "CL":         { label: "Climate Control",                  category: "Power / Convenience" },
+    "RD":         { label: "Rear Defogger",                    category: "Power / Convenience" },
+    "IW":         { label: "Intermittent Wipers",              category: "Power / Convenience" },
+    "TW":         { label: "Tilt Wheel",                       category: "Power / Convenience" },
+    "TL":         { label: "Telescopic Wheel",                 category: "Power / Convenience" },
+    "CC":         { label: "Cruise Control",                   category: "Power / Convenience" },
+    "KE":         { label: "Keyless Entry",                    category: "Power / Convenience" },
+    "CN":         { label: "Console Storage",                  category: "Power / Convenience" },
+    "CO":         { label: "Overhead Console",                 category: "Power / Convenience" },
+    "EC":         { label: "Entertainment Center",             category: "Power / Convenience" },
+    "NV":         { label: "Navigation System",                category: "Power / Convenience" },
+    "C2":         { label: "Communications System",            category: "Power / Convenience" },
+    "HU":         { label: "Heads Up Display",                 category: "Power / Convenience" },
+    "WT":         { label: "Wood Interior Trim",               category: "Power / Convenience" },
+    "EI":         { label: "Electronic Instrumentation",       category: "Power / Convenience" },
+    "IB":         { label: "On Board Computer",                category: "Power / Convenience" },
+    "MC":         { label: "Message Center",                   category: "Power / Convenience" },
+    "MM":         { label: "Memory Package",                   category: "Power / Convenience" },
+    "RJ":         { label: "Remote Starter",                   category: "Power / Convenience" },
+    "SV":         { label: "Surround View Camera",             category: "Power / Convenience" },
+    "DS":         { label: "Dual Screen",                      category: "Power / Convenience" },
+    "HL":         { label: "HomeLink",                         category: "Power / Convenience" },
+    // Power / Convenience — Transmission
+    "TRANS_AUTO": { label: "Automatic Transmission",           category: "Power / Convenience" },
+    "TRANS_OD":   { label: "Overdrive",                        category: "Power / Convenience" },
+    "TRANS_PO":   { label: "Power Overdrive",                  category: "Power / Convenience" },
+    "TRANS_S3":   { label: "3-Speed Transmission",             category: "Power / Convenience" },
+    "TRANS_S4":   { label: "4-Speed Transmission",             category: "Power / Convenience" },
+    "TRANS_S5":   { label: "5-Speed Transmission",             category: "Power / Convenience" },
+    "TRANS_S6":   { label: "6-Speed Transmission",             category: "Power / Convenience" },
+    "TRANS_4W":   { label: "4-Wheel Drive",                    category: "Power / Convenience" },
+    // Seats
+    "CS":         { label: "Cloth Seats",                      category: "Seats" },
+    "LS":         { label: "Leather Seats",                    category: "Seats" },
+    "RL":         { label: "Reclining Seats",                  category: "Seats" },
+    "BS":         { label: "Bucket Seats",                     category: "Seats" },
+    "SH":         { label: "Heated Seats",                     category: "Seats" },
+    "RH":         { label: "Rear Heated Seats",                category: "Seats" },
+    "3S":         { label: "Third Row Seat",                   category: "Seats" },
+    "3P":         { label: "Power Third Row Seat",             category: "Seats" },
+    "R3":         { label: "Retractable Seats",                category: "Seats" },
+    "2P":         { label: "12 Passenger",                     category: "Seats" },
+    "5P":         { label: "15 Passenger",                     category: "Seats" },
+    "B2":         { label: "Captain Chairs (2)",               category: "Seats" },
+    "B4":         { label: "Captain Chairs (4)",               category: "Seats" },
+    "B6":         { label: "Captain Chairs (6)",               category: "Seats" },
+    "VS":         { label: "Ventilated Seats",                 category: "Seats" },
+    "SS":         { label: "Swivel Seats",                     category: "Seats" },
+    // Audio / Entertainment
+    "AM":         { label: "AM Radio",                         category: "Audio / Entertainment" },
+    "FM":         { label: "FM Radio",                         category: "Audio / Entertainment" },
+    "ST":         { label: "Stereo",                           category: "Audio / Entertainment" },
+    "CA":         { label: "Cassette",                         category: "Audio / Entertainment" },
+    "SE":         { label: "Search / Seek",                    category: "Audio / Entertainment" },
+    "CD":         { label: "CD Player",                        category: "Audio / Entertainment" },
+    "SK":         { label: "CD Changer",                       category: "Audio / Entertainment" },
+    "UR":         { label: "Premium Radio",                    category: "Audio / Entertainment" },
+    "XM":         { label: "Satellite Radio",                  category: "Audio / Entertainment" },
+    "TQ":         { label: "Steering Wheel Audio Controls",    category: "Audio / Entertainment" },
+    "M3":         { label: "Auxiliary Audio Input",            category: "Audio / Entertainment" },
+    "EQ":         { label: "Equalizer",                        category: "Audio / Entertainment" },
+    // Wheels
+    "AW":         { label: "Aluminum / Alloy Wheels",          category: "Wheels" },
+    "CJ":         { label: "Chrome Wheels",                    category: "Wheels" },
+    "W2":         { label: "20\" or Larger Wheels",            category: "Wheels" },
+    "DC":         { label: "Deluxe Wheel Covers",              category: "Wheels" },
+    "FC":         { label: "Full Wheel Covers",                category: "Wheels" },
+    "SA":         { label: "Spoke Aluminum Wheels",            category: "Wheels" },
+    "SY":         { label: "Styled Steel Wheels",              category: "Wheels" },
+    "WW":         { label: "Wire Wheels",                      category: "Wheels" },
+    "WC":         { label: "Wire Wheel Covers",                category: "Wheels" },
+    "RW":         { label: "Rally Wheels",                     category: "Wheels" },
+    "KW":         { label: "Locking Wheels",                   category: "Wheels" },
+    "LC":         { label: "Locking Wheel Covers",             category: "Wheels" },
+    // Roof
+    "EG":         { label: "Electric Glass Roof",              category: "Roof" },
+    "ES":         { label: "Electric Steel Roof",              category: "Roof" },
+    "OR":         { label: "Skyview Roof",                     category: "Roof" },
+    "SD":         { label: "Dual Power Sunroof",               category: "Roof" },
+    "MS":         { label: "Manual Steel Roof",                category: "Roof" },
+    "MG":         { label: "Manual Glass Roof",                category: "Roof" },
+    "FR":         { label: "Flip Roof",                        category: "Roof" },
+    "TT":         { label: "T-Top",                            category: "Roof" },
+    "GT":         { label: "Glass T-Top",                      category: "Roof" },
+    "VP":         { label: "Power Convertible Roof",           category: "Roof" },
+    "RM":         { label: "Detachable Roof",                  category: "Roof" },
+    "VR":         { label: "Vinyl Covered Roof",               category: "Roof" },
+    "RF":         { label: "Cabriolet Roof",                   category: "Roof" },
+    "LR":         { label: "Landau Roof",                      category: "Roof" },
+    "LP":         { label: "Padded Landau Roof",               category: "Roof" },
+    "PV":         { label: "Padded Vinyl Roof",                category: "Roof" },
+    "HT":         { label: "Hard Top",                         category: "Roof" },
+    // Safety
+    "AG":         { label: "Driver Air Bag",                   category: "Safety" },
+    "RG":         { label: "Passenger Air Bag",                category: "Safety" },
+    "XG":         { label: "Front Side Impact Air Bags",       category: "Safety" },
+    "ZG":         { label: "Rear Side Impact Air Bags",        category: "Safety" },
+    "DG":         { label: "Head / Curtain Air Bags",          category: "Safety" },
+    "TD":         { label: "Anti-Theft Alarm",                 category: "Safety" },
+    "VZ":         { label: "Night Vision",                     category: "Safety" },
+    "IC":         { label: "Adaptive Cruise Control",          category: "Safety" },
+    "PJ":         { label: "Parking Sensors",                  category: "Safety" },
+    "PX":         { label: "Parking Sensors (Equipped)",       category: "Safety" },
+    "AB":         { label: "Anti-Lock Brakes (4-Wheel)",       category: "Safety" },
+    "A2":         { label: "Anti-Lock Brakes (2-Wheel)",       category: "Safety" },
+    "DB":         { label: "4-Wheel Disc Brakes",              category: "Safety" },
+    "RB":         { label: "Roll Bar",                         category: "Safety" },
+    "TX":         { label: "Traction Control",                 category: "Safety" },
+    "T1":         { label: "Stability Control",                category: "Safety" },
+    "AL":         { label: "Auto Leveling",                    category: "Safety" },
+    "SAFETY_BC":  { label: "Backup Camera",                    category: "Safety" },
+    "SAFETY_BD":  { label: "Blind Spot Monitor",               category: "Safety" },
+    "LW":         { label: "Lane Departure Warning",           category: "Safety" },
+    // Exterior / Truck Accessories — Exterior / Paint / Glass
+    "RR":         { label: "Roof Rack",                        category: "Exterior / Truck Accessories" },
+    "WG":         { label: "Woodgrain",                        category: "Exterior / Truck Accessories" },
+    "WP":         { label: "Rear Window Wiper",                category: "Exterior / Truck Accessories" },
+    "2T":         { label: "Two Tone Paint",                   category: "Exterior / Truck Accessories" },
+    "HP":         { label: "Three Stage Paint",                category: "Exterior / Truck Accessories" },
+    "IP":         { label: "Clearcoat Paint",                  category: "Exterior / Truck Accessories" },
+    "MP":         { label: "Metallic Paint",                   category: "Exterior / Truck Accessories" },
+    "SL":         { label: "Rear Spoiler",                     category: "Exterior / Truck Accessories" },
+    "FL":         { label: "Fog Lamps",                        category: "Exterior / Truck Accessories" },
+    "TG":         { label: "Tinted Glass",                     category: "Exterior / Truck Accessories" },
+    "DT":         { label: "Privacy Glass",                    category: "Exterior / Truck Accessories" },
+    "BN":         { label: "Body Side Moldings",               category: "Exterior / Truck Accessories" },
+    "DM":         { label: "Dual Mirrors",                     category: "Exterior / Truck Accessories" },
+    "HM":         { label: "Heated Mirrors",                   category: "Exterior / Truck Accessories" },
+    "HV":         { label: "Headlamp Washers",                 category: "Exterior / Truck Accessories" },
+    "MX":         { label: "Signal Integrated Mirrors",        category: "Exterior / Truck Accessories" },
+    // Exterior / Truck Accessories — Truck / Other
+    "OTHER_BD":   { label: "Running Boards",                   category: "Exterior / Truck Accessories" },
+    "UP":         { label: "Power Retractable Running Boards", category: "Exterior / Truck Accessories" },
+    "XE":         { label: "Xenon Headlamps",                  category: "Exterior / Truck Accessories" },
+    "AR":         { label: "Bed Rails",                        category: "Exterior / Truck Accessories" },
+    "BL":         { label: "Bedliner",                         category: "Exterior / Truck Accessories" },
+    "BY":         { label: "Spray-On Bedliner",                category: "Exterior / Truck Accessories" },
+    "CP":         { label: "Deluxe Truck Cap",                 category: "Exterior / Truck Accessories" },
+    "GG":         { label: "Grille Guard",                     category: "Exterior / Truck Accessories" },
+    "SB":         { label: "Rear Step Bumper",                 category: "Exterior / Truck Accessories" },
+    "SW":         { label: "Rear Sliding Window",              category: "Exterior / Truck Accessories" },
+    "PG":         { label: "Power Rear Window",                category: "Exterior / Truck Accessories" },
+    "TB":         { label: "Permanent Tool Box",               category: "Exterior / Truck Accessories" },
+    "TN":         { label: "Soft Tonneau Cover",               category: "Exterior / Truck Accessories" },
+    "TZ":         { label: "Hard Tonneau Cover",               category: "Exterior / Truck Accessories" },
+    "TP":         { label: "Trailering Package",               category: "Exterior / Truck Accessories" },
+    "WD":         { label: "Dual Rear Wheels",                 category: "Exterior / Truck Accessories" },
+    "XT":         { label: "Auxiliary Fuel Tank",              category: "Exterior / Truck Accessories" },
+    "OTHER_BC":   { label: "Bumper Cushions",                  category: "Exterior / Truck Accessories" },
+    "BG":         { label: "Bumper Guards",                    category: "Exterior / Truck Accessories" },
+    "EM":         { label: "California Emissions",             category: "Exterior / Truck Accessories" },
+    "SG":         { label: "Stone Guard",                      category: "Exterior / Truck Accessories" },
+    "WI":         { label: "Winch",                            category: "Exterior / Truck Accessories" },
+};
+
 export function mapEstimateOptionsToBCIF(rawOptions = []) {
     if (!Array.isArray(rawOptions)) return [];
 
@@ -299,7 +471,15 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         }
     }
 
-    return Array.from(tokens);
+    return Array.from(tokens).reduce((acc, code) => {
+        const meta = TOKEN_META[code];
+        if (!meta) {
+            console.warn("Missing TOKEN_META entry for:", code);
+            return acc;
+        }
+        acc.push({ code, label: meta.label, category: meta.category });
+        return acc;
+    }, []);
 }
 
 export function buildBCIFPayload(parsedEstimate) {
@@ -407,12 +587,12 @@ export function buildBCIFPayload(parsedEstimate) {
     setText(tokenMap, "MILEAGE", mileage ? mileage : "UNK");
 
     const optionTokens = mapEstimateOptionsToBCIF(est.features || []);
-    for (const token of optionTokens) {
-        if (!(token in tokenMap)) {
-            console.warn("[TLS] Option token not in MASTER_TOKENS:", token);
+    for (const opt of optionTokens) {
+        if (!(opt.code in tokenMap)) {
+            console.warn("[TLS] Option token not in MASTER_TOKENS:", opt.code);
             continue;
         }
-        setCheck(tokenMap, token);
+        setCheck(tokenMap, opt.code);
     }
 
     const ratings = est.conditionRatings || {};

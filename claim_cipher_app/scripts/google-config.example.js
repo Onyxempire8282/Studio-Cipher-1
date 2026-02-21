@@ -34,12 +34,12 @@ window.onGoogleMapsAPIReady = function () {
   console.log("🛡️ Security Agent: All services enabled and secured");
 
   // Initialize applications
-  if (typeof initRouteOptimizer === "function") {
-    initRouteOptimizer();
+  if (typeof initRouteCipher === "function") {
+    initRouteCipher();
   }
 
-  if (typeof window.mileageCalculator !== "undefined") {
-    window.mileageCalculator.enableGoogleMapsFeatures();
+  if (typeof window.mileageCipher !== "undefined") {
+    window.mileageCipher.enableGoogleMapsFeatures();
   }
 };
 

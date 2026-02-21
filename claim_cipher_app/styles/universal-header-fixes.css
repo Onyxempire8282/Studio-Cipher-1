@@ -41,8 +41,8 @@ body {
 }
 
 /* Fix route and mileage page specific layouts */
-.route-optimizer-main,
-.mileage-calculator-main {
+.route-cipher-main,
+.mileage-cipher-main {
     padding-top: 0 !important;
     min-height: calc(100vh - 80px) !important;
 }

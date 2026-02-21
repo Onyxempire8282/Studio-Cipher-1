@@ -30,23 +30,21 @@ export function createEmptyBCIFPayload() {
         },
 
         condition: {
-            overall: 1,
-            exterior: 1,
-            interior: 1,
-            mechanical: 1,
-            tires: {
-                frontLeft: "",
-                frontRight: "",
-                rearLeft: "",
-                rearRight: "",
-                avgFront: "",
-                avgRear: ""
-            },
-            comments: {
-                exterior: "",
-                interior: "",
-                mechanical: ""
-            }
+            // Exterior
+            paint:        { rating: 2, comment: "" },
+            sheetMetal:   { rating: 2, comment: "" },
+            glass:        { rating: 2, comment: "" },
+            trim:         { rating: 2, comment: "" },
+            // Interior
+            seats:        { rating: 2, comment: "" },
+            carpet:       { rating: 2, comment: "" },
+            dashboard:    { rating: 2, comment: "" },
+            headliner:    { rating: 2, comment: "" },
+            // Mechanical
+            frontTires:   { rating: null, treadDepth: "", comment: "" },
+            rearTires:    { rating: null, treadDepth: "", comment: "" },
+            engine:       { rating: 2, comment: "" },
+            transmission: { rating: 2, comment: "" },
         },
 
         options: [],

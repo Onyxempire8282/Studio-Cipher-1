@@ -1,0 +1,250 @@
+=== HTML ROUTE MAP ===
+
+FILE: claim_cipher_app\command-center.html
+TITLE: Command Center - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -                 window.location.href = url;
+  -         // If not allowed, protectPage() redirects and body stays hidden
+AUTH_GUARD_CALLS:
+  -         const allowed = await window.SupabaseAuth.protectPage();
+  -         // If not allowed, protectPage() redirects and body stays hidden
+LINKS_OUT:
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\firms-directory.html
+TITLE: Firms Directory - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -     <!-- DISTRO: Feature hidden - redirect to main app -->
+  -     // This feature is hidden for distribution - redirect to Route Cipher
+  -     window.location.href = 'route-cypher.html';
+  -       //     window.location.href = './login-cypher.html';
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\functionality-test.html
+TITLE: Functionality Test - Route Cipher & Mileage Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -     <!-- DISTRO: Feature hidden - redirect to main app -->
+  -     // This feature is hidden for distribution - redirect to Route Cipher
+  -     window.location.href = 'route-cypher.html';
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - route-cypher.html
+  - mileage-cypher.html
+
+FILE: claim_cipher_app\functionality-test-backup.html
+TITLE: Functionality Test - Route Cipher & Mileage Cipher
+FIRST_SCRIPT_REDIRECTS:
+  - NONE
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - route-cypher.html
+  - mileage-cypher.html
+
+FILE: claim_cipher_app\index.html
+TITLE: Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -     <p>Redirecting... <a href="route-cypher.html">Click here</a> if not redirected.</p>
+  -     <script>window.location.replace('./route-cypher.html');</script>
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - route-cypher.html
+
+FILE: claim_cipher_app\jobs-studio.html
+TITLE: Jobs Studio - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -     <!-- DISTRO: Feature hidden - redirect to main app -->
+  -     // This feature is hidden for distribution - redirect to Route Cipher
+  -     window.location.href = 'route-cypher.html';
+  -         //     window.location.href = './login-cypher.html';
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\login-cypher.html
+TITLE: Login Cypher - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -                                 <p>You'll be redirected to PayPal to complete your payment securely.</p>
+  -         // Check if already logged in - redirect to dashboard
+  -         // If user is authenticated, loginPageGuard will redirect and return false
+  -         // If redirecting, body stays hidden to prevent flash
+  -                     showMessage('Login successful! Redirecting...', false);
+  -                         window.location.href = 'command-center.html';
+  -                         showMessage('Account created! Redirecting...', false);
+  -                             window.location.href = 'command-center.html';
+  -                 console.log('ðŸŽ­ Demo mode activated - redirecting to dashboard');
+  -                 // Immediate redirect - no setTimeout, no delays
+  -                 window.location.replace('command-center.html');
+  -                 const redirectTo = `${window.location.origin}/reset-password.html`;
+  -                 const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+AUTH_GUARD_CALLS:
+  -         const shouldStayOnLoginPage = await window.SupabaseAuth.loginPageGuard();
+  -                 window.SupabaseAuth.setButtonLoading(loginBtn, true, 'Signing in...');
+  -                 const result = await window.SupabaseAuth.signIn(email, password);
+  -                     window.SupabaseAuth.setButtonLoading(loginBtn, false);
+  -                 window.SupabaseAuth.setButtonLoading(signupBtn, true, 'Creating account...');
+  -                 const result = await window.SupabaseAuth.signUp(email, password, {
+  -                         window.SupabaseAuth.setButtonLoading(signupBtn, false);
+  -                     window.SupabaseAuth.setButtonLoading(signupBtn, false);
+LINKS_OUT:
+  - NONE
+
+FILE: claim_cipher_app\mileage-cypher.html
+TITLE: Mileage Cipher - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -         // If not allowed, protectPage() redirects and body stays hidden
+AUTH_GUARD_CALLS:
+  -         const allowed = await window.SupabaseAuth.protectPage();
+  -         // If not allowed, protectPage() redirects and body stays hidden
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\my-routes.html
+TITLE: My Routes - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  - NONE
+AUTH_GUARD_CALLS:
+  -         const allowed = await window.SupabaseAuth.protectPage();
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+
+FILE: claim_cipher_app\route-cypher.html
+TITLE: Route Cipher - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -         // If not allowed, protectPage() redirects and body stays hidden
+  -                 window.location.href = 'my-routes.html';
+AUTH_GUARD_CALLS:
+  -         const allowed = await window.SupabaseAuth.protectPage();
+  -         // If not allowed, protectPage() redirects and body stays hidden
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\settings-booth.html
+TITLE: Settings Booth - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -     <!-- DISTRO: Feature hidden - redirect to main app -->
+  -     // This feature is hidden for distribution - redirect to Route Cipher
+  -     window.location.href = 'route-cypher.html';
+AUTH_GUARD_CALLS:
+  -         // Supabase Auth handles all authentication via protectPage() above
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\test-extraction.html
+TITLE: Test CCC PDF Extraction
+FIRST_SCRIPT_REDIRECTS:
+  - NONE
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - NONE
+
+FILE: claim_cipher_app\total-loss-forms.html
+TITLE: Total Loss Auto Forms - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  -     <!-- DISTRO: Feature hidden - redirect to main app -->
+  -     // This feature is hidden for distribution - redirect to Route Cipher
+  -     window.location.href = 'route-cypher.html';
+  -         //     window.location.href = './login-cypher.html';
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - jobs-studio.html
+  - total-loss-forms.html
+  - firms-directory.html
+  - settings-booth.html
+  - functionality-test.html
+
+FILE: claim_cipher_app\total-loss-studio.html
+TITLE: Total Loss Studio - Claim Cipher
+FIRST_SCRIPT_REDIRECTS:
+  - NONE
+AUTH_GUARD_CALLS:
+  -         const allowed = await window.SupabaseAuth.protectPage();
+LINKS_OUT:
+  - command-center.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - my-routes.html
+  - total-loss-studio.html
+
+FILE: claim_cipher_app\welcome.html
+TITLE: Claim Cipher - Welcome
+FIRST_SCRIPT_REDIRECTS:
+  -     <!-- DISTRO: Welcome page hidden - redirect to main app -->
+  -     // This feature is hidden for distribution - redirect to Route Cipher
+  -     window.location.href = 'route-cypher.html';
+  -       // Check authentication and redirect if needed
+  -       // If user is already authenticated, redirect to dashboard
+  -       //     console.log('ðŸŽ¤ User already authenticated, redirecting to dashboard...');
+  -       //     window.location.href = 'command-center.html';
+  -             //     // Not authenticated, redirect to login first
+  -             //     console.log('ðŸ”’ Authentication required, redirecting to login...');
+  -             //     window.location.href = 'login-cypher.html';
+  -             //     window.location.href = this.getAttribute('href');
+  -             window.location.href = this.getAttribute("href");
+AUTH_GUARD_CALLS:
+  - NONE
+LINKS_OUT:
+  - jobs-studio.html
+  - total-loss-forms.html
+  - route-cypher.html
+  - mileage-cypher.html
+  - login-cypher.html

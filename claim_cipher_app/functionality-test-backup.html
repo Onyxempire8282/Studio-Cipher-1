@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Functionality Test - Route Optimizer & Mileage Calculator</title>
+    <title>Functionality Test - Route Cipher & Mileage Cipher</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -68,11 +68,11 @@
 </head>
 <body>
     <h1>🎯 Claim Cipher - Functionality Test Suite</h1>
-    <p>Testing the Route Optimizer and Mileage Calculator modules for 100% functionality</p>
+    <p>Testing the Route Cipher and Mileage Cipher modules for 100% functionality</p>
 
     <div class="nav-links">
-        <a href="route-cypher.html">🗺️ Test Route Optimizer</a>
-        <a href="mileage-cypher.html">📊 Test Mileage Calculator</a>
+        <a href="route-cypher.html">🗺️ Test Route Cipher</a>
+        <a href="mileage-cypher.html">📊 Test Mileage Cipher</a>
     </div>
 
     <div class="test-section">
@@ -82,15 +82,15 @@
     </div>
 
     <div class="test-section">
-        <h2>🗺️ Route Optimizer Tests</h2>
+        <h2>🗺️ Route Cipher Tests</h2>
         <div id="routeResults"></div>
-        <button onclick="testRouteOptimizer()">🚀 Test Route Optimizer</button>
+        <button onclick="testRouteCipher()">🚀 Test Route Cipher</button>
     </div>
 
     <div class="test-section">
-        <h2>📊 Mileage Calculator Tests</h2>
+        <h2>📊 Mileage Cipher Tests</h2>
         <div id="mileageResults"></div>
-        <button onclick="testMileageCalculator()">🧮 Test Mileage Calculator</button>
+        <button onclick="testMileageCipher()">🧮 Test Mileage Cipher</button>
     </div>
 
     <div class="test-section">
@@ -117,10 +117,10 @@
             
             // Check if files exist
             const filesToCheck = [
-                'scripts/route-optimizer.js',
-                'scripts/mileage-calculator.js', 
-                'styles/route-optimizer.css',
-                'styles/mileage-calculator.css',
+                'scripts/route-cipher.js',
+                'scripts/mileage-cipher.js', 
+                'styles/route-cipher.css',
+                'styles/mileage-cipher.css',
                 'styles/main.css'
             ];
             
@@ -171,11 +171,11 @@
             }
         }
 
-        function testRouteOptimizer() {
+        function testRouteCipher() {
             clearResults('routeResults');
             
             // Test 1: Basic route calculation (mock)
-            addResult('routeResults', '🧪 Testing Route Optimizer Core Functions...', 'info');
+            addResult('routeResults', '🧪 Testing Route Cipher Core Functions...', 'info');
             
             // Simulate route optimizer functionality
             const mockRouteData = {
@@ -224,13 +224,13 @@
                 addResult('routeResults', '❌ Settings persistence - FAILED', 'error');
             }
 
-            addResult('routeResults', '🎯 Route Optimizer - READY FOR LIVE TESTING', 'success');
+            addResult('routeResults', '🎯 Route Cipher - READY FOR LIVE TESTING', 'success');
         }
 
-        function testMileageCalculator() {
+        function testMileageCipher() {
             clearResults('mileageResults');
             
-            addResult('mileageResults', '🧪 Testing Mileage Calculator Core Functions...', 'info');
+            addResult('mileageResults', '🧪 Testing Mileage Cipher Core Functions...', 'info');
             
             // Test calculation logic
             const testFirm = {
@@ -281,7 +281,7 @@
                 addResult('mileageResults', '❌ Copy format - INCORRECT', 'error');
             }
             
-            addResult('mileageResults', '💰 Mileage Calculator - READY FOR LIVE TESTING', 'success');
+            addResult('mileageResults', '💰 Mileage Cipher - READY FOR LIVE TESTING', 'success');
         }
 
         function testIntegration() {
@@ -315,8 +315,8 @@
             const routeUrl = window.location.origin + '/route-cypher.html';
             const mileageUrl = window.location.origin + '/mileage-cypher.html';
             
-            addResult('integrationResults', `✅ Route Optimizer URL: ${routeUrl}`, 'success');
-            addResult('integrationResults', `✅ Mileage Calculator URL: ${mileageUrl}`, 'success');
+            addResult('integrationResults', `✅ Route Cipher URL: ${routeUrl}`, 'success');
+            addResult('integrationResults', `✅ Mileage Cipher URL: ${mileageUrl}`, 'success');
             
             // Clean up test data
             localStorage.removeItem('cc_route_export');

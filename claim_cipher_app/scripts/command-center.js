@@ -500,8 +500,8 @@ class CommandCenterManager {
     // Utility Functions
     getModuleName(url) {
         const names = {
-            'route-cypher.html': 'Route Optimizer',
-            'mileage-cypher.html': 'Mileage Calculator', 
+            'route-cypher.html': 'Route Cipher',
+            'mileage-cypher.html': 'Mileage Cipher', 
             'jobs-studio.html': 'Jobs Studio',
             'firms-directory.html': 'Firms Directory',
             'settings-booth.html': 'Settings Booth',
@@ -793,7 +793,7 @@ class CommandCenterManager {
                     <div style="background: #e8f4ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                         <div style="color: #3498db; font-weight: 600; margin-bottom: 5px;">💡 Quick Tip</div>
                         <div style="color: #2c3e50; font-size: 0.9em;">
-                            Use <kbd>Ctrl+1</kbd> for Route Optimizer, <kbd>Ctrl+2</kbd> for Mileage Calculator
+                            Use <kbd>Ctrl+1</kbd> for Route Cipher, <kbd>Ctrl+2</kbd> for Mileage Cipher
                         </div>
                     </div>
                     <button onclick="commandCenter.closeModal()" 
@@ -812,8 +812,8 @@ class CommandCenterManager {
         this.closeModal();
         
         const tutorials = [
-            { title: '🗺️ Route Optimizer Basics', duration: '3:45', level: 'Beginner' },
-            { title: '🧮 Mileage Calculator Setup', duration: '2:30', level: 'Beginner' },
+            { title: '🗺️ Route Cipher Basics', duration: '3:45', level: 'Beginner' },
+            { title: '🧮 Mileage Cipher Setup', duration: '2:30', level: 'Beginner' },
             { title: '💼 Managing Insurance Firms', duration: '4:15', level: 'Intermediate' },
             { title: '📊 Advanced Route Optimization', duration: '6:20', level: 'Advanced' },
             { title: '🔄 Day Splitting Strategies', duration: '3:10', level: 'Intermediate' },
@@ -866,8 +866,8 @@ class CommandCenterManager {
     
     playTutorial(index) {
         const tutorials = [
-            'Route Optimizer Basics',
-            'Mileage Calculator Setup', 
+            'Route Cipher Basics',
+            'Mileage Cipher Setup', 
             'Managing Insurance Firms',
             'Advanced Route Optimization',
             'Day Splitting Strategies',
@@ -895,11 +895,11 @@ class CommandCenterManager {
         this.closeModal();
         
         const faqs = [
-            { q: 'How do I optimize a route with multiple stops?', a: 'Use the Route Optimizer module and add destinations one by one. Enable "Optimize Route" for best order.' },
+            { q: 'How do I optimize a route with multiple stops?', a: 'Use the Route Cipher module and add destinations one by one. Enable "Optimize Route" for best order.' },
             { q: 'How are billable miles calculated?', a: 'Total miles minus free miles provided by the insurance firm, multiplied by the rate per mile.' },
             { q: 'Can I use this offline?', a: 'Basic functionality works offline, but route optimization requires internet. Upgrade to Pro for full offline support.' },
             { q: 'How do I add a new insurance firm?', a: 'Go to Firms Directory and click "Add New Firm" or use the quick action button.' },
-            { q: 'What are keyboard shortcuts?', a: 'Press Ctrl+1 for Route Optimizer, Ctrl+2 for Mileage Calculator, Ctrl+S for Settings.' }
+            { q: 'What are keyboard shortcuts?', a: 'Press Ctrl+1 for Route Cipher, Ctrl+2 for Mileage Cipher, Ctrl+S for Settings.' }
         ];
         
         const faqHTML = faqs.map(faq => `
@@ -940,8 +940,8 @@ class CommandCenterManager {
         this.closeModal();
         
         const shortcuts = [
-            { keys: 'Ctrl + 1', action: 'Open Route Optimizer' },
-            { keys: 'Ctrl + 2', action: 'Open Mileage Calculator' },
+            { keys: 'Ctrl + 1', action: 'Open Route Cipher' },
+            { keys: 'Ctrl + 2', action: 'Open Mileage Cipher' },
             { keys: 'Ctrl + 3', action: 'Open Jobs Studio' },
             { keys: 'Ctrl + 4', action: 'Open Firms Directory' },
             { keys: 'Ctrl + S', action: 'Open Settings' },

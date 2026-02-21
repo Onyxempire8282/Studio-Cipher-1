@@ -90,7 +90,7 @@ window.ClaimCipherAPI = {
 
     // Add callback if needed
     if (window.location.pathname.includes("route-cypher.html")) {
-      apiUrl += "&callback=initRouteOptimizer";
+      apiUrl += "&callback=initRouteCipher";
     }
 
     // Remove existing Google Maps script if any
@@ -109,8 +109,8 @@ window.ClaimCipherAPI = {
     script.onload = function () {
       console.log("🗺️ Google Maps API loaded successfully");
       // Update calculator settings if available
-      if (window.mileageCalculator) {
-        window.mileageCalculator.settings.googleMapsApiKey =
+      if (window.mileageCipher) {
+        window.mileageCipher.settings.googleMapsApiKey =
           config.GOOGLE_MAPS_API_KEY;
       }
     };

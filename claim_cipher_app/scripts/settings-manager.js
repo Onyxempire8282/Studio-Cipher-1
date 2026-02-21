@@ -27,7 +27,7 @@ class SettingsManager {
             maxLegMiles: 50,
             enableGeographicClustering: true,
 
-            // Mileage Calculator
+            // Mileage Cipher
             defaultMileageRate: 0.67,
             measurementUnits: 'miles',
             roundTripDefault: false,
@@ -145,8 +145,8 @@ class SettingsManager {
             localStorage.setItem(this.settingsKey, JSON.stringify(this.settings));
             
             // Update other systems
-            this.updateRouteOptimizerSettings();
-            this.updateMileageCalculatorSettings();
+            this.updateRouteCipherSettings();
+            this.updateMileageCipherSettings();
             
             this.showNotification('Settings saved successfully!', 'success');
             
@@ -157,9 +157,9 @@ class SettingsManager {
         }
     }
 
-    updateRouteOptimizerSettings() {
+    updateRouteCipherSettings() {
         // Update route optimizer if it exists
-        if (window.routeOptimizer) {
+        if (window.routeCipher) {
             console.log('🗺️ Updating route optimizer settings');
             // The route optimizer will read from settings on next optimization
         }
@@ -173,9 +173,9 @@ class SettingsManager {
         }
     }
 
-    updateMileageCalculatorSettings() {
+    updateMileageCipherSettings() {
         // Update mileage calculator settings if it exists
-        if (window.mileageCalculator) {
+        if (window.mileageCipher) {
             console.log('🧮 Updating mileage calculator settings');
             // The mileage calculator will read from settings on next calculation
         }

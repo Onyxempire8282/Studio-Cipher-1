@@ -44,18 +44,18 @@ const OPTION_CODES = [
 // =========================================
 
 const CONDITION_GROUPS = {
-    paint:        { prefix: "PAINT",        key: "exterior" },
-    sheetMetal:   { prefix: "SHEET_METAL",  key: "exterior" },
-    glass:        { prefix: "GLASS",        key: "exterior" },
-    trim:         { prefix: "TRIM",         key: "exterior" },
-    seats:        { prefix: "SEATS",        key: "interior" },
-    carpet:       { prefix: "CARPET",       key: "interior" },
-    dashboard:    { prefix: "DASHBOARD",    key: "interior" },
-    headliner:    { prefix: "HEADLINER",    key: "interior" },
-    frontTires:   { prefix: "FRONT_TIRES",  key: "mechanical" },
-    rearTires:    { prefix: "REAR_TIRES",   key: "mechanical" },
-    engine:       { prefix: "ENGINE",       key: "mechanical" },
-    transmission: { prefix: "TRANSMISSION", key: "mechanical" }
+    paint:        { prefix: "PAINT" },
+    sheetMetal:   { prefix: "SHEET_METAL" },
+    glass:        { prefix: "GLASS" },
+    trim:         { prefix: "TRIM" },
+    seats:        { prefix: "SEATS" },
+    carpet:       { prefix: "CARPET" },
+    dashboard:    { prefix: "DASHBOARD" },
+    headliner:    { prefix: "HEADLINER" },
+    frontTires:   { prefix: "FRONT_TIRES" },
+    rearTires:    { prefix: "REAR_TIRES" },
+    engine:       { prefix: "ENGINE" },
+    transmission: { prefix: "TRANSMISSION" },
 };
 
 // =========================================
@@ -171,17 +171,18 @@ function renderVehicleCheckboxTokens(map, payload) {
 // =========================================
 
 function renderConditionTokens(map, payload) {
-    const cond = payload.condition;
-    const comments = cond.comments || {};
+    const cond = payload.condition || {};
 
-    for (const [, group] of Object.entries(CONDITION_GROUPS)) {
-        const rating = cond[group.key] ?? cond.overall ?? 1;
+    for (const [componentKey, group] of Object.entries(CONDITION_GROUPS)) {
+        const component  = cond[componentKey] || {};
+        const rating     = component.rating;
+        const hasRating  = rating !== null && rating !== undefined;
 
         for (let i = 0; i <= 3; i++) {
-            map[`${group.prefix}_${i}`] = checkbox(i === rating);
+            map[`${group.prefix}_${i}`] = checkbox(hasRating && i === Number(rating));
         }
 
-        map[`${group.prefix}_COMMENT`] = comments[group.key] || "";
+        map[`${group.prefix}_COMMENT`] = component.comment || "";
     }
 }
 

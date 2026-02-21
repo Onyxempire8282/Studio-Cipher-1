@@ -40,7 +40,7 @@
   // ======================================================
   const PAGE_CONFIG = {
     'route-cypher.html': {
-      label: 'Route Optimizer',
+      label: 'Route Cipher',
       requiredSelectors: [
         '#startLocation',
         '#destinationsList',
@@ -78,7 +78,7 @@
       requiredScripts: [
         'supabase-auth.js',
         'route-service.js',
-        'route-optimizer.js',
+        'route-cipher.js',
         'cipher-core.js',
         'firm-store.js',
         'session-manager.js',
@@ -87,7 +87,7 @@
     },
 
     'mileage-cypher.html': {
-      label: 'Mileage Calculator',
+      label: 'Mileage Cipher',
       requiredSelectors: [
         '#firmSelect',
         '#pointA',

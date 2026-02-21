@@ -299,11 +299,20 @@ html, body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: none;
 }
 
 .password-toggle:focus,
 .password-toggle:active {
     outline: none;
+    box-shadow: none;
+    transform: translateY(-50%);
+}
+
+.password-toggle:hover,
+.password-toggle:active {
+    background: transparent;
+    border: none;
     box-shadow: none;
     transform: translateY(-50%);
 }

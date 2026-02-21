@@ -9,10 +9,11 @@ import { mapConditionFromCCC } from './engines/conditionEngine.js';
 import { evaluateLossType } from './engines/lossEngine.js';
 import { buildClaimSummary } from './summaryEngine.js';
 import { renderBCIFPayload } from './render/bcifRenderer.js';
-import { renderProcessingView, updateStage } from './ui/processingView.js';
+import { mountProcessingView, unmountProcessingView, updateStage } from './ui/processingView.js';
 import { renderSummaryView } from './ui/summaryView.js';
-import { mapEstimateOptionsToBCIF } from './bcifPayloadBuilder.js';
+import { mapEstimateOptionsToBCIF, TOKEN_META } from './bcifPayloadBuilder.js';
 import { generateBCIFPdf } from './render/bcifPdfGenerator.js';
+import { generateClaimSummaryDocx } from './render/claimSummaryDocx.js';
 
 // =========================================
 //  BCIF SERVER (optional — DOCX fill when running)
@@ -59,69 +60,126 @@ export function initTotalLossStudio() {
 
 function renderDropZone() {
     container.innerHTML = `
-        <div class="tls-dropzone" id="tls-dropzone">
-            <div class="tls-dropzone__icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(184,115,51,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 8 12 3 7 8"/>
-                    <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
+<div class="stage">
+
+    <div class="stage-glow"></div>
+
+    <div class="upload-panel">
+
+        <div class="panel-chrome">
+
+            <div class="panel-header">
+                <div class="panel-title">Load Estimate</div>
+                <div class="panel-line"></div>
+                <div class="panel-status">
+                    <div class="status-dot ready"></div>
+                    Ready
+                </div>
             </div>
 
-            <h3 class="cipher-section-title tls-dropzone__title">Drop CCC Estimate Here</h3>
-            <p class="cipher-body tls-dropzone__subtitle">PDF format accepted</p>
+            <div class="panel-body">
 
-            <button class="cipher-btn cipher-btn--primary" id="tls-browse-btn">
-                <div class="rivet tl"></div><div class="rivet tr"></div>
-                <div class="rivet bl"></div><div class="rivet br"></div>
-                Browse Files
-            </button>
+                <div class="dropzone" id="dropzone">
 
-            <input type="file" id="tls-file-input" accept=".pdf" style="display: none;" />
+                    <div class="default-state" id="defaultState">
+
+                        <div class="upload-icon-wrap">
+                            <div class="upload-icon"></div>
+                            <div class="upload-tray"></div>
+                        </div>
+
+                        <div class="drop-text">
+                            <div class="drop-headline">
+                                Drop CCC Estimate Here
+                            </div>
+                            <div class="drop-sub">
+                                PDF format · CCC ONE exports accepted
+                            </div>
+                        </div>
+
+                        <div class="drop-or">
+                            <div class="drop-or-line"></div>
+                            <div class="drop-or-text">OR</div>
+                            <div class="drop-or-line"></div>
+                        </div>
+
+                        <button class="browse-btn" id="browseBtn">
+                            Browse Files
+                        </button>
+
+                    </div>
+
+                    <input type="file" id="fileInput" accept=".pdf" hidden>
+
+                </div>
+
+            </div>
+
+            <div class="specs-row">
+                <div class="spec">
+                    <div class="spec-label">Accepted Source</div>
+                    <div class="spec-value">CCC ONE</div>
+                </div>
+                <div class="spec">
+                    <div class="spec-label">Output</div>
+                    <div class="spec-value">BCIF + Claim Summary</div>
+                </div>
+                <div class="spec">
+                    <div class="spec-label">Processing</div>
+                    <div class="spec-value">~4 seconds</div>
+                </div>
+            </div>
+
         </div>
+
+        <div class="history-strip">
+
+            <div class="history-header">
+                <div class="history-title">Recent</div>
+                <div class="history-line"></div>
+            </div>
+
+            <div class="history-items" id="historyItems"></div>
+
+        </div>
+
+    </div>
+
+</div>
     `;
 
-    const dropzone = document.getElementById('tls-dropzone');
-    const fileInput = document.getElementById('tls-file-input');
-    const browseBtn = document.getElementById('tls-browse-btn');
+        const dropzone      = document.getElementById('dropzone');
+        const fileInput     = document.getElementById('fileInput');
+        const browseBtn     = document.getElementById('browseBtn');
+        const defaultState  = document.getElementById('defaultState');
 
-    browseBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        fileInput.click();
-    });
+        browseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+        });
 
-    dropzone.addEventListener('click', function () {
-        fileInput.click();
-    });
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            handleFile(file);
+        });
 
-    dropzone.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        dropzone.style.borderColor = 'var(--cipher-accent)';
-        dropzone.style.background = 'rgba(184, 115, 51, 0.05)';
-    });
+        dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('drag-over');
+        });
 
-    dropzone.addEventListener('dragleave', function (e) {
-        e.preventDefault();
-        dropzone.style.borderColor = 'rgba(184, 115, 51, 0.3)';
-        dropzone.style.background = '';
-    });
+        dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('drag-over');
+        });
 
-    dropzone.addEventListener('drop', function (e) {
-        e.preventDefault();
-        dropzone.style.borderColor = 'rgba(184, 115, 51, 0.3)';
-        dropzone.style.background = '';
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            handleFile(files[0]);
-        }
-    });
-
-    fileInput.addEventListener('change', function () {
-        if (fileInput.files.length > 0) {
-            handleFile(fileInput.files[0]);
-        }
-    });
+        dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (!file) return;
+            handleFile(file);
+        });
 }
 
 // =========================================
@@ -154,9 +212,8 @@ async function handleFile(file) {
 
     try {
         // 1. Show processing animation early
-        container.innerHTML = renderProcessingView();
+        mountProcessingView();
         updateStage(0);
-        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
         await delay(800);
 
         // 2. Extract raw text
@@ -217,6 +274,8 @@ async function handleFile(file) {
         updateStage(4);
         await delay(400);
 
+        unmountProcessingView();
+
         container.style.transition = 'opacity 200ms';
         container.style.opacity = '0';
 
@@ -224,11 +283,14 @@ async function handleFile(file) {
         container.innerHTML = renderSummaryView(state.bcifPayload);
         container.style.opacity = '1';
 
+        updateSummaryHeaderFooter(state.bcifPayload);
+
         // 8. Wire all listeners
         attachSummaryListeners();
 
     } catch (err) {
         console.error('[TLS] Processing failed:', err);
+        unmountProcessingView();
         showError(err.message || 'An unexpected error occurred while processing the estimate.');
     }
 }
@@ -330,44 +392,12 @@ function attachSummaryListeners() {
     bindInput('sv-vin',         v => { state.bcifPayload.vehicle.vin = v; });
     bindInput('sv-additionalNotes', v => { state.bcifPayload.summary.additionalNotes = v; });
 
-    setupOptionsSelect();
+    renderOptionsCheckboxes();
 
-    const overallEl = document.getElementById('sv-overall');
-    if (overallEl) {
-        overallEl.addEventListener('change', e => {
-            const val = parseInt(e.target.value, 10);
-            state.bcifPayload.condition.overall   = val;
-            state.bcifPayload.condition.exterior   = val;
-            state.bcifPayload.condition.interior   = val;
-            state.bcifPayload.condition.mechanical = val;
-        });
-    }
+    setupGranularConditionRows();
+    setupSummaryAccordion();
 
-    // --- Generate Summary ---
-
-    const generateBtn = document.getElementById('sv-generateSummary');
-    if (generateBtn) {
-        if (generateBtn.dataset.bound === '1') {
-            console.debug('[TLS] Generate Summary already bound.');
-        } else {
-            generateBtn.dataset.bound = '1';
-            generateBtn.addEventListener('click', handleGenerateSummary);
-        }
-    } else {
-        console.warn('[TLS] Generate Summary button not found.');
-    }
-
-    // --- Copy Summary ---
-
-    document.getElementById('tls-copy-summary')
-        ?.addEventListener('click', handleCopySummary);
-
-    // --- Download Summary (.txt) ---
-
-    document.getElementById('tls-download-summary')
-        ?.addEventListener('click', handleDownloadSummary);
-
-    // --- Download ---
+    // --- Download BCIF Form ---
 
     const downloadBtn = document.getElementById('sv-download');
     if (downloadBtn) {
@@ -378,6 +408,95 @@ function attachSummaryListeners() {
             downloadBtn.addEventListener('click', handleDownload);
         }
     }
+
+    // --- Download Claim Summary ---
+
+    document.getElementById('tls-download-summary')
+        ?.addEventListener('click', handleDownloadSummary);
+
+    // --- Reset ---
+
+    document.getElementById('sv-reset')?.addEventListener('click', () => {
+        state.parsedEstimate = null;
+        state.bcifPayload    = null;
+        state.tokenMap       = null;
+        renderDropZone();
+    });
+}
+
+function updateSummaryHeaderFooter(payload) {
+    const claimEl = document.getElementById('claimNumberDisplay');
+    const vehicleEl = document.getElementById('vehicleSummaryDisplay');
+    const vinEl = document.getElementById('vehicleVinDisplay');
+    const footerClaimEl = document.getElementById('footerClaimNumber');
+    const footerVehicleEl = document.getElementById('footerVehicleSummary');
+
+    if (!claimEl || !vehicleEl || !vinEl || !footerClaimEl || !footerVehicleEl) return;
+
+    const claimNumber = String(payload?.claim?.claimNumber || '').trim();
+    const year = String(payload?.vehicle?.year || '').trim();
+    const make = String(payload?.vehicle?.make || '').trim();
+    const model = String(payload?.vehicle?.model || '').trim();
+    const vin = String(payload?.vehicle?.vin || '').trim();
+
+    const applyFade = (el, text) => {
+        el.classList.add('is-fading');
+        el.textContent = text;
+        requestAnimationFrame(() => {
+            el.classList.remove('is-fading');
+        });
+    };
+
+    if (!claimNumber || !year || !make || !model || !vin) {
+        applyFade(claimEl, 'UNPARSED');
+        applyFade(vehicleEl, 'No vehicle data detected');
+        applyFade(vinEl, 'UNPARSED');
+        applyFade(footerClaimEl, 'UNPARSED');
+        applyFade(footerVehicleEl, 'No vehicle data detected');
+        return;
+    }
+
+    const vehicleName = `${year} ${make} ${model}`;
+    const vehicleSummary = `${vehicleName} · VIN: ${vin}`;
+
+    applyFade(claimEl, claimNumber);
+    applyFade(vehicleEl, vehicleName);
+    applyFade(vinEl, vin);
+    applyFade(footerClaimEl, claimNumber);
+    applyFade(footerVehicleEl, vehicleSummary);
+}
+
+
+function setupSummaryAccordion() {
+    const accordions = Array.from(document.querySelectorAll('.sv-accordion'));
+    if (accordions.length === 0) return;
+
+    const closeAccordion = item => {
+        const toggle = item.querySelector('[data-accordion-toggle]');
+        item.classList.remove('is-open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const openAccordion = item => {
+        const toggle = item.querySelector('[data-accordion-toggle]');
+        item.classList.add('is-open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    accordions.forEach(item => {
+        closeAccordion(item);
+
+        const toggle = item.querySelector('[data-accordion-toggle]');
+        if (!toggle) return;
+
+        toggle.addEventListener('click', () => {
+            const isOpen = item.classList.contains('is-open');
+            accordions.forEach(closeAccordion);
+            if (!isOpen) {
+                openAccordion(item);
+            }
+        });
+    });
 }
 
 function bindInput(id, setter) {
@@ -385,6 +504,30 @@ function bindInput(id, setter) {
     if (el) {
         el.addEventListener('input', e => setter(e.target.value));
     }
+}
+
+function bindSummaryHeaderFooter(parseResult) {
+    const claimNumber = parseResult?.claim?.claimNumber || 'UNPARSED';
+    const year = parseResult?.vehicle?.year || '';
+    const make = parseResult?.vehicle?.make || '';
+    const model = parseResult?.vehicle?.model || '';
+    const vin = parseResult?.vehicle?.vin || '';
+
+    const vehicleSummary = (year || make || model || vin)
+        ? `${year} ${make} ${model}   ${vin}`.replace(/\s+/g, ' ').trim()
+        : 'No vehicle data detected';
+
+    const bindings = [
+        { id: 'claimNumberDisplay', value: claimNumber },
+        { id: 'vehicleSummaryDisplay', value: vehicleSummary },
+        { id: 'footerClaimNumber', value: claimNumber },
+        { id: 'footerVehicleSummary', value: vehicleSummary }
+    ];
+
+    bindings.forEach(({ id, value }) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    });
 }
 
 // =========================================
@@ -499,26 +642,34 @@ function handleCopySummary() {
 }
 
 // =========================================
-//  DOWNLOAD SUMMARY (.txt)
+//  DOWNLOAD SUMMARY (.docx)
 // =========================================
 
-function handleDownloadSummary() {
-    const textarea = document.getElementById('sv-damageSummary');
+async function handleDownloadSummary() {
     const status = document.getElementById('tls-copy-status');
 
-    if (!textarea || !textarea.value.trim()) {
-        if (status) status.textContent = "Nothing to download.";
+    if (!state.bcifPayload) {
+        if (status) status.textContent = 'Nothing to download.';
         return;
     }
 
-    const claimNumber = state.bcifPayload?.claim?.claimNumber || 'EXPORT';
-    const fileName = `SUMMARY_${claimNumber}.txt`;
-    const blob = new Blob([textarea.value], { type: 'text/plain' });
-    triggerDownload(blob, fileName);
+    const btn = document.getElementById('tls-download-summary');
+    if (btn) btn.disabled = true;
+    if (status) status.textContent = 'Generating report\u2026';
 
-    if (status) {
-        status.textContent = "Summary downloaded \u2713";
-        setTimeout(() => status.textContent = "", 1500);
+    try {
+        const blob = await generateClaimSummaryDocx(state);
+        const claimNumber = state.bcifPayload?.claim?.claimNumber || 'EXPORT';
+        triggerDownload(blob, `SUMMARY_${claimNumber}.docx`);
+        if (status) {
+            status.textContent = 'Summary downloaded \u2713';
+            setTimeout(() => { status.textContent = ''; }, 1500);
+        }
+    } catch (err) {
+        console.error('[TLS] DOCX summary generation failed:', err);
+        if (status) status.textContent = 'Download failed.';
+    } finally {
+        if (btn) btn.disabled = false;
     }
 }
 
@@ -654,55 +805,265 @@ function validateBeforeDownload(payload) {
         return false;
     }
 
-    const overallValue = Number(payload.condition.overall);
-    if (!Number.isFinite(overallValue)) {
-        console.warn('[TLS] Validation failed. Invalid condition.overall:', payload.condition.overall);
-        alert('Please select a condition rating before downloading.');
+    // Require at least one condition component to have a rating set
+    const cond = payload.condition || {};
+    const hasAnyRating = Object.values(cond).some(
+        c => c && typeof c === 'object' && c.rating !== null && c.rating !== undefined
+    );
+    if (!hasAnyRating) {
+        console.warn('[TLS] Validation failed. No condition ratings set.');
+        alert('Please complete at least one condition rating before downloading.');
         return false;
     }
 
     return true;
 }
 
-function setupOptionsSelect() {
-    const optionsSelect = document.getElementById('sv-optionsSelect');
-    const options = Array.isArray(state.parsedEstimate?.options)
-        ? state.parsedEstimate.options
-        : [];
+// =========================================
+//  OPTIONS — CATEGORIZED CHECKBOX UI
+// =========================================
 
-    console.debug('[TLS] Options select exists:', Boolean(optionsSelect));
-    console.debug(`[TLS] Parsed options count: ${options.length}`);
+const OPTION_CATEGORY_ORDER = [
+    'Power / Convenience',
+    'Seats',
+    'Audio / Entertainment',
+    'Wheels',
+    'Roof',
+    'Safety',
+    'Exterior / Truck Accessories',
+    'Other'
+];
 
-    if (!optionsSelect) return;
+// =========================================
+//  CONDITION AUTO-FILL — professional text per component × rating
+//  Tires excluded — no auto-fill; user enters tread depth manually.
+// =========================================
 
-    if (options.length === 0) {
-        optionsSelect.disabled = true;
-        optionsSelect.innerHTML = '<option value="" disabled>No options parsed</option>';
-        return;
+const CONDITION_AUTO_FILL = {
+    paint: {
+        0: "Heavy oxidation, peeling, large chips and clear failure present.",
+        1: "Noticeable wear with chips and surface defects beyond normal use.",
+        2: "Normal wear for age. Minor chips or scratches. No major deterioration.",
+        3: "Finish is clean with minimal wear. No significant defects noted."
+    },
+    sheetMetal: {
+        0: "Major dents, corrosion, or prior poor-quality repairs visible.",
+        1: "Multiple dents or prior repair evidence. Alignment not perfect.",
+        2: "Minor dings or typical wear. Panels align properly.",
+        3: "Panels straight. No visible damage or prior repair concerns."
+    },
+    glass: {
+        0: "Cracks or significant damage affecting integrity.",
+        1: "Chips or defects present but not fully compromised.",
+        2: "Light wear or minor pitting. No structural cracks.",
+        3: "Glass clear. No cracks or defects observed."
+    },
+    trim: {
+        0: "Missing, damaged, or heavily deteriorated trim components.",
+        1: "Fading, pitting, or loose trim present.",
+        2: "Normal wear. Minor blemishes only.",
+        3: "Trim intact and clean with minimal wear."
+    },
+    seats: {
+        0: "Heavy wear, tears, burns, or significant staining.",
+        1: "Noticeable wear or small tears consistent with age.",
+        2: "Light wear. No major damage.",
+        3: "Seats clean with minimal wear."
+    },
+    carpet: {
+        0: "Heavy staining, damage, or deterioration.",
+        1: "Visible wear or moderate staining.",
+        2: "Light wear consistent with age.",
+        3: "Clean with minimal wear."
+    },
+    dashboard: {
+        0: "Cracks, warping, or heavy deterioration.",
+        1: "Visible wear or minor cracking.",
+        2: "Normal wear. No major defects.",
+        3: "Clean with no damage noted."
+    },
+    headliner: {
+        0: "Sagging, stains, or separation present.",
+        1: "Minor staining or looseness.",
+        2: "Normal condition with light wear.",
+        3: "Clean and properly secured."
+    },
+    engine: {
+        0: "Mechanical issues evident. Leaks or performance concerns.",
+        1: "Minor leaks or maintenance concerns noted.",
+        2: "Operational with no major issues observed at inspection.",
+        3: "Runs properly with no visible concerns at time of inspection."
+    },
+    transmission: {
+        0: "Operational concerns evident at inspection.",
+        1: "Performance irregularities or prior concerns noted.",
+        2: "No operational concerns observed during inspection.",
+        3: "Functioning normally at time of inspection."
+    },
+};
+
+function getSelectedOptionCodes() {
+    return Array.from(
+        document.querySelectorAll('#optionsContainer input[type="checkbox"]:checked')
+    ).map(cb => cb.value);
+}
+
+function syncOptionsToState() {
+    if (state.bcifPayload) {
+        state.bcifPayload.options = getSelectedOptionCodes();
+        console.debug('[TLS] Options synced to state:', state.bcifPayload.options.length, 'selected');
+    }
+}
+
+// =========================================
+//  GRANULAR CONDITION ROWS — per-component rating + comment (+ tread for tires)
+// =========================================
+
+const TIRE_COMPONENTS = new Set(['frontTires', 'rearTires']);
+
+function setupGranularConditionRows() {
+    const rows = document.querySelectorAll('.sv-condition-row[data-component]');
+
+    rows.forEach(row => {
+        const component = row.dataset.component;
+        if (!component || !state.bcifPayload.condition[component]) return;
+
+        const isTire   = TIRE_COMPONENTS.has(component);
+        const condComp = state.bcifPayload.condition[component];
+
+        const select   = row.querySelector('.condition-rating-select');
+        const textarea = row.querySelector('.condition-comment');
+        const treadEl  = row.querySelector('.condition-tread-depth'); // null for non-tires
+        if (!select || !textarea) return;
+
+        // Initialise select from state
+        if (condComp.rating !== null && condComp.rating !== undefined) {
+            select.value = String(condComp.rating);
+        }
+
+        // Initialise tread depth input
+        if (treadEl && condComp.treadDepth) {
+            treadEl.value = condComp.treadDepth;
+        }
+
+        // Auto-populate comment (non-tires only, if still empty)
+        if (!isTire && !textarea.value.trim() && CONDITION_AUTO_FILL[component]) {
+            const rating = condComp.rating ?? 1;
+            textarea.value = CONDITION_AUTO_FILL[component][rating] || '';
+            condComp.comment = textarea.value;
+        }
+
+        // Textarea → state + user-edit flag
+        textarea.addEventListener('input', () => {
+            textarea.dataset.userEdited = 'true';
+            condComp.comment = textarea.value;
+        });
+
+        // Tread depth → state
+        if (treadEl) {
+            treadEl.addEventListener('input', () => {
+                condComp.treadDepth = treadEl.value;
+            });
+        }
+
+        // Rating select → state + auto-fill comment
+        select.addEventListener('change', e => {
+            const raw    = e.target.value;
+            const rating = raw === '' ? null : parseInt(raw, 10);
+            condComp.rating = rating;
+
+            if (!isTire && rating !== null && textarea.dataset.userEdited !== 'true'
+                    && CONDITION_AUTO_FILL[component]) {
+                textarea.value = CONDITION_AUTO_FILL[component][rating] || '';
+                condComp.comment = textarea.value;
+            }
+
+            // Transmission inherits engine rating until user edits it
+            if (component === 'engine') {
+                _syncTransmissionToEngine(rating);
+            }
+        });
+
+        // Track user edits on the transmission SELECT itself
+        if (component === 'transmission') {
+            select.addEventListener('change', () => {
+                select.dataset.userEdited = 'true';
+            });
+        }
+    });
+}
+
+function _syncTransmissionToEngine(engineRating) {
+    const transRow = document.querySelector('.sv-condition-row[data-component="transmission"]');
+    if (!transRow) return;
+
+    const transSelect   = transRow.querySelector('.condition-rating-select');
+    const transTextarea = transRow.querySelector('.condition-comment');
+    if (!transSelect || transSelect.dataset.userEdited === 'true') return;
+
+    if (engineRating !== null) {
+        transSelect.value = String(engineRating);
+        state.bcifPayload.condition.transmission.rating = engineRating;
     }
 
-    const uniqueOptions = [...new Set(options.filter(Boolean))];
-    const selectedOptions = new Set(state.bcifPayload?.options || []);
-    optionsSelect.disabled = false;
-    optionsSelect.innerHTML = '';
-    uniqueOptions.forEach(optionValue => {
-        const optionEl = document.createElement('option');
-        optionEl.value = String(optionValue);
-        optionEl.textContent = String(optionValue);
-        if (selectedOptions.has(optionEl.value)) {
-            optionEl.selected = true;
+    if (transTextarea && transTextarea.dataset.userEdited !== 'true'
+            && CONDITION_AUTO_FILL.transmission && engineRating !== null) {
+        transTextarea.value = CONDITION_AUTO_FILL.transmission[engineRating] || '';
+        state.bcifPayload.condition.transmission.comment = transTextarea.value;
+    }
+}
+
+function renderOptionsCheckboxes() {
+    const optionsEl = document.getElementById('optionsContainer');
+    if (!optionsEl) return;
+
+    const parsedSet = new Set(
+        (state.parsedEstimate?.options || []).map(o =>
+            typeof o === 'object' ? o.code : o
+        )
+    );
+
+    const groups = {};
+    for (const [code, meta] of Object.entries(TOKEN_META)) {
+        const cat = meta.category;
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push({ code, label: meta.label });
+    }
+
+    const orderedCats = [
+        ...OPTION_CATEGORY_ORDER.filter(c => groups[c]),
+        ...Object.keys(groups).filter(c => !OPTION_CATEGORY_ORDER.includes(c))
+    ];
+
+    const html = orderedCats.map(cat => {
+        const items = groups[cat].map(({ code, label }) => {
+            const detected = parsedSet.has(code);
+            const checked = detected ? ' checked' : '';
+            const itemClass = detected ? 'option-item option-detected' : 'option-item';
+            return `
+            <div class="${itemClass}">
+                <label>
+                    <input type="checkbox" value="${escapeHTML(code)}"${checked}>
+                    <span>${escapeHTML(label)}</span>
+                </label>
+            </div>`;
+        }).join('');
+        return `
+            <div class="option-category">
+                <div class="option-category-title">${escapeHTML(cat)}</div>
+                ${items}
+            </div>`;
+    }).join('');
+
+    optionsEl.innerHTML = html;
+
+    optionsEl.addEventListener('change', e => {
+        if (e.target.type === 'checkbox') {
+            syncOptionsToState();
         }
-        optionsSelect.appendChild(optionEl);
     });
 
-    const applySelectedOptions = () => {
-        const selectedValues = Array.from(optionsSelect.selectedOptions).map(opt => opt.value);
-        state.bcifPayload.options = mapEstimateOptionsToBCIF(selectedValues.length ? selectedValues : []);
-        console.debug('[TLS] Options selected:', state.bcifPayload.options);
-    };
-
-    applySelectedOptions();
-    optionsSelect.addEventListener('change', applySelectedOptions);
+    syncOptionsToState();
 }
 
 async function loadAssetIndex() {

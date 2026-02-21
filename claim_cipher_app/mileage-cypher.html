@@ -10,7 +10,7 @@
     <!-- Industrial Plate System - Shared visual language -->
     <link rel="stylesheet" href="styles/industrial-plates.css" />
 
-    <!-- Page Layout - Mileage Calculator specific -->
+    <!-- Page Layout - Mileage Cipher specific -->
     <link rel="stylesheet" href="styles/mileage-cypher-layout.css" />
 
     <!-- Professional Calculator Interface -->
@@ -56,7 +56,7 @@
     <!--
       LAYOUT FIX: Added 'main-content' class to match Route page structure.
 
-      ROOT CAUSE: Route page uses class="route-optimizer-main main-content"
+      ROOT CAUSE: Route page uses class="route-cipher-main main-content"
       but Mileage was missing the 'main-content' class.
 
       The 'main-content' class from universal-system.css and universal-header-fixes.css
@@ -66,14 +66,14 @@
       WHY IT ONLY AFFECTED MILEAGE: Route page had both classes; Mileage only had one.
       WHY THIS FIX IS CORRECT: Normalizes both pages to use the same layout architecture.
     -->
-    <main class="mileage-calculator-main main-content main-container">
+    <main class="mileage-cipher-main main-content main-container">
       <section class="hero-section elevation-3">
         <div class="rivet tl"></div>
         <div class="rivet tr"></div>
         <div class="rivet bl"></div>
         <div class="rivet br"></div>
 
-        <h1 class="cipher-hero-title">Mileage Calculator</h1>
+        <h1 class="cipher-hero-title">Mileage Cipher</h1>
         <p class="cipher-body">Calculate billable mileage for insurance claims</p>
       </section>
 
@@ -184,7 +184,7 @@
           <div class="rivet br"></div>
 
           <h2 class="plate-engraved-title cipher-section-title">Billing Summary</h2>
-          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="window.mileageCalculator.closeBillingModal()">
+          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="window.mileageCipher.closeBillingModal()">
             <div class="rivet tl"></div>
             <div class="rivet tr"></div>
             <div class="rivet bl"></div>
@@ -393,8 +393,8 @@
         script.onload = () => {
           console.log("Google Maps API loaded for Mileage Cypher");
           // Initialize Places Autocomplete after API loads
-          if (window.mileageCalculator) {
-            window.mileageCalculator.initializeGooglePlacesAutocomplete();
+          if (window.mileageCipher) {
+            window.mileageCipher.initializeGooglePlacesAutocomplete();
           }
         };
         script.onerror = () =>

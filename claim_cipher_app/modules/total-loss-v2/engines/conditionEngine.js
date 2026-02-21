@@ -7,9 +7,20 @@ export function mapConditionFromCCC(cccConditionText = "") {
     const rating = cccToInternal[normalized] ?? 1; // default NORMAL
 
     return {
-        overall: rating,
-        exterior: rating,
-        interior: rating,
-        mechanical: rating
+        // Exterior
+        paint:        { rating, comment: "" },
+        sheetMetal:   { rating, comment: "" },
+        glass:        { rating, comment: "" },
+        trim:         { rating, comment: "" },
+        // Interior
+        seats:        { rating, comment: "" },
+        carpet:       { rating, comment: "" },
+        dashboard:    { rating, comment: "" },
+        headliner:    { rating, comment: "" },
+        // Mechanical — tires left unrated for manual entry
+        frontTires:   { rating: null, treadDepth: "", comment: "" },
+        rearTires:    { rating: null, treadDepth: "", comment: "" },
+        engine:       { rating, comment: "" },
+        transmission: { rating, comment: "" },
     };
 }

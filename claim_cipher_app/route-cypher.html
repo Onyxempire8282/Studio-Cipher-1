@@ -56,20 +56,20 @@
       </div>
     </header>
 
-    <main class="route-optimizer-main main-content main-container">
+    <main class="route-cipher-main main-content main-container">
       <section class="hero-section elevation-3">
         <div class="rivet tl"></div>
         <div class="rivet tr"></div>
         <div class="rivet bl"></div>
         <div class="rivet br"></div>
 
-        <h1 class="cipher-hero-title">Route Optimizer</h1>
+        <h1 class="cipher-hero-title">Route Cipher</h1>
         <p class="cipher-body">Plan efficient multi-stop routes with intelligent day splitting</p>
       </section>
       <div class="route-container">
         <!-- Left Panel: Input + Results -->
         <div class="input-and-results-panel">
-          <!-- Route Optimizer Section -->
+          <!-- Route Cipher Section -->
           <div class="optimizer-layout">
             <div class="optimizer-form">
               <div class="cipher-plate elevation-2 optimizer-plate form-section">
@@ -175,7 +175,7 @@
                 </div>
               </div>
 
-              <!-- Hidden defaults for route-optimizer.js (UI removed, values preserved) -->
+              <!-- Hidden defaults for route-cipher.js (UI removed, values preserved) -->
               <div style="display:none">
                 <input type="checkbox" id="optimizeEnabled" checked />
                 <input type="checkbox" id="splitEnabled" checked />
@@ -201,7 +201,7 @@
                 </button>
                 <button
                   type="button"
-                  onclick="window.routeOptimizer && window.routeOptimizer.clearSavedRoutes()"
+                  onclick="window.routeCipher && window.routeCipher.clearSavedRoutes()"
                   class="cipher-btn secondary-control"
                 >
                   <div class="rivet tl"></div>
@@ -425,7 +425,7 @@
             </button>
             <button
               class="cipher-btn modal-btn modal-btn-secondary"
-              onclick="window.routeOptimizer.showSaveDayModal()"
+              onclick="window.routeCipher.showSaveDayModal()"
             >
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
@@ -506,7 +506,7 @@
           <button
             id="overrideSplitBtn"
             class="cipher-btn modal-btn modal-btn-secondary"
-            onclick="window.routeOptimizer.handleClusterOverride('split')"
+            onclick="window.routeCipher.handleClusterOverride('split')"
           >
             <div class="rivet tl"></div>
             <div class="rivet tr"></div>
@@ -517,7 +517,7 @@
           <button
             id="overrideKeepBtn"
             class="cipher-btn modal-btn modal-btn-primary"
-            onclick="window.routeOptimizer.handleClusterOverride('keepTogether')"
+            onclick="window.routeCipher.handleClusterOverride('keepTogether')"
           >
             <div class="rivet tl"></div>
             <div class="rivet tr"></div>
@@ -645,7 +645,7 @@
           window.GOOGLE_MAPS_CONFIG.apiKey
         }&libraries=${window.GOOGLE_MAPS_CONFIG.libraries.join(
           ","
-        )}&callback=initRouteOptimizer`;
+        )}&callback=initRouteCipher`;
         script.async = true;
         script.defer = true;
         document.head.appendChild(script);
@@ -656,9 +656,9 @@
         );
         // Initialize without Google Maps
         setTimeout(() => {
-          if (typeof RouteOptimizer !== "undefined") {
-            window.routeOptimizer = new RouteOptimizer();
-            console.log("🗺️ Route Optimizer initialized in fallback mode");
+          if (typeof RouteCipher !== "undefined") {
+            window.routeCipher = new RouteCipher();
+            console.log("🗺️ Route Cipher initialized in fallback mode");
           }
         }, 100);
       }
@@ -667,8 +667,8 @@
     <!-- Distance Cache - authoritative distance storage -->
     <script src="scripts/distance-cache.js"></script>
 
-    <!-- Route Optimizer Script -->
-    <script src="scripts/route-optimizer.js"></script>
+    <!-- Route Cipher Script -->
+    <script src="scripts/route-cipher.js"></script>
 
     <!-- Modal Control Functions -->
     <script>
@@ -683,14 +683,14 @@
       }
 
       function switchModalDay(dayIndex) {
-        if (!window.routeOptimizer || !window.routeOptimizer.currentRoute) {
+        if (!window.routeCipher || !window.routeCipher.currentRoute) {
           console.error("No route data available");
           return;
         }
 
         // Track the active day
         activeModalDayIndex = dayIndex;
-        window.routeOptimizer.activeModalDay = dayIndex;
+        window.routeCipher.activeModalDay = dayIndex;
 
         // Update active tab
         document.querySelectorAll(".day-tab").forEach((tab, index) => {
@@ -708,43 +708,43 @@
         }
 
         // Show timeline and map for selected day
-        window.routeOptimizer.showDayTimeline(
+        window.routeCipher.showDayTimeline(
           dayIndex,
-          window.routeOptimizer.currentRoute,
-          window.routeOptimizer.currentOriginalRoute
+          window.routeCipher.currentRoute,
+          window.routeCipher.currentOriginalRoute
         );
-        window.routeOptimizer.renderModalDayRoute(
-          window.routeOptimizer.currentRoute,
+        window.routeCipher.renderModalDayRoute(
+          window.routeCipher.currentRoute,
           dayIndex
         );
       }
 
       // Edit the currently active day
       function editActiveDay() {
-        if (window.routeOptimizer) {
-          window.routeOptimizer.editDayRoute(activeModalDayIndex);
+        if (window.routeCipher) {
+          window.routeCipher.editDayRoute(activeModalDayIndex);
         }
       }
 
       function exportRouteFromModal() {
-        if (window.routeOptimizer) {
-          window.routeOptimizer.showSaveDayModal();
+        if (window.routeCipher) {
+          window.routeCipher.showSaveDayModal();
         }
       }
 
       // Save Route Modal Functions
       function openSaveRouteModal() {
-        if (!window.routeOptimizer || !window.routeOptimizer.currentRoute) {
+        if (!window.routeCipher || !window.routeCipher.currentRoute) {
           alert('No route to save. Please optimize a route first.');
           return;
         }
 
-        const route = window.routeOptimizer.currentRoute;
-        const startLocation = window.routeOptimizer.startLocation ||
+        const route = window.routeCipher.currentRoute;
+        const startLocation = window.routeCipher.startLocation ||
                               document.getElementById('startLocation')?.value || 'Unknown';
 
         // Get destinations
-        const destinations = window.routeOptimizer.destinations || [];
+        const destinations = window.routeCipher.destinations || [];
         const endAddress = destinations.length > 0
           ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
           : startLocation;
@@ -780,10 +780,10 @@
         btn.innerHTML = '<span>⏳</span><span>Saving...</span>';
 
         try {
-          const route = window.routeOptimizer.currentRoute;
-          const startLocation = window.routeOptimizer.startLocation ||
+          const route = window.routeCipher.currentRoute;
+          const startLocation = window.routeCipher.startLocation ||
                                 document.getElementById('startLocation')?.value || 'Unknown';
-          const destinations = window.routeOptimizer.destinations || [];
+          const destinations = window.routeCipher.destinations || [];
           const endAddress = destinations.length > 0
             ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
             : startLocation;
@@ -817,8 +817,8 @@
 
             if (result.success) {
               closeSaveRouteModal();
-              if (window.routeOptimizer.showToast) {
-                window.routeOptimizer.showToast('Route saved to My Routes!');
+              if (window.routeCipher.showToast) {
+                window.routeCipher.showToast('Route saved to My Routes!');
               } else {
                 alert('Route saved successfully! View it in My Routes.');
               }
@@ -832,8 +832,8 @@
           } else {
             // No date - saved to session only
             closeSaveRouteModal();
-            if (window.routeOptimizer && window.routeOptimizer.showToast) {
-              window.routeOptimizer.showToast('Route saved to current session.');
+            if (window.routeCipher && window.routeCipher.showToast) {
+              window.routeCipher.showToast('Route saved to current session.');
             }
           }
         } catch (err) {
@@ -849,36 +849,36 @@
     <!-- Security Agent: Google Maps API Script -->
     <script>
       // Security Agent: Global callback function
-      function initRouteOptimizer() {
+      function initRouteCipher() {
         console.log(
           "🔒 Security Agent: Google Maps API loaded, initializing..."
         );
 
         try {
-          if (typeof RouteOptimizer !== "undefined") {
-            window.routeOptimizer = new RouteOptimizer();
+          if (typeof RouteCipher !== "undefined") {
+            window.routeCipher = new RouteCipher();
 
             // Initialize Google Maps
-            if (window.routeOptimizer && typeof google !== "undefined") {
+            if (window.routeCipher && typeof google !== "undefined") {
               const mapContainer = document.getElementById("routeMap");
               if (mapContainer) {
-                window.routeOptimizer.map = new google.maps.Map(mapContainer, {
+                window.routeCipher.map = new google.maps.Map(mapContainer, {
                   zoom: 10,
                   center: { lat: 40.7128, lng: -74.006 },
                   mapTypeId: google.maps.MapTypeId.ROADMAP,
                 });
 
-                window.routeOptimizer.directionsService =
+                window.routeCipher.directionsService =
                   new google.maps.DirectionsService();
-                window.routeOptimizer.directionsRenderer =
+                window.routeCipher.directionsRenderer =
                   new google.maps.DirectionsRenderer({
                     draggable: true,
                     panel: document.getElementById("directionsPanel"),
                   });
-                window.routeOptimizer.geocoder = new google.maps.Geocoder();
+                window.routeCipher.geocoder = new google.maps.Geocoder();
 
-                window.routeOptimizer.directionsRenderer.setMap(
-                  window.routeOptimizer.map
+                window.routeCipher.directionsRenderer.setMap(
+                  window.routeCipher.map
                 );
 
                 console.log(

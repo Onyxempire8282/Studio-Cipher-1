@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Loss Studio — Summary Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Steel industrial palette — layered grays with clear value separation */
+  --plate:      #0e0f11;   /* page background — darkest */
+  --steel:      #161a1d;   /* card background */
+  --steel-mid:  #1e2328;   /* card inner sections */
+  --steel-lift: #252b31;   /* elevated elements */
+  --input-bg:   #0a0c0e;   /* input fields — darkest so they read clearly */
+  --rivet:      #2e353d;   /* borders / dividers */
+  --rivet-hi:   #3d464f;   /* highlighted borders */
+
+  --amber:      #e8952a;
+  --amber-dim:  rgba(232,149,42,0.15);
+  --amber-line: rgba(232,149,42,0.35);
+
+  --white:      #edeae4;
+  --text:       #8f9399;
+  --text-hi:    #b8bdc2;
+  --muted:      #4a5058;
+
+  --danger:     #c0392b;
+  --success:    rgba(232,149,42,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--plate);
+  color: var(--text-hi);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── STEEL TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 56px;
+  background: rgba(14,15,17,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rivet);
+  box-shadow: 0 1px 0 rgba(232,149,42,0.08);
+}
+
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab {
+  display: flex; align-items: center; padding: 0 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer; border-right: 1px solid var(--rivet);
+  border-left: 1px solid transparent;
+  transition: all 0.2s; position: relative; text-decoration: none;
+}
+.nav-tab:first-child { border-left: 1px solid var(--rivet); }
+.nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+.nav-tab.active {
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-bottom: 2px solid var(--amber);
+}
+
+.nav-user {
+  display: flex; align-items: center; gap: 16px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.nav-user strong { color: var(--text-hi); display: block; font-size: 11px; }
+.nav-logout {
+  padding: 7px 16px; border: 1px solid var(--rivet);
+  color: var(--muted); font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s; background: transparent;
+}
+.nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--steel);
+  border-bottom: 1px solid var(--rivet);
+  padding: 0 40px;
+  position: relative; z-index: 1;
+}
+.page-header-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0;
+}
+.page-title-block { display: flex; flex-direction: column; gap: 4px; }
+.page-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber);
+}
+.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 0.06em; color: var(--white);
+}
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* Claim quick-ref badge */
+.claim-badge {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.claim-badge-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px; color: var(--amber); letter-spacing: 0.1em;
+}
+.claim-badge-vehicle {
+  font-size: 11px; color: var(--muted); letter-spacing: 0.06em;
+}
+
+/* ── VERIFY BANNER ── */
+.verify-banner {
+  background: linear-gradient(90deg, rgba(232,149,42,0.08), transparent);
+  border-top: 1px solid var(--amber-line);
+  border-bottom: 1px solid rgba(232,149,42,0.08);
+  padding: 12px 40px;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; z-index: 1;
+}
+.verify-banner-inner {
+  max-width: 1100px; margin: 0 auto; width: 100%;
+  display: flex; align-items: center; gap: 12px;
+}
+.verify-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 8px rgba(232,149,42,0.7);
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 8px rgba(232,149,42,0.7); }
+  50%      { box-shadow: 0 0 16px rgba(232,149,42,1); }
+}
+.verify-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber);
+}
+.verify-sub { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 32px 40px 120px;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+/* ── SECTION CARD ── */
+.card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+  transition: border-left-color 0.2s;
+}
+.card:hover { border-left-color: var(--rivet-hi); }
+.card.accent { border-left-color: var(--amber); }
+
+/* Corner rivets */
+.card::before,
+.card::after {
+  content: '';
+  position: absolute;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--rivet-hi);
+  border: 1px solid var(--muted);
+}
+.card::before { top: 8px; right: 10px; }
+.card::after  { bottom: 8px; right: 10px; }
+
+.card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rivet);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--steel-mid);
+}
+.card-header-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber);
+}
+.card-header-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--amber-line), transparent);
+}
+.card-header-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+}
+
+.card-body { padding: 24px; }
+
+/* ── TWO COL INFO GRID ── */
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+}
+.info-col {
+  background: var(--steel-mid);
+  border: 1px solid var(--rivet);
+  padding: 20px;
+}
+.info-col-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber);
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--rivet);
+}
+
+/* ── FIELD ── */
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+}
+.field-value {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  border-top: 1px solid var(--rivet-hi);
+  padding: 10px 14px;
+  color: var(--white); font-size: 13px; font-weight: 400;
+  font-family: 'Barlow', sans-serif;
+  outline: none; width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  /* subtle inset effect */
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.field-value:focus {
+  border-color: var(--amber);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+}
+.field-value::placeholder { color: var(--muted); }
+
+select.field-value {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5058'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px; cursor: pointer;
+}
+
+textarea.field-value {
+  resize: vertical; min-height: 72px; line-height: 1.6;
+  font-family: 'Barlow', sans-serif;
+}
+
+/* ── OPTIONS EQUIPMENT ── */
+.options-scroll {
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+.options-scroll::-webkit-scrollbar { width: 6px; }
+.options-scroll::-webkit-scrollbar-track { background: var(--rivet); }
+.options-scroll::-webkit-scrollbar-thumb { background: var(--rivet-hi); }
+
+.options-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.option-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 12px; color: var(--text);
+}
+.option-item:hover { background: rgba(255,255,255,0.03); }
+.option-item.checked { color: var(--text-hi); }
+
+.option-check {
+  width: 14px; height: 14px;
+  border: 1px solid var(--rivet-hi);
+  background: var(--steel-lift);
+  flex-shrink: 0; display: grid; place-items: center;
+  transition: all 0.15s;
+}
+.option-item.checked .option-check {
+  background: var(--amber-dim);
+  border-color: var(--amber-line);
+}
+.option-item.checked .option-check::after {
+  content: '✓';
+  font-size: 9px; color: var(--amber); font-weight: bold;
+}
+
+/* ── SUB SECTION (Exterior/Interior/Mechanical) ── */
+.sub-section { margin-bottom: 0; }
+.sub-section + .sub-section { border-top: 1px solid var(--rivet); }
+
+.sub-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--amber); padding: 12px 24px 8px;
+  background: rgba(232,149,42,0.04);
+  border-bottom: 1px solid var(--rivet);
+  display: flex; align-items: center; gap: 10px;
+}
+.sub-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(232,149,42,0.2), transparent);
+}
+
+.condition-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  padding: 20px 24px;
+}
+
+.condition-item { display: flex; flex-direction: column; gap: 8px; }
+.condition-name {
+  font-size: 11px; color: var(--muted); letter-spacing: 0.06em;
+  font-family: 'DM Mono', monospace; text-transform: uppercase;
+}
+
+/* Condition rating bar visual */
+.rating-row { display: flex; gap: 6px; align-items: center; }
+.rating-bar {
+  flex: 1; height: 3px; background: var(--rivet);
+  position: relative; overflow: hidden;
+}
+.rating-fill {
+  height: 100%; background: var(--amber);
+  transition: width 0.3s;
+}
+.rating-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--amber); letter-spacing: 0.08em; white-space: nowrap;
+}
+
+.condition-note {
+  font-size: 12px; color: var(--text); line-height: 1.6;
+  padding: 8px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  border-left: 2px solid var(--rivet-hi);
+  font-style: italic;
+}
+
+/* ── DAMAGE SUMMARY ── */
+.damage-pre {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  padding: 16px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--text-hi); line-height: 1.8;
+  letter-spacing: 0.04em;
+  min-height: 80px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* ── ACTION FOOTER ── */
+.action-footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(14,15,17,0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--rivet);
+  box-shadow: 0 -1px 0 rgba(232,149,42,0.1), 0 -8px 32px rgba(0,0,0,0.5);
+  padding: 16px 40px;
+  z-index: 100;
+}
+.action-footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.action-footer-info {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.action-footer-claim {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--amber); letter-spacing: 0.1em;
+}
+.action-footer-vehicle {
+  font-size: 12px; color: var(--muted);
+}
+
+.action-btns { display: flex; gap: 10px; align-items: center; }
+
+.btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 12px 28px; border: none; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-reset {
+  background: transparent;
+  border: 1px solid var(--rivet);
+  color: var(--muted);
+}
+.btn-reset:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+.btn-secondary {
+  background: var(--steel-lift);
+  border: 1px solid var(--rivet-hi);
+  color: var(--text-hi);
+}
+.btn-secondary:hover {
+  background: var(--steel-mid);
+  border-color: var(--amber-line);
+  color: var(--white);
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: #000; font-weight: 600;
+  border: 1px solid var(--amber);
+  box-shadow: 0 0 20px rgba(232,149,42,0.25);
+}
+.btn-primary:hover {
+  background: #f0a030;
+  box-shadow: 0 0 28px rgba(232,149,42,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-icon { font-size: 14px; }
+
+/* ── ADDITIONAL NOTES ── */
+.notes-area {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  border-top: 1px solid var(--rivet-hi);
+  padding: 14px 16px;
+  color: var(--white); font-size: 13px;
+  font-family: 'Barlow', sans-serif; font-weight: 300;
+  width: 100%; resize: vertical; min-height: 80px; outline: none;
+  transition: border-color 0.2s;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+.notes-area:focus {
+  border-color: var(--amber);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.15);
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-tabs">
+    <a class="nav-tab" href="#">Dashboard</a>
+    <a class="nav-tab" href="#">Routes</a>
+    <a class="nav-tab" href="#">Mileage</a>
+    <a class="nav-tab" href="#">My Routes</a>
+    <a class="nav-tab active" href="#">Total Loss</a>
+  </div>
+  <div class="nav-user">
+    <div>
+      <strong>Professional User</strong>
+      Claims Specialist
+    </div>
+    <button class="nav-logout">Logout</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-block">
+      <div class="page-label">Total Loss Studio</div>
+      <div class="page-title">Summary Verification</div>
+      <div class="page-sub">Review all extracted data before generating the BCIF form</div>
+    </div>
+    <div class="claim-badge">
+      <div class="claim-badge-num">L005028073</div>
+      <div class="claim-badge-vehicle">2025 Ford Police · 1FM5K8AC2SGA31859</div>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY BANNER -->
+<div class="verify-banner">
+  <div class="verify-banner-inner">
+    <div class="verify-dot"></div>
+    <div class="verify-text">Verify Before Committing</div>
+    <div class="verify-sub">— Correct any errors below. Downloads are final.</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CLAIM + VEHICLE INFO -->
+  <div class="card accent">
+    <div class="card-header">
+      <div class="card-header-title">Claim & Vehicle Information</div>
+      <div class="card-header-line"></div>
+    </div>
+    <div class="card-body" style="padding:3px">
+      <div class="info-grid">
+        <div class="info-col">
+          <div class="info-col-label">Claim Information</div>
+          <div class="field">
+            <div class="field-label">Carrier</div>
+            <input class="field-value" type="text" placeholder="Enter carrier name">
+          </div>
+          <div class="field">
+            <div class="field-label">Claim Number</div>
+            <input class="field-value" type="text" value="L005028073">
+          </div>
+          <div class="field">
+            <div class="field-label">Adjuster</div>
+            <input class="field-value" type="text" placeholder="Enter adjuster name">
+          </div>
+        </div>
+        <div class="info-col">
+          <div class="info-col-label">Vehicle</div>
+          <div class="field">
+            <div class="field-label">Year</div>
+            <input class="field-value" type="text" value="2025">
+          </div>
+          <div class="field">
+            <div class="field-label">Make</div>
+            <input class="field-value" type="text" value="FORD">
+          </div>
+          <div class="field">
+            <div class="field-label">Model</div>
+            <input class="field-value" type="text" value="Police">
+          </div>
+          <div class="field">
+            <div class="field-label">VIN</div>
+            <input class="field-value" type="text" value="1FM5K8AC2SGA31859">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIONS / EQUIPMENT -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">Options / Equipment</div>
+      <div class="card-header-line"></div>
+      <div class="card-header-count">Scroll to view all</div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="options-scroll">
+        <div class="options-inner">
+          <div class="sub-label" style="grid-column:1/-1">Power / Convenience</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Steering</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Brakes</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Windows</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Locks</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Driver Seat</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Passenger Seat</div>
+          <div class="option-item"><div class="option-check"></div>Power Antenna</div>
+          <div class="option-item checked"><div class="option-check"></div>Power Mirrors</div>
+          <div class="option-item"><div class="option-check"></div>Power Trunk / Liftgate</div>
+          <div class="option-item"><div class="option-check"></div>Power Adjustable Pedals</div>
+          <div class="option-item"><div class="option-check"></div>Power Sliding Door</div>
+          <div class="option-item"><div class="option-check"></div>Dual Power Sliding Doors</div>
+          <div class="option-item"><div class="option-check"></div>Air Conditioning</div>
+          <div class="option-item"><div class="option-check"></div>Dual Air Conditioning</div>
+          <div class="option-item"><div class="option-check"></div>Climate Control</div>
+          <div class="option-item"><div class="option-check"></div>Rear Defogger</div>
+          <div class="option-item"><div class="option-check"></div>Intermittent Wipers</div>
+          <div class="option-item checked"><div class="option-check"></div>Tilt Wheel</div>
+          <div class="option-item"><div class="option-check"></div>Telescopic Wheel</div>
+          <div class="option-item checked"><div class="option-check"></div>Cruise Control</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONDITION -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">Condition</div>
+      <div class="card-header-line"></div>
+    </div>
+
+    <!-- EXTERIOR -->
+    <div class="sub-section">
+      <div class="sub-label">Exterior</div>
+      <div class="condition-grid">
+        <div class="condition-item">
+          <div class="condition-name">Paint</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Normal wear for age. Minor chips or scratches. No major deterioration.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Sheet Metal</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Minor dings or typical wear. Panels align properly.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Glass</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Light wear or minor pitting. No structural cracks.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Trim</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Normal wear. Minor blemishes only.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERIOR -->
+    <div class="sub-section">
+      <div class="sub-label">Interior</div>
+      <div class="condition-grid">
+        <div class="condition-item">
+          <div class="condition-name">Seats</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Light wear. No major damage.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Carpet</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Light wear consistent with age.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Dashboard</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Normal wear. No major defects.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Headliner</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Normal condition with light wear.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MECHANICAL -->
+    <div class="sub-section">
+      <div class="sub-label">Mechanical</div>
+      <div class="condition-grid">
+        <div class="condition-item">
+          <div class="condition-name">Engine</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">Operational with no major issues observed at inspection.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Transmission</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+            <div class="rating-value">Good</div>
+          </div>
+          <div class="condition-note">No operational concerns observed during inspection.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Front Tires</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:0%"></div></div>
+            <div class="rating-value" style="color:var(--muted)">— not rated —</div>
+          </div>
+          <div class="condition-note" style="color:var(--muted)">No tread depth recorded.</div>
+        </div>
+        <div class="condition-item">
+          <div class="condition-name">Rear Tires</div>
+          <div class="rating-row">
+            <div class="rating-bar"><div class="rating-fill" style="width:0%"></div></div>
+            <div class="rating-value" style="color:var(--muted)">— not rated —</div>
+          </div>
+          <div class="condition-note" style="color:var(--muted)">No tread depth recorded.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAMAGE SUMMARY -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">Damage Summary</div>
+      <div class="card-header-line"></div>
+    </div>
+    <div class="card-body">
+      <div class="damage-pre">
+Claim Number: L005028073
+Insured: City of Greenville
+Phone: (252) 329-4522
+      </div>
+    </div>
+  </div>
+
+  <!-- ADDITIONAL NOTES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">Additional Notes</div>
+      <div class="card-header-line"></div>
+    </div>
+    <div class="card-body">
+      <textarea class="notes-area" placeholder="Add any additional notes or observations before generating the form..."></textarea>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- FIXED ACTION FOOTER -->
+<div class="action-footer">
+  <div class="action-footer-inner">
+    <div class="action-footer-info">
+      <div class="action-footer-claim">L005028073 — Ready for Download</div>
+      <div class="action-footer-vehicle">2025 Ford Police · VIN 1FM5K8AC2SGA31859</div>
+    </div>
+    <div class="action-btns">
+      <button class="btn btn-reset">⟳ Reset</button>
+      <button class="btn btn-secondary">
+        <span class="btn-icon">↓</span> Download Claim Summary
+      </button>
+      <button class="btn btn-primary">
+        <span class="btn-icon">↓</span> Download BCIF Form
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Checkbox toggle
+document.querySelectorAll('.option-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.classList.toggle('checked');
+  });
+});
+</script>
+
+</body>
+</html>

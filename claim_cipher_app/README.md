@@ -17,8 +17,8 @@ Claim Cipher is a professional insurance adjuster application built with hip-hop
 
 - **🔐 Professional Authentication System** - Secure login with session management
 - **🎛️ Command Center Dashboard** - Comprehensive overview of all activities  
-- **📊 Mileage Calculator** - Calculate reimbursements with precision
-- **🗺️ Route Optimizer** - Plan efficient travel routes
+- **📊 Mileage Cipher** - Calculate reimbursements with precision
+- **🗺️ Route Cipher** - Plan efficient travel routes
 - **💼 Jobs Management Studio** - Track and manage all assignments
 - **🏢 Firms Directory** - Maintain insurance company contacts
 - **⚙️ Settings Configuration** - Customize your experience

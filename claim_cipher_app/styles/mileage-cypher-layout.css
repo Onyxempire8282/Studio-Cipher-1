@@ -12,9 +12,9 @@
  * - Added padding-bottom for clean visual closure
  *
  * This ensures the Mileage page has the same centered, closed container
- * feel as the Route Optimizer page.
+ * feel as the Route Cipher page.
  */
-.mileage-calculator-main {
+.mileage-cipher-main {
     min-height: calc(100vh - 80px);
 }
 
@@ -39,24 +39,24 @@
     height: fit-content;
 }
 
-.mileage-calculator-main .calculator-form {
+.mileage-cipher-main .calculator-form {
     padding: var(--cipher-space-sm) var(--cipher-space-lg) var(--cipher-space-lg);
 }
 
-.mileage-calculator-main .form-section {
+.mileage-cipher-main .form-section {
     margin-bottom: var(--cipher-space-lg);
     padding: var(--cipher-space-md);
 }
 
-.mileage-calculator-main .input-group {
+.mileage-cipher-main .input-group {
     margin-bottom: var(--cipher-space-md);
 }
 
-.mileage-calculator-main .route-inputs {
+.mileage-cipher-main .route-inputs {
     gap: var(--cipher-space-md);
 }
 
-.mileage-calculator-main .route-arrow {
+.mileage-cipher-main .route-arrow {
     margin-bottom: 0;
 }
 
@@ -74,7 +74,7 @@
 
 /*
  * FIX: Removed .calculator-section::after pseudo-element that was creating
- * ghost text ("🧮 Mileage Calculator") under the nav bar.
+ * ghost text ("🧮 Mileage Cipher") under the nav bar.
  *
  * ROOT CAUSE: The HTML already has a proper .section-header with h2 at lines 53-61.
  * The CSS ::after pseudo-element was creating a DUPLICATE header positioned
