@@ -8,6 +8,7 @@ class MileageCypherCalculator {
     this.settings = this.initializeSettings();
     this.currentCalculation = null;
     this.calculationHistory = [];
+    this.isRoundTrip = false;
 
     // Distance source metadata (separate from distance value)
     // Tracks: 'google_api' | 'cache_google' | 'user_manual' | null
@@ -94,6 +95,14 @@ class MileageCypherCalculator {
         if (this.settings.autoCalculateEnabled) {
           this.debounceAutoCalculate();
         }
+      });
+    }
+
+    const roundTripToggle = document.getElementById("roundTrip");
+    if (roundTripToggle) {
+      this.isRoundTrip = !!roundTripToggle.checked;
+      roundTripToggle.addEventListener("change", () => {
+        this.isRoundTrip = !!roundTripToggle.checked;
       });
     }
 
@@ -310,6 +319,26 @@ class MileageCypherCalculator {
     const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) return;
 
+    var rateEl = document.querySelector('[data-rate-display]')
+      || document.getElementById('rateDisplay');
+    var freeEl = document.querySelector('[data-free-display]')
+      || document.getElementById('freeDisplay');
+
+    if (rateEl) rateEl.textContent = '$' + firm.ratePerMile.toFixed(2);
+    if (freeEl) freeEl.textContent = firm.freeMiles > 0
+      ? firm.freeMiles + ' mi' : 'None';
+
+    const roundTripToggle = document.getElementById("roundTrip");
+    const roundTripThumb = document.getElementById("rtMainThumb");
+    if (roundTripToggle) {
+      roundTripToggle.checked = !!firm.roundTripDefault;
+      this.isRoundTrip = !!firm.roundTripDefault;
+    }
+    if (roundTripThumb && roundTripToggle) {
+      roundTripThumb.style.left = roundTripToggle.checked ? '21px' : '3px';
+      roundTripThumb.style.background = roundTripToggle.checked ? '#e8952a' : '#4a5058';
+    }
+
     // Reset distance source when firm changes (different billing rules may apply)
     this.currentDistanceSource = null;
     console.log("Distance source reset (firm changed)");
@@ -385,6 +414,8 @@ class MileageCypherCalculator {
       throw new Error("Google Maps API not loaded");
     }
 
+    this.setSessionIndicator(true);
+
     const distanceInput = document.getElementById("distanceMiles");
     const originalPlaceholder = distanceInput.placeholder;
 
@@ -452,6 +483,8 @@ class MileageCypherCalculator {
   performCalculation(auto = false) {
     console.log("performCalculation called, auto:", auto);
 
+    this.setSessionIndicator(true);
+
     const calculationData = this.gatherCalculationInputs();
     console.log("Calculation data gathered:", calculationData);
 
@@ -486,6 +519,8 @@ class MileageCypherCalculator {
       console.error("Calculation error:", error);
       this.showCalculateLoading(false); // Hide loading state
       return null;
+    } finally {
+      this.setSessionIndicator(false);
     }
   }
 
@@ -497,7 +532,8 @@ class MileageCypherCalculator {
     const distanceValue =
       document.getElementById("distanceMiles")?.value || "0";
     const distance = parseFloat(distanceValue);
-    const roundTrip = firm?.roundTripDefault || false;
+    const roundTripToggle = document.getElementById("roundTrip");
+    const roundTrip = roundTripToggle ? !!roundTripToggle.checked : (firm?.roundTripDefault || false);
     const note = document.getElementById("noteField")?.value?.trim() || "";
 
     console.log(
@@ -609,6 +645,29 @@ class MileageCypherCalculator {
     const billableMiles = Math.max(0, baseMiles - firm.freeMiles);
     const totalFee = billableMiles * firm.ratePerMile;
 
+    // Update billing display elements
+    var amountEl = document.getElementById('billingAmount');
+    var formulaEl = document.getElementById('billingFormula');
+    var freeNote = document.getElementById('freeMilesNote');
+
+    if (amountEl) {
+      amountEl.textContent = '$' + totalFee.toFixed(2);
+    }
+    if (formulaEl) {
+      formulaEl.textContent = baseMiles.toFixed(1) + ' mi'
+        + (firm.freeMiles > 0
+          ? ' \u2212 ' + firm.freeMiles + ' free'
+          : '')
+        + ' \u00d7 $' + firm.ratePerMile.toFixed(2) + '/mi';
+    }
+    if (freeNote && firm.freeMiles > 0) {
+      freeNote.textContent = 'First ' + firm.freeMiles
+        + ' mi free per firm policy';
+      freeNote.style.display = 'block';
+    } else if (freeNote) {
+      freeNote.style.display = 'none';
+    }
+
     return {
       firm,
       route: { from: pointA, to: pointB },
@@ -639,13 +698,14 @@ class MileageCypherCalculator {
       note,
     } = result;
 
+    const distanceLabel = roundTrip ? "One-way Distance:" : "Distance:";
     const breakdownHtml = `
             <div class="breakdown-item">
               <span class="label">Route:</span>
               <span class="value">${route.from} → ${route.to}</span>
             </div>
             <div class="breakdown-item">
-              <span class="label">One-way Distance:</span>
+              <span class="label">${distanceLabel}</span>
               <span class="value">${distance} miles</span>
             </div>
             <div class="breakdown-item">
@@ -735,11 +795,24 @@ class MileageCypherCalculator {
     if (!copyText) return;
 
     try {
-      await navigator.clipboard.writeText(copyText);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(copyText);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = copyText;
+        textarea.setAttribute("readonly", "readonly");
+        textarea.style.position = "absolute";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
       console.log("Calculation copied to clipboard");
       this.showCopySuccess();
     } catch (error) {
       console.error("Copy failed:", error);
+      this.showNotification("Copy failed", "error");
     }
   }
 
@@ -1180,6 +1253,12 @@ class MileageCypherCalculator {
     if (distanceStatus) {
       distanceStatus.textContent = status;
     }
+  }
+
+  setSessionIndicator(active) {
+    const indicator = document.getElementById("sessionIndicator");
+    if (!indicator) return;
+    indicator.classList.toggle("hidden", !active);
   }
 
   showNotification(message, type = "info") {
