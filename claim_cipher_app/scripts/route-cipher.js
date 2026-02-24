@@ -4407,8 +4407,13 @@ function hideError() {
 }
 
 // Initialize when Google Maps loads
-function initRouteCipher() {
+async function initRouteCipher() {
   console.log("🔒 Security Agent: initRouteCipher called");
+
+  if (window.BillingGuard && window.BillingGuard.waitForAccess) {
+    const allowed = await window.BillingGuard.waitForAccess();
+    if (!allowed) return;
+  }
 
   if (window.routeCipher) {
     console.log("🔒 RouteCipher already exists, updating with Google Maps");
@@ -4459,8 +4464,13 @@ function initRouteCipher() {
 }
 
 // Fallback initialization if Google Maps doesn't load
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   console.log("🔒 Security Agent: DOM loaded, initializing Route Cipher...");
+
+  if (window.BillingGuard && window.BillingGuard.waitForAccess) {
+    const allowed = await window.BillingGuard.waitForAccess();
+    if (!allowed) return;
+  }
 
   // Only create if it doesn't exist
   if (!window.routeCipher) {

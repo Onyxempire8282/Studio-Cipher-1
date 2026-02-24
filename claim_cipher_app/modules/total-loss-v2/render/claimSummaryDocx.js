@@ -2,6 +2,8 @@
 // Typography: Times New Roman throughout. Section headers carry a 1pt solid underline rule.
 // Layout: Claim block → [pg break] → Narrative block → Estimates → Appraiser Statement
 
+import { buildClaimSummarySections } from "../summaryEngine.js";
+
 let _lib = null;
 
 async function _getLib() {
@@ -228,6 +230,14 @@ export async function generateClaimSummaryDocx(state) {
         return blocks;
     }
 
+    function renderSummarySections(sections) {
+        return (sections || []).flatMap((section) => {
+            const content = String(section?.content || '').trim();
+            if (!content) return [];
+            return [sectionHeader(section.title), bodyPara(content)];
+        });
+    }
+
     function estimateTotal() {
         const total = _toNumber(parsed.estimateTotal);
         if (!total) return [];
@@ -252,6 +262,9 @@ export async function generateClaimSummaryDocx(state) {
 
     // ─── Assemble ────────────────────────────────────────────────────────────────
 
+    const summarySections = buildClaimSummarySections(parsed, payload);
+    const additionalSections = summarySections.filter((section) => section.title === 'ADDITIONAL NOTES');
+
     const children = [
         ...docTitle(),
         ...insuranceCompanyInformation(),
@@ -262,6 +275,7 @@ export async function generateClaimSummaryDocx(state) {
         ...vehicleInformation(),
         pageBreak(),
         ...lossDescription(),
+        ...renderSummarySections(additionalSections),
         ...estimateTotal(),
         ...appraiserStatement(),
     ].filter(Boolean);

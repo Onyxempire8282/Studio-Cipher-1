@@ -1138,11 +1138,13 @@ class CommandCenterManager {
     }
 }
 
-// Initialize Command Center when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+function initCommandCenter() {
+    if (window.commandCenter) return;
     console.log('📝 Lyricist Agent: Initializing Command Center functionality...');
     window.commandCenter = new CommandCenterManager();
-});
+}
+
+window.initCommandCenter = initCommandCenter;
 
 // Global functions for backward compatibility
 function navigateToModule(url) {

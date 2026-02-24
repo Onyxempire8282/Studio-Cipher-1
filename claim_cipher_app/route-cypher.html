@@ -18,6 +18,9 @@
 
     <!-- Route Cipher Professional Styling -->
     <link rel="stylesheet" href="styles/route-cipher-professional.css" />
+
+    <!-- v2.5 Visual Skin — load last to override -->
+    <link rel="stylesheet" href="styles/v25-skin.css" />
   </head>
   <body class="route-page" style="visibility: hidden;">
     <header class="cipher-header">
@@ -55,6 +58,20 @@
         </div>
       </div>
     </header>
+
+    <div class="v25-page-header">
+      <div class="v25-page-header-inner">
+        <div>
+          <div class="v25-page-label">Route Cipher</div>
+          <div class="v25-page-title">Plan Your Route</div>
+          <div class="v25-page-sub">Multi-stop optimization with intelligent day splitting</div>
+        </div>
+        <div class="v25-header-badges">
+          <div class="v25-hbadge">Max Stops <span>15</span></div>
+          <div class="v25-hbadge">Status <span>Ready</span></div>
+        </div>
+      </div>
+    </div>
 
     <main class="route-cipher-main main-content main-container">
       <section class="hero-section elevation-3">
@@ -176,7 +193,7 @@
               </div>
 
               <!-- Hidden defaults for route-cipher.js (UI removed, values preserved) -->
-              <div style="display:none">
+              <div>
                 <input type="checkbox" id="optimizeEnabled" checked />
                 <input type="checkbox" id="splitEnabled" checked />
                 <input type="number" id="maxLegMiles" value="50" />
@@ -607,17 +624,23 @@
     <!-- Supabase Configuration and Auth -->
     <script src="scripts/supabase-config.js"></script>
     <script src="scripts/supabase-auth.js"></script>
+    <script src="scripts/billing-guard.js"></script>
     <script src="scripts/route-service.js"></script>
 
     <!-- Supabase Page Protection - MUST run before page renders -->
     <script>
     (async function() {
-        // Body is hidden via style="visibility: hidden;" on body tag
-        const allowed = await window.SupabaseAuth.protectPage();
-        if (allowed) {
-            document.body.style.visibility = 'visible';
-        }
-        // If not allowed, protectPage() redirects and body stays hidden
+      document.body.style.visibility = 'hidden';
+      const allowed = await window.SupabaseAuth.protectPage();
+      if (!allowed) return;
+
+      const access = await window.BillingGuard.checkAccess();
+      if (!window.BillingGuard.hasAccess(access.profile)) {
+        window.location.href = "billing-required.html";
+        return;
+      }
+
+      document.body.style.visibility = 'visible';
     })();
     </script>
 
@@ -849,7 +872,7 @@
     <!-- Security Agent: Google Maps API Script -->
     <script>
       // Security Agent: Global callback function
-      function initRouteCipher() {
+      async function initRouteCipher() {
         console.log(
           "🔒 Security Agent: Google Maps API loaded, initializing..."
         );
@@ -905,5 +928,18 @@
       }
     </script>
     <script src="scripts/claim-cipher-system-qa.js"></script>
+
+    <div class="v25-action-footer">
+      <div class="v25-footer-inner">
+        <div class="v25-footer-info">
+          <div class="v25-footer-main" id="v25FooterMain">Route Cipher — Ready</div>
+          <div class="v25-footer-sub">Add stops and optimize</div>
+        </div>
+        <div class="v25-action-btns">
+          <button class="v25-btn v25-btn-ghost" onclick="window.routeCipher && window.routeCipher.clearSavedRoutes()">⟳ Clear</button>
+          <button class="v25-btn v25-btn-primary" onclick="document.getElementById('optimizeRoute').click()">Optimize Route →</button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

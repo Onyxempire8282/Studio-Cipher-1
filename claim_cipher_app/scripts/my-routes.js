@@ -19,6 +19,10 @@
    */
   async function init() {
     console.log("📋 My Routes initializing...");
+    if (window.BillingGuard && window.BillingGuard.waitForAccess) {
+      const allowed = await window.BillingGuard.waitForAccess();
+      if (!allowed) return;
+    }
     setupEventListeners();
     await loadRoutes();
     updateUserDisplay();

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles/industrial-plates.css">
     <link rel="stylesheet" href="styles/login-layout.css">
 </head>
-<body class="cipher-dark-theme" style="visibility: hidden;">
+<body class="cipher-dark-theme">
 
     <div class="auth-container">
       <div class="cipher-content">
@@ -337,15 +337,7 @@
     document.addEventListener('DOMContentLoaded', async function() {
         console.log('Supabase Auth: Initializing login page');
 
-        // Check if already logged in - redirect to dashboard
-        // If user is authenticated, loginPageGuard will redirect and return false
-        const shouldStayOnLoginPage = await window.SupabaseAuth.loginPageGuard();
-
-        // Only show page if user should stay on login page (not authenticated)
-        if (shouldStayOnLoginPage) {
-            document.body.style.visibility = 'visible';
-        }
-        // If redirecting, body stays hidden to prevent flash
+        document.body.style.visibility = 'visible';
 
         // Get form elements
         const loginForm = document.getElementById('login-cypher-form');

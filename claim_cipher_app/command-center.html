@@ -25,7 +25,7 @@
             <div class="user-section">
                 <div class="user-info">
                     <div class="user-name" id="userName">Professional User</div>
-                    <div class="user-role">Claims Specialist</div>
+                    <div class="user-role" id="user-role">Claims Specialist</div>
                 </div>
                 <button class="cipher-btn logout-btn" onclick="handleLogout()">
                     <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
@@ -43,6 +43,7 @@
             <h1 class="welcome-title cipher-hero-title" id="welcomeTitle">Welcome back</h1>
             <p class="welcome-subtitle cipher-body">Route optimization and mileage operations</p>
         </section>
+
 
         <!-- Status Metrics -->
         <section class="metrics-section">
@@ -246,18 +247,9 @@
     <!-- Supabase Configuration and Auth -->
     <script src="scripts/supabase-config.js"></script>
     <script src="scripts/supabase-auth.js"></script>
+    <script src="scripts/billing-guard.js"></script>
+    <script src="scripts/billing.js"></script>
 
-    <!-- Supabase Page Protection - MUST run before page renders -->
-    <script>
-    (async function() {
-        // Body is hidden via style="visibility: hidden;" on body tag
-        const allowed = await window.SupabaseAuth.protectPage();
-        if (allowed) {
-            document.body.style.visibility = 'visible';
-        }
-        // If not allowed, protectPage() redirects and body stays hidden
-    })();
-    </script>
 
     <!-- Core Scripts -->
     <script src="scripts/cipher-core.js"></script>
@@ -266,6 +258,26 @@
 
     <script src="scripts/command-center-security.js"></script>
     <script src="scripts/command-center.js"></script>
+
+    <!-- Supabase + Billing Guard - MUST run before rendering -->
+    <script>
+    (async function() {
+        document.body.style.visibility = 'hidden';
+        const allowed = await window.SupabaseAuth.protectPage();
+        if (!allowed) return;
+
+        const access = await window.BillingGuard.checkAccess();
+        if (!window.BillingGuard.hasAccess(access.profile)) {
+            window.location.href = "billing-required.html";
+            return;
+        }
+
+        document.body.style.visibility = 'visible';
+        if (window.initCommandCenter) {
+            window.initCommandCenter();
+        }
+    })();
+    </script>
     
     <script src="scripts/claim-cipher-system-qa.js"></script>
 </body>

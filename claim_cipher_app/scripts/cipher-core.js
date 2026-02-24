@@ -3,9 +3,9 @@
 
 // Initialize cipher user context across all pages
 function initializeCipherUserContext() {
-    const userType = localStorage.getItem('cipher_user_type') || 'demo';
+    const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
     const userEmail = localStorage.getItem('cipher_user_email') || 'demo@claimcipher.com';
-    const userName = userType === 'demo' ? 'Demo User' : userEmail.split('@')[0];
+    const userName = isDemoMode ? 'Demo User' : userEmail.split('@')[0];
     
     // Set user type attribute on body
     document.body.setAttribute('data-cipher-user-type', userType);
@@ -16,18 +16,37 @@ function initializeCipherUserContext() {
     const userAvatarEl = document.getElementById('user-avatar');
     
     if (userNameEl) userNameEl.textContent = userName;
-    if (userRoleEl) userRoleEl.textContent = userType === 'demo' ? 'Demo Mode' : 'Pro User';
+    if (userRoleEl) userRoleEl.textContent = isDemoMode ? 'Demo Mode' : 'Free User';
     if (userAvatarEl) userAvatarEl.textContent = userName.substring(0, 2).toUpperCase();
     
     // Show demo notice if needed
-    if (userType === 'demo') {
+    if (isDemoMode) {
         const demoNotice = document.getElementById('demo-notice');
         if (demoNotice) {
             demoNotice.style.display = 'flex';
         }
     }
     
-    console.log(`🎤 Cipher user context initialized: ${userType}`);
+    console.log(`🎤 Cipher user context initialized: ${isDemoMode ? 'demo' : 'user'}`);
+}
+
+function applyBillingRole(detail) {
+    const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
+    const userRoleEl = document.getElementById('user-role');
+    if (!userRoleEl) return;
+    if (isDemoMode) {
+        userRoleEl.textContent = 'Demo Mode';
+        return;
+    }
+    if (detail?.tier === 'pro') {
+        userRoleEl.textContent = 'Pro User';
+        return;
+    }
+    if (detail?.tier === 'basic') {
+        userRoleEl.textContent = 'Basic User';
+        return;
+    }
+    userRoleEl.textContent = 'Free User';
 }
 
 // Setup logout handler
@@ -228,6 +247,7 @@ async function handleLogout() {
 
 // Export functions globally
 window.initializeCipherUserContext = initializeCipherUserContext;
+window.applyBillingRole = applyBillingRole;
 window.setupCipherLogoutHandler = setupCipherLogoutHandler;
 window.animateCipherNumber = animateCipherNumber;
 window.showCipherNotification = showCipherNotification;

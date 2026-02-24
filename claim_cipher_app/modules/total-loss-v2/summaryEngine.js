@@ -1,6 +1,18 @@
 // Builds Claim Cipher standardized summary text from parsedEstimate + bcifPayload
 
 export function buildClaimSummary(parsedEstimate, payload) {
+    const { header, narrative, estimateSummary } = buildSummaryParts(parsedEstimate, payload);
+    const sections = buildSummarySections(narrative, estimateSummary, payload);
+
+    return [header, narrative, estimateSummary].filter(Boolean).join("\n\n");
+}
+
+export function buildClaimSummarySections(parsedEstimate, payload) {
+    const { narrative, estimateSummary } = buildSummaryParts(parsedEstimate, payload);
+    return buildSummarySections(narrative, estimateSummary, payload);
+}
+
+function buildSummaryParts(parsedEstimate, payload) {
     const est = parsedEstimate || {};
 
     const poiRaw   = est.pointOfImpact || "";
@@ -34,7 +46,30 @@ export function buildClaimSummary(parsedEstimate, payload) {
     const narrative       = routeNarrative(data, poiCode);
     const estimateSummary = buildEstimateSummary(data);
 
-    return [header, narrative, estimateSummary].filter(Boolean).join("\n\n");
+    return { header, narrative, estimateSummary };
+}
+
+function buildSummarySections(narrative, estimateSummary, payload) {
+    const sections = [
+        { title: "LOSS DESCRIPTION", content: narrative }
+    ];
+
+    const additionalNotes = payload?.summary?.additionalNotes?.trim();
+    if (additionalNotes) {
+        sections.push({
+            title: "ADDITIONAL NOTES",
+            content: additionalNotes
+        });
+    }
+
+    if (estimateSummary) {
+        sections.push({
+            title: "ESTIMATE SUMMARY",
+            content: estimateSummary
+        });
+    }
+
+    return sections;
 }
 
 // =========================================

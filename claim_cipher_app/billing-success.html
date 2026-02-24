@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Activated - Claim Cipher</title>
+    <link rel="stylesheet" href="styles/universal-system.css" />
+    <link rel="stylesheet" href="styles/industrial-plates.css" />
+</head>
+<body>
+    <main class="main-container" style="padding: 48px 24px; max-width: 720px; margin: 0 auto;">
+        <section class="stat-plate" style="padding: 32px;">
+            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+            <h1 class="cipher-hero-title" style="margin-bottom: 12px;">Subscription Activated</h1>
+            <p id="billing-message" class="cipher-body" style="margin-bottom: 16px;">Finalizing your subscription...</p>
+            <div id="billing-detail" class="cipher-body" style="margin-bottom: 24px;"></div>
+            <button class="cipher-btn" onclick="window.location.href='command-center.html'">Return to Command Center</button>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+
+    <script>
+        (function () {
+            const messageEl = document.getElementById("billing-message");
+            const detailEl = document.getElementById("billing-detail");
+            const dashboardUrl = "command-center.html";
+            const maxAttempts = 4;
+            const delayMs = 4000;
+            const timeoutMs = 15000;
+
+            function setMessage(text) {
+                if (messageEl) {
+                    messageEl.textContent = text;
+                }
+            }
+
+            function setDetail(text) {
+                if (detailEl) {
+                    detailEl.textContent = text;
+                }
+            }
+
+            function hasAccess(profile) {
+                if (!profile) return false;
+                if (profile.role === "admin") return true;
+                if (profile.subscription_tier === "basic" || profile.subscription_tier === "pro") return true;
+                return false;
+            }
+
+            function getSessionId() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get("session_id");
+            }
+
+            async function fetchBillingStatus() {
+                const supabase = window.SupabaseAuth?.init?.();
+                if (!supabase) {
+                    throw new Error("Supabase not initialized");
+                }
+
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    throw new Error("No active session");
+                }
+
+                const baseUrl = window.SUPABASE_CONFIG?.url || "";
+                const response = await fetch(`${baseUrl}/functions/v1/billing-status`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${session.access_token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || "billing-status failed");
+                }
+
+                return response.json();
+            }
+
+            async function pollBillingStatus() {
+                const sessionId = getSessionId();
+                if (!sessionId) {
+                    setMessage("Missing session ID. Please refresh or contact support.");
+                    return;
+                }
+
+                setMessage("Finalizing your subscription...");
+                const startTime = Date.now();
+
+                for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+                    if (Date.now() - startTime > timeoutMs) {
+                        break;
+                    }
+
+                    try {
+                        const data = await fetchBillingStatus();
+                        const profile = {
+                            role: data?.role || null,
+                            subscription_tier: data?.tier || "none",
+                            subscription_status: data?.status || "inactive",
+                        };
+
+                        if (hasAccess(profile)) {
+                            setMessage("Subscription confirmed. Redirecting...");
+                            window.location.replace(dashboardUrl);
+                            return;
+                        }
+
+                        setDetail(`Status: ${profile.subscription_status} | Tier: ${profile.subscription_tier}`);
+                    } catch (error) {
+                        console.error("Billing status error:", error);
+                        setDetail("Waiting for confirmation...");
+                    }
+
+                    if (attempt < maxAttempts) {
+                        await new Promise((resolve) => setTimeout(resolve, delayMs));
+                    }
+                }
+
+                setMessage("Still processing. Please refresh this page in a few seconds.");
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                pollBillingStatus();
+            });
+        })();
+    </script>
+</body>
+</html>

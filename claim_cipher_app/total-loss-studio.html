@@ -53,14 +53,22 @@
     <!-- Supabase Configuration and Auth -->
     <script src="scripts/supabase-config.js"></script>
     <script src="scripts/supabase-auth.js"></script>
+    <script src="scripts/billing-guard.js"></script>
 
     <!-- Supabase Page Protection -->
     <script>
     (async function() {
+        document.body.style.visibility = 'hidden';
         const allowed = await window.SupabaseAuth.protectPage();
-        if (allowed) {
-            document.body.style.visibility = 'visible';
+        if (!allowed) return;
+
+        const access = await window.BillingGuard.checkAccess();
+        if (!window.BillingGuard.hasAccess(access.profile)) {
+            window.location.href = "billing-required.html";
+            return;
         }
+
+        document.body.style.visibility = 'visible';
     })();
     </script>
 

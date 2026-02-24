@@ -1384,7 +1384,11 @@ async function handleLogout() {
 }
 
 // Initialize when DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (window.BillingGuard && window.BillingGuard.waitForAccess) {
+    const allowed = await window.BillingGuard.waitForAccess();
+    if (!allowed) return;
+  }
   // Check if API configuration is available
   if (window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY) {
     const apiKey = window.MILEAGE_CYPHER_CONFIG.GOOGLE_MAPS_API_KEY;
