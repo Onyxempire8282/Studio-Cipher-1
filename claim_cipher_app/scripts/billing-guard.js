@@ -38,15 +38,8 @@
       return { allowed: false };
     }
 
-    // Admins bypass billing entirely — redirect to command center immediately
+    // Admins bypass billing entirely
     if (profile && profile.role === "admin") {
-      const onCommandCenter = window.location.pathname.endsWith("command-center.html")
-        || window.location.pathname === "/"
-        || window.location.pathname === "";
-      if (!onCommandCenter) {
-        window.location.replace("command-center.html");
-        return { allowed: true, profile };
-      }
       return { allowed: true, profile };
     }
 

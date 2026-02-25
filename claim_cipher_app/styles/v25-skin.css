@@ -36,22 +36,12 @@
    c) Body — grid texture + Barlow base font
    ============================================================ */
 body {
-  background: var(--plate) !important;
   font-family: 'Barlow', sans-serif !important;
   font-weight: 300;
+  /* Background intentionally NOT overridden — inherits metal texture from industrial-plates.css */
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.013) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.013) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-}
+
 
 /* ============================================================
    d) Nav — restyle .cipher-header
@@ -67,7 +57,14 @@ body::before {
 }
 
 .header-content {
+  display: flex !important;
   height: 56px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-links {
+  display: flex !important;
   align-items: center;
 }
 

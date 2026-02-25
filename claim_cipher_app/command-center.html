@@ -1,285 +1,633 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center - Claim Cipher</title>
-    
-    <!-- Universal System - Base styling -->
-    <link rel="stylesheet" href="styles/universal-system.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+  <title>Claim Cipher — Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --plate:      #0e0f11;
+  --steel:      #161a1d;
+  --steel-mid:  #1e2328;
+  --steel-lift: #252b31;
+  --input-bg:   #0a0c0e;
+  --rivet:      #2e353d;
+  --rivet-hi:   #3d464f;
+  --amber:      #e8952a;
+  --amber-dim:  rgba(232,149,42,0.12);
+  --amber-line: rgba(232,149,42,0.35);
+  --amber-glow: rgba(232,149,42,0.06);
+  --white:      #edeae4;
+  --text:       #8f9399;
+  --text-hi:    #b8bdc2;
+  --muted:      #4a5058;
+}
 
-    <!-- Industrial Plate System - Shared visual language -->
-    <link rel="stylesheet" href="styles/industrial-plates.css">
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-    <!-- Page Layout - Command Center specific -->
-    <link rel="stylesheet" href="styles/command-center-layout.css">
+body {
+  background: var(--plate);
+  color: var(--text-hi);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px 0 24px; height: 64px;
+  background: rgba(14,15,17,0.98);
+  border-bottom: 1px solid var(--rivet);
+  box-shadow: 0 1px 0 rgba(232,149,42,0.07);
+}
+.nav-logo {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--white); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo span { color: var(--amber); }
+.nav-logo-sep { width: 1px; height: 18px; background: var(--rivet); }
+.nav-logo-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
+}
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab {
+  display: flex; align-items: center; padding: 0 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer;
+  border-right: 1px solid var(--rivet);
+  border-left: 1px solid transparent;
+  transition: all 0.2s; text-decoration: none;
+}
+.nav-tab:first-child { border-left: 1px solid var(--rivet); }
+.nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+.nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.nav-user strong { color: var(--white); display: block; font-size: 12px; }
+.nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
+.nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+/* ── COMMAND HEADER ── */
+.cmd-header {
+  background:
+    radial-gradient(ellipse 80% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
+    var(--steel);
+  border-bottom: 1px solid var(--rivet);
+  padding: 0 40px;
+  position: relative; z-index: 1;
+}
+.cmd-header-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 0;
+}
+.cmd-greeting { display: flex; flex-direction: column; gap: 6px; }
+.cmd-greeting-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); }
+.cmd-greeting-name { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.04em; color: var(--white); line-height: 1; }
+.cmd-greeting-sub { font-size: 13px; color: var(--muted); }
+
+.cmd-clock { text-align: right; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.clock-time { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--white); letter-spacing: 0.06em; line-height: 1; }
+.clock-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ── MAIN ── */
+.main {
+  max-width: 1200px; margin: 0 auto;
+  padding: 32px 40px 60px;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+/* ── STAT STRIP ── */
+.stat-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  position: relative;
+}
+.stat-strip::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--amber), rgba(232,149,42,0.1), transparent);
+}
+.stat-cell {
+  padding: 24px 28px;
+  border-right: 1px solid var(--rivet);
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative; transition: background 0.2s;
+}
+.stat-cell:last-child { border-right: none; }
+.stat-cell:hover { background: rgba(255,255,255,0.015); }
+.stat-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; line-height: 1; letter-spacing: 0.01em; color: var(--white); }
+.stat-num span { color: var(--amber); }
+.stat-delta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; display: flex; align-items: center; gap: 5px; }
+.stat-delta .up { color: var(--amber); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 14px;
+  padding: 20px 0 8px;
+}
+.section-label-text { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--amber); white-space: nowrap; }
+.section-label-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+
+/* ── OPERATIONS GRID ── */
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.op-card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  cursor: pointer;
+  transition: all 0.22s;
+  text-decoration: none;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+.op-card::before, .op-card::after {
+  content: '';
+  position: absolute;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+  z-index: 1;
+}
+.op-card::before { top: 10px; right: 12px; }
+.op-card::after  { bottom: 10px; right: 12px; }
+.op-card:hover {
+  border-left-color: var(--amber);
+  background: var(--steel-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.08);
+}
+.op-card .sweep {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(232,149,42,0.04) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.op-card:hover .sweep { opacity: 1; }
+.op-card-top { padding: 24px 24px 16px; flex: 1; }
+.op-number { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 14px; }
+.op-icon {
+  width: 40px; height: 40px;
+  background: var(--steel-mid); border: 1px solid var(--rivet);
+  display: grid; place-items: center;
+  margin-bottom: 16px; transition: all 0.22s;
+}
+.op-card:hover .op-icon { background: var(--amber-dim); border-color: var(--amber-line); }
+.op-icon svg { width: 18px; height: 18px; }
+.op-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; color: var(--white); margin-bottom: 8px; }
+.op-desc { font-size: 12px; color: var(--text); line-height: 1.7; }
+.op-card-footer {
+  padding: 12px 24px;
+  border-top: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.2s;
+}
+.op-card:hover .op-card-footer { background: rgba(232,149,42,0.05); }
+.op-stat { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.op-stat span { color: var(--amber); }
+.op-arrow {
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  transition: color 0.2s, transform 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.op-card:hover .op-arrow { color: var(--amber); transform: translateX(3px); }
+
+/* ── LOWER ROW ── */
+.lower-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+
+/* ── ACTIVITY FEED ── */
+.feed-card {
+  background: var(--steel); border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  display: flex; flex-direction: column;
+}
+.feed-header {
+  padding: 14px 20px; border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  display: flex; align-items: center; gap: 10px;
+}
+.feed-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
+.feed-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+.feed-items { display: flex; flex-direction: column; }
+.feed-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: background 0.15s;
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-item:hover { background: rgba(255,255,255,0.015); }
+.feed-dot-wrap { display: flex; flex-direction: column; align-items: center; padding-top: 4px; }
+.feed-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rivet-hi); border: 1px solid var(--muted); flex-shrink: 0; }
+.feed-dot.amber { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 6px rgba(232,149,42,0.5); }
+.feed-dot.dim   { background: var(--muted); border-color: var(--rivet); }
+.feed-thread { width: 1px; flex: 1; min-height: 24px; background: var(--rivet); margin-top: 4px; }
+.feed-content { flex: 1; }
+.feed-action { font-size: 12px; color: var(--text-hi); line-height: 1.5; }
+.feed-action strong { color: var(--amber); font-weight: 500; }
+.feed-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; margin-top: 3px; }
+
+/* ── QUICK ACTIONS ── */
+.quick-card {
+  background: var(--steel); border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  display: flex; flex-direction: column;
+}
+.quick-header {
+  padding: 14px 20px; border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  display: flex; align-items: center; gap: 10px;
+}
+.quick-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
+.quick-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+.quick-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.quick-btn {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: var(--steel-mid); border: 1px solid var(--rivet);
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.quick-btn:hover { border-color: var(--amber-line); background: var(--amber-dim); }
+.quick-btn-icon {
+  width: 32px; height: 32px;
+  background: var(--steel-lift); border: 1px solid var(--rivet);
+  display: grid; place-items: center; flex-shrink: 0; transition: all 0.2s;
+}
+.quick-btn:hover .quick-btn-icon { background: var(--amber-dim); border-color: var(--amber-line); }
+.quick-btn-icon svg { width: 14px; height: 14px; }
+.quick-btn-info { flex: 1; }
+.quick-btn-name { font-size: 13px; color: var(--white); font-weight: 500; }
+.quick-btn-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.quick-btn-arrow { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); transition: color 0.2s, transform 0.2s; }
+.quick-btn:hover .quick-btn-arrow { color: var(--amber); transform: translateX(3px); }
+.quick-btn.primary { background: var(--amber); border-color: var(--amber); }
+.quick-btn.primary .quick-btn-name { color: #000; font-weight: 600; }
+.quick-btn.primary .quick-btn-desc { color: rgba(0,0,0,0.6); }
+.quick-btn.primary .quick-btn-icon { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.2); }
+.quick-btn.primary .quick-btn-arrow { color: rgba(0,0,0,0.5); }
+.quick-btn.primary:hover { background: #f0a030; box-shadow: 0 0 20px rgba(232,149,42,0.3); }
+
+@media (max-width: 900px) {
+  .main { padding: 16px 16px 60px; }
+  .ops-grid { grid-template-columns: 1fr; }
+  .lower-grid { grid-template-columns: 1fr; }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .nav { padding: 0 16px; }
+  .nav-tabs { display: none; }
+  .cmd-header { padding: 0 16px; }
+}
+  </style>
 </head>
 <body style="visibility: hidden;">
-    <!-- Designer Agent: Modern Header -->
-    <header class="command-header cipher-header">
-        <div class="header-content">
-            <div class="app-brand">
-                <img src="../branding/logo/claimcipher-mark.png" alt="Claim Cipher" class="nav-logo" />
-            </div>
-            
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-name" id="userName">Professional User</div>
-                    <div class="user-role" id="user-role">Claims Specialist</div>
-                </div>
-                <button class="cipher-btn logout-btn" onclick="handleLogout()">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    Logout
-                </button>
-            </div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="command-center.html">Dashboard</a>
+    <a class="nav-tab" href="route-cypher.html">Routes</a>
+    <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+    <a class="nav-tab" href="my-routes.html">My Routes</a>
+    <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <strong id="userName">Professional User</strong>
+      <span id="user-role">Claims Specialist</span>
+    </div>
+    <button class="nav-logout" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- COMMAND HEADER -->
+<div class="cmd-header">
+  <div class="cmd-header-inner">
+    <div class="cmd-greeting">
+      <div class="cmd-greeting-label">Command Center</div>
+      <div class="cmd-greeting-name" id="welcomeTitle">Welcome Back.</div>
+      <div class="cmd-greeting-sub">Route optimization and mileage operations</div>
+    </div>
+    <div class="cmd-clock">
+      <div class="clock-time" id="clockTime">--:--:--</div>
+      <div class="clock-date" id="clockDate">---</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-cell">
+      <div class="stat-label">Routes Calculated</div>
+      <div class="stat-num" id="routesCalculated">0</div>
+      <div class="stat-delta"><span class="up">↑</span> all time</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Miles Counted</div>
+      <div class="stat-num" id="milesComputed">0</div>
+      <div class="stat-delta"><span class="up">↑</span> from mileage logs</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Active Firms</div>
+      <div class="stat-num" id="firmsManaged">0</div>
+      <div class="stat-delta">in rotation</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Total Loss Files</div>
+      <div class="stat-num" id="tlsFiles">—</div>
+      <div class="stat-delta">processed</div>
+    </div>
+  </div>
+
+  <!-- OPERATIONS -->
+  <div class="section-label">
+    <div class="section-label-text">Operations</div>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="ops-grid">
+
+    <!-- Route Cipher -->
+    <a href="route-cypher.html" class="op-card">
+      <div class="sweep"></div>
+      <div class="op-card-top">
+        <div class="op-number">01</div>
+        <div class="op-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="var(--text)" stroke-width="1.5">
+            <circle cx="3" cy="9" r="2"/>
+            <circle cx="15" cy="4" r="2"/>
+            <circle cx="15" cy="14" r="2"/>
+            <path d="M5 9h4l4-5M9 9l4 5" stroke-linecap="round"/>
+          </svg>
         </div>
-    </header>
+        <div class="op-name">Route Cipher</div>
+        <div class="op-desc">Plan optimal routes with Google Maps integration. Multi-stop optimization with day splitting for high-volume inspection days.</div>
+      </div>
+      <div class="op-card-footer">
+        <div class="op-stat"><span id="footerRoutes">—</span> routes this month</div>
+        <div class="op-arrow">Open →</div>
+      </div>
+    </a>
 
-    <!-- Designer Agent: Main Dashboard -->
-    <div class="dashboard-container command-center-scope main-container">
-        <!-- Hero Section -->
-        <section class="hero-section elevation-3">
-            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-            <h1 class="welcome-title cipher-hero-title" id="welcomeTitle">Welcome back</h1>
-            <p class="welcome-subtitle cipher-body">Route optimization and mileage operations</p>
-        </section>
+    <!-- Mileage Cipher -->
+    <a href="mileage-cypher.html" class="op-card">
+      <div class="sweep"></div>
+      <div class="op-card-top">
+        <div class="op-number">02</div>
+        <div class="op-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="var(--text)" stroke-width="1.5">
+            <rect x="2" y="4" width="14" height="10" rx="1"/>
+            <path d="M5 8h8M5 11h5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="op-name">Mileage Cipher</div>
+        <div class="op-desc">Calculate billable miles with firm management. Automatic distance calculation and audit-ready billing exports.</div>
+      </div>
+      <div class="op-card-footer">
+        <div class="op-stat"><span id="footerMiles">—</span> miles logged</div>
+        <div class="op-arrow">Open →</div>
+      </div>
+    </a>
 
+    <!-- My Routes -->
+    <a href="my-routes.html" class="op-card">
+      <div class="sweep"></div>
+      <div class="op-card-top">
+        <div class="op-number">03</div>
+        <div class="op-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="var(--text)" stroke-width="1.5">
+            <path d="M3 5h12M3 9h8M3 13h5" stroke-linecap="round"/>
+            <circle cx="14" cy="13" r="2"/>
+            <path d="M14 11V7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="op-name">My Routes</div>
+        <div class="op-desc">Manage route lifecycle and close routes to create IRS-ready mileage logs for tax reporting and firm billing.</div>
+      </div>
+      <div class="op-card-footer">
+        <div class="op-stat"><span id="footerOpenRoutes">—</span> open routes</div>
+        <div class="op-arrow">Open →</div>
+      </div>
+    </a>
 
-        <!-- Status Metrics -->
-        <section class="metrics-section">
-            <div class="quick-stats" id="quickStats">
-                <div class="stat-plate">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <div class="stat-number" id="routesCalculated">0</div>
-                    <div class="stat-label">Routes Calculated</div>
-                </div>
-                <div class="stat-plate">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <div class="stat-number" id="milesComputed">0</div>
-                    <div class="stat-label">Miles Counted</div>
-                </div>
-                <div class="stat-plate">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <div class="stat-number" id="firmsManaged">0</div>
-                    <div class="stat-label">Active Firms</div>
-                </div>
-            </div>
-        </section>
+    <!-- Total Loss Studio — full-width banner -->
+    <a href="total-loss-studio.html" class="op-card" style="grid-column: span 3; flex-direction: row;">
+      <div class="sweep"></div>
+      <div class="op-card-top" style="display:flex;align-items:center;gap:24px;padding:20px 24px;flex:1">
+        <div>
+          <div class="op-number" style="margin-bottom:8px">04</div>
+          <div class="op-icon" style="margin-bottom:0">
+            <svg viewBox="0 0 18 18" fill="none" stroke="var(--text)" stroke-width="1.5">
+              <path d="M4 2h7l3 3v11H4z"/>
+              <path d="M11 2v3h3M6 9h6M6 12h4" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div class="op-name">Total Loss Studio</div>
+          <div class="op-desc">Upload CCC estimates, generate BCIF forms, and produce professional claim summaries. Parse estimates and reduce admin bleed.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:140px">
+          <div class="op-stat" style="font-size:11px"><span id="footerTlsFiles">—</span> files processed</div>
+        </div>
+      </div>
+      <div class="op-card-footer" style="border-top:none;border-left:1px solid var(--rivet);padding:0 24px;min-width:120px;justify-content:center">
+        <div class="op-arrow" style="flex-direction:column;gap:4px;text-align:center">
+          <span style="font-size:18px">→</span>
+          <span>Open</span>
+        </div>
+      </div>
+    </a>
 
-        <!-- Modules Section -->
-        <section class="modules-section">
-            <h2 class="section-title cipher-section-title">OPERATIONS</h2>
-            <div class="modules-grid">
-                <!-- Route Cipher Card -->
-                <div class="module-card route-card" onclick="navigateToModule('route-cypher.html')">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <h3 class="module-title cipher-section-title">Route Cipher</h3>
-                    <p class="module-description cipher-body">Plan optimal routes with Google Maps integration. Multi-stop optimization with day splitting.</p>
-                </div>
+  </div>
 
-                <!-- Mileage Cipher Card -->
-                <div class="module-card mileage-card" onclick="navigateToModule('mileage-cypher.html')">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <h3 class="module-title cipher-section-title">Mileage Cipher</h3>
-                    <p class="module-description cipher-body">Calculate billable miles with firm management. Automatic distance calculation and billing.</p>
-                </div>
+  <!-- LOWER ROW -->
+  <div class="section-label" style="margin-top:8px">
+    <div class="section-label-text">Activity &amp; Quick Actions</div>
+    <div class="section-label-line"></div>
+  </div>
 
-                <!-- My Routes Card -->
-                <div class="module-card routes-card" onclick="navigateToModule('my-routes.html')">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <h3 class="module-title cipher-section-title">My Routes</h3>
-                    <p class="module-description cipher-body">Manage route lifecycle and close routes to create IRS-ready mileage logs for tax reporting.</p>
-                </div>
+  <div class="lower-grid">
 
-                <!-- Total Loss Studio Card -->
-                <div class="module-card total-loss-studio-card" onclick="navigateToModule('total-loss-studio.html')">
-                    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-                    <h3 class="module-title cipher-section-title">Total Loss Studio</h3>
-                    <p class="module-description cipher-body">Upload CCC estimates, generate BCIF forms, and produce professional claim summaries.</p>
-                </div>
-
-                <!-- DISTRO: Hidden features - do not delete -->
-                <!--
-                <div class="module-card jobs-card" onclick="navigateToModule('jobs-studio.html')">
-                    <span class="module-icon">💼</span>
-                    <h3 class="module-title">Jobs Studio</h3>
-                    <p class="module-description">Manage claims, track job progress, and organize client information efficiently.</p>
-                    <div class="module-actions">
-                        <a href="jobs-studio.html" class="action-btn primary-btn">Open Jobs</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); newJob()">New Job</button>
-                    </div>
-                </div>
-
-                <div class="module-card total-loss-card" onclick="navigateToModule('total-loss-forms.html')">
-                    <span class="module-icon">🚗</span>
-                    <h3 class="module-title">Total Loss Auto Forms</h3>
-                    <p class="module-description">CCC-compatible form processing with comprehensive vehicle data capture and PDF generation.</p>
-                    <div class="module-actions">
-                        <a href="total-loss-forms.html" class="action-btn primary-btn">Open Forms</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); newTotalLossForm()">New Form</button>
-                    </div>
-                </div>
-
-                <div class="module-card firms-card" onclick="navigateToModule('firms-directory.html')">
-                    <span class="module-icon">🏢</span>
-                    <h3 class="module-title">Firms Directory</h3>
-                    <p class="module-description">Manage insurance firm details, rates, and billing preferences for accurate calculations.</p>
-                    <div class="module-actions">
-                        <a href="firms-directory.html" class="action-btn primary-btn">Manage Firms</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); addFirm()">Add Firm</button>
-                    </div>
-                </div>
-
-                <div class="module-card settings-card" onclick="navigateToModule('settings-booth.html')">
-                    <span class="module-icon">⚙️</span>
-                    <h3 class="module-title">Settings Booth</h3>
-                    <p class="module-description">Configure application preferences, API keys, and system settings.</p>
-                    <div class="module-actions">
-                        <a href="settings-booth.html" class="action-btn primary-btn">Open Settings</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); quickSettings()">Quick Setup</button>
-                    </div>
-                </div>
-
-                <div class="module-card test-card" onclick="navigateToModule('functionality-test.html')">
-                    <span class="module-icon">🧪</span>
-                    <h3 class="module-title">Test Suite</h3>
-                    <p class="module-description">Run functionality tests and verify system performance across all modules.</p>
-                    <div class="module-actions">
-                        <a href="functionality-test.html" class="action-btn primary-btn">Run Tests</a>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); quickTest()">Quick Test</button>
-                    </div>
-                </div>
-                -->
-                <!-- END DISTRO: Hidden features -->
-
-                <!-- DISTRO: Mobile Suite and Help hidden - do not delete
-                <div class="module-card mobile-card pro-feature" onclick="showMobileSuiteModal()">
-                    <span class="module-icon">📱</span>
-                    <div class="pro-badge">PRO</div>
-                    <h3 class="module-title">Mobile Suite</h3>
-                    <p class="module-description">Premium mobile app with offline capabilities, GPS integration, and cloud sync.</p>
-                    <div class="module-actions">
-                        <button class="action-btn primary-btn" onclick="event.stopPropagation(); showMobileSuiteModal()">View Pro Features</button>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); downloadMobileApp()">Download App</button>
-                    </div>
-                </div>
-
-                <div class="module-card help-card" onclick="showHelpModal()">
-                    <span class="module-icon">❓</span>
-                    <h3 class="module-title">Help & Documentation</h3>
-                    <p class="module-description">Comprehensive guides, tutorials, and support resources for all features.</p>
-                    <div class="module-actions">
-                        <button class="action-btn primary-btn" onclick="event.stopPropagation(); showHelpModal()">Get Help</button>
-                        <button class="action-btn secondary-btn" onclick="event.stopPropagation(); showTutorials()">Tutorials</button>
-                    </div>
-                </div>
-                -->
-            </div>
-        </section>
-
-        <!-- DISTRO: Recent Activity hidden - do not delete -->
-        <section class="activity-section" style="display: none;">
-            <h3 class="activity-title cipher-section-title">Recent Activity</h3>
-            <div class="activity-feed" id="activityFeed">
-                <div class="activity-item">
-                    <div class="activity-icon route-activity">🗺️</div>
-                    <div class="activity-content">
-                        <div class="activity-text">Route optimized: Philadelphia to Baltimore (3 stops)</div>
-                        <div class="activity-time">2 minutes ago</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon mileage-activity">🧮</div>
-                    <div class="activity-content">
-                        <div class="activity-text">Mileage calculated: $67.50 for Sedgwick claim</div>
-                        <div class="activity-time">15 minutes ago</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon route-activity">🗺️</div>
-                    <div class="activity-content">
-                        <div class="activity-text">Day split applied: Route exceeds 50 miles per leg</div>
-                        <div class="activity-time">1 hour ago</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- DISTRO: System Status hidden - do not delete -->
-        <section class="activity-section" style="display: none;">
-            <h3 class="activity-title cipher-section-title">System Status</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span>Google Maps API</span>
-                    <span class="status-indicator status-online">Online</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span>Route Cipher</span>
-                    <span class="status-indicator status-online">Ready</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span>Mileage Cipher</span>
-                    <span class="status-indicator status-online">Ready</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span>Local Storage</span>
-                    <span class="status-indicator status-online">Active</span>
-                </div>
-            </div>
-        </section>
+    <!-- Activity Feed -->
+    <div class="feed-card">
+      <div class="feed-header">
+        <div class="feed-title">Recent Activity</div>
+        <div class="feed-line"></div>
+      </div>
+      <div class="feed-items" id="activityFeed">
+        <!-- Populated by command-center.js -->
+      </div>
     </div>
 
-    <script>
-        // Placeholder functions referenced by inline onclick handlers
-        // Real implementations live in command-center.js (CommandCenterManager)
-        function navigateToModule(url) {
-            if (window.commandCenter) {
-                window.commandCenter.navigateToModule(url);
-            } else {
-                window.location.href = url;
-            }
-        }
-    </script>
+    <!-- Quick Actions -->
+    <div class="quick-card">
+      <div class="quick-header">
+        <div class="quick-title">Quick Actions</div>
+        <div class="quick-line"></div>
+      </div>
+      <div class="quick-body">
 
-    <!-- Supabase JS v2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <a href="route-cypher.html" class="quick-btn primary">
+          <div class="quick-btn-icon">
+            <svg viewBox="0 0 14 14" fill="none" stroke="#000" stroke-width="1.5">
+              <circle cx="3" cy="7" r="1.5"/>
+              <circle cx="11" cy="3" r="1.5"/>
+              <circle cx="11" cy="11" r="1.5"/>
+              <path d="M4.5 7h3l3-4M7.5 7l3 4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="quick-btn-info">
+            <div class="quick-btn-name">New Route</div>
+            <div class="quick-btn-desc">Start optimizing today's stops</div>
+          </div>
+          <div class="quick-btn-arrow">→</div>
+        </a>
 
-    <!-- Supabase Configuration and Auth -->
-    <script src="scripts/supabase-config.js"></script>
-    <script src="scripts/supabase-auth.js"></script>
-    <script src="scripts/billing-guard.js"></script>
-    <script src="scripts/billing.js"></script>
+        <a href="total-loss-studio.html" class="quick-btn">
+          <div class="quick-btn-icon">
+            <svg viewBox="0 0 14 14" fill="none" stroke="var(--text)" stroke-width="1.5">
+              <path d="M3 2h5l3 3v7H3z"/>
+              <path d="M8 2v3h3M5 7h4M5 10h3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="quick-btn-info">
+            <div class="quick-btn-name">Upload Estimate</div>
+            <div class="quick-btn-desc">Process a CCC total loss file</div>
+          </div>
+          <div class="quick-btn-arrow">→</div>
+        </a>
 
+        <a href="my-routes.html" class="quick-btn">
+          <div class="quick-btn-icon">
+            <svg viewBox="0 0 14 14" fill="none" stroke="var(--text)" stroke-width="1.5">
+              <rect x="2" y="3" width="10" height="8" rx="1"/>
+              <path d="M4 6h6M4 9h4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="quick-btn-info">
+            <div class="quick-btn-name">Log Mileage</div>
+            <div class="quick-btn-desc">Manage open routes &amp; close for export</div>
+          </div>
+          <div class="quick-btn-arrow">→</div>
+        </a>
 
-    <!-- Core Scripts -->
-    <script src="scripts/cipher-core.js"></script>
-    <script src="scripts/route-service.js"></script>
-    <script src="scripts/firm-store.js"></script>
+        <a href="mileage-cypher.html" class="quick-btn">
+          <div class="quick-btn-icon">
+            <svg viewBox="0 0 14 14" fill="none" stroke="var(--text)" stroke-width="1.5">
+              <path d="M7 2v10M2 7l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="quick-btn-info">
+            <div class="quick-btn-name">Export Billing</div>
+            <div class="quick-btn-desc">Generate mileage report for firm</div>
+          </div>
+          <div class="quick-btn-arrow">→</div>
+        </a>
 
-    <script src="scripts/command-center-security.js"></script>
-    <script src="scripts/command-center.js"></script>
+      </div>
+    </div>
 
-    <!-- Supabase + Billing Guard - MUST run before rendering -->
-    <script>
-    (async function() {
-        document.body.style.visibility = 'hidden';
-        const allowed = await window.SupabaseAuth.protectPage();
-        if (!allowed) return;
+  </div>
+</div>
 
-        const access = await window.BillingGuard.checkAccess();
-        if (!window.BillingGuard.hasAccess(access.profile)) {
-            window.location.href = "billing-required.html";
-            return;
-        }
+<script>
+  function navigateToModule(url) {
+    if (window.commandCenter) {
+      window.commandCenter.navigateToModule(url);
+    } else {
+      window.location.href = url;
+    }
+  }
+</script>
 
-        document.body.style.visibility = 'visible';
-        if (window.initCommandCenter) {
-            window.initCommandCenter();
-        }
-    })();
-    </script>
-    
-    <script src="scripts/claim-cipher-system-qa.js"></script>
+<!-- Supabase JS v2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Supabase Configuration and Auth -->
+<script src="scripts/supabase-config.js"></script>
+<script src="scripts/supabase-auth.js"></script>
+<script src="scripts/billing-guard.js"></script>
+<script src="scripts/billing.js"></script>
+
+<!-- Core Scripts -->
+<script src="scripts/cipher-core.js"></script>
+<script src="scripts/route-service.js"></script>
+<script src="scripts/firm-store.js"></script>
+
+<script src="scripts/command-center-security.js"></script>
+<script src="scripts/command-center.js"></script>
+
+<!-- Auth + Billing Guard — must run before rendering -->
+<script>
+(async function() {
+  document.body.style.visibility = 'hidden';
+  const allowed = await window.SupabaseAuth.protectPage();
+  if (!allowed) return;
+
+  const access = await window.BillingGuard.checkAccess();
+  if (!window.BillingGuard.hasAccess(access.profile)) {
+    window.location.href = 'billing-required.html';
+    return;
+  }
+
+  document.body.style.visibility = 'visible';
+  if (window.initCommandCenter) {
+    window.initCommandCenter();
+  }
+})();
+</script>
+
+<script src="scripts/claim-cipher-system-qa.js"></script>
+
+<script>
+function tickClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const timeEl = document.getElementById('clockTime');
+  const dateEl = document.getElementById('clockDate');
+  if (timeEl) timeEl.textContent = h + ':' + m + ':' + s;
+  if (dateEl) dateEl.textContent = days[now.getDay()] + ' · ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+}
+tickClock();
+setInterval(tickClock, 1000);
+</script>
+
 </body>
 </html>
-

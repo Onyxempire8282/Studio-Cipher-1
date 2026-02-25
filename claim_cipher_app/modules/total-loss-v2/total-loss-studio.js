@@ -81,32 +81,35 @@ function renderDropZone() {
 
                 <div class="dropzone" id="dropzone">
 
-                    <div class="default-state" id="defaultState">
-
+                    <!-- Default state -->
+                    <div class="dz-default" id="defaultState">
                         <div class="upload-icon-wrap">
-                            <div class="upload-icon"></div>
-                            <div class="upload-tray"></div>
-                        </div>
-
-                        <div class="drop-text">
-                            <div class="drop-headline">
-                                Drop CCC Estimate Here
-                            </div>
-                            <div class="drop-sub">
-                                PDF format · CCC ONE exports accepted
+                            <div style="display:flex;flex-direction:column;align-items:center">
+                                <div class="upload-icon"></div>
+                                <div class="upload-tray"></div>
                             </div>
                         </div>
-
+                        <div>
+                            <div class="drop-headline">Drop CCC Estimate Here</div>
+                            <div class="drop-sub">PDF format · CCC ONE exports accepted</div>
+                        </div>
                         <div class="drop-or">
                             <div class="drop-or-line"></div>
-                            <div class="drop-or-text">OR</div>
+                            <div class="drop-or-text">or</div>
                             <div class="drop-or-line"></div>
                         </div>
+                        <button class="browse-btn" id="browseBtn">Browse Files</button>
+                    </div>
 
-                        <button class="browse-btn" id="browseBtn">
-                            Browse Files
-                        </button>
-
+                    <!-- File selected state -->
+                    <div class="dz-selected" id="selectedState">
+                        <div class="file-icon-wrap">PDF</div>
+                        <div>
+                            <div class="file-name" id="fileName">estimate.pdf</div>
+                            <div class="file-size" id="fileSize">—</div>
+                        </div>
+                        <button class="file-proceed" id="proceedBtn">Process Estimate →</button>
+                        <button class="file-cancel" id="cancelBtn">✕ Remove file</button>
                     </div>
 
                     <input type="file" id="fileInput" accept=".pdf" hidden>
@@ -148,38 +151,71 @@ function renderDropZone() {
 </div>
     `;
 
-        const dropzone      = document.getElementById('dropzone');
-        const fileInput     = document.getElementById('fileInput');
-        const browseBtn     = document.getElementById('browseBtn');
-        const defaultState  = document.getElementById('defaultState');
+    const dropzone      = document.getElementById('dropzone');
+    const fileInput     = document.getElementById('fileInput');
+    const browseBtn     = document.getElementById('browseBtn');
+    const defaultState  = document.getElementById('defaultState');
+    const selectedState = document.getElementById('selectedState');
+    const fileNameEl    = document.getElementById('fileName');
+    const fileSizeEl    = document.getElementById('fileSize');
+    const proceedBtn    = document.getElementById('proceedBtn');
+    const cancelBtn     = document.getElementById('cancelBtn');
 
-        browseBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                fileInput.click();
-        });
+    let pendingFile = null;
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            handleFile(file);
-        });
+    function showSelected(file) {
+        pendingFile = file;
+        fileNameEl.textContent = file.name;
+        fileSizeEl.textContent = (file.size / 1024 / 1024).toFixed(1) + ' MB';
+        defaultState.style.display = 'none';
+        selectedState.style.display = 'flex';
+        dropzone.style.borderColor = 'var(--amber, #e8952a)';
+        dropzone.style.borderStyle = 'solid';
+    }
 
-        dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('drag-over');
-        });
+    function resetDrop() {
+        pendingFile = null;
+        defaultState.style.display = 'flex';
+        selectedState.style.display = 'none';
+        dropzone.style.borderColor = '';
+        dropzone.style.borderStyle = '';
+        fileInput.value = '';
+    }
 
-        dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('drag-over');
-        });
+    browseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+    });
 
-        dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('drag-over');
-                const file = e.dataTransfer.files[0];
-                if (!file) return;
-            handleFile(file);
-        });
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) showSelected(file);
+    });
+
+    proceedBtn.addEventListener('click', () => {
+        if (pendingFile) handleFile(pendingFile);
+    });
+
+    cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetDrop();
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) showSelected(file);
+    });
 }
 
 // =========================================

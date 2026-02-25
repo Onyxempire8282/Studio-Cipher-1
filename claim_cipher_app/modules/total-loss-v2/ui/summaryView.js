@@ -1,148 +1,166 @@
-// Summary Verification UI (Editable Structured View)
+// Summary Verification UI — v2.5 Card Layout
 
 export function renderSummaryView(payload) {
     return `
         <div class="tls-summary-layout">
-            <section class="tls-summary-header tl-header">
-                <div class="tls-summary-header-inner">
-                    <div class="tls-summary-header-left">
-                        <div class="tls-summary-label tl-label">TOTAL LOSS STUDIO</div>
-                        <div class="tls-summary-title tl-title">SUMMARY VERIFICATION</div>
-                        
+
+            <!-- PAGE HEADER -->
+            <div class="sv-page-header">
+                <div class="sv-page-header-inner">
+                    <div>
+                        <div class="sv-page-label">Total Loss Studio</div>
+                        <div class="sv-page-title">Summary Verification</div>
+                        <div class="sv-page-sub">Review extracted data — correct any errors before download</div>
                     </div>
-                    <div class="tls-summary-header-right tl-meta">
-                        <div class="tls-summary-claim">CLAIM <span id="claimNumberDisplay" class="tls-data"></span></div>
-                        <div class="tls-summary-vehicle"><span id="vehicleSummaryDisplay" class="tls-data"></span></div>
-                        <div class="tls-summary-vin">VIN: <span id="vehicleVinDisplay" class="tls-data"></span></div>
+                    <div class="sv-claim-badge">
+                        <div class="sv-claim-badge-label">Claim</div>
+                        <div class="sv-claim-badge-num tls-data" id="claimNumberDisplay"></div>
+                        <div class="sv-claim-badge-vehicle tls-data" id="vehicleSummaryDisplay"></div>
+                        <div class="sv-claim-badge-vin">VIN <span class="tls-data" id="vehicleVinDisplay"></span></div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section class="tls-verify-strip">
-                <span class="tls-verify-dot" aria-hidden="true"></span>
-                <span class="tls-verify-text">VERIFY BEFORE COMMITTING — Correct any errors below. Downloads are final.</span>
-            </section>
+            <!-- VERIFY BANNER -->
+            <div class="sv-verify-banner">
+                <div class="sv-verify-banner-inner">
+                    <div class="sv-verify-dot"></div>
+                    <div class="sv-verify-text">Verify Before Committing</div>
+                    <div class="sv-verify-sub">— Correct any errors below. Downloads are final.</div>
+                </div>
+            </div>
 
-            <section class="tls-summary-scroll">
-                <div class="total-loss-v2-scope tls-summary">
-                    <div class="sv-stack">
-                        <section class="cipher-plate elevation-2 sv-plate sv-claim-plate">
-                            <div class="rivet tl"></div><div class="rivet tr"></div>
-                            <div class="rivet bl"></div><div class="rivet br"></div>
-                            <div class="sv-plate-header">
-                                <div class="sv-plate-title">CLAIM &amp; VEHICLE INFORMATION</div>
-                            </div>
-                            <div class="sv-plate-body">
-                                <div class="sv-grid">
-                                    <section class="sv-section">
-                                        <h3 class="cipher-label sv-section-heading">Claim Information</h3>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-carrier">Carrier</label>
-                                            <input type="text" id="sv-carrier" class="cipher-input" value="${payload.claim.carrier}" />
-                                        </div>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-claimNumber">Claim Number</label>
-                                            <input type="text" id="sv-claimNumber" class="cipher-input" value="${payload.claim.claimNumber}" />
-                                        </div>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-adjuster">Adjuster</label>
-                                            <input type="text" id="sv-adjuster" class="cipher-input" value="${payload.claim.adjuster}" />
-                                        </div>
-                                    </section>
+            <!-- MAIN SCROLL -->
+            <div class="sv-main-scroll">
+                <div class="sv-main">
 
-                                    <section class="sv-section">
-                                        <h3 class="cipher-label sv-section-heading">Vehicle Information</h3>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-year">Year</label>
-                                            <input type="text" id="sv-year" class="cipher-input" value="${payload.vehicle.year}" />
-                                        </div>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-make">Make</label>
-                                            <input type="text" id="sv-make" class="cipher-input" value="${payload.vehicle.make}" />
-                                        </div>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-model">Model</label>
-                                            <input type="text" id="sv-model" class="cipher-input" value="${payload.vehicle.model}" />
-                                        </div>
-                                        <div class="sv-field-group">
-                                            <label class="cipher-body" for="sv-vin">VIN</label>
-                                            <input type="text" id="sv-vin" class="cipher-input" value="${payload.vehicle.vin}" />
-                                        </div>
-                                    </section>
+                    <!-- CLAIM & VEHICLE INFORMATION -->
+                    <div class="sv-card sv-card--accent">
+                        <div class="sv-card-header">
+                            <div class="sv-card-title">Claim &amp; Vehicle Information</div>
+                            <div class="sv-card-line"></div>
+                        </div>
+                        <div class="sv-card-body" style="padding:3px">
+                            <div class="sv-info-grid">
+
+                                <div class="sv-info-col">
+                                    <div class="sv-info-col-label">Claim Information</div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">Carrier</div>
+                                        <input class="sv-field-value" type="text" id="sv-carrier"
+                                               value="${payload.claim.carrier}" placeholder="Enter carrier name" />
+                                    </div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">Claim Number</div>
+                                        <input class="sv-field-value" type="text" id="sv-claimNumber"
+                                               value="${payload.claim.claimNumber}" />
+                                    </div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">Adjuster</div>
+                                        <input class="sv-field-value" type="text" id="sv-adjuster"
+                                               value="${payload.claim.adjuster}" placeholder="Enter adjuster name" />
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
 
-                        <section class="cipher-plate elevation-2 sv-plate sv-accordion" data-accordion-item>
-                            <div class="rivet tl"></div><div class="rivet tr"></div>
-                            <div class="rivet bl"></div><div class="rivet br"></div>
-                            <button class="sv-accordion-toggle" type="button" data-accordion-toggle aria-expanded="false">
-                                <span class="sv-plate-title">OPTIONS / EQUIPMENT</span>
-                                <span class="sv-chevron" aria-hidden="true"></span>
-                            </button>
-                            <div class="sv-accordion-body">
+                                <div class="sv-info-col">
+                                    <div class="sv-info-col-label">Vehicle</div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">Year</div>
+                                        <input class="sv-field-value" type="text" id="sv-year"
+                                               value="${payload.vehicle.year}" />
+                                    </div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">Make</div>
+                                        <input class="sv-field-value" type="text" id="sv-make"
+                                               value="${payload.vehicle.make}" />
+                                    </div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">Model</div>
+                                        <input class="sv-field-value" type="text" id="sv-model"
+                                               value="${payload.vehicle.model}" />
+                                    </div>
+                                    <div class="sv-field">
+                                        <div class="sv-field-label">VIN</div>
+                                        <input class="sv-field-value" type="text" id="sv-vin"
+                                               value="${payload.vehicle.vin}" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OPTIONS / EQUIPMENT -->
+                    <div class="sv-card">
+                        <div class="sv-card-header">
+                            <div class="sv-card-title">Options / Equipment</div>
+                            <div class="sv-card-line"></div>
+                            <div class="sv-card-count">Scroll to view all</div>
+                        </div>
+                        <div class="sv-card-body" style="padding:0">
+                            <div class="sv-options-scroll">
                                 <div id="optionsContainer"></div>
                             </div>
-                        </section>
+                        </div>
+                    </div>
 
-                        <section class="cipher-plate elevation-2 sv-plate sv-accordion" data-accordion-item>
-                            <div class="rivet tl"></div><div class="rivet tr"></div>
-                            <div class="rivet bl"></div><div class="rivet br"></div>
-                            <button class="sv-accordion-toggle" type="button" data-accordion-toggle aria-expanded="false">
-                                <span class="sv-plate-title">CONDITION</span>
-                                <span class="sv-chevron" aria-hidden="true"></span>
-                            </button>
-                            <div class="sv-accordion-body">
-                                ${renderGranularCondition(payload.condition)}
-                            </div>
-                        </section>
+                    <!-- CONDITION -->
+                    <div class="sv-card">
+                        <div class="sv-card-header">
+                            <div class="sv-card-title">Condition</div>
+                            <div class="sv-card-line"></div>
+                        </div>
+                        ${renderGranularCondition(payload.condition)}
+                    </div>
 
-                        <section class="cipher-plate elevation-2 sv-plate sv-accordion" data-accordion-item>
-                            <div class="rivet tl"></div><div class="rivet tr"></div>
-                            <div class="rivet bl"></div><div class="rivet br"></div>
-                            <button class="sv-accordion-toggle" type="button" data-accordion-toggle aria-expanded="false">
-                                <span class="sv-plate-title">DAMAGE SUMMARY</span>
-                                <span class="sv-chevron" aria-hidden="true"></span>
-                            </button>
-                            <div class="sv-accordion-body">
-                                <textarea id="sv-damageSummary" class="cipher-input sv-textarea" readonly>${payload.summary.damageSummary}</textarea>
-                            </div>
-                        </section>
+                    <!-- DAMAGE SUMMARY -->
+                    <div class="sv-card">
+                        <div class="sv-card-header">
+                            <div class="sv-card-title">Damage Summary</div>
+                            <div class="sv-card-line"></div>
+                        </div>
+                        <div class="sv-card-body">
+                            <textarea class="sv-damage-textarea" id="sv-damageSummary"
+                                      readonly>${payload.summary.damageSummary}</textarea>
+                        </div>
+                    </div>
 
-                        <section class="cipher-plate elevation-2 sv-plate sv-accordion" data-accordion-item>
-                            <div class="rivet tl"></div><div class="rivet tr"></div>
-                            <div class="rivet bl"></div><div class="rivet br"></div>
-                            <button class="sv-accordion-toggle" type="button" data-accordion-toggle aria-expanded="false">
-                                <span class="sv-plate-title">ADDITIONAL NOTES</span>
-                                <span class="sv-chevron" aria-hidden="true"></span>
-                            </button>
-                            <div class="sv-accordion-body">
-                                <textarea id="sv-additionalNotes" class="cipher-input sv-textarea">${payload.summary.additionalNotes}</textarea>
-                            </div>
-                        </section>
+                    <!-- ADDITIONAL NOTES -->
+                    <div class="sv-card">
+                        <div class="sv-card-header">
+                            <div class="sv-card-title">Additional Notes</div>
+                            <div class="sv-card-line"></div>
+                        </div>
+                        <div class="sv-card-body">
+                            <textarea class="sv-notes-area" id="sv-additionalNotes"
+                                      placeholder="Add any additional notes before generating the form...">${payload.summary.additionalNotes}</textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ACTION FOOTER -->
+            <div class="sv-action-footer">
+                <div class="sv-action-footer-inner">
+                    <div>
+                        <div class="sv-footer-claim">CLAIM <span id="footerClaimNumber" class="tls-data"></span> — Ready for Download</div>
+                        <div class="sv-footer-vehicle"><span id="footerVehicleSummary" class="tls-data"></span></div>
+                    </div>
+                    <div class="sv-action-btns">
+                        <button class="sv-btn sv-btn--reset" id="sv-reset">↺ Reset</button>
+                        <button class="sv-btn sv-btn--secondary" id="tls-download-summary">↓ Download Claim Summary</button>
+                        <button class="sv-btn sv-btn--primary" id="sv-download">↓ Download BCIF Form</button>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section class="tls-summary-footer">
-                <div class="tls-summary-footer-inner">
-                    <div class="sv-actions-left">
-                        <div class="tls-footer-claim">CLAIM <span id="footerClaimNumber" class="tls-data"></span> — Ready for Download</div>
-                        <div class="tls-footer-vehicle"><span id="footerVehicleSummary" class="tls-data"></span></div>
-                    </div>
-                    <div class="sv-actions-right">
-                        <button id="sv-reset" class="cipher-btn cipher-btn--ghost">Reset</button>
-                        <button id="tls-download-summary" class="cipher-btn cipher-btn--secondary">Download Claim Summary</button>
-                        <button id="sv-download" class="cipher-btn cipher-btn--primary">Download BCIF Form</button>
-                    </div>
-                </div>
-            </section>
         </div>
     `;
 }
 
 // =========================================
-//  GRANULAR CONDITION UI
+//  GRANULAR CONDITION UI — Sub-sectioned
 // =========================================
 
 function renderGranularCondition(condition) {
@@ -153,25 +171,36 @@ function renderGranularCondition(condition) {
         { value: 3, text: 'Excellent' },
     ];
 
-    const columns = [
-        [
-            { key: 'paint', label: 'Paint' },
-            { key: 'glass', label: 'Glass' },
-            { key: 'seats', label: 'Seats' },
-            { key: 'engine', label: 'Engine' },
-            { key: 'frontTires', label: 'Front Tires', isTire: true },
-        ],
-        [
-            { key: 'sheetMetal', label: 'Sheet Metal' },
-            { key: 'trim', label: 'Trim' },
-            { key: 'carpet', label: 'Carpet' },
-            { key: 'transmission', label: 'Transmission' },
-            { key: 'rearTires', label: 'Rear Tires', isTire: true },
-        ]
+    const groups = [
+        {
+            label: 'Exterior',
+            items: [
+                { key: 'paint',      label: 'Paint' },
+                { key: 'glass',      label: 'Glass' },
+                { key: 'sheetMetal', label: 'Sheet Metal' },
+                { key: 'trim',       label: 'Trim' },
+            ]
+        },
+        {
+            label: 'Interior',
+            items: [
+                { key: 'seats',  label: 'Seats' },
+                { key: 'carpet', label: 'Carpet' },
+            ]
+        },
+        {
+            label: 'Mechanical',
+            items: [
+                { key: 'engine',       label: 'Engine' },
+                { key: 'transmission', label: 'Transmission' },
+                { key: 'frontTires',   label: 'Front Tires', isTire: true },
+                { key: 'rearTires',    label: 'Rear Tires',  isTire: true },
+            ]
+        }
     ];
 
-    const renderBlock = ({ key, label, isTire }) => {
-        const comp = condition[key] || {};
+    const renderItem = ({ key, label, isTire }) => {
+        const comp   = condition[key] || {};
         const rating = comp.rating;
 
         const blankOpt = isTire
@@ -187,27 +216,31 @@ function renderGranularCondition(condition) {
             .join('');
 
         const treadBlock = isTire ? `
-                    <div class="sv-tread-depth-group">
-                        <span class="sv-tread-depth-label">Tread depth:</span>
-                        <input type="text" class="cipher-input sv-tread-depth-input condition-tread-depth"
+                    <div class="sv-tread-row">
+                        <span class="sv-tread-label">Tread:</span>
+                        <input type="text" class="condition-tread-depth"
                                placeholder="e.g. 7/32" value="${comp.treadDepth || ''}" />
                     </div>` : '';
 
         return `
-                <div class="sv-condition-block sv-condition-row" data-component="${key}">
-                    <div class="sv-condition-label">${label.toUpperCase()}</div>
-                    <div class="sv-condition-rating">
-                        <span class="sv-rating-bar" aria-hidden="true"></span>
-                        <select class="cipher-input condition-rating-select">${options}</select>
+                <div class="sv-condition-row" data-component="${key}">
+                    <div class="sv-condition-name">${label.toUpperCase()}</div>
+                    <div class="sv-rating-row">
+                        <div class="sv-rating-bar"></div>
+                        <select class="condition-rating-select">${options}</select>
                     </div>
                     ${treadBlock}
-                    <textarea class="condition-comment cipher-input sv-textarea" placeholder="Condition notes...">${comp.comment || ''}</textarea>
+                    <textarea class="condition-comment" placeholder="Condition notes...">${comp.comment || ''}</textarea>
                 </div>`;
     };
 
-    const columnMarkup = columns
-        .map(group => `<div class="sv-condition-col">${group.map(renderBlock).join('')}</div>`)
-        .join('');
+    const sectionsMarkup = groups.map(group => `
+        <div class="sv-sub-section">
+            <div class="sv-sub-label">${group.label}</div>
+            <div class="sv-condition-grid">
+                ${group.items.map(renderItem).join('')}
+            </div>
+        </div>`).join('');
 
-    return `<div class="sv-condition-grid">${columnMarkup}</div>`;
+    return sectionsMarkup;
 }

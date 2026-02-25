@@ -262,7 +262,7 @@ class CommandCenterManager {
      */
     getFirmsWithBillingRate() {
         try {
-            const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+            const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
             return firms.filter(firm =>
                 firm && typeof firm.ratePerMile === 'number' && firm.ratePerMile > 0
             ).length;
@@ -273,7 +273,7 @@ class CommandCenterManager {
     }
 
     animateCounters() {
-        const counters = document.querySelectorAll('.stat-number');
+        const counters = document.querySelectorAll('.stat-num');
 
         counters.forEach(counter => {
             const target = parseFloat(counter.textContent.replace(/,/g, '')) || 0;
@@ -307,7 +307,7 @@ class CommandCenterManager {
             return;
         }
         
-        feed.innerHTML = activities.map(activity => this.createActivityHTML(activity)).join('');
+        feed.innerHTML = activities.map((activity, index) => this.createActivityHTML(activity, index, activities.length)).join('');
     }
     
     getStoredActivities() {
@@ -344,26 +344,20 @@ class CommandCenterManager {
         this.loadRecentActivity();
     }
     
-    createActivityHTML(activity) {
-        const icons = {
-            route: '🗺️',
-            mileage: '🧮', 
-            job: '💼',
-            firm: '🏢',
-            auth: '🔐',
-            test: '🧪',
-            navigation: '🔗',
-            general: '📋'
-        };
-        
-        const typeClass = `${activity.type}-activity`;
-        
+    createActivityHTML(activity, index, total) {
+        const isLatest = index === 0;
+        const hasThread = index < total - 1;
+        const dotClass = isLatest ? 'amber' : 'dim';
+
         return `
-            <div class="activity-item">
-                <div class="activity-icon ${typeClass}">${icons[activity.type] || '📋'}</div>
-                <div class="activity-content">
-                    <div class="activity-text">${activity.description}</div>
-                    <div class="activity-time">${this.formatTimeAgo(activity.timestamp)}</div>
+            <div class="feed-item">
+                <div class="feed-dot-wrap">
+                    <div class="feed-dot ${dotClass}"></div>
+                    ${hasThread ? '<div class="feed-thread"></div>' : ''}
+                </div>
+                <div class="feed-content">
+                    <div class="feed-action">${activity.description}</div>
+                    <div class="feed-time">${this.formatTimeAgo(activity.timestamp)}</div>
                 </div>
             </div>
         `;
@@ -544,7 +538,7 @@ class CommandCenterManager {
     
     initializeAnimations() {
         // Stagger card animations on load
-        const cards = document.querySelectorAll('.module-card');
+        const cards = document.querySelectorAll('.op-card');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';

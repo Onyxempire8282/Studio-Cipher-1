@@ -1,4 +1,4 @@
-// Processing animation view with user-facing stages.
+// Processing animation view — v2.5 fullscreen loader
 const STAGES = [
     "Building the Cipher",
     "Marking the Frame",
@@ -14,60 +14,65 @@ let progressRaf = null;
 
 export function renderProcessingView() {
     return `
-        <div class="tls-processing-counter" id="tlsProcessingCounter" role="status" aria-live="polite">0%</div>
-        <div class="tls-processing-label" id="tlsProcessingLabel">${STAGES[0].toUpperCase()}</div>
-        <ol class="tls-processing-steps" id="tlsProcessingSteps">
-            ${STAGES.map((label, index) => `
-                <li class="tls-processing-step" data-stage-index="${index}">${label.toUpperCase()}</li>
-            `).join("")}
-        </ol>
-        <div class="tls-processing-bar" id="tlsProcessingBar" aria-hidden="true"></div>
+        <div id="tlsProcessingOverlay">
+            <div class="tls-proc-glow"></div>
+            <div class="tls-proc-corner tl"></div>
+            <div class="tls-proc-corner tr"></div>
+            <div class="tls-proc-corner bl"></div>
+            <div class="tls-proc-corner br"></div>
+            <div class="tls-proc-top-label">Total Loss Studio — Processing Estimate</div>
+            <div class="tls-proc-progress-track">
+                <div class="tls-proc-progress-fill" id="tlsProgressFill"></div>
+            </div>
+            <div class="tls-proc-main">
+                <div class="tls-proc-counter-wrap">
+                    <div class="tls-proc-counter" id="tlsCounter">0</div>
+                    <div class="tls-proc-counter-pct">%</div>
+                </div>
+                <div class="tls-proc-step-label" id="tlsStepLabel">${STAGES[0]}</div>
+                <div class="tls-proc-divider"></div>
+                <div class="tls-proc-steps" id="tlsStepList">
+                    ${STAGES.map((label, i) => `
+                    <div class="tls-proc-step" id="tlsStep${i}">
+                        <div class="tls-proc-step-dot"></div>
+                        <span>${label}</span>
+                    </div>`).join('')}
+                </div>
+                <div class="tls-proc-complete-msg" id="tlsCompleteMsg">— Output Ready —</div>
+            </div>
+        </div>
     `;
 }
 
 export function mountProcessingView() {
-    if (document.getElementById("tlsProcessingCounter")) return;
-
-    document.body.classList.add("tls-processing-active");
+    if (document.getElementById("tlsProcessingOverlay")) return;
     document.body.insertAdjacentHTML("beforeend", renderProcessingView());
     setProgress(0, true);
 }
 
 export function unmountProcessingView() {
-    const ids = ["tlsProcessingCounter", "tlsProcessingLabel", "tlsProcessingSteps", "tlsProcessingBar"];
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-    });
-
-    document.body.classList.remove("tls-processing-active");
+    const overlay = document.getElementById("tlsProcessingOverlay");
+    if (overlay) overlay.remove();
 }
 
 export function updateStage(stageIndex) {
-    const label = document.getElementById("tlsProcessingLabel");
-    const steps = document.querySelectorAll(".tls-processing-step");
-
-    if (!label || steps.length === 0) return;
+    const label = document.getElementById("tlsStepLabel");
+    if (!label) return;
 
     const nextIndex = Math.max(0, Math.min(stageIndex, STAGES.length - 1));
-    const labelText = STAGES[nextIndex].toUpperCase();
-    label.textContent = labelText;
+    label.textContent = STAGES[nextIndex];
 
-    steps.forEach((step, index) => {
-        if (index < nextIndex) {
-            step.classList.add("is-completed");
-            step.classList.remove("is-active");
-            return;
+    for (let i = 0; i < STAGES.length; i++) {
+        const step = document.getElementById(`tlsStep${i}`);
+        if (!step) continue;
+        if (i < nextIndex) {
+            step.className = 'tls-proc-step done';
+        } else if (i === nextIndex) {
+            step.className = 'tls-proc-step active';
+        } else {
+            step.className = 'tls-proc-step';
         }
-
-        if (index === nextIndex) {
-            step.classList.add("is-active");
-            step.classList.remove("is-completed");
-            return;
-        }
-
-        step.classList.remove("is-active", "is-completed");
-    });
+    }
 
     const target = PROGRESS_TARGETS[nextIndex] ?? 0;
     setProgress(target, false);
@@ -108,17 +113,17 @@ function setProgress(target, immediate) {
 }
 
 function renderProgress(value, immediate) {
-    const counter = document.getElementById("tlsProcessingCounter");
-    const bar = document.getElementById("tlsProcessingBar");
-    if (!counter || !bar) return;
+    const counter = document.getElementById("tlsCounter");
+    const fill = document.getElementById("tlsProgressFill");
+    if (!counter || !fill) return;
 
-    counter.textContent = `${value}%`;
-    bar.style.setProperty("--tls-progress", `${value}%`);
+    counter.textContent = String(value);
+    fill.style.width = `${value}%`;
 
     if (!immediate) {
-        counter.classList.remove("is-flicker");
+        counter.classList.remove("tls-proc-flicker");
         void counter.offsetWidth;
-        counter.classList.add("is-flicker");
+        counter.classList.add("tls-proc-flicker");
     }
 }
 

@@ -3,45 +3,212 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
     <title>Total Loss Studio - Claim Cipher</title>
 
-    <!-- Universal System - Base styling -->
-    <link rel="stylesheet" href="styles/universal-system.css" />
-
-    <!-- Industrial Plate System - Shared visual language -->
+    <!-- Industrial Plate System - Shared visual language (cipher-plate, cipher-btn, rivet) -->
     <link rel="stylesheet" href="styles/industrial-plates.css" />
 
     <!-- Total Loss V2 - Scoped layout -->
     <link rel="stylesheet" href="modules/total-loss-v2/total-loss-v2.css" />
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      /* ── V2.5 CSS VARIABLES ── */
+      :root {
+        --plate:      #0e0f11;
+        --steel:      #161a1d;
+        --steel-mid:  #1e2328;
+        --steel-lift: #252b31;
+        --input-bg:   #0a0c0e;
+        --rivet:      #2e353d;
+        --rivet-hi:   #3d464f;
+        --amber:      #e8952a;
+        --amber-dim:  rgba(232,149,42,0.12);
+        --amber-line: rgba(232,149,42,0.35);
+        --white:      #edeae4;
+        --text:       #8f9399;
+        --text-hi:    #b8bdc2;
+        --muted:      #4a5058;
+
+        /* cipher-* aliases used by total-loss-v2.css */
+        --cipher-accent:          #e8952a;
+        --cipher-text-primary:    #edeae4;
+        --cipher-text-secondary:  #b8bdc2;
+        --cipher-text-muted:      #4a5058;
+        --cipher-font-mono:       'DM Mono', monospace;
+        --cipher-space-xs:        0.5rem;
+        --cipher-space-sm:        1rem;
+        --cipher-space-md:        1.5rem;
+        --cipher-space-lg:        2rem;
+        --cipher-space-xl:        2.5rem;
+        --cipher-space-xxl:       3rem;
+        --cipher-font-weight-medium: 500;
+        --cipher-success:         #27ae60;
+        --cipher-danger:          #e74c3c;
+      }
+
+      /* ── BODY — override industrial-plates.css !important background ── */
+      body {
+        background: var(--plate) !important;
+        color: var(--text-hi);
+        font-family: 'Barlow', sans-serif;
+        font-weight: 300;
+        min-height: 100vh;
+      }
+      body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+      }
+
+      /* ── NAV LOGOUT — reset industrial-plates.css blanket button styles ── */
+      .nav-logout {
+        all: unset;
+        padding: 7px 16px !important;
+        border: 1px solid var(--rivet) !important;
+        color: var(--muted) !important;
+        font-family: 'DM Mono', monospace !important;
+        font-size: 10px !important;
+        letter-spacing: 0.1em !important;
+        text-transform: uppercase !important;
+        cursor: pointer !important;
+        transition: all 0.2s !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        min-height: unset !important;
+        box-shadow: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+      }
+      .nav-logout:hover {
+        border-color: var(--rivet-hi) !important;
+        color: var(--text-hi) !important;
+        transform: none !important;
+      }
+
+      /* ── MAIN CONTENT — clear universal-system margin/padding ── */
+      .main-content.main-container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      }
+
+      /* ── NAV ── */
+      .nav {
+        position: sticky; top: 0; z-index: 100;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 32px 0 24px; height: 64px;
+        background: rgba(14,15,17,0.97);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--rivet);
+        box-shadow: 0 1px 0 rgba(232,149,42,0.08);
+      }
+      .nav-tabs { display: flex; gap: 0; height: 100%; }
+      .nav-tab {
+        display: flex; align-items: center; padding: 0 20px;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--muted); cursor: pointer;
+        border-right: 1px solid var(--rivet);
+        border-left: 1px solid transparent;
+        transition: all 0.2s; text-decoration: none;
+      }
+      .nav-tab:first-child { border-left: 1px solid var(--rivet); }
+      .nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+      .nav-tab.active {
+        color: var(--amber);
+        background: var(--amber-dim);
+        border-bottom: 2px solid var(--amber);
+      }
+      .nav-logo {
+        font-family: 'Barlow', sans-serif;
+        font-size: 15px; font-weight: 600; letter-spacing: 0.08em;
+        color: var(--white); text-decoration: none; white-space: nowrap;
+      }
+      .nav-logo span { color: var(--amber); }
+      .nav-right { display: flex; align-items: center; gap: 16px; }
+      .nav-user {
+        font-family: 'DM Mono', monospace; font-size: 10px;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+        text-align: right;
+      }
+      .nav-user strong { color: var(--text-hi); display: block; font-size: 11px; }
+
+      /* ── PAGE HEADER ── */
+      .page-header {
+        background: var(--steel);
+        border-bottom: 1px solid var(--rivet);
+        padding: 20px 40px !important;
+        position: relative !important;
+        z-index: 1;
+      }
+      .page-header-inner {
+        max-width: 1200px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .page-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--amber); margin-bottom: 4px;
+      }
+      .page-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; letter-spacing: 0.06em; color: var(--white);
+      }
+      .page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+      .header-meta {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+        text-align: right; line-height: 1.8;
+      }
+      .header-meta span { color: var(--text-hi); }
+
+      /* ── MAIN CONTENT WRAPPER ── */
+      .main-content.main-container {
+        width: 100%;
+        position: relative; z-index: 1;
+      }
+    </style>
 </head>
 <body style="visibility: hidden;">
-    <header class="cipher-header">
-        <div class="header-content">
-            <div class="app-brand">
-                <img src="../branding/logo/claimcipher-mark.png" alt="Claim Cipher" class="nav-logo" />
+    <nav class="nav">
+        <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
+        <div class="nav-tabs">
+            <a class="nav-tab" href="command-center.html">Dashboard</a>
+            <a class="nav-tab" href="route-cypher.html">Routes</a>
+            <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+            <a class="nav-tab" href="my-routes.html">My Routes</a>
+            <a class="nav-tab active" href="total-loss-studio.html">Total Loss</a>
+        </div>
+        <div class="nav-right">
+            <div class="nav-user">
+                <strong id="userName">Professional User</strong>
+                Claims Specialist
             </div>
-            <div class="nav-links">
-                <a href="command-center.html">Dashboard</a>
-                <a href="route-cypher.html">Routes</a>
-                <a href="mileage-cypher.html">Mileage</a>
-                <a href="my-routes.html">My Routes</a>
-                <a href="total-loss-studio.html" class="active">Total Loss</a>
+            <button class="nav-logout" onclick="handleLogout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div>
+                <div class="page-label">Total Loss Studio</div>
+                <div class="page-title">Load Estimate</div>
+                <div class="page-sub">CCC estimate processing and BCIF form generation</div>
             </div>
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-name" id="userName">Professional User</div>
-                    <div class="user-role">Claims Specialist</div>
-                </div>
-                <button class="cipher-btn logout-btn" onclick="handleLogout()">
-                    <div class="rivet tl"></div>
-                    <div class="rivet tr"></div>
-                    <div class="rivet bl"></div>
-                    <div class="rivet br"></div>
-                    Logout
-                </button>
+            <div class="header-meta">
+                Accepted Format <span>PDF</span><br>
+                Max Size <span>25 MB</span><br>
+                Source <span>CCC ONE</span>
             </div>
         </div>
-    </header>
+    </div>
 
     <main class="main-content main-container">
         <div id="tl-v2-container" class="total-loss-v2-scope"></div>

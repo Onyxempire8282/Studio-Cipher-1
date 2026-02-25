@@ -256,3 +256,35 @@ window.generateCipherDemoData = generateCipherDemoData;
 window.handleLogout = handleLogout;
 
 console.log('🎤 Cipher Core JavaScript loaded - No Matter What!');
+
+// ─── NAV USER NAME — auto-runs on every page ───────────────────────────────
+// Reads the real user name from Supabase metadata and updates #userName.
+// Priority: full_name → name → company → business_name → email prefix
+(async function updateNavUserName() {
+    const el = document.getElementById('userName');
+    if (!el) return;
+
+    // Demo mode
+    if (sessionStorage.getItem('demo_mode') === 'true') {
+        el.textContent = 'Demo User';
+        return;
+    }
+
+    if (!window.SupabaseAuth || !window.SupabaseAuth.getCurrentUser) return;
+
+    try {
+        const { email, metadata } = await window.SupabaseAuth.getCurrentUser();
+        if (!email) return;
+
+        const name = (metadata && (
+            metadata.full_name ||
+            metadata.name ||
+            metadata.company ||
+            metadata.business_name
+        )) || email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+        el.textContent = name;
+    } catch (e) {
+        // Silently fail — hardcoded fallback stays visible
+    }
+})();

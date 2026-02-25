@@ -3,647 +3,1423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Cypher - Claim Cipher</title>
-    <link rel="icon" href="/public/branding/icons/favicon.ico">
+    <title>Claim Cipher — Drop In</title>
+    <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Stack B: Universal base → Industrial plates → Page layout -->
-    <link rel="stylesheet" href="styles/universal-system.css">
-    <link rel="stylesheet" href="styles/industrial-plates.css">
-    <link rel="stylesheet" href="styles/login-layout.css">
+    <!-- =====================================================
+         PART 1 — CSS (self-contained, replaces all imports)
+         ===================================================== -->
+    <style>
+
+    /* ── VARIABLES ── */
+    :root {
+        --plate:       #0e0f11;
+        --steel:       #161a1d;
+        --steel-mid:   #1e2328;
+        --steel-lift:  #252b31;
+        --input-bg:    #0a0c0e;
+        --rivet:       #2e353d;
+        --rivet-hi:    #3d464f;
+        --amber:       #e8952a;
+        --amber-dim:   rgba(232,149,42,0.12);
+        --amber-line:  rgba(232,149,42,0.35);
+        --white:       #edeae4;
+        --text-hi:     #b8bdc2;
+        --muted:       #4a5058;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── BODY ── */
+    body {
+        background: var(--plate);
+        font-family: 'Barlow', sans-serif;
+        font-weight: 300;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    /* Grid texture */
+    body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+    }
+
+    /* Ambient glow */
+    body::after {
+        content: '';
+        position: fixed;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(232,149,42,0.05) 0%, transparent 70%);
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none; z-index: 0;
+        animation: breathe 6s ease-in-out infinite;
+    }
+    @keyframes breathe {
+        0%,100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+        50%      { opacity: 1;   transform: translate(-50%,-50%) scale(1.15); }
+    }
+
+    /* ── WRAPPER ── */
+    .login-wrap {
+        position: relative; z-index: 1;
+        width: 100%; max-width: 400px;
+        padding: 20px;
+    }
+
+    /* ── CARD ── */
+    .card {
+        background: var(--steel);
+        border: 1px solid var(--rivet);
+        border-top: 2px solid var(--amber);
+        box-shadow:
+            0 0 0 1px rgba(232,149,42,0.06),
+            0 40px 80px rgba(0,0,0,0.8),
+            0 8px 32px rgba(0,0,0,0.5);
+        position: relative;
+    }
+
+    /* Bottom corner brackets */
+    .card::before, .card::after {
+        content: '';
+        position: absolute;
+        width: 10px; height: 10px;
+        border-color: var(--amber);
+        border-style: solid;
+        opacity: 0.3;
+    }
+    .card::before { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+    /* Rivet dots */
+    .rivet {
+        position: absolute;
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--rivet-hi); border: 1px solid var(--muted);
+    }
+    .rivet-tl { top: 10px; left: 12px; }
+    .rivet-tr { top: 10px; right: 12px; }
+
+    /* ── LOGO SECTION ── */
+    .logo-section {
+        padding: 36px 32px 24px;
+        display: flex; flex-direction: column; align-items: center; gap: 16px;
+        border-bottom: 1px solid var(--rivet);
+        background: var(--steel-mid);
+        position: relative;
+    }
+
+    .logo-circle {
+        width: 96px; height: 96px;
+        border-radius: 50%;
+        border: 2px solid var(--rivet);
+        background: var(--steel-mid);
+        box-shadow:
+            0 0 0 4px rgba(232,149,42,0.08),
+            0 0 32px rgba(232,149,42,0.15),
+            0 8px 24px rgba(0,0,0,0.6);
+        display: grid; place-items: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .logo-img {
+        width: 76px; height: 76px;
+        object-fit: contain;
+        display: block;
+    }
+
+    .logo-wordmark {
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .logo-name {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; letter-spacing: 0.12em; color: var(--white);
+        line-height: 1;
+    }
+    .logo-name span { color: var(--amber); }
+    .logo-tm {
+        font-family: 'Barlow', sans-serif;
+        font-size: 11px; font-weight: 400;
+        vertical-align: super; letter-spacing: 0;
+        color: var(--muted);
+    }
+    .logo-tagline {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    /* ── TABS ── */
+    .tabs {
+        display: grid; grid-template-columns: 1fr 1fr;
+        border-bottom: 1px solid var(--rivet);
+    }
+    .tab {
+        padding: 12px 20px;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--muted); cursor: pointer; text-align: center;
+        border-right: 1px solid var(--rivet);
+        transition: all 0.2s;
+        background: transparent;
+        user-select: none;
+    }
+    .tab:last-child { border-right: none; }
+    .tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+    .tab.active {
+        color: var(--amber);
+        background: var(--amber-dim);
+        border-bottom: 2px solid var(--amber);
+        margin-bottom: -1px;
+    }
+
+    /* ── ERROR DISPLAY ── */
+    #error-cypher {
+        display: none;
+        padding: 10px 28px;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.08em;
+        line-height: 1.5;
+    }
+
+    /* ── FORM PANELS ── */
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+
+    /* ── FORM BODY ── */
+    .form-body { padding: 24px 28px 16px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field:last-of-type { margin-bottom: 0; }
+
+    /* Two-column row (signup name + company) */
+    .form-row {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .form-row .field { margin-bottom: 0; }
+
+    .field-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .field-input {
+        background: var(--input-bg);
+        border: 1px solid var(--rivet);
+        border-top: 1px solid var(--rivet-hi);
+        padding: 12px 14px;
+        color: var(--white); font-size: 14px;
+        font-family: 'Barlow', sans-serif;
+        outline: none; width: 100%;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        transition: border-color 0.2s, box-shadow 0.2s;
+        letter-spacing: 0.02em;
+        border-radius: 0;
+    }
+    .field-input:focus {
+        border-color: var(--amber);
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5),
+                    0 0 0 1px rgba(232,149,42,0.2);
+    }
+    .field-input::placeholder { color: var(--muted); }
+
+    /* ── PASSWORD WRAPPER ── */
+    .pw-wrap { position: relative; }
+    .pw-toggle {
+        position: absolute; right: 12px; top: 50%;
+        transform: translateY(-50%);
+        background: transparent; border: none;
+        color: var(--muted); cursor: pointer;
+        padding: 0; line-height: 1;
+        transition: color 0.2s;
+        opacity: 0.5;
+        border-radius: 0;
+        min-height: unset;
+        box-shadow: none;
+    }
+    .pw-toggle:hover { color: var(--text-hi); opacity: 1; }
+    .pw-toggle svg {
+        width: 16px; height: 16px;
+        stroke: currentColor; fill: none;
+        stroke-width: 2;
+        stroke-linecap: round; stroke-linejoin: round;
+        display: block;
+    }
+    .pw-toggle line { stroke: currentColor; }
+
+    /* ── REMEMBER ME ── */
+    .remember-row {
+        display: flex; align-items: center; gap: 10px;
+        margin: 16px 0 0;
+    }
+    .remember-check {
+        width: 16px; height: 16px;
+        background: var(--input-bg);
+        border: 1px solid var(--rivet);
+        display: grid; place-items: center;
+        cursor: pointer; flex-shrink: 0;
+        transition: all 0.2s;
+        border-radius: 0;
+    }
+    .remember-check.checked {
+        background: var(--amber-dim);
+        border-color: var(--amber-line);
+    }
+    .remember-check-inner {
+        width: 8px; height: 8px;
+        background: var(--amber);
+        opacity: 0; transition: opacity 0.15s;
+    }
+    .remember-check.checked .remember-check-inner { opacity: 1; }
+    .remember-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--muted); cursor: pointer; user-select: none;
+    }
+
+    /* ── TERMS CHECKBOX ROW ── */
+    .terms-label {
+        display: flex; align-items: flex-start; gap: 8px;
+        cursor: pointer;
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--muted); line-height: 1.6;
+    }
+    .terms-label input[type="checkbox"] {
+        margin-top: 2px; flex-shrink: 0;
+        accent-color: var(--amber);
+    }
+
+    /* ── FORM FOOTER ── */
+    .form-footer {
+        padding: 12px 28px 28px;
+        display: flex; flex-direction: column; gap: 12px;
+    }
+
+    /* ── PRIMARY BUTTON ── */
+    .btn-primary {
+        width: 100%; padding: 14px;
+        background: var(--amber); border: 1px solid var(--amber);
+        color: #000; font-family: 'DM Mono', monospace;
+        font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+        font-weight: 600; cursor: pointer; transition: all 0.2s;
+        box-shadow: 0 0 24px rgba(232,149,42,0.3);
+        position: relative; overflow: hidden;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        border-radius: 0; min-height: unset;
+    }
+    .btn-primary:hover {
+        background: #f0a030;
+        box-shadow: 0 0 36px rgba(232,149,42,0.5);
+        transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled {
+        opacity: 0.7; cursor: not-allowed; transform: none;
+    }
+
+    /* Scanline shimmer on hover */
+    .btn-primary::after {
+        content: '';
+        position: absolute; top: 0; left: -100%;
+        width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        transition: left 0.4s;
+    }
+    .btn-primary:hover::after { left: 140%; }
+
+    /* Loading state inside button */
+    .loading-cipher-state {
+        display: none;
+        align-items: center; justify-content: center; gap: 8px;
+        font-size: 12px; letter-spacing: 0.14em;
+    }
+    .cipher-spinner {
+        width: 12px; height: 12px;
+        border: 2px solid rgba(0,0,0,0.25);
+        border-top-color: #000;
+        border-radius: 50%;
+        animation: cipher-spin 0.7s linear infinite;
+        flex-shrink: 0;
+    }
+    @keyframes cipher-spin { to { transform: rotate(360deg); } }
+
+    /* ── FORGOT LINK ── */
+    .forgot-link {
+        text-align: center;
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--muted); cursor: pointer;
+        transition: color 0.2s;
+        background: transparent; border: none;
+        padding: 0; width: 100%;
+        border-radius: 0; min-height: unset; box-shadow: none;
+    }
+    .forgot-link:hover { color: var(--amber); }
+
+    /* ── CIPHER LINK ── */
+    .cipher-link {
+        color: var(--amber); text-decoration: none;
+        transition: opacity 0.2s;
+    }
+    .cipher-link:hover { opacity: 0.75; }
+
+    /* ── DIVIDER ── */
+    .divider {
+        display: flex; align-items: center; gap: 12px;
+    }
+    .divider-line {
+        flex: 1; height: 1px; background: var(--rivet);
+    }
+    .divider-text {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.2em; color: var(--muted);
+        text-transform: uppercase;
+    }
+
+    /* ── DEMO BUTTON ── */
+    .btn-demo {
+        width: 100%; padding: 12px;
+        background: transparent; border: 1px solid var(--rivet);
+        color: var(--muted); font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+        cursor: pointer; transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        border-radius: 0; min-height: unset; box-shadow: none;
+    }
+    .btn-demo:hover {
+        border-color: var(--amber-line);
+        color: var(--text-hi);
+        background: var(--amber-dim);
+    }
+    .demo-arrow { transition: transform 0.2s; }
+    .btn-demo:hover .demo-arrow { transform: translateX(3px); }
+
+    /* ── CARD FOOTER ── */
+    .card-footer {
+        padding: 12px 20px;
+        border-top: 1px solid var(--rivet);
+        background: var(--steel-mid);
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .footer-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--amber); opacity: 0.5;
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+        0%,100% { opacity: 0.4; }
+        50% { opacity: 0.9; box-shadow: 0 0 6px rgba(232,149,42,0.6); }
+    }
+    .footer-text {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    /* ── VERSION STRIP ── */
+    .version-strip {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 0 0;
+    }
+    .version-text {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--rivet-hi);
+    }
+
+    /* =====================================================
+       MODAL BASE — shared by reset + payment modals
+       ===================================================== */
+    .cipher-modal {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.75);
+        display: none;
+        align-items: center; justify-content: center;
+        z-index: 9000;
+        backdrop-filter: blur(4px);
+    }
+    .cipher-modal-content {
+        background: var(--steel);
+        border: 1px solid var(--rivet);
+        border-top: 2px solid var(--amber);
+        box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+        max-width: 480px; width: 90%;
+        position: relative;
+    }
+    .cipher-modal-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--rivet);
+    }
+    .cipher-modal-header h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 20px; letter-spacing: 0.08em; color: var(--white);
+    }
+    .cipher-modal-close {
+        background: transparent; border: 1px solid var(--rivet);
+        color: var(--muted); cursor: pointer;
+        width: 28px; height: 28px;
+        display: grid; place-items: center;
+        font-size: 18px; line-height: 1;
+        transition: all 0.2s; border-radius: 0;
+        min-height: unset; box-shadow: none;
+    }
+    .cipher-modal-close:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+    .cipher-modal-body { padding: 24px 24px 28px; }
+
+    /* ── FORM ELEMENTS inside modals ── */
+    .form-cipher-group {
+        display: flex; flex-direction: column; gap: 6px;
+        margin-bottom: 14px;
+    }
+    .form-cipher-group:last-child { margin-bottom: 0; }
+    .form-cipher-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--muted);
+    }
+    .form-cipher-input {
+        background: var(--input-bg);
+        border: 1px solid var(--rivet);
+        border-top: 1px solid var(--rivet-hi);
+        padding: 10px 14px;
+        color: var(--white); font-size: 14px;
+        font-family: 'Barlow', sans-serif;
+        outline: none; width: 100%;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        transition: border-color 0.2s; border-radius: 0;
+    }
+    .form-cipher-input:focus {
+        border-color: var(--amber);
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,149,42,0.2);
+    }
+    .form-cipher-row {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .form-cipher-checkbox {
+        display: flex; align-items: flex-start; gap: 8px;
+        cursor: pointer; font-size: 13px; color: var(--text-hi); line-height: 1.5;
+    }
+    .form-cipher-checkbox input { accent-color: var(--amber); margin-top: 2px; }
+
+    /* Primary button in modals */
+    .cipher-btn--primary.cipher-btn--full {
+        width: 100%; margin-top: 16px; padding: 13px;
+        background: var(--amber); border: 1px solid var(--amber);
+        color: #000; font-family: 'DM Mono', monospace;
+        font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+        font-weight: 600; cursor: pointer; transition: all 0.2s;
+        box-shadow: 0 0 20px rgba(232,149,42,0.25);
+        border-radius: 0; min-height: unset; display: block;
+    }
+    .cipher-btn--primary.cipher-btn--full:hover {
+        background: #f0a030; box-shadow: 0 0 32px rgba(232,149,42,0.4);
+    }
+
+    /* Reset message */
+    .reset-message {
+        margin-top: 14px;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.1em;
+        text-align: center; min-height: 18px;
+    }
+    .reset-message.is-error  { color: #e05555; }
+    .reset-message.is-success { color: #4caf6e; }
+
+    /* ── PAYMENT MODAL ── */
+    .payment-cipher-options { margin: 18px 0; }
+    .payment-cipher-options h3 {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--amber); margin-bottom: 10px;
+    }
+    .payment-cipher-tabs {
+        display: flex; border: 1px solid var(--rivet); margin-bottom: 14px;
+    }
+    .payment-tab {
+        flex: 1; padding: 10px;
+        background: transparent; border: none; border-right: 1px solid var(--rivet);
+        color: var(--muted); cursor: pointer;
+        font-family: 'DM Mono', monospace; font-size: 11px;
+        letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;
+        border-radius: 0; min-height: unset; box-shadow: none;
+    }
+    .payment-tab:last-child { border-right: none; }
+    .payment-tab.active { background: var(--amber-dim); color: var(--amber); }
+    .payment-cipher-method { display: none; }
+    .payment-cipher-method.active { display: block; }
+    .pricing-cipher-summary {
+        background: var(--steel-mid); border: 1px solid var(--rivet);
+        padding: 14px 18px; margin: 18px 0;
+    }
+    .price-row {
+        display: flex; justify-content: space-between;
+        font-family: 'DM Mono', monospace; font-size: 11px;
+        letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px;
+    }
+    .price-row.total {
+        color: var(--text-hi); padding-top: 10px;
+        border-top: 1px solid var(--rivet); margin-bottom: 0;
+    }
+    .price-row .price { color: var(--amber); }
+    .trial-info {
+        font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center;
+    }
+    .paypal-cipher-info { text-align: center; padding: 20px; color: var(--muted); font-size: 13px; }
+    .paypal-icon { font-size: 32px; margin-bottom: 10px; }
+    .paypal-benefits { display: flex; gap: 14px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+    .paypal-benefits span {
+        font-family: 'DM Mono', monospace; font-size: 10px; color: var(--amber);
+    }
+
+    /* ── LEGAL MODALS ── */
+    .legal-modal {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.75);
+        display: none;
+        align-items: center; justify-content: center;
+        z-index: 9000;
+        backdrop-filter: blur(4px);
+    }
+    .legal-modal-content {
+        background: var(--steel);
+        border: 1px solid var(--rivet);
+        border-top: 2px solid var(--amber);
+        box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+        max-width: 560px; width: 90%;
+        max-height: 80vh; overflow-y: auto;
+    }
+    .legal-modal-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 24px; border-bottom: 1px solid var(--rivet);
+        position: sticky; top: 0; background: var(--steel); z-index: 1;
+    }
+    .legal-modal-header h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 20px; letter-spacing: 0.08em; color: var(--white);
+    }
+    .legal-modal-close {
+        background: transparent; border: 1px solid var(--rivet);
+        color: var(--muted); cursor: pointer;
+        width: 28px; height: 28px;
+        display: grid; place-items: center;
+        font-size: 18px; transition: all 0.2s;
+        border-radius: 0; min-height: unset; box-shadow: none;
+    }
+    .legal-modal-close:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+    .legal-modal-body {
+        padding: 24px 24px 28px;
+        color: var(--text-hi); font-size: 13px; line-height: 1.7;
+    }
+    .legal-modal-body h3 {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--amber); margin: 20px 0 8px;
+    }
+    .legal-modal-body h3:first-child { margin-top: 0; }
+    .legal-modal-body p { color: var(--muted); margin-bottom: 10px; }
+    .legal-modal-body strong { color: var(--text-hi); }
+
+    /* ── DEMO TIMER ── */
+    .demo-cipher-timer {
+        position: fixed; bottom: 24px; left: 50%;
+        transform: translateX(-50%);
+        background: var(--steel-mid);
+        border: 1px solid var(--rivet);
+        border-left: 3px solid var(--amber);
+        padding: 10px 20px; z-index: 8000;
+        white-space: nowrap;
+    }
+    .timer-content {
+        display: flex; align-items: center; gap: 10px;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--muted);
+    }
+    .timer-countdown { color: var(--amber); }
+    .timer-upgrade-btn {
+        padding: 6px 16px; background: var(--amber); color: #000;
+        border: none; cursor: pointer; font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+        font-weight: 600; transition: background 0.2s;
+        border-radius: 0; min-height: unset; box-shadow: none;
+    }
+    .timer-upgrade-btn:hover { background: #f0a030; }
+
+    </style>
 </head>
-<body class="cipher-dark-theme">
+<body>
 
-    <div class="auth-container">
-      <div class="cipher-content">
-        <div class="cipher-plate login-plate">
-            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-            <!-- Brand Header: Clear product identification -->
-            <div class="auth-brand-header">
-                <img src="../branding/logo/claimcipher-full.png" alt="Claim Cipher" class="login-logo" />
+<!-- =====================================================
+     PART 2 — MAIN CARD
+     ===================================================== -->
+<div class="login-wrap">
+    <div class="card">
+        <div class="rivet rivet-tl"></div>
+        <div class="rivet rivet-tr"></div>
+
+        <!-- LOGO -->
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="/branding/logo/claimcipher-mark.png"
+                     alt="Claim Cipher" class="logo-img">
             </div>
-            <div class="auth-brand-divider" aria-hidden="true"></div>
-
-            <!-- Login/Signup Toggle -->
-            <div class="auth-cipher-toggle">
-                <button class="toggle-cipher active" id="login-toggle">Drop In</button>
-                <button class="toggle-cipher" id="signup-toggle">Sign Up</button>
+            <div class="logo-wordmark">
+                <div class="logo-name"><span>CLAIM</span>CIPHER<sup class="logo-tm">™</sup></div>
+                <div class="logo-tagline">Field Operations Platform</div>
             </div>
+        </div>
 
-            <div id="error-cypher" class="error-cypher"></div>
-            
-            <!-- Login Cypher Form -->
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" id="tabLogin"
+                 onclick="switchTab('login')">Drop In</div>
+            <div class="tab" id="tabSignup"
+                 onclick="switchTab('signup')">Sign Up</div>
+        </div>
+
+        <!-- ERROR DISPLAY -->
+        <div id="error-cypher" class="error-cypher"></div>
+
+        <!-- ── LOGIN PANEL ── -->
+        <div class="form-panel active" id="panelLogin">
             <form id="login-cypher-form">
-                <div class="form-cipher-group">
-                    <label class="form-cipher-label" for="login-email">Email</label>
-                    <input type="email" autocomplete="email" spellcheck="false" class="form-cipher-input" id="login-email" required autocomplete="username">
-                </div>
-                
-                <div class="form-cipher-group">
-                    <label class="form-cipher-label" for="login-password">Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" autocomplete="current-password" class="form-cipher-input" id="login-password" required autocomplete="current-password">
-                        <button type="button" class="password-toggle" id="password-toggle" aria-label="Toggle password visibility">
-                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
+                <div class="form-body">
+
+                    <div class="field" id="emailField">
+                        <label class="field-label" for="login-email">Email</label>
+                        <input class="field-input" type="email" id="login-email"
+                            placeholder="adjuster@firm.com"
+                            autocomplete="email" spellcheck="false" required>
                     </div>
-                </div>
-                
-                <div class="form-cipher-group">
-                    <label class="form-cipher-checkbox">
-                        <input type="checkbox" id="remember-cipher" name="remember">
-                        <span class="checkmark"></span>
-                        Remember me
-                    </label>
-                </div>
-                
-                <button type="submit" class="cipher-btn cipher-btn--primary cipher-btn--full" id="login-btn">
-                    <span class="btn-text">Drop In</span>
-                    <div class="loading-cipher-state" id="login-loading-state">
-                        <div class="cipher-spinner"></div>
-                        <span>Dropping in...</span>
+
+                    <div class="field" id="passwordField">
+                        <label class="field-label" for="login-password">Password</label>
+                        <div class="pw-wrap">
+                            <input class="field-input" type="password" id="login-password"
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                                style="padding-right:42px;" required>
+                            <button class="pw-toggle password-toggle" type="button"
+                                id="password-toggle"
+                                aria-label="Toggle password visibility">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                </button>
-                
-                <button type="button" class="cipher-link forgot-password" id="forgot-password-link">
-                    Forgot your cipher?
+
+                    <div class="remember-row">
+                        <div class="remember-check" id="rememberCheck"
+                             onclick="toggleRemember()">
+                            <div class="remember-check-inner"></div>
+                        </div>
+                        <input type="checkbox" id="remember-cipher"
+                               name="remember" style="display:none">
+                        <div class="remember-label"
+                             onclick="toggleRemember()">Remember me</div>
+                    </div>
+
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn-primary" id="login-btn">
+                        <span class="btn-text">Drop In →</span>
+                        <div class="loading-cipher-state" id="login-loading-state">
+                            <div class="cipher-spinner"></div>
+                            <span>Dropping in...</span>
+                        </div>
+                    </button>
+
+                    <button type="button" class="forgot-link"
+                            id="forgot-password-link">
+                        Forgot your cipher?
+                    </button>
+
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <div class="divider-text">or</div>
+                        <div class="divider-line"></div>
+                    </div>
+
+                    <button type="button" class="btn-demo" id="demo-cipher-btn">
+                        <span>Try Demo Mode</span>
+                        <span class="demo-arrow">→</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ── SIGN UP PANEL ── -->
+        <div class="form-panel" id="panelSignup">
+            <form id="signup-cypher-form">
+                <div class="form-body">
+
+                    <div class="form-row">
+                        <div class="field">
+                            <label class="field-label" for="signup-name">Name</label>
+                            <input class="field-input" type="text" id="signup-name"
+                                placeholder="Your name" autocomplete="name" required>
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="signup-company">Company</label>
+                            <input class="field-input" type="text" id="signup-company"
+                                placeholder="Firm name"
+                                autocomplete="organization">
+                        </div>
+                    </div>
+
+                    <div class="field" style="margin-top:16px;">
+                        <label class="field-label" for="signup-email">Email</label>
+                        <input class="field-input" type="email" id="signup-email"
+                            placeholder="adjuster@firm.com"
+                            autocomplete="email" spellcheck="false" required>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="signup-password">Password</label>
+                        <div class="pw-wrap">
+                            <input class="field-input" type="password" id="signup-password"
+                                placeholder="Create password"
+                                autocomplete="new-password"
+                                style="padding-right:42px;" required>
+                            <button class="pw-toggle password-toggle" type="button"
+                                id="signup-password-toggle"
+                                aria-label="Toggle password visibility">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="terms-label">
+                            <input type="checkbox" id="agree-terms" required>
+                            <span>I agree to the
+                                <a href="#" id="terms-link" class="cipher-link">Terms of Service</a>
+                                and
+                                <a href="#" id="privacy-link" class="cipher-link">Privacy Policy</a>
+                            </span>
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn-primary" id="signup-btn">
+                        <span class="btn-text">Create Account →</span>
+                        <div class="loading-cipher-state" id="signup-loading-state">
+                            <div class="cipher-spinner"></div>
+                            <span>Creating account...</span>
+                        </div>
+                    </button>
+
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <div class="divider-text">or</div>
+                        <div class="divider-line"></div>
+                    </div>
+
+                    <button type="button" class="btn-demo"
+                            onclick="handleDemoMode()">
+                        <span>Try Demo Mode</span>
+                        <span class="demo-arrow">→</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- CARD FOOTER -->
+        <div class="card-footer">
+            <div class="footer-dot"></div>
+            <div class="footer-text">Secure · Encrypted · Operator-grade</div>
+        </div>
+
+    </div>
+
+    <!-- VERSION -->
+    <div class="version-strip">
+        <div class="version-text">v2.8</div>
+        <div class="version-text">ClaimCipher.io</div>
+    </div>
+</div>
+
+
+<!-- =====================================================
+     PART 3 — MODALS (production HTML, preserved exactly)
+     ===================================================== -->
+
+<!-- Password Reset Modal -->
+<div id="reset-password-modal" class="cipher-modal" style="display: none;">
+    <div class="cipher-modal-content">
+        <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div>
+        <div class="cipher-modal-header">
+            <h2>Password Reset</h2>
+            <button class="cipher-modal-close" type="button"
+                    aria-label="Close reset modal"
+                    onclick="closeResetModal()">&times;</button>
+        </div>
+        <div class="cipher-modal-body">
+            <form id="reset-request-form">
+                <div class="form-cipher-group">
+                    <label class="form-cipher-label" for="reset-email">Email</label>
+                    <input type="email" autocomplete="email" spellcheck="false"
+                           class="form-cipher-input" id="reset-email" required>
+                </div>
+                <button type="submit"
+                        class="cipher-btn cipher-btn--primary cipher-btn--full"
+                        id="reset-submit-btn">
+                    Send Reset Link
                 </button>
             </form>
-            
-            <!-- Signup Cypher Form (hidden by default) -->
-            <form id="signup-cypher-form" style="display: none;">
+            <div id="reset-message" class="reset-message" aria-live="polite"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Signup Payment Modal -->
+<div id="signup-payment-modal" class="cipher-modal" style="display: none;">
+    <div class="cipher-modal-content">
+        <div class="cipher-modal-header">
+            <h2>Complete Your Sign Up</h2>
+            <button class="cipher-modal-close"
+                    onclick="closeSignupModal()">&times;</button>
+        </div>
+        <div class="cipher-modal-body">
+            <form id="payment-form">
                 <div class="form-cipher-row">
                     <div class="form-cipher-group">
-                        <label class="form-cipher-label" for="signup-name">Name</label>
-                        <input type="text" class="form-cipher-input" id="signup-name" required>
+                        <label class="form-cipher-label">Full Name *</label>
+                        <input type="text" id="payment-name"
+                               class="form-cipher-input" required>
                     </div>
                     <div class="form-cipher-group">
-                        <label class="form-cipher-label" for="signup-company">Company</label>
-                        <input type="text" class="form-cipher-input" id="signup-company">
+                        <label class="form-cipher-label">Phone Number *</label>
+                        <input type="tel" id="payment-phone"
+                               class="form-cipher-input" required>
                     </div>
                 </div>
-                
+
                 <div class="form-cipher-group">
-                    <label class="form-cipher-label" for="signup-email">Email</label>
-                    <input type="email" autocomplete="email" spellcheck="false" class="form-cipher-input" id="signup-email" required>
+                    <label class="form-cipher-label">Email Address *</label>
+                    <input type="email" id="payment-email"
+                           class="form-cipher-input" required>
                 </div>
-                
-                <div class="form-cipher-group">
-                    <label class="form-cipher-label" for="signup-password">Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" autocomplete="current-password" class="form-cipher-input" id="signup-password" required>
-                        <button type="button" class="password-toggle" id="signup-password-toggle" aria-label="Toggle password visibility">
-                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
+
+                <div class="payment-cipher-options">
+                    <h3>Payment Method</h3>
+                    <div class="payment-cipher-tabs">
+                        <button type="button" class="payment-tab active"
+                                data-method="card">Credit/Debit Card</button>
+                        <button type="button" class="payment-tab"
+                                data-method="paypal">PayPal</button>
+                    </div>
+
+                    <div id="card-payment" class="payment-cipher-method active">
+                        <div class="form-cipher-row">
+                            <div class="form-cipher-group">
+                                <label class="form-cipher-label">Card Number *</label>
+                                <input type="text" id="card-number"
+                                       class="form-cipher-input"
+                                       placeholder="1234 5678 9012 3456" required>
+                            </div>
+                            <div class="form-cipher-group">
+                                <label class="form-cipher-label">CVV *</label>
+                                <input type="text" id="card-cvv"
+                                       class="form-cipher-input"
+                                       placeholder="123" maxlength="4" required>
+                            </div>
+                        </div>
+                        <div class="form-cipher-row">
+                            <div class="form-cipher-group">
+                                <label class="form-cipher-label">Expiry Date *</label>
+                                <input type="text" id="card-expiry"
+                                       class="form-cipher-input"
+                                       placeholder="MM/YY" maxlength="5" required>
+                            </div>
+                            <div class="form-cipher-group">
+                                <label class="form-cipher-label">Cardholder Name *</label>
+                                <input type="text" id="card-name"
+                                       class="form-cipher-input" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="paypal-payment" class="payment-cipher-method">
+                        <div class="paypal-cipher-info">
+                            <div class="paypal-icon">🅿️</div>
+                            <p>You'll be redirected to PayPal to complete your payment securely.</p>
+                            <div class="paypal-benefits">
+                                <span>✓ Secure Payment</span>
+                                <span>✓ Buyer Protection</span>
+                                <span>✓ No Card Details Required</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="form-cipher-group">
-                    <label class="form-cipher-checkbox">
-                        <input type="checkbox" id="agree-terms" required>
-                        <span class="checkmark"></span>
-                        I agree to the <a href="#" class="cipher-link" id="terms-link">Terms of Service</a> and <a href="#" class="cipher-link" id="privacy-link">Privacy Policy</a>
-                    </label>
-                </div>
-                
-                <button type="submit" class="cipher-btn cipher-btn--primary cipher-btn--full" id="signup-btn">
-                    <span class="btn-text">🎵 Join the Crew</span>
-                    <div class="loading-cipher-state" id="signup-loading-state">
-                        <div class="cipher-spinner"></div>
-                        <span>Creating account...</span>
+
+                <div class="pricing-cipher-summary">
+                    <div class="price-row">
+                        <span>Claim Cipher Pro (Monthly)</span>
+                        <span class="price">$47/month</span>
                     </div>
+                    <div class="price-row total">
+                        <span>Total Today</span>
+                        <span class="price">$47.00</span>
+                    </div>
+                    <div class="trial-info">🎯 Includes 7-day free trial</div>
+                </div>
+
+                <button type="submit"
+                        class="cipher-btn cipher-btn--primary cipher-btn--full">
+                    Start My Trial ($0 Today)
                 </button>
             </form>
-            
-            <div class="cipher-divider">
-                <span>or</span>
-            </div>
-            
-            <!-- Demo Cypher Section -->
-            <div class="demo-cipher-section">
-                <div class="demo-cipher-title">Try Demo Mode</div>
-                <div class="demo-cipher-description">
-                    Preview Claim Cipher with sample data
-                </div>
-                <button id="demo-cipher-btn" class="cipher-btn cipher-btn--secondary cipher-btn--full">
-                    🎤 Start Demo
-                </button>
-            </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Password Reset Modal -->
-    <div id="reset-password-modal" class="cipher-modal" style="display: none;">
-        <div class="cipher-modal-content">
-            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-            <div class="cipher-modal-header">
-                <h2>Password Reset</h2>
-                <button class="cipher-modal-close" type="button" aria-label="Close reset modal" onclick="closeResetModal()">&times;</button>
-            </div>
-            <div class="cipher-modal-body">
-                <form id="reset-request-form">
-                    <div class="form-cipher-group">
-                        <label class="form-cipher-label" for="reset-email">Email</label>
-                        <input type="email" autocomplete="email" spellcheck="false" class="form-cipher-input" id="reset-email" required>
-                    </div>
-                    <button type="submit" class="cipher-btn cipher-btn--primary cipher-btn--full" id="reset-submit-btn">
-                        Send Reset Link
-                    </button>
-                </form>
-                <div id="reset-message" class="reset-message" aria-live="polite"></div>
-            </div>
         </div>
     </div>
+</div>
 
-    <!-- Signup Payment Modal -->
-    <div id="signup-payment-modal" class="cipher-modal" style="display: none;">
-        <div class="cipher-modal-content">
-            <div class="cipher-modal-header">
-                <h2>🎤 Complete Your Sign Up</h2>
-                <button class="cipher-modal-close" onclick="closeSignupModal()">&times;</button>
-            </div>
-            <div class="cipher-modal-body">
-                <form id="payment-form">
-                    <div class="form-cipher-row">
-                        <div class="form-cipher-group">
-                            <label class="form-cipher-label">Full Name *</label>
-                            <input type="text" id="payment-name" class="form-cipher-input" required>
-                        </div>
-                        <div class="form-cipher-group">
-                            <label class="form-cipher-label">Phone Number *</label>
-                            <input type="tel" id="payment-phone" class="form-cipher-input" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-cipher-group">
-                        <label class="form-cipher-label">Email Address *</label>
-                        <input type="email" id="payment-email" class="form-cipher-input" required>
-                    </div>
-                    
-                    <div class="payment-cipher-options">
-                        <h3>💳 Payment Method</h3>
-                        <div class="payment-cipher-tabs">
-                            <button type="button" class="payment-tab active" data-method="card">Credit/Debit Card</button>
-                            <button type="button" class="payment-tab" data-method="paypal">PayPal</button>
-                        </div>
-                        
-                        <div id="card-payment" class="payment-cipher-method active">
-                            <div class="form-cipher-row">
-                                <div class="form-cipher-group">
-                                    <label class="form-cipher-label">Card Number *</label>
-                                    <input type="text" id="card-number" class="form-cipher-input" placeholder="1234 5678 9012 3456" required>
-                                </div>
-                                <div class="form-cipher-group">
-                                    <label class="form-cipher-label">CVV *</label>
-                                    <input type="text" id="card-cvv" class="form-cipher-input" placeholder="123" maxlength="4" required>
-                                </div>
-                            </div>
-                            <div class="form-cipher-row">
-                                <div class="form-cipher-group">
-                                    <label class="form-cipher-label">Expiry Date *</label>
-                                    <input type="text" id="card-expiry" class="form-cipher-input" placeholder="MM/YY" maxlength="5" required>
-                                </div>
-                                <div class="form-cipher-group">
-                                    <label class="form-cipher-label">Cardholder Name *</label>
-                                    <input type="text" id="card-name" class="form-cipher-input" required>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="paypal-payment" class="payment-cipher-method">
-                            <div class="paypal-cipher-info">
-                                <div class="paypal-icon">🅿️</div>
-                                <p>You'll be redirected to PayPal to complete your payment securely.</p>
-                                <div class="paypal-benefits">
-                                    <span>✓ Secure Payment</span>
-                                    <span>✓ Buyer Protection</span>
-                                    <span>✓ No Card Details Required</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-cipher-summary">
-                        <div class="price-row">
-                            <span>Claim Cipher Pro (Monthly)</span>
-                            <span class="price">$47/month</span>
-                        </div>
-                        <div class="price-row total">
-                            <span>Total Today</span>
-                            <span class="price">$47.00</span>
-                        </div>
-                        <div class="trial-info">🎯 Includes 7-day free trial</div>
-                    </div>
-                    
-                    <button type="submit" class="cipher-btn cipher-btn--primary cipher-btn--full">
-                        🎤 Start My Trial ($0 Today)
-                    </button>
-                </form>
-            </div>
+<!-- Demo Timer -->
+<div id="demo-timer" class="demo-cipher-timer" style="display: none;">
+    <div class="timer-content">
+        <span class="timer-icon">⏰</span>
+        <span class="timer-text">Demo Time Remaining: </span>
+        <span class="timer-countdown" id="demo-countdown">6d 23h 59m 45s</span>
+        <button class="timer-upgrade-btn"
+                onclick="showUpgradeModal()">Upgrade Now</button>
+    </div>
+</div>
+
+<!-- Terms of Service Modal -->
+<div id="terms-modal" class="legal-modal" style="display: none;">
+    <div class="legal-modal-content">
+        <div class="legal-modal-header">
+            <h2>Terms of Service</h2>
+            <button class="legal-modal-close"
+                    onclick="closeLegalModal('terms-modal')">&times;</button>
+        </div>
+        <div class="legal-modal-body">
+            <p><strong>Effective Date:</strong> January 1, 2025</p>
+            <h3>1. Acceptance of Terms</h3>
+            <p>By accessing or using Claim Cipher, you agree to be bound by these Terms of Service. If you do not agree, please do not use the service.</p>
+            <h3>2. Service Description</h3>
+            <p>Claim Cipher provides insurance appraisal workflow tools including route optimization, mileage tracking, and scheduling features for professional appraisers.</p>
+            <h3>3. User Responsibilities</h3>
+            <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.</p>
+            <h3>4. Acceptable Use</h3>
+            <p>You agree to use the service only for lawful purposes and in accordance with these terms. You may not use the service to transmit harmful or illegal content.</p>
+            <h3>5. Intellectual Property</h3>
+            <p>All content and functionality of Claim Cipher is owned by Studio Cipher and is protected by copyright and other intellectual property laws.</p>
+            <h3>6. Limitation of Liability</h3>
+            <p>Claim Cipher is provided "as is" without warranties. We are not liable for any indirect, incidental, or consequential damages arising from your use of the service.</p>
+            <h3>7. Changes to Terms</h3>
+            <p>We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of modified terms.</p>
+            <h3>8. Contact</h3>
+            <p>For questions about these terms, please contact support@claimcipher.com</p>
         </div>
     </div>
+</div>
 
-    <!-- Demo Timer (appears when in demo mode) -->
-    <div id="demo-timer" class="demo-cipher-timer" style="display: none;">
-        <div class="timer-content">
-            <span class="timer-icon">⏰</span>
-            <span class="timer-text">Demo Time Remaining: </span>
-            <span class="timer-countdown" id="demo-countdown">6d 23h 59m 45s</span>
-            <button class="timer-upgrade-btn" onclick="showUpgradeModal()">Upgrade Now</button>
+<!-- Privacy Policy Modal -->
+<div id="privacy-modal" class="legal-modal" style="display: none;">
+    <div class="legal-modal-content">
+        <div class="legal-modal-header">
+            <h2>Privacy Policy</h2>
+            <button class="legal-modal-close"
+                    onclick="closeLegalModal('privacy-modal')">&times;</button>
+        </div>
+        <div class="legal-modal-body">
+            <p><strong>Effective Date:</strong> January 1, 2025</p>
+            <h3>1. Information We Collect</h3>
+            <p>We collect information you provide directly, such as your name, email, and company information when you create an account.</p>
+            <h3>2. How We Use Your Information</h3>
+            <p>We use your information to provide and improve our services, communicate with you, and ensure the security of your account.</p>
+            <h3>3. Data Storage</h3>
+            <p>Your data is stored securely using industry-standard encryption. We use Supabase for authentication and data management.</p>
+            <h3>4. Information Sharing</h3>
+            <p>We do not sell your personal information. We may share data with service providers who assist in operating our service, subject to confidentiality agreements.</p>
+            <h3>5. Your Rights</h3>
+            <p>You have the right to access, correct, or delete your personal information. Contact us to exercise these rights.</p>
+            <h3>6. Cookies</h3>
+            <p>We use cookies and similar technologies to maintain your session and improve user experience.</p>
+            <h3>7. Security</h3>
+            <p>We implement appropriate security measures to protect your information against unauthorized access or disclosure.</p>
+            <h3>8. Changes to This Policy</h3>
+            <p>We may update this policy periodically. We will notify you of significant changes via email or service notification.</p>
+            <h3>9. Contact</h3>
+            <p>For privacy inquiries, please contact privacy@claimcipher.com</p>
         </div>
     </div>
+</div>
 
-    <!-- Terms of Service Modal -->
-    <div id="terms-modal" class="legal-modal" style="display: none;">
-        <div class="legal-modal-content">
-            <div class="legal-modal-header">
-                <h2>Terms of Service</h2>
-                <button class="legal-modal-close" onclick="closeLegalModal('terms-modal')">&times;</button>
-            </div>
-            <div class="legal-modal-body">
-                <p><strong>Effective Date:</strong> January 1, 2025</p>
-                <h3>1. Acceptance of Terms</h3>
-                <p>By accessing or using Claim Cipher, you agree to be bound by these Terms of Service. If you do not agree, please do not use the service.</p>
-                <h3>2. Service Description</h3>
-                <p>Claim Cipher provides insurance appraisal workflow tools including route optimization, mileage tracking, and scheduling features for professional appraisers.</p>
-                <h3>3. User Responsibilities</h3>
-                <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.</p>
-                <h3>4. Acceptable Use</h3>
-                <p>You agree to use the service only for lawful purposes and in accordance with these terms. You may not use the service to transmit harmful or illegal content.</p>
-                <h3>5. Intellectual Property</h3>
-                <p>All content and functionality of Claim Cipher is owned by Studio Cipher and is protected by copyright and other intellectual property laws.</p>
-                <h3>6. Limitation of Liability</h3>
-                <p>Claim Cipher is provided "as is" without warranties. We are not liable for any indirect, incidental, or consequential damages arising from your use of the service.</p>
-                <h3>7. Changes to Terms</h3>
-                <p>We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of modified terms.</p>
-                <h3>8. Contact</h3>
-                <p>For questions about these terms, please contact support@claimcipher.com</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Privacy Policy Modal -->
-    <div id="privacy-modal" class="legal-modal" style="display: none;">
-        <div class="legal-modal-content">
-            <div class="legal-modal-header">
-                <h2>Privacy Policy</h2>
-                <button class="legal-modal-close" onclick="closeLegalModal('privacy-modal')">&times;</button>
-            </div>
-            <div class="legal-modal-body">
-                <p><strong>Effective Date:</strong> January 1, 2025</p>
-                <h3>1. Information We Collect</h3>
-                <p>We collect information you provide directly, such as your name, email, and company information when you create an account.</p>
-                <h3>2. How We Use Your Information</h3>
-                <p>We use your information to provide and improve our services, communicate with you, and ensure the security of your account.</p>
-                <h3>3. Data Storage</h3>
-                <p>Your data is stored securely using industry-standard encryption. We use Supabase for authentication and data management.</p>
-                <h3>4. Information Sharing</h3>
-                <p>We do not sell your personal information. We may share data with service providers who assist in operating our service, subject to confidentiality agreements.</p>
-                <h3>5. Your Rights</h3>
-                <p>You have the right to access, correct, or delete your personal information. Contact us to exercise these rights.</p>
-                <h3>6. Cookies</h3>
-                <p>We use cookies and similar technologies to maintain your session and improve user experience.</p>
-                <h3>7. Security</h3>
-                <p>We implement appropriate security measures to protect your information against unauthorized access or disclosure.</p>
-                <h3>8. Changes to This Policy</h3>
-                <p>We may update this policy periodically. We will notify you of significant changes via email or service notification.</p>
-                <h3>9. Contact</h3>
-                <p>For privacy inquiries, please contact privacy@claimcipher.com</p>
-            </div>
-        </div>
-    </div>
+<!-- =====================================================
+     PART 4 — SCRIPTS
+     ===================================================== -->
 
-    <!-- Supabase JS v2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- New UI functions (tab switch, remember-me, demo delegate) -->
+<script>
+function switchTab(tab) {
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+    document.getElementById('panelLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('panelSignup').classList.toggle('active', tab === 'signup');
+}
 
-    <!-- Supabase Configuration and Auth -->
-    <script src="scripts/supabase-config.js"></script>
-    <script src="scripts/supabase-auth.js"></script>
+function toggleRemember() {
+    var el = document.getElementById('rememberCheck');
+    el.classList.toggle('checked');
+    var cb = document.getElementById('remember-cipher');
+    if (cb) cb.checked = el.classList.contains('checked');
+}
 
-    <!-- Legacy login script (kept for form toggle/UI functionality) -->
-    <script src="scripts/login-cypher.js"></script>
+function handleDemoMode() {
+    var btn = document.getElementById('demo-cipher-btn');
+    if (btn) btn.click();
+}
+</script>
 
-    <script>
-    /**
-     * Supabase Auth Integration for Login Page
-     * Overrides legacy login/signup handlers with Supabase Auth
-     */
-    document.addEventListener('DOMContentLoaded', async function() {
-        console.log('Supabase Auth: Initializing login page');
+<!-- Supabase JS v2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        document.body.style.visibility = 'visible';
+<!-- Supabase Configuration and Auth -->
+<script src="scripts/supabase-config.js"></script>
+<script src="scripts/supabase-auth.js"></script>
 
-        // Get form elements
-        const loginForm = document.getElementById('login-cypher-form');
-        const signupForm = document.getElementById('signup-cypher-form');
-        const errorDisplay = document.getElementById('error-cypher');
-        const demoCipherBtn = document.getElementById('demo-cipher-btn');
-        const resetForm = document.getElementById('reset-request-form');
-        const resetEmail = document.getElementById('reset-email');
-        const resetMessage = document.getElementById('reset-message');
+<!-- Legacy login script (kept for form toggle/UI functionality) -->
+<script src="scripts/login-cypher.js"></script>
 
-        // Helper to show error/success messages
-        function showMessage(message, isError = true) {
-            if (errorDisplay) {
-                errorDisplay.textContent = message;
-                errorDisplay.style.display = 'block';
-                errorDisplay.style.color = isError ? '#ff4444' : '#44ff44';
+<script>
+/**
+ * Supabase Auth Integration for Login Page
+ * Overrides legacy login/signup handlers with Supabase Auth
+ */
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Supabase Auth: Initializing login page');
 
-                if (!isError) {
-                    setTimeout(() => {
-                        errorDisplay.style.display = 'none';
-                    }, 5000);
-                }
+    document.body.style.visibility = 'visible';
+
+    // Get form elements
+    const loginForm = document.getElementById('login-cypher-form');
+    const signupForm = document.getElementById('signup-cypher-form');
+    const errorDisplay = document.getElementById('error-cypher');
+    const demoCipherBtn = document.getElementById('demo-cipher-btn');
+    const resetForm = document.getElementById('reset-request-form');
+    const resetEmail = document.getElementById('reset-email');
+    const resetMessage = document.getElementById('reset-message');
+
+    // Helper to show error/success messages
+    function showMessage(message, isError = true) {
+        if (errorDisplay) {
+            errorDisplay.textContent = message;
+            errorDisplay.style.display = 'block';
+            errorDisplay.style.color = isError ? '#ff4444' : '#44ff44';
+
+            if (!isError) {
+                setTimeout(() => {
+                    errorDisplay.style.display = 'none';
+                }, 5000);
             }
         }
+    }
 
-        function clearMessage() {
-            if (errorDisplay) {
-                errorDisplay.style.display = 'none';
-            }
+    function clearMessage() {
+        if (errorDisplay) {
+            errorDisplay.style.display = 'none';
         }
+    }
 
-        // Override Login Form Handler
-        if (loginForm) {
-            // Remove existing submit handlers by cloning the form
-            const newLoginForm = loginForm.cloneNode(true);
-            loginForm.parentNode.replaceChild(newLoginForm, loginForm);
+    // Override Login Form Handler
+    if (loginForm) {
+        // Remove existing submit handlers by cloning the form
+        const newLoginForm = loginForm.cloneNode(true);
+        loginForm.parentNode.replaceChild(newLoginForm, loginForm);
 
-            newLoginForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                clearMessage();
+        newLoginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            clearMessage();
 
-                const email = document.getElementById('login-email')?.value?.trim();
-                const password = document.getElementById('login-password')?.value;
-                const loginBtn = document.getElementById('login-btn');
+            const email = document.getElementById('login-email')?.value?.trim();
+            const password = document.getElementById('login-password')?.value;
+            const loginBtn = document.getElementById('login-btn');
 
-                if (!email || !password) {
-                    showMessage('Please enter both email and password');
-                    return;
-                }
+            if (!email || !password) {
+                showMessage('Please enter both email and password');
+                return;
+            }
 
-                // Show loading state
-                window.SupabaseAuth.setButtonLoading(loginBtn, true, 'Signing in...');
+            // Show loading state
+            window.SupabaseAuth.setButtonLoading(loginBtn, true, 'Signing in...');
 
-                const result = await window.SupabaseAuth.signIn(email, password);
+            const result = await window.SupabaseAuth.signIn(email, password);
 
-                if (result.success) {
-                    showMessage('Login successful! Redirecting...', false);
+            if (result.success) {
+                showMessage('Login successful! Redirecting...', false);
+                setTimeout(() => {
+                    window.location.href = 'command-center.html';
+                }, 1000);
+            } else {
+                window.SupabaseAuth.setButtonLoading(loginBtn, false);
+                showMessage(result.error || 'Invalid credentials. Please try again.');
+            }
+        });
+    }
+
+    // Override Signup Form Handler
+    if (signupForm) {
+        // Remove existing submit handlers by cloning the form
+        const newSignupForm = signupForm.cloneNode(true);
+        signupForm.parentNode.replaceChild(newSignupForm, signupForm);
+
+        newSignupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            clearMessage();
+
+            const name = document.getElementById('signup-name')?.value?.trim();
+            const company = document.getElementById('signup-company')?.value?.trim();
+            const email = document.getElementById('signup-email')?.value?.trim();
+            const password = document.getElementById('signup-password')?.value;
+            const agreeTerms = document.getElementById('agree-terms')?.checked;
+            const signupBtn = document.getElementById('signup-btn');
+
+            // Validation
+            if (!name) {
+                showMessage('Please enter your name');
+                return;
+            }
+
+            if (!email) {
+                showMessage('Please enter your email address');
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showMessage('Password must be at least 6 characters long');
+                return;
+            }
+
+            if (!agreeTerms) {
+                showMessage('Please agree to the Terms of Service and Privacy Policy');
+                return;
+            }
+
+            // Show loading state
+            window.SupabaseAuth.setButtonLoading(signupBtn, true, 'Creating account...');
+
+            const result = await window.SupabaseAuth.signUp(email, password, {
+                full_name: name,
+                company: company || ''
+            });
+
+            if (result.success) {
+                if (result.requiresConfirmation) {
+                    window.SupabaseAuth.setButtonLoading(signupBtn, false);
+                    showMessage('Please check your email to confirm your account.', false);
+                } else {
+                    showMessage('Account created! Redirecting...', false);
                     setTimeout(() => {
                         window.location.href = 'command-center.html';
                     }, 1000);
-                } else {
-                    window.SupabaseAuth.setButtonLoading(loginBtn, false);
-                    showMessage(result.error || 'Invalid credentials. Please try again.');
                 }
-            });
-        }
+            } else {
+                window.SupabaseAuth.setButtonLoading(signupBtn, false);
+                showMessage(result.error || 'Failed to create account. Please try again.');
+            }
+        });
+    }
 
-        // Override Signup Form Handler
-        if (signupForm) {
-            // Remove existing submit handlers by cloning the form
-            const newSignupForm = signupForm.cloneNode(true);
-            signupForm.parentNode.replaceChild(newSignupForm, signupForm);
+    // Demo mode button - session-based demo with sample data
+    if (demoCipherBtn) {
+        demoCipherBtn.addEventListener('click', function(e) {
+            e.preventDefault();
 
-            newSignupForm.addEventListener('submit', async function(e) {
+            // Enable demo mode via sessionStorage
+            sessionStorage.setItem('demo_mode', 'true');
+
+            // Ensure clean demo state - no auth, no persisted routes
+            sessionStorage.removeItem('claimCipherAuth');
+            localStorage.removeItem('cipher_last_route');
+            localStorage.removeItem('cipher_routes_by_day');
+
+            console.log('🎭 Demo mode activated - redirecting to dashboard');
+
+            // Immediate redirect - no setTimeout, no delays
+            window.location.replace('command-center.html');
+        });
+    }
+
+    // Enable all inputs (fix from legacy code)
+    const inputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
+    inputs.forEach(input => {
+        input.removeAttribute('disabled');
+        input.removeAttribute('readonly');
+        input.style.pointerEvents = 'auto';
+        input.style.opacity = '1';
+    });
+
+    // Enable all buttons
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.removeAttribute('disabled');
+        button.style.pointerEvents = 'auto';
+        button.style.opacity = '1';
+    });
+
+    console.log('Supabase Auth: Login page ready');
+        const eyeSvg = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        `;
+        const eyeOffSvg = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="3" y1="3" x2="21" y2="21"></line>
+            </svg>
+        `;
+
+        document.querySelectorAll('.password-toggle').forEach(function(toggle) {
+            const input = toggle.parentElement.querySelector('input');
+            if (!input) return;
+            toggle.innerHTML = eyeSvg;
+            toggle.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
-                clearMessage();
-
-                const name = document.getElementById('signup-name')?.value?.trim();
-                const company = document.getElementById('signup-company')?.value?.trim();
-                const email = document.getElementById('signup-email')?.value?.trim();
-                const password = document.getElementById('signup-password')?.value;
-                const agreeTerms = document.getElementById('agree-terms')?.checked;
-                const signupBtn = document.getElementById('signup-btn');
-
-                // Validation
-                if (!name) {
-                    showMessage('Please enter your name');
-                    return;
-                }
-
-                if (!email) {
-                    showMessage('Please enter your email address');
-                    return;
-                }
-
-                if (!password || password.length < 6) {
-                    showMessage('Password must be at least 6 characters long');
-                    return;
-                }
-
-                if (!agreeTerms) {
-                    showMessage('Please agree to the Terms of Service and Privacy Policy');
-                    return;
-                }
-
-                // Show loading state
-                window.SupabaseAuth.setButtonLoading(signupBtn, true, 'Creating account...');
-
-                const result = await window.SupabaseAuth.signUp(email, password, {
-                    full_name: name,
-                    company: company || ''
-                });
-
-                if (result.success) {
-                    if (result.requiresConfirmation) {
-                        window.SupabaseAuth.setButtonLoading(signupBtn, false);
-                        showMessage('Please check your email to confirm your account.', false);
-                    } else {
-                        showMessage('Account created! Redirecting...', false);
-                        setTimeout(() => {
-                            window.location.href = 'command-center.html';
-                        }, 1000);
-                    }
-                } else {
-                    window.SupabaseAuth.setButtonLoading(signupBtn, false);
-                    showMessage(result.error || 'Failed to create account. Please try again.');
-                }
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                toggle.innerHTML = isPassword ? eyeOffSvg : eyeSvg;
             });
-        }
-
-        // Demo mode button - session-based demo with sample data
-        if (demoCipherBtn) {
-            demoCipherBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Enable demo mode via sessionStorage
-                sessionStorage.setItem('demo_mode', 'true');
-
-                // Ensure clean demo state - no auth, no persisted routes
-                sessionStorage.removeItem('claimCipherAuth');
-                localStorage.removeItem('cipher_last_route');
-                localStorage.removeItem('cipher_routes_by_day');
-
-                console.log('🎭 Demo mode activated - redirecting to dashboard');
-
-                // Immediate redirect - no setTimeout, no delays
-                window.location.replace('command-center.html');
-            });
-        }
-
-        // Enable all inputs (fix from legacy code)
-        const inputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
-        inputs.forEach(input => {
-            input.removeAttribute('disabled');
-            input.removeAttribute('readonly');
-            input.style.pointerEvents = 'auto';
-            input.style.opacity = '1';
         });
 
-        // Enable all buttons
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.removeAttribute('disabled');
-            button.style.pointerEvents = 'auto';
-            button.style.opacity = '1';
-        });
+    function setResetMessage(message, isError = false) {
+        if (!resetMessage) return;
+        resetMessage.textContent = message;
+        resetMessage.classList.toggle('is-error', isError);
+        resetMessage.classList.toggle('is-success', !isError);
+    }
 
-        console.log('Supabase Auth: Login page ready');
-            const eyeSvg = `
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            `;
-            const eyeOffSvg = `
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <line x1="3" y1="3" x2="21" y2="21"></line>
-                </svg>
-            `;
+    if (resetForm) {
+        resetForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-            document.querySelectorAll('.password-toggle').forEach(function(toggle) {
-                const input = toggle.parentElement.querySelector('input');
-                if (!input) return;
-                toggle.innerHTML = eyeSvg;
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const isPassword = input.type === 'password';
-                    input.type = isPassword ? 'text' : 'password';
-                    toggle.innerHTML = isPassword ? eyeOffSvg : eyeSvg;
-                });
-            });
+            const email = resetEmail?.value?.trim();
+            if (!email) {
+                setResetMessage('Please enter your email address.', true);
+                return;
+            }
 
-        function setResetMessage(message, isError = false) {
-            if (!resetMessage) return;
-            resetMessage.textContent = message;
-            resetMessage.classList.toggle('is-error', isError);
-            resetMessage.classList.toggle('is-success', !isError);
-        }
-
-        if (resetForm) {
-            resetForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                const email = resetEmail?.value?.trim();
-                if (!email) {
-                    setResetMessage('Please enter your email address.', true);
-                    return;
-                }
-
-                const client = window.SupabaseAuth?.init?.();
-                if (!client) {
-                    setResetMessage('If an account exists, a reset link has been sent.', false);
-                    return;
-                }
-
-                const redirectTo = `${window.location.origin}/reset-password.html`;
-                const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
-
-                if (error) {
-                    console.warn('Password reset request error:', error.message);
-                }
-
+            const client = window.SupabaseAuth?.init?.();
+            if (!client) {
                 setResetMessage('If an account exists, a reset link has been sent.', false);
-            });
-        }
+                return;
+            }
 
-        // Legal Modal Handlers
-        const termsLink = document.getElementById('terms-link');
-        const privacyLink = document.getElementById('privacy-link');
+            const redirectTo = `${window.location.origin}/reset-password.html`;
+            const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
 
-        if (termsLink) {
-            termsLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                openLegalModal('terms-modal');
-            });
-        }
+            if (error) {
+                console.warn('Password reset request error:', error.message);
+            }
 
-        if (privacyLink) {
-            privacyLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                openLegalModal('privacy-modal');
-            });
-        }
-
-    });
-
-    // Legal Modal Functions
-    function openLegalModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+            setResetMessage('If an account exists, a reset link has been sent.', false);
+        });
     }
 
-    function closeLegalModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }
+    // Legal Modal Handlers
+    const termsLink = document.getElementById('terms-link');
+    const privacyLink = document.getElementById('privacy-link');
+
+    if (termsLink) {
+        termsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openLegalModal('terms-modal');
+        });
     }
 
-    // Reset Modal Functions
-    function openResetModal() {
-        const modal = document.getElementById('reset-password-modal');
-        const resetForm = document.getElementById('reset-request-form');
-        const resetMessage = document.getElementById('reset-message');
-
-        if (resetMessage) {
-            resetMessage.textContent = '';
-            resetMessage.classList.remove('is-error', 'is-success');
-        }
-
-        if (resetForm) {
-            resetForm.reset();
-        }
-
-        if (modal) {
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+    if (privacyLink) {
+        privacyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openLegalModal('privacy-modal');
+        });
     }
 
-    function closeResetModal() {
-        const modal = document.getElementById('reset-password-modal');
-        if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }
+});
+
+// Legal Modal Functions
+function openLegalModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeLegalModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+// Reset Modal Functions
+function openResetModal() {
+    const modal = document.getElementById('reset-password-modal');
+    const resetForm = document.getElementById('reset-request-form');
+    const resetMessage = document.getElementById('reset-message');
+
+    if (resetMessage) {
+        resetMessage.textContent = '';
+        resetMessage.classList.remove('is-error', 'is-success');
     }
 
-    // Close legal modal when clicking outside content
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('legal-modal')) {
-            e.target.style.display = 'none';
-            document.body.style.overflow = '';
-        }
-    });
-    </script>
+    if (resetForm) {
+        resetForm.reset();
+    }
+
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeResetModal() {
+    const modal = document.getElementById('reset-password-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+// Close legal modal when clicking outside content
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('legal-modal')) {
+        e.target.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+});
+</script>
+
 </body>
 </html>
-

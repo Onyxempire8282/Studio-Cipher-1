@@ -196,7 +196,7 @@ class SettingsManager {
                 settings: this.settings,
                 routeHistory: JSON.parse(localStorage.getItem('cc_route_history') || '[]'),
                 mileageHistory: JSON.parse(localStorage.getItem('cc_mileage_history') || '[]'),
-                firms: JSON.parse(localStorage.getItem('cc_firms') || '[]'),
+                firms: JSON.parse(localStorage.getItem('cipher_user_firms') || '[]'),
                 exportDate: new Date().toISOString(),
                 version: '1.0'
             };
@@ -262,8 +262,17 @@ class SettingsManager {
 
     clearCache() {
         if (confirm('Clear all cached data? This will not affect saved settings.')) {
-            // Clear non-essential cached data
-            const keysToKeep = [this.settingsKey, 'cipher_authenticated'];
+            // Clear non-essential cached data.
+            // Firm keys are explicitly protected — firms are Supabase-backed and
+            // the cache must survive a local clear so offline fallback still works.
+            const keysToKeep = [
+                this.settingsKey,
+                'cipher_authenticated',
+                'cipher_user_firms',
+                'cipher_last_selected_firm',
+                'demo_cipher_user_firms',
+                'demo_cipher_last_selected_firm',
+            ];
             const allKeys = Object.keys(localStorage);
             
             allKeys.forEach(key => {

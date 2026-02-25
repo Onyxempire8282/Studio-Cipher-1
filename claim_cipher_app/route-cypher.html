@@ -1,945 +1,1598 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Route Cipher - Claim Cipher</title>
-    <!-- Universal System - Base styling -->
-    <link rel="stylesheet" href="styles/universal-system.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+  <title>Route Cipher - Claim Cipher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --plate:      #0e0f11;
+      --steel:      #161a1d;
+      --steel-mid:  #1e2328;
+      --steel-lift: #252b31;
+      --input-bg:   #0a0c0e;
+      --rivet:      #2e353d;
+      --rivet-hi:   #3d464f;
+      --amber:      #e8952a;
+      --amber-dim:  rgba(232,149,42,0.12);
+      --amber-line: rgba(232,149,42,0.35);
+      --white:      #edeae4;
+      --text:       #8f9399;
+      --text-hi:    #b8bdc2;
+      --muted:      #4a5058;
+      --green:      #4caf6e;
+      --green-dim:  rgba(76,175,110,0.12);
+    }
 
-    <!-- Industrial Plate System - Shared visual language -->
-    <link rel="stylesheet" href="styles/industrial-plates.css" />
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-    <!-- Page Layout - Route Cypher specific -->
-    <link rel="stylesheet" href="styles/route-cypher-layout.css" />
+    body {
+      background: var(--plate);
+      color: var(--text-hi);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
 
-    <!-- Professional Calculator Interface -->
-    <link rel="stylesheet" href="styles/professional-calculator.css" />
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
 
-    <!-- Route Cipher Professional Styling -->
-    <link rel="stylesheet" href="styles/route-cipher-professional.css" />
+    /* ── NAV ── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px 0 24px; height: 64px;
+      background: rgba(14,15,17,0.98);
+      border-bottom: 1px solid var(--rivet);
+      box-shadow: 0 1px 0 rgba(232,149,42,0.07);
+      flex-shrink: 0;
+    }
+    .nav-logo {
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--amber); }
+    .nav-tabs { display: flex; gap: 0; height: 100%; }
+    .nav-tab {
+      display: flex; align-items: center; padding: 0 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      border-right: 1px solid var(--rivet);
+      border-left: 1px solid transparent;
+      transition: all 0.2s; text-decoration: none;
+    }
+    .nav-tab:first-child { border-left: 1px solid var(--rivet); }
+    .nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+    .nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
+    .nav-user strong { color: var(--white); display: block; font-size: 12px; }
+    .nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
+    .nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
 
-    <!-- v2.5 Visual Skin — load last to override -->
-    <link rel="stylesheet" href="styles/v25-skin.css" />
-  </head>
-  <body class="route-page" style="visibility: hidden;">
-    <header class="cipher-header">
-      <div class="header-content">
-        <div class="app-brand">
-          <img src="../branding/logo/claimcipher-mark.png" alt="Claim Cipher" class="nav-logo" />
-        </div>
-        <div class="nav-links">
-          <a href="command-center.html">Dashboard</a>
-          <a href="route-cypher.html" class="active">Routes</a>
-          <a href="mileage-cypher.html">Mileage</a>
-          <a href="my-routes.html">My Routes</a>
-          <!-- DISTRO: Hidden features - do not delete -->
-          <!-- <a href="jobs-studio.html">Jobs</a> -->
-          <!-- <a href="total-loss-forms.html">Forms</a> -->
-          <!-- <a href="firms-directory.html">Firms</a> -->
-          <!-- <a href="settings-booth.html">Settings</a> -->
-          <!-- <a href="functionality-test.html">Tests</a> -->
-        </div>
-        <div class="user-section">
-          <div class="user-info">
-            <div class="user-name" id="userName">Professional User</div>
-            <div class="user-role">Claims Specialist</div>
-          </div>
-          <button
-            class="cipher-btn logout-btn"
-            onclick="handleLogout()"
-          >
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            Logout
-          </button>
-        </div>
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background:
+        radial-gradient(ellipse 60% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
+        var(--steel);
+      border-bottom: 1px solid var(--rivet);
+      padding: 24px 40px;
+      position: relative; z-index: 1; flex-shrink: 0;
+    }
+    .page-header-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .page-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.06em; color: var(--white); }
+    .page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .header-badge { display: flex; gap: 3px; }
+    .hbadge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 14px; border: 1px solid var(--rivet); color: var(--muted);
+      background: var(--steel-mid);
+    }
+    .hbadge span { color: var(--amber); }
+
+    /* ── MAIN GRID ── */
+    .main {
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      padding: 32px 40px 100px;
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 3px;
+      align-items: start;
+    }
+
+    /* ── CARD SYSTEM ── */
+    .card {
+      background: var(--steel);
+      border: 1px solid var(--rivet);
+      border-left: 3px solid var(--rivet);
+      position: relative;
+    }
+    .card.accent { border-left-color: var(--amber); }
+    .card::before, .card::after {
+      content: ''; position: absolute;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--rivet-hi); border: 1px solid var(--muted);
+    }
+    .card::before { top: 10px; right: 12px; }
+    .card::after  { bottom: 10px; right: 12px; }
+    .card-header {
+      padding: 14px 20px; border-bottom: 1px solid var(--rivet);
+      background: var(--steel-mid);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+    .card-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+    .card-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+    .card-body { padding: 24px; }
+
+    /* ── LEFT COLUMN ── */
+    .left-col { display: flex; flex-direction: column; gap: 3px; }
+
+    /* ── FIELD ── */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .field-input {
+      background: var(--input-bg);
+      border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
+      padding: 11px 14px; color: var(--white); font-size: 13px;
+      font-family: 'Barlow', sans-serif; outline: none; width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+    }
+    .field-input:focus {
+      border-color: var(--amber);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+    }
+    .field-input::placeholder { color: var(--muted); }
+    .field-hint { font-size: 11px; color: var(--muted); font-style: italic; }
+
+    /* ── STOP ROWS — destination-input maps to stop-row visually ── */
+    .destinations-list { display: flex; flex-direction: column; gap: 3px; counter-reset: stop-counter; }
+
+    .destination-input {
+      display: flex; align-items: stretch;
+      background: var(--steel-mid); border: 1px solid var(--rivet);
+      transition: border-color 0.2s;
+      counter-increment: stop-counter;
+    }
+    .destination-input:hover { border-color: var(--rivet-hi); }
+
+    /* Numbered pill — mirrors v2.5 .stop-num */
+    .destination-input::before {
+      content: counter(stop-counter, decimal-leading-zero);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+      padding: 0 14px; min-width: 44px; text-align: center;
+      background: var(--steel-lift); border-right: 1px solid var(--rivet);
+      align-self: stretch; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .destination-input:first-child::before {
+      color: var(--amber); background: var(--amber-dim); border-right-color: var(--amber-line);
+    }
+
+    .destination-address-input {
+      flex: 1; background: transparent; border: none;
+      padding: 12px 12px; color: var(--white); font-size: 13px;
+      font-family: 'Barlow', sans-serif; outline: none;
+    }
+    .destination-address-input::placeholder { color: var(--muted); }
+
+    .remove-btn {
+      width: 36px !important; min-height: 36px !important;
+      background: transparent !important; border: none !important;
+      border-left: 1px solid var(--rivet) !important;
+      color: var(--muted) !important; cursor: pointer; font-size: 14px !important;
+      display: grid !important; place-items: center; flex-shrink: 0;
+      transition: all 0.2s; align-self: stretch;
+      font-family: initial !important; letter-spacing: 0 !important;
+      text-transform: none !important; padding: 0 !important;
+      border-radius: 0 !important;
+    }
+    .remove-btn:hover {
+      background: rgba(192,57,43,0.1) !important;
+      color: #c0392b !important;
+      border-left-color: rgba(192,57,43,0.3) !important;
+    }
+
+    /* ── ADD STOP BUTTON ── */
+    #addDestination {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; width: 100%; margin-top: 8px;
+      border: 1px dashed var(--rivet) !important;
+      cursor: pointer; transition: all 0.2s;
+      background: transparent !important; color: var(--muted) !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 11px !important; letter-spacing: 0.14em; text-transform: uppercase;
+      border-radius: 0 !important; box-shadow: none !important;
+    }
+    #addDestination:hover {
+      border-color: var(--amber-line) !important;
+      color: var(--amber) !important;
+      background: var(--amber-dim) !important;
+    }
+    #addDestination::before {
+      content: '+';
+      width: 20px; height: 20px; border: 1px solid var(--rivet);
+      display: grid; place-items: center; font-size: 14px; flex-shrink: 0;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    #addDestination:hover::before { border-color: var(--amber-line); }
+
+    /* Stop limit bar */
+    .stop-limit {
+      display: flex; align-items: center; gap: 10px; margin-top: 10px;
+    }
+    .stop-limit-bar { flex: 1; height: 2px; background: var(--rivet); }
+    .stop-limit-fill { height: 100%; background: var(--amber); transition: width 0.3s; width: 6.67%; }
+    .stop-limit-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; white-space: nowrap; }
+    .stop-limit-text span { color: var(--amber); }
+
+    /* ── TOGGLE ROWS ── */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid var(--rivet);
+      margin-bottom: 0;
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-label { font-size: 13px; color: var(--text-hi); }
+    .toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .toggle {
+      position: relative; width: 40px; height: 22px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: var(--rivet); border: 1px solid var(--rivet-hi);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .toggle-thumb {
+      position: absolute; left: 3px; top: 3px;
+      width: 14px; height: 14px;
+      background: var(--muted); transition: all 0.2s; pointer-events: none;
+    }
+    .toggle input:checked + .toggle-track { background: var(--amber-dim); border-color: var(--amber-line); }
+    .toggle input:checked ~ .toggle-thumb { background: var(--amber); left: 21px; box-shadow: 0 0 6px rgba(232,149,42,0.5); }
+
+    /* ── OPTIMIZE / CONTROL BUTTONS ── */
+    .control-group {
+      display: flex; gap: 3px; margin-top: 0;
+    }
+    #optimizeRoute {
+      flex: 1;
+      font-family: 'DM Mono', monospace !important; font-size: 11px !important;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 12px 28px; border: none; cursor: pointer;
+      background: var(--amber) !important; color: #000 !important; font-weight: 600;
+      border: 1px solid var(--amber) !important;
+      box-shadow: 0 0 20px rgba(232,149,42,0.25);
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+      border-radius: 0 !important;
+    }
+    #optimizeRoute:hover { background: #f0a030 !important; box-shadow: 0 0 28px rgba(232,149,42,0.4); transform: translateY(-1px); }
+    #optimizeRoute:disabled { opacity: 0.6; transform: none; }
+
+    .secondary-control {
+      font-family: 'DM Mono', monospace !important; font-size: 11px !important;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 12px 20px; cursor: pointer; transition: all 0.2s;
+      background: transparent !important; border: 1px solid var(--rivet) !important;
+      color: var(--muted) !important; border-radius: 0 !important;
+    }
+    .secondary-control:hover { border-color: var(--rivet-hi) !important; color: var(--text-hi) !important; }
+
+    /* ── RESULTS SECTION ── */
+    #routeResults {
+      background: var(--steel);
+      border: 1px solid var(--rivet);
+      border-left: 3px solid var(--amber);
+      margin-top: 0;
+    }
+    #routeResults .cipher-section-title {
+      font-family: 'DM Mono', monospace !important;
+      font-size: 11px !important; letter-spacing: 0.2em !important;
+      text-transform: uppercase !important; color: var(--amber) !important;
+    }
+    .route-output { color: var(--text-hi); font-family: 'Barlow', sans-serif; font-size: 13px; padding: 16px 20px; }
+    .route-actions { display: flex; gap: 3px; padding: 0 20px 16px; flex-wrap: wrap; }
+    .copy-btn, .secondary-btn {
+      font-family: 'DM Mono', monospace !important; font-size: 10px !important;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 16px; background: var(--steel-lift) !important;
+      border: 1px solid var(--rivet) !important; color: var(--text) !important;
+      cursor: pointer; transition: all 0.2s; border-radius: 0 !important;
+    }
+    .copy-btn:hover, .secondary-btn:hover { border-color: var(--rivet-hi) !important; color: var(--text-hi) !important; }
+    .primary-action-btn {
+      font-family: 'DM Mono', monospace !important; font-size: 10px !important;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 16px; background: var(--amber) !important;
+      border: 1px solid var(--amber) !important; color: #000 !important; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; border-radius: 0 !important;
+    }
+    .calendar-export-btn {
+      font-family: 'DM Mono', monospace !important; font-size: 10px !important;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 16px; background: var(--steel-lift) !important;
+      border: 1px solid var(--rivet) !important; color: var(--text) !important;
+      cursor: pointer; border-radius: 0 !important;
+    }
+    .calendar-export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .export-title {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--amber); margin-bottom: 10px;
+      padding: 16px 20px 0;
+    }
+    .export-actions { display: flex; gap: 3px; padding: 0 20px; flex-wrap: wrap; }
+    .export-status { font-size: 11px; color: var(--muted); padding: 8px 20px 16px; font-style: italic; }
+    .section-header { padding: 14px 20px; border-bottom: 1px solid var(--rivet); background: var(--steel-mid); }
+
+    /* ── RIGHT COLUMN ── */
+    .right-col { display: flex; flex-direction: column; gap: 3px; position: sticky; top: 72px; }
+
+    .map-preview {
+      background: var(--input-bg);
+      border: 1px solid var(--rivet);
+      height: 240px;
+      position: relative; overflow: hidden;
+    }
+    #routeMap { width: 100%; height: 100%; }
+
+    /* ── ROUTE SUMMARY ── */
+    .summary-rows { display: flex; flex-direction: column; }
+    .summary-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px; border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .summary-val { font-size: 13px; color: var(--text-hi); font-weight: 400; }
+    .summary-val.amber { color: var(--amber); font-family: 'DM Mono', monospace; }
+
+    /* ── ACTION FOOTER ── */
+    .action-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(14,15,17,0.97);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--rivet);
+      box-shadow: 0 -1px 0 rgba(232,149,42,0.1), 0 -8px 32px rgba(0,0,0,0.5);
+      padding: 14px 40px; z-index: 100;
+    }
+    .action-footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .footer-info { display: flex; flex-direction: column; gap: 2px; }
+    .footer-info-main { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--amber); letter-spacing: 0.1em; }
+    .footer-info-sub { font-size: 11px; color: var(--muted); }
+    .action-btns { display: flex; gap: 10px; }
+    .btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 28px; border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .btn-ghost { background: transparent; border: 1px solid var(--rivet); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+    .btn-steel { background: var(--steel-lift); border: 1px solid var(--rivet-hi); color: var(--text-hi); }
+    .btn-steel:hover { border-color: var(--amber-line); color: var(--white); }
+    .btn-primary { background: var(--amber); color: #000; font-weight: 600; border: 1px solid var(--amber); box-shadow: 0 0 20px rgba(232,149,42,0.25); }
+    .btn-primary:hover { background: #f0a030; box-shadow: 0 0 28px rgba(232,149,42,0.4); transform: translateY(-1px); }
+
+    /* ── MODALS ── */
+    .route-map-modal {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.8); align-items: center; justify-content: center;
+      padding: 12px;
+    }
+    .route-map-modal.active { display: flex !important; }
+
+    /* Modal chrome */
+    .modal {
+      background: var(--steel);
+      border: 1px solid var(--rivet);
+      border-top: 2px solid var(--amber);
+      box-shadow: 0 0 0 1px rgba(232,149,42,0.06), 0 32px 80px rgba(0,0,0,0.7), 0 8px 32px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column;
+      max-height: 92vh; width: 100%; max-width: 1320px;
+      position: relative; overflow: hidden;
+    }
+
+    /* XL workspace modifier — route visualization modal */
+    .modal.cc-modal--xl {
+      width: min(1400px, 96vw);
+      min-width: min(1400px, 96vw);
+      max-width: min(1400px, 96vw);
+      height: min(820px, 86vh);
+      min-height: min(820px, 86vh);
+      max-height: min(820px, 86vh);
+      font-size: clamp(12px, 1vw, 14px);
+    }
+    /* Prevent double scrollbars inside xl modal */
+    .modal.cc-modal--xl .modal-body { overflow: hidden; }
+    .modal.cc-modal--xl .modal-timeline { overflow-y: auto; }
+    .modal.cc-modal--xl .map-panel { overflow: hidden; }
+
+    /* Responsive stack under 980px */
+    @media (max-width: 980px) {
+      .modal.cc-modal--xl {
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+        height: 100dvh;
+        min-height: 100dvh;
+        max-height: 100dvh;
+      }
+      .modal.cc-modal--xl .modal-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        overflow-y: auto;
+      }
+      .modal.cc-modal--xl .stop-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--rivet);
+        max-height: 300px;
+      }
+    }
+    .modal::before, .modal::after {
+      content: ''; position: absolute;
+      width: 12px; height: 12px; border-color: var(--amber); border-style: solid; opacity: 0.4;
+      z-index: 1; pointer-events: none;
+    }
+    .modal::before { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+    .modal::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+    /* Modal header */
+    .modal-header {
+      display: flex; align-items: stretch; gap: 0;
+      border-bottom: 1px solid var(--rivet);
+      background: var(--steel-mid); flex-shrink: 0; height: 56px;
+    }
+    .modal-title-block {
+      padding: 0 24px; border-right: 1px solid var(--rivet);
+      display: flex; flex-direction: column; justify-content: center; gap: 2px;
+      flex-shrink: 0;
+    }
+    .modal-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber);
+    }
+    .modal-title-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px; letter-spacing: 0.06em; color: var(--white);
+    }
+
+    /* Day tabs — route-cipher.js injects .day-tab elements into #dayTabs */
+    .modal-tabs { display: flex; height: 100%; }
+    .day-tab {
+      display: flex !important; align-items: center !important; gap: 8px !important;
+      padding: 0 20px !important; height: 100% !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 10px !important; letter-spacing: 0.12em !important; text-transform: uppercase !important;
+      color: var(--muted) !important; cursor: pointer;
+      border-right: 1px solid var(--rivet) !important;
+      border-left: none !important; border-top: none !important; border-bottom: 2px solid transparent !important;
+      background: transparent !important;
+      transition: all 0.2s;
+    }
+    .day-tab:hover { color: var(--text-hi) !important; background: rgba(255,255,255,0.02) !important; }
+    .day-tab.active { color: var(--amber) !important; background: var(--amber-dim) !important; border-bottom-color: var(--amber) !important; }
+
+    /* Efficiency badge */
+    .modal-header-right {
+      margin-left: auto; display: flex; align-items: center; padding: 0 20px;
+    }
+    .efficiency-badge { display: flex; flex-direction: column; gap: 3px; text-align: right; }
+    .efficiency-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+    }
+    .efficiency-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .efficiency-bar { width: 80px; height: 3px; background: var(--rivet); }
+    .efficiency-fill { height: 100%; background: var(--green); box-shadow: 0 0 6px rgba(76,175,110,0.5); transition: width 0.4s; }
+    .efficiency-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--green); letter-spacing: 0.06em; }
+
+    /* Close button */
+    .modal-close {
+      width: 48px; height: 100%;
+      background: transparent; border: none; border-left: 1px solid var(--rivet);
+      color: var(--muted); cursor: pointer; font-size: 16px;
+      display: grid; place-items: center; transition: all 0.2s; flex-shrink: 0;
+    }
+    .modal-close:hover { background: rgba(192,57,43,0.1); color: #e05555; border-left-color: rgba(192,57,43,0.3); }
+
+    /* Modal body */
+    .modal-body {
+      display: grid; grid-template-columns: 300px 1fr;
+      flex: 1; overflow: hidden; min-height: 0;
+    }
+
+    /* Stop panel */
+    .stop-panel {
+      border-right: 1px solid var(--rivet);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .stop-panel-header {
+      padding: 10px 16px; background: var(--steel-mid);
+      border-bottom: 1px solid var(--rivet);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .stop-panel-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber);
+    }
+    .stop-panel-meta {
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em;
+    }
+    .modal-timeline {
+      flex: 1; overflow-y: auto;
+    }
+    .modal-timeline::-webkit-scrollbar { width: 3px; }
+    .modal-timeline::-webkit-scrollbar-track { background: var(--rivet); }
+    .modal-timeline::-webkit-scrollbar-thumb { background: var(--rivet-hi); }
+
+    /* Map panel */
+    .map-panel { display: flex; flex-direction: column; background: var(--input-bg); position: relative; }
+    .map-area { flex: 1; background: #1a2030; position: relative; overflow: hidden; }
+    .modal-map { width: 100%; height: 100%; position: absolute; inset: 0; }
+    .map-controls {
+      position: absolute; top: 12px; left: 12px; display: flex; gap: 3px; z-index: 10;
+    }
+    .map-ctrl-btn {
+      background: rgba(14,15,17,0.9); border: 1px solid var(--rivet);
+      color: var(--text-hi); font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 7px 14px; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(4px);
+    }
+    .map-ctrl-btn:hover { border-color: var(--rivet-hi); }
+    .map-ctrl-btn.active { border-color: var(--amber-line); color: var(--amber); background: rgba(232,149,42,0.08); }
+
+    /* Modal footer */
+    .modal-footer {
+      display: flex; align-items: stretch;
+      background: var(--steel-mid); border-top: 1px solid var(--rivet); flex-shrink: 0;
+    }
+    .footer-stats { display: flex; }
+    .footer-stat {
+      padding: 12px 20px; border-right: 1px solid var(--rivet);
+      display: flex; flex-direction: column; justify-content: center; gap: 2px;
+    }
+    .footer-stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+    }
+    .footer-stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; color: var(--white); letter-spacing: 0.03em; line-height: 1;
+    }
+    .footer-stat-val span { color: var(--amber); font-size: 14px; }
+    .footer-actions {
+      display: flex; gap: 8px; padding: 12px 16px; margin-left: auto; align-items: center;
+    }
+    .modal-footer .btn { padding: 10px 20px; }
+
+    /* ── STOP SEQUENCE PANEL ── */
+    .stop-item-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 16px 16px;
+    }
+    .stop-pill {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      border: 1px solid #2e353d;
+      margin-top: 1px;
+    }
+    .stop-pill-start {
+      border-color: rgba(232,149,42,0.35);
+      color: #e8952a;
+      background: rgba(232,149,42,0.12);
+    }
+    .stop-pill-stop {
+      border-color: #3d464f;
+      color: #b8bdc2;
+      background: #252b31;
+    }
+    .stop-pill-finish {
+      border-color: rgba(76,175,110,0.35);
+      color: #4caf6e;
+      background: rgba(76,175,110,0.12);
+    }
+    .stop-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .stop-city {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #e6edf3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .stop-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6e7b87;
+      margin-top: 2px;
+    }
+    .stop-connector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 16px 4px 34px;
+      border-top: 1px solid rgba(255,255,255,0.025);
+      border-bottom: 1px solid rgba(255,255,255,0.025);
+    }
+    .connector-line-visual {
+      width: 1px;
+      height: 100%;
+      background: #2e353d;
+      flex-shrink: 0;
+    }
+    .connector-data {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .connector-mi {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: #cfd8e3;
+      letter-spacing: 0.06em;
+    }
+    .connector-sep {
+      color: #3d464f;
+      font-size: 14px;
+    }
+    .connector-time {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: #cfd8e3;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── SAVE ROUTE MODAL ── */
+    .sr-modal-inner {
+      background: #161a1d;
+      border: 1px solid #2e353d;
+      border-top: 2px solid #e8952a;
+      min-width: 340px;
+      max-width: 420px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+    }
+    .sr-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: #1e2328;
+      border-bottom: 1px solid #2e353d;
+    }
+    .sr-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #e8952a;
+      margin-bottom: 2px;
+    }
+    .sr-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.06em;
+      color: #edeae4;
+    }
+    .sr-close {
+      background: transparent;
+      border: 1px solid #2e353d;
+      color: #4a5058;
+      width: 28px; height: 28px;
+      display: grid; place-items: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .sr-close:hover { border-color: rgba(192,57,43,0.4); color: #e05555; }
+    .sr-body { padding: 20px; }
+    .sr-field { display: flex; flex-direction: column; gap: 6px; }
+    .sr-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #4a5058;
+    }
+    .sr-optional {
+      color: #2e353d;
+      text-transform: lowercase;
+      letter-spacing: 0;
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+    }
+    .sr-date-input {
+      background: #0a0c0e;
+      border: 1px solid #2e353d;
+      border-top-color: #3d464f;
+      padding: 10px 12px;
+      color: #edeae4;
+      font-size: 13px;
+      font-family: 'Barlow', sans-serif;
+      outline: none;
+      width: 100%;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+      transition: border-color 0.2s;
+      color-scheme: dark;
+    }
+    .sr-date-input:focus {
+      border-color: #e8952a;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+    }
+    .sr-hint { font-size: 11px; color: #4a5058; font-style: italic; }
+    .sr-days { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+    .sr-day-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #1e2328;
+      border: 1px solid #2e353d;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sr-day-item:hover { border-color: #3d464f; background: #252b31; }
+    .sr-day-item.sr-day-active {
+      border-color: rgba(232,149,42,0.35);
+      background: rgba(232,149,42,0.08);
+    }
+    .sr-day-pill {
+      width: 24px; height: 24px;
+      display: grid; place-items: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      border: 1px solid #3d464f;
+      color: #b8bdc2;
+      background: #252b31;
+      flex-shrink: 0;
+    }
+    .sr-day-item.sr-day-active .sr-day-pill {
+      border-color: rgba(232,149,42,0.35);
+      color: #e8952a;
+      background: rgba(232,149,42,0.12);
+    }
+    .sr-day-info { flex: 1; }
+    .sr-day-name { font-size: 13px; color: #b8bdc2; font-weight: 400; }
+    .sr-day-item.sr-day-active .sr-day-name { color: #edeae4; }
+    .sr-day-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #4a5058;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .sr-day-check { font-size: 12px; color: #e8952a; opacity: 0; transition: opacity 0.2s; }
+    .sr-day-item.sr-day-active .sr-day-check { opacity: 1; }
+    .sr-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 14px 20px;
+      border-top: 1px solid #2e353d;
+      background: #1e2328;
+    }
+    .sr-btn-cancel {
+      background: transparent;
+      border: 1px solid #2e353d;
+      color: #4a5058;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sr-btn-cancel:hover { border-color: #3d464f; color: #b8bdc2; }
+    .sr-btn-save {
+      background: #e8952a;
+      border: 1px solid #e8952a;
+      color: #000;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(232,149,42,0.25);
+    }
+    .sr-btn-save:hover { background: #f0a030; box-shadow: 0 0 28px rgba(232,149,42,0.4); }
+
+    /* cluster + save modals */
+    .cluster-override-container, .save-route-container {
+      background: var(--steel); border: 1px solid var(--rivet); border-left: 3px solid var(--amber);
+      width: 90vw; max-width: 560px; max-height: 90vh; overflow-y: auto;
+    }
+    .override-content, .save-route-content { padding: 20px 24px; }
+    .cluster-info h3 { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-hi); letter-spacing: 0.06em; margin-bottom: 8px; }
+    .cluster-description { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .cluster-stops-list { padding-left: 16px; font-size: 12px; color: var(--text-hi); }
+    .overage-stat { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--rivet); }
+    .overage-stat:last-child { border-bottom: none; }
+    .stat-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
+    .stat-value { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-hi); }
+    .override-recommendation { margin-top: 16px; padding: 12px 16px; background: var(--steel-mid); border: 1px solid var(--rivet); font-size: 12px; color: var(--text); }
+    .modal-footer, .override-actions { padding: 14px 20px; border-top: 1px solid var(--rivet); background: var(--steel-mid); display: flex; gap: 8px; justify-content: flex-end; }
+    .modal-title span { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+    .save-route-description { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+    .save-route-form .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .input-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .filter-input {
+      background: var(--input-bg); border: 1px solid var(--rivet); border-top-color: var(--rivet-hi);
+      padding: 10px 12px; color: var(--white); font-family: 'Barlow', sans-serif; font-size: 13px; outline: none; width: 100%;
+    }
+    .filter-input:focus { border-color: var(--amber); }
+    .input-hint { font-size: 11px; color: var(--muted); font-style: italic; }
+    .route-summary-preview { display: flex; flex-direction: column; }
+    .summary-row--highlight .summary-label, .summary-row--highlight .summary-value { color: var(--amber); }
+    .summary-label { color: var(--text); font-size: 12px; }
+    .summary-value { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-hi); }
+
+    /* loading + error */
+    .loading-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
+    .loading-content { background: var(--steel); border: 1px solid var(--rivet); border-left: 3px solid var(--amber); padding: 32px 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .loading-content p { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
+    .spinner { width: 24px; height: 24px; border: 2px solid var(--rivet); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-display { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 500; background: var(--steel-mid); border: 1px solid rgba(192,57,43,0.4); border-left: 3px solid rgba(192,57,43,0.7); color: #f08080; padding: 12px 16px; display: flex; align-items: center; gap: 12px; font-size: 13px; }
+
+    /* hide rivet corner elements */
+    .rivet { display: none !important; }
+
+    @media (max-width: 900px) {
+      .main { grid-template-columns: 1fr; padding: 16px 16px 100px; }
+      .right-col { position: static; }
+      .nav { padding: 0 16px; }
+      .nav-tabs { display: none; }
+      .page-header { padding: 20px 16px; }
+      .action-footer { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body style="visibility: hidden;">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
+    <div class="nav-tabs">
+      <a class="nav-tab" href="command-center.html">Dashboard</a>
+      <a class="nav-tab active" href="route-cypher.html">Routes</a>
+      <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+      <a class="nav-tab" href="my-routes.html">My Routes</a>
+      <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user"><strong id="userName">Professional User</strong>Claims Specialist</div>
+      <button class="nav-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="page-label">Route Cipher</div>
+        <div class="page-title">Plan Your Route</div>
+        <div class="page-sub">Multi-stop optimization with intelligent day splitting</div>
       </div>
-    </header>
-
-    <div class="v25-page-header">
-      <div class="v25-page-header-inner">
-        <div>
-          <div class="v25-page-label">Route Cipher</div>
-          <div class="v25-page-title">Plan Your Route</div>
-          <div class="v25-page-sub">Multi-stop optimization with intelligent day splitting</div>
-        </div>
-        <div class="v25-header-badges">
-          <div class="v25-hbadge">Max Stops <span>15</span></div>
-          <div class="v25-hbadge">Status <span>Ready</span></div>
-        </div>
+      <div class="header-badge">
+        <div class="hbadge">Max Stops <span>15</span></div>
+        <div class="hbadge">Stops Added <span id="stopCountBadge">1</span></div>
+        <div class="hbadge">Status <span>Ready</span></div>
       </div>
     </div>
+  </div>
 
-    <main class="route-cipher-main main-content main-container">
-      <section class="hero-section elevation-3">
-        <div class="rivet tl"></div>
-        <div class="rivet tr"></div>
-        <div class="rivet bl"></div>
-        <div class="rivet br"></div>
+  <!-- MAIN GRID -->
+  <div class="main">
 
-        <h1 class="cipher-hero-title">Route Cipher</h1>
-        <p class="cipher-body">Plan efficient multi-stop routes with intelligent day splitting</p>
-      </section>
-      <div class="route-container">
-        <!-- Left Panel: Input + Results -->
-        <div class="input-and-results-panel">
-          <!-- Route Cipher Section -->
-          <div class="optimizer-layout">
-            <div class="optimizer-form">
-              <div class="cipher-plate elevation-2 optimizer-plate form-section">
-                <div class="rivet tl"></div>
-                <div class="rivet tr"></div>
-                <div class="rivet bl"></div>
-                <div class="rivet br"></div>
-                <h3 class="form-section-title cipher-section-title">
-                  Starting Location
-                </h3>
-                <div class="input-group">
-                  <label for="startLocation" class="input-label cipher-label">
-                    Starting Point
-                  </label>
-                  <input
-                    type="text"
-                    id="startLocation"
-                    class="route-input"
-                    placeholder="Enter your starting address..."
-                  />
-                  <div class="input-hint cipher-body">
-                    Your starting location will be saved for future use
-                  </div>
-                </div>
-              </div>
+    <!-- LEFT COLUMN -->
+    <div class="left-col optimizer-form">
 
-              <!-- DISTRO: Dropped Claims section hidden - do not delete (future dispatch integration) -->
-              <div class="optimizer-section form-section drop-zone-section" style="display: none;">
-                <h3 class="form-section-title cipher-section-title">
-                  Dropped Claims
-                </h3>
-                <div id="claimDropZone" class="claim-drop-zone">
-                  <div class="drop-zone-empty-state">
-                    <p>Drop claims here from Cipher Dispatch</p>
-                    <button id="pasteClaimsBtn" class="cipher-btn secondary-btn">
-                      <div class="rivet tl"></div>
-                      <div class="rivet tr"></div>
-                      <div class="rivet bl"></div>
-                      <div class="rivet br"></div>
-                      Paste Claims (Mobile)
-                    </button>
-                  </div>
-                </div>
-                <div class="drop-zone-actions" style="display: none;">
-                  <button id="clearClaims" class="cipher-btn secondary-btn">
-                    <div class="rivet tl"></div>
-                    <div class="rivet tr"></div>
-                    <div class="rivet bl"></div>
-                    <div class="rivet br"></div>
-                    Clear All
-                  </button>
-                  <button id="routeClaims" class="cipher-btn primary-action-btn" disabled>
-                    <div class="rivet tl"></div>
-                    <div class="rivet tr"></div>
-                    <div class="rivet bl"></div>
-                    <div class="rivet br"></div>
-                    <span class="route-claims-text">Route Claims</span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="cipher-plate elevation-2 optimizer-plate form-section">
-                <div class="rivet tl"></div>
-                <div class="rivet tr"></div>
-                <div class="rivet bl"></div>
-                <div class="rivet br"></div>
-                <h3 class="form-section-title cipher-section-title">
-                  Destinations
-                </h3>
-                <div class="destinations-group">
-                  <div class="destinations-header">
-                    <div class="destinations-label cipher-body">
-                      Add up to 15 destinations
-                    </div>
-                    <button id="addDestination" class="cipher-btn secondary-btn">
-                      <div class="rivet tl"></div>
-                      <div class="rivet tr"></div>
-                      <div class="rivet bl"></div>
-                      <div class="rivet br"></div>
-                      Add Stop
-                    </button>
-                  </div>
-                  <div id="destinationsList" class="destinations-list">
-                    <div class="destination-input">
-                      <input
-                        type="text"
-                        placeholder="Enter destination address"
-                        class="destination-address-input"
-                      />
-                      <button
-                        class="cipher-btn cipher-btn--small remove-btn"
-                        onclick="removeDestination(this)"
-                        title="Remove this destination"
-                      >
-                        <div class="rivet tl"></div>
-                        <div class="rivet tr"></div>
-                        <div class="rivet bl"></div>
-                        <div class="rivet br"></div>
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Hidden defaults for route-cipher.js (UI removed, values preserved) -->
-              <div>
-                <input type="checkbox" id="optimizeEnabled" checked />
-                <input type="checkbox" id="splitEnabled" checked />
-                <input type="number" id="maxLegMiles" value="50" />
-                <select id="territoryType"><option value="mixed" selected>Mixed</option></select>
-                <input type="checkbox" id="geographicClustering" checked />
-                <select id="maxDailyHours"><option value="8" selected>8</option></select>
-                <input type="number" id="maxStopsPerDay" value="6" />
-                <input type="number" id="timePerAppointment" value="30" />
-              </div>
-
-              <div class="control-group">
-                <button id="optimizeRoute" class="cipher-btn primary-control">
-                  <div class="rivet tl"></div>
-                  <div class="rivet tr"></div>
-                  <div class="rivet bl"></div>
-                  <div class="rivet br"></div>
-                  <span class="btn-text">Optimize Route</span>
-                  <span class="btn-loading" style="display: none">
-                    <span class="loading-spinner"></span>
-                    Optimizing...
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onclick="window.routeCipher && window.routeCipher.clearSavedRoutes()"
-                  class="cipher-btn secondary-control"
-                >
-                  <div class="rivet tl"></div>
-                  <div class="rivet tr"></div>
-                  <div class="rivet bl"></div>
-                  <div class="rivet br"></div>
-                  <span>Clear Saved Routes</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Results Section -->
-          <div
-            class="results-section cipher-plate elevation-2"
-            id="routeResults"
-            style="display: none"
-          >
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <div class="section-header">
-              <div class="section-title">
-                <h2 class="cipher-section-title">Route Analysis & Scheduling</h2>
-              </div>
-            </div>
-
-            <div class="results-content">
-              <div id="routeOutput" class="route-output"></div>
-
-              <div class="route-actions">
-                <button id="copyRoute" class="cipher-btn copy-btn">
-                  <div class="rivet tl"></div>
-                  <div class="rivet tr"></div>
-                  <div class="rivet bl"></div>
-                  <div class="rivet br"></div>
-                  Copy
-                </button>
-                <button id="exportMiles" class="cipher-btn secondary-btn">
-                  <div class="rivet tl"></div>
-                  <div class="rivet tr"></div>
-                  <div class="rivet bl"></div>
-                  <div class="rivet br"></div>
-                  Mileage
-                </button>
-                <button id="saveToMyRoutes" class="cipher-btn primary-action-btn">
-                  <div class="rivet tl"></div>
-                  <div class="rivet tr"></div>
-                  <div class="rivet bl"></div>
-                  <div class="rivet br"></div>
-                  Save to My Routes
-                </button>
-              </div>
-
-              <div class="calendar-export-section">
-                <h3 class="export-title">
-                  Schedule Appointments
-                </h3>
-                <div class="export-actions">
-                  <button
-                    id="exportGoogleCal"
-                    class="cipher-btn calendar-export-btn"
-                    disabled
-                  >
-                    <div class="rivet tl"></div>
-                    <div class="rivet tr"></div>
-                    <div class="rivet bl"></div>
-                    <div class="rivet br"></div>
-                    Google Calendar
-                  </button>
-                  <button
-                    id="exportAppleCal"
-                    class="cipher-btn calendar-export-btn"
-                    disabled
-                  >
-                    <div class="rivet tl"></div>
-                    <div class="rivet tr"></div>
-                    <div class="rivet bl"></div>
-                    <div class="rivet br"></div>
-                    Apple Calendar
-                  </button>
-                  <button id="exportMobileCipher" class="cipher-btn primary-action-btn">
-                    <div class="rivet tl"></div>
-                    <div class="rivet tr"></div>
-                    <div class="rivet bl"></div>
-                    <div class="rivet br"></div>
-                    Mobile Cipher
-                  </button>
-                </div>
-                <div class="export-status">
-                  <span id="exportStatus"
-                    >Set appointment times above to enable calendar export</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Starting Location -->
+      <div class="card accent optimizer-plate form-section">
+        <div class="card-header">
+          <div class="card-title">Starting Location</div>
+          <div class="card-line"></div>
+          <div class="card-meta">Saved between sessions</div>
         </div>
-
-        <!-- Right Panel: Map Only -->
-        <div class="map-only-panel">
-          <!-- Map Container -->
-          <div class="map-section cipher-plate elevation-2 map-plate">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <div class="section-header">
-              <div class="section-title">
-                <h2>Route Visualization</h2>
-              </div>
-              <div class="section-subtitle">
-                Visual validation - "Do I want to drive that way?"
-              </div>
-            </div>
-            <div class="map-container">
-              <div id="routeMap"></div>
-            </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-label">Starting Point</div>
+            <input
+              class="field-input"
+              type="text"
+              id="startLocation"
+              placeholder="Enter your starting address..."
+            />
+            <div class="field-hint">Your starting location will be saved for future use</div>
           </div>
         </div>
       </div>
-      </div>
 
-      <!-- Loading Overlay -->
-      <div id="loadingOverlay" class="loading-overlay" style="display: none">
-        <div class="loading-content cipher-plate elevation-2">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          <div class="spinner"></div>
-          <p>Calculating optimal route...</p>
+      <!-- DISTRO: Dropped Claims — hidden, do not delete -->
+      <div class="optimizer-section form-section drop-zone-section" style="display: none;">
+        <div id="claimDropZone" class="claim-drop-zone">
+          <div class="drop-zone-empty-state">
+            <p>Drop claims here from Cipher Dispatch</p>
+            <button id="pasteClaimsBtn">Paste Claims (Mobile)</button>
+          </div>
+        </div>
+        <div class="drop-zone-actions" style="display: none;">
+          <button id="clearClaims">Clear All</button>
+          <button id="routeClaims" disabled><span class="route-claims-text">Route Claims</span></button>
         </div>
       </div>
 
-      <!-- Error Display -->
-      <div id="errorDisplay" class="error-display" style="display: none">
-        <p id="errorMessage"></p>
-        <button onclick="hideError()" class="cipher-btn cipher-btn--small">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          ×
+      <!-- Destinations -->
+      <div class="card optimizer-plate form-section">
+        <div class="card-header">
+          <div class="card-title">Destinations</div>
+          <div class="card-line"></div>
+          <div class="card-meta" id="stopCountLabel">1 / 15 stops</div>
+        </div>
+        <div class="card-body">
+
+          <div class="destinations-list" id="destinationsList">
+            <div class="destination-input">
+              <input
+                type="text"
+                placeholder="Enter destination address"
+                class="destination-address-input"
+              />
+              <button
+                class="remove-btn"
+                onclick="removeDestination(this)"
+                title="Remove this destination"
+              >✕</button>
+            </div>
+          </div>
+
+          <button id="addDestination">Add Stop</button>
+
+          <div class="stop-limit">
+            <div class="stop-limit-bar">
+              <div class="stop-limit-fill" id="limitFill"></div>
+            </div>
+            <div class="stop-limit-text"><span id="limitCount">1</span> / 15 stops used</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Hidden JS defaults — values read by route-cipher.js -->
+      <div style="display:none;">
+        <input type="checkbox" id="optimizeEnabled" checked />
+        <input type="checkbox" id="splitEnabled" checked />
+        <input type="number" id="maxLegMiles" value="50" />
+        <select id="territoryType"><option value="mixed" selected>Mixed</option></select>
+        <input type="checkbox" id="geographicClustering" checked />
+        <select id="maxDailyHours"><option value="8" selected>8</option></select>
+        <input type="number" id="maxStopsPerDay" value="6" />
+        <input type="number" id="timePerAppointment" value="30" />
+      </div>
+
+      <!-- Route Options -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Route Options</div>
+          <div class="card-line"></div>
+        </div>
+        <div class="card-body">
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Intelligent Day Splitting</div>
+              <div class="toggle-sub">Automatically split stops across multiple days</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="daySplit" onchange="updateSummary()">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Return to Start</div>
+              <div class="toggle-sub">Add return trip to starting location</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="returnStart" onchange="updateSummary()">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Avoid Highways</div>
+              <div class="toggle-sub">Route via local roads only</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="avoidHighways">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Optimize controls -->
+      <div class="control-group">
+        <button id="optimizeRoute">
+          <span class="btn-text">Optimize Route</span>
+          <span class="btn-loading" style="display:none;">
+            <span class="loading-spinner"></span>
+            Optimizing...
+          </span>
         </button>
+        <button
+          type="button"
+          onclick="window.routeCipher && window.routeCipher.clearSavedRoutes()"
+          class="secondary-control"
+        >Clear Saved Routes</button>
       </div>
-    </main>
 
-    <!-- Route Map Modal -->
-    <div id="routeMapModal" class="route-map-modal cipher-modal steel-surface">
-      <div class="cipher-plate elevation-3 steel-surface route-visualization-main">
-        <div class="rivet tl"></div>
-        <div class="rivet tr"></div>
-        <div class="rivet bl"></div>
-        <div class="rivet br"></div>
-        <!-- Modal Header -->
-        <div class="modal-header hero-section elevation-3">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          <h2>Route Visualization</h2>
-          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="closeRouteModal()">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            ×
+      <!-- Results Section — shown by JS after optimization -->
+      <div
+        class="card"
+        id="routeResults"
+        style="display: none; border-left-color: var(--amber);"
+      >
+        <div class="section-header">
+          <h2 class="cipher-section-title">Route Analysis &amp; Scheduling</h2>
+        </div>
+        <div id="routeOutput" class="route-output"></div>
+        <div class="route-actions">
+          <button id="copyRoute" class="copy-btn">Copy</button>
+          <button id="exportMiles" class="secondary-btn">Mileage</button>
+          <button id="saveToMyRoutes" class="primary-action-btn">Save to My Routes</button>
+        </div>
+        <div class="calendar-export-section">
+          <h3 class="export-title">Schedule Appointments</h3>
+          <div class="export-actions">
+            <button id="exportGoogleCal" class="calendar-export-btn" disabled>Google Calendar</button>
+            <button id="exportAppleCal" class="calendar-export-btn" disabled>Apple Calendar</button>
+            <button id="exportMobileCipher" class="primary-action-btn">Mobile Cipher</button>
+          </div>
+          <div class="export-status">
+            <span id="exportStatus">Set appointment times above to enable calendar export</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /left-col -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- Route Preview (live Google Maps renders here) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Route Preview</div>
+          <div class="card-line"></div>
+        </div>
+        <div class="map-preview">
+          <div id="routeMap"></div>
+        </div>
+      </div>
+
+      <!-- Route Summary -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Route Summary</div>
+          <div class="card-line"></div>
+        </div>
+        <div class="summary-rows">
+          <div class="summary-row">
+            <div class="summary-key">Total Stops</div>
+            <div class="summary-val amber" id="sumStops">1</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-key">Est. Distance</div>
+            <div class="summary-val" id="sumDistance">— mi</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-key">Est. Drive Time</div>
+            <div class="summary-val" id="sumTime">—</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-key">Days Required</div>
+            <div class="summary-val" id="sumDays">1</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-key">Day Split</div>
+            <div class="summary-val" id="sumSplit">Off</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-key">Return to Start</div>
+            <div class="summary-val" id="sumReturn">No</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Starting Points (cosmetic) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Saved Starts</div>
+          <div class="card-line"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px rgba(232,149,42,0.5);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:12px;color:var(--text-hi);">Home Office</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;">Last used starting point</div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Use →</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--rivet-hi);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:12px;color:var(--text-hi);">Field Office</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;">Saved starting point</div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Use →</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /right-col -->
+
+  </div>
+  <!-- /main -->
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Calculating optimal route...</p>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  <div id="errorDisplay" class="error-display" style="display: none;">
+    <p id="errorMessage"></p>
+    <button onclick="hideError()" class="modal-close-btn">×</button>
+  </div>
+
+  <!-- Route Map Modal -->
+  <div id="routeMapModal" class="route-map-modal">
+    <div class="modal cc-modal--xl">
+
+      <!-- MODAL HEADER -->
+      <div class="modal-header">
+        <div class="modal-title-block">
+          <div class="modal-eyebrow">Route Cipher</div>
+          <div class="modal-title-text">Route Visualization</div>
+        </div>
+
+        <!-- Day tabs — route-cipher.js injects .day-tab elements here -->
+        <div class="modal-tabs" id="dayTabs"></div>
+
+        <div class="modal-header-right">
+          <div class="efficiency-badge">
+            <div class="efficiency-label">Route Efficiency</div>
+            <div class="efficiency-bar-wrap">
+              <div class="efficiency-bar">
+                <div class="efficiency-fill" id="efficiencyFill" style="width:0%"></div>
+              </div>
+              <div class="efficiency-pct" id="efficiencyPct">—</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="modal-close" onclick="closeRouteModal()">✕</button>
+      </div>
+
+      <!-- MODAL BODY -->
+      <div class="modal-body">
+
+        <!-- Stop List Panel -->
+        <div class="stop-panel">
+          <div class="stop-panel-header">
+            <div class="stop-panel-label">Stop Sequence</div>
+            <div class="stop-panel-meta" id="stopPanelMeta"></div>
+          </div>
+          <!-- route-cipher.js populates this -->
+          <div id="modalTimeline" class="modal-timeline"></div>
+        </div>
+
+        <!-- Map Panel -->
+        <div class="map-panel">
+          <div class="map-area">
+            <div class="map-controls">
+              <button class="map-ctrl-btn active">Map</button>
+              <button class="map-ctrl-btn">Satellite</button>
+            </div>
+            <!-- Google Maps renders here -->
+            <div id="modalMap" class="modal-map"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div class="modal-footer">
+        <div class="footer-stats">
+          <div class="footer-stat">
+            <div class="footer-stat-label">Total Distance</div>
+            <div class="footer-stat-val" id="modalStatDist">—</div>
+          </div>
+          <div class="footer-stat">
+            <div class="footer-stat-label">Drive Time</div>
+            <div class="footer-stat-val" id="modalStatTime">—</div>
+          </div>
+          <div class="footer-stat">
+            <div class="footer-stat-label">Days</div>
+            <div class="footer-stat-val" id="modalStatDays">—</div>
+          </div>
+          <div class="footer-stat">
+            <div class="footer-stat-label">Stops</div>
+            <div class="footer-stat-val" id="modalStatStops">—</div>
+          </div>
+        </div>
+        <!-- Legacy stats target for route-cipher.js compatibility -->
+        <div id="modalStats" style="display:none;"></div>
+
+        <div class="footer-actions">
+          <button id="editDayBtn" class="btn btn-ghost" onclick="editActiveDay()">
+            <span id="editDayBtnText">Edit Day 1</span>
           </button>
+          <button class="btn btn-steel" onclick="window.routeCipher.showSaveDayModal()">Save Route</button>
+          <button class="btn btn-primary" onclick="exportRouteFromModal()">Export Schedule →</button>
         </div>
+      </div>
 
-        <!-- Day Tabs -->
-        <div id="dayTabs" class="day-tabs">
-          <!-- Tabs will be generated dynamically -->
-        </div>
+    </div>
+  </div>
 
-        <!-- Modal Content -->
-        <div class="modal-content route-visualization-content">
-          <!-- Left: Timeline -->
-          <div class="route-left-column route-day-column">
-            <div id="modalTimeline" class="modal-timeline stop-list">
-              <!-- Timeline will be generated dynamically -->
-            </div>
+  <!-- Cluster Override Modal -->
+  <div id="clusterOverrideModal" class="route-map-modal">
+    <div class="cluster-override-container">
+      <div class="modal-header">
+        <div class="modal-title"><span>Route Decision Needed</span></div>
+      </div>
+      <div class="override-content">
+        <div class="override-summary">
+          <div class="cluster-info">
+            <h3 id="clusterStopsTitle">2 stops in same region</h3>
+            <p class="cluster-description">These stops are close together but adding them exceeds your daily mileage target:</p>
+            <ul id="clusterStopsList" class="cluster-stops-list"></ul>
           </div>
-
-          <!-- Right: Map -->
-          <div class="cipher-plate elevation-2 cipher-plate--map route-visualization-map">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <div class="modal-map-container">
-              <div id="modalMap" class="modal-map"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="route-footer">
-          <div class="route-metrics cipher-plate elevation-1">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <div class="modal-stats" id="modalStats">
-              <!-- Stats will be shown here -->
-            </div>
-          </div>
-          <div class="route-actions">
-            <button
-              id="editDayBtn"
-              class="cipher-btn modal-btn modal-btn-secondary"
-              onclick="editActiveDay()"
-            >
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              <span id="editDayBtnText">Edit Day 1</span>
-            </button>
-            <button
-              class="cipher-btn modal-btn modal-btn-secondary"
-              onclick="window.routeCipher.showSaveDayModal()"
-            >
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              <span>Save Route</span>
-            </button>
-            <button
-              class="cipher-btn modal-btn modal-btn-primary"
-              onclick="exportRouteFromModal()"
-            >
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              <span>Export Schedule</span>
-            </button>
+          <div class="overage-info">
+            <div class="overage-stat"><span class="stat-label">Current day mileage:</span><span class="stat-value" id="currentDayMiles">0 mi</span></div>
+            <div class="overage-stat"><span class="stat-label">Adding these stops:</span><span class="stat-value" id="clusterMiles">+0 mi</span></div>
+            <div class="overage-stat"><span class="stat-label">Total if kept together:</span><span class="stat-value" id="totalIfKept">0 mi</span></div>
+            <div class="overage-stat"><span class="stat-label">Your daily target:</span><span class="stat-value" id="dailyCapDisplay">0 mi</span></div>
+            <div class="overage-stat"><span class="stat-label">Overage:</span><span class="stat-value" id="overageDisplay">+0 mi</span></div>
           </div>
         </div>
+        <div class="override-recommendation">
+          <p id="recommendationText">Keeping these stops together avoids backtracking and is more efficient.</p>
+        </div>
+      </div>
+      <div class="override-actions">
+        <button id="overrideSplitBtn" class="modal-btn modal-btn-secondary" onclick="window.routeCipher.handleClusterOverride('split')">Split Into Separate Days</button>
+        <button id="overrideKeepBtn" class="modal-btn modal-btn-primary" onclick="window.routeCipher.handleClusterOverride('keepTogether')">Keep Together (More Efficient)</button>
       </div>
     </div>
+  </div>
 
-    <!-- Cluster Override Modal -->
-    <div id="clusterOverrideModal" class="route-map-modal">
-      <div class="cluster-override-container cipher-plate elevation-3">
-        <div class="rivet tl"></div>
-        <div class="rivet tr"></div>
-        <div class="rivet bl"></div>
-        <div class="rivet br"></div>
-        <div class="modal-header">
-          <div class="modal-title">
-            <span>Route Decision Needed</span>
+  <!-- Save to My Routes Modal -->
+  <div id="saveRouteModal" class="route-map-modal">
+    <div class="save-route-container">
+      <div class="modal-header">
+        <div class="modal-title"><span>Save Route</span></div>
+        <button class="modal-close-btn" onclick="closeSaveRouteModal()">×</button>
+      </div>
+      <div class="save-route-content">
+        <p class="save-route-description">Save this route to My Routes for lifecycle management and mileage logging.</p>
+        <div class="save-route-form">
+          <div class="form-group">
+            <label for="routeDate" class="input-label">Route Date (optional)</label>
+            <input type="date" id="routeDate" class="filter-input" />
+            <span class="input-hint">Leave blank to save without a date</span>
           </div>
-        </div>
-
-        <div class="override-content">
-          <div class="override-summary">
-            <div class="cluster-info">
-              <h3 id="clusterStopsTitle">2 stops in same region</h3>
-              <p class="cluster-description">These stops are close together but adding them exceeds your daily mileage target:</p>
-              <ul id="clusterStopsList" class="cluster-stops-list">
-                <!-- Dynamically populated -->
-              </ul>
-            </div>
-
-            <div class="overage-info">
-              <div class="overage-stat">
-                <span class="stat-label">Current day mileage:</span>
-                <span class="stat-value" id="currentDayMiles">0 mi</span>
-              </div>
-              <div class="overage-stat">
-                <span class="stat-label">Adding these stops:</span>
-                <span class="stat-value" id="clusterMiles">+0 mi</span>
-              </div>
-              <div class="overage-stat highlight">
-                <span class="stat-label">Total if kept together:</span>
-                <span class="stat-value" id="totalIfKept">0 mi</span>
-              </div>
-              <div class="overage-stat warning">
-                <span class="stat-label">Your daily target:</span>
-                <span class="stat-value" id="dailyCapDisplay">0 mi</span>
-              </div>
-              <div class="overage-stat overage">
-                <span class="stat-label">Overage:</span>
-                <span class="stat-value" id="overageDisplay">+0 mi</span>
-              </div>
-            </div>
+          <div class="route-summary-preview">
+            <div class="summary-row"><span class="summary-label">Start:</span><span class="summary-value" id="saveRouteStart">-</span></div>
+            <div class="summary-row"><span class="summary-label">End:</span><span class="summary-value" id="saveRouteEnd">-</span></div>
+            <div class="summary-row summary-row--highlight"><span class="summary-label">Total Miles:</span><span class="summary-value" id="saveRouteMiles">-</span></div>
           </div>
-
-          <div class="override-recommendation">
-            <p id="recommendationText">
-              Keeping these stops together avoids backtracking and is more efficient.
-            </p>
-          </div>
-        </div>
-
-        <div class="modal-footer override-actions">
-          <button
-            id="overrideSplitBtn"
-            class="cipher-btn modal-btn modal-btn-secondary"
-            onclick="window.routeCipher.handleClusterOverride('split')"
-          >
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <span>Split Into Separate Days</span>
-          </button>
-          <button
-            id="overrideKeepBtn"
-            class="cipher-btn modal-btn modal-btn-primary"
-            onclick="window.routeCipher.handleClusterOverride('keepTogether')"
-          >
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <span>Keep Together (More Efficient)</span>
-          </button>
         </div>
       </div>
-    </div>
-
-    <!-- Save to My Routes Modal -->
-    <div id="saveRouteModal" class="route-map-modal">
-      <div class="save-route-container cipher-plate elevation-3">
-        <div class="rivet tl"></div>
-        <div class="rivet tr"></div>
-        <div class="rivet bl"></div>
-        <div class="rivet br"></div>
-        <div class="modal-header">
-          <div class="modal-title">
-            <span class="cipher-section-title">Save Route</span>
-          </div>
-          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="closeSaveRouteModal()">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            ×
-          </button>
-        </div>
-
-        <div class="save-route-content">
-          <p class="save-route-description cipher-body">
-            Save this route to My Routes for lifecycle management and mileage logging.
-          </p>
-
-          <div class="save-route-form">
-            <div class="form-group">
-              <label for="routeDate" class="input-label cipher-label">Route Date (optional)</label>
-              <input type="date" id="routeDate" class="filter-input" />
-              <span class="input-hint cipher-body">Leave blank to save without a date</span>
-            </div>
-
-            <div class="route-summary-preview">
-              <div class="summary-row">
-                <span class="summary-label">Start:</span>
-                <span class="summary-value" id="saveRouteStart">-</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">End:</span>
-                <span class="summary-value" id="saveRouteEnd">-</span>
-              </div>
-              <div class="summary-row summary-row--highlight">
-                <span class="summary-label">Total Miles:</span>
-                <span class="summary-value" id="saveRouteMiles">-</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button class="cipher-btn modal-btn modal-btn-secondary" onclick="closeSaveRouteModal()">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            Cancel
-          </button>
-          <button id="confirmSaveRouteBtn" class="cipher-btn modal-btn modal-btn-primary" onclick="confirmSaveRoute()">
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            <span>Save Route</span>
-          </button>
-        </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-secondary" onclick="closeSaveRouteModal()">Cancel</button>
+        <button id="confirmSaveRouteBtn" class="modal-btn modal-btn-primary" onclick="confirmSaveRoute()">Save Route</button>
       </div>
     </div>
+  </div>
 
-    <!-- Load API configuration first -->
-    <script src="config/github-pages-env.js"></script>
-    <script src="config/api-config-production.js"></script>
+  <!-- FIXED ACTION FOOTER -->
+  <div class="action-footer">
+    <div class="action-footer-inner">
+      <div class="footer-info">
+        <div class="footer-info-main" id="v25FooterMain">Route Cipher — Ready to Optimize</div>
+        <div class="footer-info-sub" id="footerSub">Add your stops and hit Optimize Route</div>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-ghost" onclick="window.routeCipher && window.routeCipher.clearSavedRoutes()">⟳ Clear All</button>
+        <button class="btn btn-steel" onclick="openSaveRouteModal && openSaveRouteModal()">Save Draft</button>
+        <button class="btn btn-primary" onclick="document.getElementById('optimizeRoute').click()">Optimize Route →</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- Supabase JS v2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Load API configuration first -->
+  <script src="config/github-pages-env.js"></script>
+  <script src="config/api-config-production.js"></script>
 
-    <!-- Supabase Configuration and Auth -->
-    <script src="scripts/supabase-config.js"></script>
-    <script src="scripts/supabase-auth.js"></script>
-    <script src="scripts/billing-guard.js"></script>
-    <script src="scripts/route-service.js"></script>
+  <!-- Supabase JS v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Supabase Page Protection - MUST run before page renders -->
-    <script>
-    (async function() {
-      document.body.style.visibility = 'hidden';
-      const allowed = await window.SupabaseAuth.protectPage();
-      if (!allowed) return;
+  <!-- Supabase Configuration and Auth -->
+  <script src="scripts/supabase-config.js"></script>
+  <script src="scripts/supabase-auth.js"></script>
+  <script src="scripts/billing-guard.js"></script>
+  <script src="scripts/route-service.js"></script>
 
-      const access = await window.BillingGuard.checkAccess();
-      if (!window.BillingGuard.hasAccess(access.profile)) {
-        window.location.href = "billing-required.html";
+  <!-- Supabase Page Protection - MUST run before page renders -->
+  <script>
+  (async function() {
+    document.body.style.visibility = 'hidden';
+    const allowed = await window.SupabaseAuth.protectPage();
+    if (!allowed) return;
+
+    const access = await window.BillingGuard.checkAccess();
+    if (!window.BillingGuard.hasAccess(access.profile)) {
+      window.location.href = "billing-required.html";
+      return;
+    }
+
+    document.body.style.visibility = 'visible';
+  })();
+  </script>
+
+  <!-- Core Scripts (utilities only, no auth) -->
+  <script src="scripts/cipher-core.js"></script>
+
+  <!-- Shared Firm Storage & Session Manager -->
+  <script src="scripts/firm-store.js"></script>
+  <script src="scripts/session-manager.js"></script>
+
+  <!-- Google Maps Configuration -->
+  <script src="scripts/google-config.js"></script>
+
+  <!-- Google Maps API -->
+  <script>
+    if (
+      window.GOOGLE_MAPS_CONFIG &&
+      window.GOOGLE_MAPS_CONFIG.apiKey &&
+      window.GOOGLE_MAPS_CONFIG.apiKey !== "CONFIGURE_YOUR_GOOGLE_MAPS_API_KEY"
+    ) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${
+        window.GOOGLE_MAPS_CONFIG.apiKey
+      }&libraries=${window.GOOGLE_MAPS_CONFIG.libraries.join(",")}&callback=initRouteCipher`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    } else {
+      setTimeout(() => {
+        if (typeof RouteCipher !== "undefined") {
+          window.routeCipher = new RouteCipher();
+        }
+      }, 100);
+    }
+  </script>
+
+  <!-- Distance Cache -->
+  <script src="scripts/distance-cache.js"></script>
+
+  <!-- Route Cipher Script -->
+  <script src="scripts/route-cipher.js"></script>
+
+  <!-- Modal Control Functions -->
+  <script>
+    let activeModalDayIndex = 0;
+
+    function closeRouteModal() {
+      document.getElementById("routeMapModal").classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    function switchModalDay(dayIndex) {
+      if (!window.routeCipher || !window.routeCipher.currentRoute) return;
+      activeModalDayIndex = dayIndex;
+      window.routeCipher.activeModalDay = dayIndex;
+      document.querySelectorAll(".day-tab").forEach((tab, index) => {
+        tab.classList.toggle("active", index === dayIndex);
+      });
+      const editBtnText = document.getElementById("editDayBtnText");
+      if (editBtnText) editBtnText.textContent = `Edit Day ${dayIndex + 1}`;
+      window.routeCipher.showDayTimeline(dayIndex, window.routeCipher.currentRoute, window.routeCipher.currentOriginalRoute);
+      window.routeCipher.renderModalDayRoute(window.routeCipher.currentRoute, dayIndex);
+    }
+
+    function editActiveDay() {
+      if (window.routeCipher) window.routeCipher.editDayRoute(activeModalDayIndex);
+    }
+
+    function exportRouteFromModal() {
+      if (window.routeCipher) window.routeCipher.showSaveDayModal();
+    }
+
+    function openSaveRouteModal() {
+      if (!window.routeCipher || !window.routeCipher.currentRoute) {
+        alert('No route to save. Please optimize a route first.');
         return;
       }
+      const route = window.routeCipher.currentRoute;
+      const startLocation = window.routeCipher.startLocation || document.getElementById('startLocation')?.value || 'Unknown';
+      const destinations = window.routeCipher.destinations || [];
+      const endAddress = destinations.length > 0
+        ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
+        : startLocation;
+      document.getElementById('routeDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('saveRouteStart').textContent = startLocation;
+      document.getElementById('saveRouteEnd').textContent = endAddress;
+      document.getElementById('saveRouteMiles').textContent = (route.overall?.miles || 0) + ' miles';
+      document.getElementById('saveRouteModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
-      document.body.style.visibility = 'visible';
-    })();
-    </script>
+    function closeSaveRouteModal() {
+      document.getElementById('saveRouteModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
 
-    <!-- Core Scripts (utilities only, no auth) -->
-    <script src="scripts/cipher-core.js"></script>
-
-    <!-- Shared Firm Storage & Session Manager -->
-    <script src="scripts/firm-store.js"></script>
-    <script src="scripts/session-manager.js"></script>
-
-    <!-- Google Maps Configuration -->
-    <script src="scripts/google-config.js"></script>
-
-    <!-- Google Maps API -->
-    <script>
-      // Load Google Maps API if key is configured
-      if (
-        window.GOOGLE_MAPS_CONFIG &&
-        window.GOOGLE_MAPS_CONFIG.apiKey &&
-        window.GOOGLE_MAPS_CONFIG.apiKey !==
-          "CONFIGURE_YOUR_GOOGLE_MAPS_API_KEY"
-      ) {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${
-          window.GOOGLE_MAPS_CONFIG.apiKey
-        }&libraries=${window.GOOGLE_MAPS_CONFIG.libraries.join(
-          ","
-        )}&callback=initRouteCipher`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-        console.log("🗺️ Loading Google Maps API...");
-      } else {
-        console.warn(
-          "🗺️ Google Maps API key not configured, using fallback mode"
-        );
-        // Initialize without Google Maps
-        setTimeout(() => {
-          if (typeof RouteCipher !== "undefined") {
-            window.routeCipher = new RouteCipher();
-            console.log("🗺️ Route Cipher initialized in fallback mode");
-          }
-        }, 100);
-      }
-    </script>
-
-    <!-- Distance Cache - authoritative distance storage -->
-    <script src="scripts/distance-cache.js"></script>
-
-    <!-- Route Cipher Script -->
-    <script src="scripts/route-cipher.js"></script>
-
-    <!-- Modal Control Functions -->
-    <script>
-      // Track the currently active day in the modal
-      let activeModalDayIndex = 0;
-
-      // Global functions for modal control
-      function closeRouteModal() {
-        const modal = document.getElementById("routeMapModal");
-        modal.classList.remove("active");
-        document.body.style.overflow = "";
-      }
-
-      function switchModalDay(dayIndex) {
-        if (!window.routeCipher || !window.routeCipher.currentRoute) {
-          console.error("No route data available");
-          return;
-        }
-
-        // Track the active day
-        activeModalDayIndex = dayIndex;
-        window.routeCipher.activeModalDay = dayIndex;
-
-        // Update active tab
-        document.querySelectorAll(".day-tab").forEach((tab, index) => {
-          if (index === dayIndex) {
-            tab.classList.add("active");
-          } else {
-            tab.classList.remove("active");
-          }
-        });
-
-        // Update the Edit Day button label
-        const editBtnText = document.getElementById("editDayBtnText");
-        if (editBtnText) {
-          editBtnText.textContent = `Edit Day ${dayIndex + 1}`;
-        }
-
-        // Show timeline and map for selected day
-        window.routeCipher.showDayTimeline(
-          dayIndex,
-          window.routeCipher.currentRoute,
-          window.routeCipher.currentOriginalRoute
-        );
-        window.routeCipher.renderModalDayRoute(
-          window.routeCipher.currentRoute,
-          dayIndex
-        );
-      }
-
-      // Edit the currently active day
-      function editActiveDay() {
-        if (window.routeCipher) {
-          window.routeCipher.editDayRoute(activeModalDayIndex);
-        }
-      }
-
-      function exportRouteFromModal() {
-        if (window.routeCipher) {
-          window.routeCipher.showSaveDayModal();
-        }
-      }
-
-      // Save Route Modal Functions
-      function openSaveRouteModal() {
-        if (!window.routeCipher || !window.routeCipher.currentRoute) {
-          alert('No route to save. Please optimize a route first.');
-          return;
-        }
-
+    async function confirmSaveRoute() {
+      const routeDate = document.getElementById('routeDate').value || null;
+      const btn = document.getElementById('confirmSaveRouteBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      try {
         const route = window.routeCipher.currentRoute;
-        const startLocation = window.routeCipher.startLocation ||
-                              document.getElementById('startLocation')?.value || 'Unknown';
-
-        // Get destinations
+        const startLocation = window.routeCipher.startLocation || document.getElementById('startLocation')?.value || 'Unknown';
         const destinations = window.routeCipher.destinations || [];
         const endAddress = destinations.length > 0
           ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
           : startLocation;
-
-        // Set default date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('routeDate').value = today;
-
-        // Populate summary
-        document.getElementById('saveRouteStart').textContent = startLocation;
-        document.getElementById('saveRouteEnd').textContent = endAddress;
-        document.getElementById('saveRouteMiles').textContent =
-          (route.overall?.miles || 0) + ' miles';
-
-        // Show modal
-        const modal = document.getElementById('saveRouteModal');
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeSaveRouteModal() {
-        const modal = document.getElementById('saveRouteModal');
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-
-      async function confirmSaveRoute() {
-        const dateInput = document.getElementById('routeDate');
-        const routeDate = dateInput.value || null; // null if no date selected
-
-        const btn = document.getElementById('confirmSaveRouteBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span>⏳</span><span>Saving...</span>';
-
-        try {
-          const route = window.routeCipher.currentRoute;
-          const startLocation = window.routeCipher.startLocation ||
-                                document.getElementById('startLocation')?.value || 'Unknown';
-          const destinations = window.routeCipher.destinations || [];
-          const endAddress = destinations.length > 0
-            ? destinations[destinations.length - 1]?.address || destinations[destinations.length - 1] || startLocation
-            : startLocation;
-
-          // Always save to SessionManager (local session tracking)
-          const sessionRouteData = {
-            startLocation: startLocation,
-            endAddress: endAddress,
-            totalMiles: route.overall?.miles || 0,
-            date: routeDate,
-            days: route.days,
-            savedAt: Date.now()
-          };
-
-          if (window.SessionManager) {
-            window.SessionManager.addRouteToSession(sessionRouteData);
-            console.log('Route added to SessionManager');
-          }
-
-          // Only persist to Supabase if a date was provided
-          if (routeDate && window.RouteService) {
-            const routeData = {
-              date: routeDate,
-              start_address: startLocation,
-              end_address: endAddress,
-              total_miles: route.overall?.miles || 0,
-              stop_count: Math.max(destinations.length, 1)
-            };
-
-            const result = await window.RouteService.saveRoute(routeData);
-
-            if (result.success) {
-              closeSaveRouteModal();
-              if (window.routeCipher.showToast) {
-                window.routeCipher.showToast('Route saved to My Routes!');
-              } else {
-                alert('Route saved successfully! View it in My Routes.');
-              }
-
-              if (confirm('Route saved! Open My Routes to manage it?')) {
-                window.location.href = 'my-routes.html';
-              }
-            } else {
-              alert('Failed to save route: ' + (result.error || 'Unknown error'));
-            }
-          } else {
-            // No date - saved to session only
+        if (window.SessionManager) {
+          window.SessionManager.addRouteToSession({ startLocation, endAddress, totalMiles: route.overall?.miles || 0, date: routeDate, days: route.days, savedAt: Date.now() });
+        }
+        if (routeDate && window.RouteService) {
+          const result = await window.RouteService.saveRoute({ date: routeDate, start_address: startLocation, end_address: endAddress, total_miles: route.overall?.miles || 0, stop_count: Math.max(destinations.length, 1) });
+          if (result.success) {
             closeSaveRouteModal();
-            if (window.routeCipher && window.routeCipher.showToast) {
-              window.routeCipher.showToast('Route saved to current session.');
+            if (window.routeCipher.showToast) window.routeCipher.showToast('Route saved to My Routes!');
+            if (confirm('Route saved! Open My Routes to manage it?')) window.location.href = 'my-routes.html';
+          } else {
+            alert('Failed to save route: ' + (result.error || 'Unknown error'));
+          }
+        } else {
+          closeSaveRouteModal();
+          if (window.routeCipher?.showToast) window.routeCipher.showToast('Route saved to current session.');
+        }
+      } catch (err) {
+        alert('Error saving route: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Route';
+      }
+    }
+  </script>
+
+  <!-- Google Maps Init -->
+  <script>
+    async function initRouteCipher() {
+      try {
+        if (typeof RouteCipher !== "undefined") {
+          window.routeCipher = new RouteCipher();
+          if (typeof google !== "undefined") {
+            const mapContainer = document.getElementById("routeMap");
+            if (mapContainer) {
+              window.routeCipher.map = new google.maps.Map(mapContainer, {
+                zoom: 10,
+                center: { lat: 40.7128, lng: -74.006 },
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+              });
+              window.routeCipher.directionsService = new google.maps.DirectionsService();
+              window.routeCipher.directionsRenderer = new google.maps.DirectionsRenderer({
+                draggable: true,
+                panel: document.getElementById("directionsPanel"),
+              });
+              window.routeCipher.geocoder = new google.maps.Geocoder();
+              window.routeCipher.directionsRenderer.setMap(window.routeCipher.map);
             }
           }
-        } catch (err) {
-          console.error('Save route error:', err);
-          alert('Error saving route: ' + err.message);
-        } finally {
-          btn.disabled = false;
-          btn.innerHTML = '<span>💾</span><span>Save Route</span>';
         }
+      } catch (error) {
+        console.error("Route Cipher init error:", error);
       }
-    </script>
+    }
 
-    <!-- Security Agent: Google Maps API Script -->
-    <script>
-      // Security Agent: Global callback function
-      async function initRouteCipher() {
-        console.log(
-          "🔒 Security Agent: Google Maps API loaded, initializing..."
-        );
+    function gm_authFailure() {
+      document.getElementById("errorMessage").textContent = "Google Maps failed to load. Check API key.";
+      document.getElementById("errorDisplay").style.display = "block";
+    }
+  </script>
 
-        try {
-          if (typeof RouteCipher !== "undefined") {
-            window.routeCipher = new RouteCipher();
+  <script src="scripts/claim-cipher-system-qa.js"></script>
 
-            // Initialize Google Maps
-            if (window.routeCipher && typeof google !== "undefined") {
-              const mapContainer = document.getElementById("routeMap");
-              if (mapContainer) {
-                window.routeCipher.map = new google.maps.Map(mapContainer, {
-                  zoom: 10,
-                  center: { lat: 40.7128, lng: -74.006 },
-                  mapTypeId: google.maps.MapTypeId.ROADMAP,
-                });
+  <!-- Toggle summary sync -->
+  <script>
+    function updateSummary() {
+      const split = document.getElementById('daySplit');
+      const ret   = document.getElementById('returnStart');
+      if (document.getElementById('sumSplit'))  document.getElementById('sumSplit').textContent  = split?.checked ? 'On'  : 'Off';
+      if (document.getElementById('sumReturn')) document.getElementById('sumReturn').textContent = ret?.checked   ? 'Yes' : 'No';
+    }
 
-                window.routeCipher.directionsService =
-                  new google.maps.DirectionsService();
-                window.routeCipher.directionsRenderer =
-                  new google.maps.DirectionsRenderer({
-                    draggable: true,
-                    panel: document.getElementById("directionsPanel"),
-                  });
-                window.routeCipher.geocoder = new google.maps.Geocoder();
-
-                window.routeCipher.directionsRenderer.setMap(
-                  window.routeCipher.map
-                );
-
-                console.log(
-                  "🔒 Security Agent: Google Maps fully initialized!"
-                );
-              } else {
-                console.error(
-                  "🔒 Security Agent: Map container #routeMap not found"
-                );
-              }
-            }
-          }
-        } catch (error) {
-          console.error("🔒 Security Agent: Initialization error:", error);
-        }
+    // Keep stop count badge in sync with destinationsList changes
+    (function() {
+      const list = document.getElementById('destinationsList');
+      if (!list) return;
+      function syncCount() {
+        const count = list.querySelectorAll('.destination-input').length;
+        const badge = document.getElementById('stopCountBadge');
+        const label = document.getElementById('stopCountLabel');
+        const limitCount = document.getElementById('limitCount');
+        const limitFill  = document.getElementById('limitFill');
+        const sumStops   = document.getElementById('sumStops');
+        if (badge) badge.textContent = count;
+        if (label) label.textContent = `${count} / 15 stops`;
+        if (limitCount) limitCount.textContent = count;
+        if (limitFill)  limitFill.style.width = (count / 15 * 100) + '%';
+        if (sumStops)   sumStops.textContent = count;
       }
+      const observer = new MutationObserver(syncCount);
+      observer.observe(list, { childList: true, subtree: false });
+    })();
+  </script>
 
-      // Security Agent: Error handler for API failures
-      function gm_authFailure() {
-        console.error("🔒 Security Agent: Google Maps authentication failed");
-        document.getElementById("errorMessage").textContent =
-          "Google Maps failed to load. Check API key.";
-        document.getElementById("errorDisplay").style.display = "block";
-      }
-    </script>
-    <script src="scripts/claim-cipher-system-qa.js"></script>
-
-    <div class="v25-action-footer">
-      <div class="v25-footer-inner">
-        <div class="v25-footer-info">
-          <div class="v25-footer-main" id="v25FooterMain">Route Cipher — Ready</div>
-          <div class="v25-footer-sub">Add stops and optimize</div>
-        </div>
-        <div class="v25-action-btns">
-          <button class="v25-btn v25-btn-ghost" onclick="window.routeCipher && window.routeCipher.clearSavedRoutes()">⟳ Clear</button>
-          <button class="v25-btn v25-btn-primary" onclick="document.getElementById('optimizeRoute').click()">Optimize Route →</button>
-        </div>
-      </div>
-    </div>
-  </body>
+</body>
 </html>

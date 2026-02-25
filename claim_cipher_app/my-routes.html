@@ -1,227 +1,578 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Routes - Claim Cipher</title>
-    <!-- Stack B: Universal base → Industrial plates → Page layout -->
-    <link rel="stylesheet" href="styles/universal-system.css" />
-    <link rel="stylesheet" href="styles/industrial-plates.css" />
-    <link rel="stylesheet" href="styles/my-routes-layout.css" />
-  </head>
-  <body class="my-routes-page" style="visibility: hidden">
-    <header class="cipher-header">
-      <div class="header-content">
-        <div class="app-brand">
-          <img src="../branding/logo/claimcipher-mark.png" alt="Claim Cipher" class="nav-logo" />
-        </div>
-        <div class="nav-links">
-          <a href="command-center.html">Dashboard</a>
-          <a href="route-cypher.html">Routes</a>
-          <a href="mileage-cypher.html">Mileage</a>
-          <a href="my-routes.html" class="active">My Routes</a>
-        </div>
-        <div class="user-section">
-          <div class="user-info">
-            <div class="user-name" id="userName">Professional User</div>
-            <div class="user-role">Claims Specialist</div>
-          </div>
-          <button
-            class="cipher-btn logout-btn"
-            onclick="handleLogout()"
-          >
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            Logout
-          </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+  <title>Claim Cipher — My Routes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --plate:      #0e0f11;
+  --steel:      #161a1d;
+  --steel-mid:  #1e2328;
+  --steel-lift: #252b31;
+  --input-bg:   #0a0c0e;
+  --rivet:      #2e353d;
+  --rivet-hi:   #3d464f;
+  --amber:      #e8952a;
+  --amber-dim:  rgba(232,149,42,0.12);
+  --amber-line: rgba(232,149,42,0.35);
+  --white:      #edeae4;
+  --text:       #8f9399;
+  --text-hi:    #b8bdc2;
+  --muted:      #4a5058;
+  --green:      #4caf6e;
+  --green-dim:  rgba(76,175,110,0.12);
+  --red:        #c0392b;
+  --red-dim:    rgba(192,57,43,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--plate);
+  color: var(--text-hi);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px 0 24px; height: 64px;
+  background: rgba(14,15,17,0.98);
+  border-bottom: 1px solid var(--rivet);
+  box-shadow: 0 1px 0 rgba(232,149,42,0.07);
+  flex-shrink: 0;
+}
+.nav-logo { font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; color: var(--white); text-decoration: none; }
+.nav-logo span { color: var(--amber); }
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab { display: flex; align-items: center; padding: 0 20px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-right: 1px solid var(--rivet); border-left: 1px solid transparent; transition: all 0.2s; text-decoration: none; }
+.nav-tab:first-child { border-left: 1px solid var(--rivet); }
+.nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+.nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.nav-user strong { color: var(--white); display: block; font-size: 12px; }
+.nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
+.nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background:
+    radial-gradient(ellipse 60% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
+    var(--steel);
+  border-bottom: 1px solid var(--rivet);
+  padding: 24px 40px;
+  position: relative; z-index: 1; flex-shrink: 0;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.page-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+.page-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.06em; color: var(--white); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.header-badge { display: flex; gap: 3px; }
+.hbadge { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--rivet); color: var(--muted); background: var(--steel-mid); }
+.hbadge span { color: var(--amber); }
+.hbadge.green span { color: var(--green); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 28px 40px 80px;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+}
+.filter-bar::before, .filter-bar::after {
+  content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+}
+.filter-bar::before { top: 10px; right: 12px; }
+.filter-bar::after  { bottom: 10px; right: 12px; }
+
+.filter-header {
+  padding: 12px 20px; background: var(--steel-mid); border-bottom: 1px solid var(--rivet);
+  display: flex; align-items: center; gap: 10px;
+}
+.filter-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+.filter-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
+
+.filter-body {
+  padding: 18px 20px;
+  display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+}
+.filter-field { display: flex; flex-direction: column; gap: 5px; }
+.filter-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.filter-input {
+  background: var(--input-bg); border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
+  padding: 9px 12px; color: var(--white); font-size: 13px;
+  font-family: 'Barlow', sans-serif; outline: none;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  transition: border-color 0.2s; min-width: 160px;
+}
+.filter-input:focus { border-color: var(--amber); }
+.filter-input::-webkit-calendar-picker-indicator { filter: invert(0.4); }
+
+.filter-sep {
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+  padding-bottom: 10px; letter-spacing: 0.1em;
+}
+
+/* status filter pills */
+.filter-pills { display: flex; gap: 3px; }
+.pill {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 9px 14px;
+  border: 1px solid var(--rivet); background: var(--steel-mid);
+  color: var(--muted); cursor: pointer; transition: all 0.2s;
+}
+.pill:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+.pill.active-all    { border-color: var(--amber-line); background: var(--amber-dim); color: var(--amber); }
+.pill.active-open   { border-color: rgba(232,149,42,0.3); background: rgba(232,149,42,0.08); color: var(--amber); }
+.pill.active-closed { border-color: rgba(76,175,110,0.3); background: var(--green-dim); color: var(--green); }
+.pill.active-void   { border-color: rgba(192,57,43,0.3); background: var(--red-dim); color: var(--red); }
+
+.filter-btns { display: flex; gap: 6px; margin-left: auto; }
+.f-btn {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 9px 18px; cursor: pointer; transition: all 0.2s; border: none;
+}
+.f-btn-apply { background: var(--amber); color: #000; font-weight: 600; }
+.f-btn-apply:hover { background: #f0a030; }
+.f-btn-clear { background: var(--steel-lift); border: 1px solid var(--rivet-hi); color: var(--muted); }
+.f-btn-clear:hover { color: var(--text-hi); border-color: var(--rivet-hi); }
+
+/* ── ROUTES HEADER ROW ── */
+.routes-header-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 4px;
+}
+.routes-count {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.routes-count span { color: var(--amber); }
+
+.export-btn {
+  background: var(--steel-lift); border: 1px solid var(--rivet-hi);
+  color: var(--text-hi); font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 9px 18px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.export-btn:hover { border-color: var(--amber-line); color: var(--amber); }
+
+/* ── ROUTE CARD ── */
+.route-card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+  transition: border-left-color 0.2s, background 0.2s;
+}
+.route-card::before, .route-card::after {
+  content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+}
+.route-card::before { top: 10px; right: 12px; }
+.route-card::after  { bottom: 10px; right: 12px; }
+.route-card.status-closed { border-left-color: var(--green); }
+.route-card.status-open   { border-left-color: var(--amber); }
+.route-card.status-void   { border-left-color: var(--red); opacity: 0.6; }
+.route-card:hover { background: var(--steel-mid); }
+
+.route-card-inner {
+  display: flex; align-items: center;
+  padding: 18px 20px; gap: 20px;
+}
+
+.route-date-block { min-width: 140px; }
+.route-date {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+  color: var(--white); font-weight: 500; margin-bottom: 6px;
+}
+.route-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tag {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 8px; border: 1px solid;
+}
+.tag-round { border-color: rgba(232,149,42,0.3); color: var(--amber); background: var(--amber-dim); }
+.tag-split { border-color: rgba(184,189,194,0.2); color: var(--muted); background: var(--steel-mid); }
+
+.route-dest {
+  flex: 1; font-size: 13px; color: var(--text-hi);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.route-dest-main { color: var(--text-hi); }
+.route-dest-end  { font-size: 12px; color: var(--muted); }
+.route-dest-stops { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+.route-miles-block { text-align: right; min-width: 110px; }
+.route-miles {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; color: var(--white); letter-spacing: 0.02em; line-height: 1;
+}
+.route-miles span { color: var(--amber); font-size: 16px; }
+.route-miles-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+.route-actions {
+  display: flex; align-items: center; gap: 6px; min-width: 240px; justify-content: flex-end;
+}
+
+.status-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 5px 12px; border: 1px solid;
+}
+.status-closed { border-color: rgba(76,175,110,0.35); color: var(--green); background: var(--green-dim); }
+.status-open   { border-color: var(--amber-line); color: var(--amber); background: var(--amber-dim);
+  animation: pulse-badge 2s ease-in-out infinite; }
+@keyframes pulse-badge { 0%,100%{box-shadow:none}50%{box-shadow:0 0 8px rgba(232,149,42,0.3)} }
+.status-void   { border-color: rgba(192,57,43,0.3); color: var(--red); background: var(--red-dim); }
+
+.route-action-btn {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 7px 12px;
+  border: 1px solid var(--rivet); color: var(--muted);
+  background: transparent; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.route-action-btn:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+.route-action-btn[disabled],
+.route-action-btn.logged { opacity: 0.5; cursor: default; pointer-events: none; }
+.route-action-btn.logged { border-color: rgba(76,175,110,0.3); color: var(--green); background: var(--green-dim); opacity: 1; }
+.route-action-btn.danger:hover { border-color: rgba(192,57,43,0.4); color: var(--red); background: var(--red-dim); }
+
+/* Export note */
+.export-note {
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--green);
+  letter-spacing: 0.08em; padding: 6px 20px 10px;
+  border-top: 1px solid rgba(76,175,110,0.08);
+  display: flex; align-items: center; gap: 6px;
+}
+.export-note::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); opacity: 0.7; flex-shrink: 0; }
+
+/* ── STATE DISPLAYS ── */
+.routes-state {
+  padding: 60px 20px; text-align: center;
+  border: 1px dashed var(--rivet); background: var(--steel);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.state-icon { font-size: 28px; opacity: 0.4; }
+.state-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.state-sub { font-size: 12px; color: var(--muted); }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--rivet); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TOTAL STRIP ── */
+.total-strip {
+  background: var(--steel-mid);
+  border: 1px solid var(--rivet);
+  border-top: 2px solid rgba(232,149,42,0.2);
+  display: grid; grid-template-columns: repeat(4,1fr);
+}
+.total-cell { padding: 16px 20px; border-right: 1px solid var(--rivet); }
+.total-cell:last-child { border-right: none; }
+.total-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.total-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--white); letter-spacing: 0.02em; line-height: 1; }
+.total-val span { color: var(--amber); }
+.total-val.green { color: var(--green); }
+
+/* ── MODALS ── */
+.cc-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.78);
+  align-items: center; justify-content: center;
+}
+.cc-dialog {
+  background: var(--steel); border: 1px solid var(--rivet);
+  border-top: 2px solid var(--amber);
+  min-width: 380px; max-width: 500px; width: 90%;
+}
+.cc-dialog-header {
+  padding: 14px 20px; background: var(--steel-mid); border-bottom: 1px solid var(--rivet);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cc-dialog-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+.cc-close-btn { background: none; border: 1px solid var(--rivet); color: var(--muted); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; line-height: 1; }
+.cc-close-btn:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+.cc-dialog-body { padding: 24px 20px; }
+.cc-dialog-footer { padding: 14px 20px; border-top: 1px solid var(--rivet); display: flex; gap: 8px; justify-content: flex-end; }
+.cc-dialog p { font-size: 13px; color: var(--text-hi); margin-bottom: 16px; line-height: 1.6; }
+.cc-dialog strong { color: var(--white); font-weight: 600; }
+
+.cc-form-row { display: flex; flex-direction: column; gap: 5px; margin-top: 14px; }
+.cc-form-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.cc-form-row .filter-input { min-width: unset; width: 100%; }
+
+.summary-grid { display: flex; flex-direction: column; gap: 6px; }
+.summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 12px; background: var(--steel-mid); border: 1px solid var(--rivet); }
+.summary-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.summary-value { font-size: 13px; color: var(--text-hi); }
+.summary-row--highlight .summary-label { color: var(--text-hi); }
+.summary-row--highlight .summary-value { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--amber); letter-spacing: 0.04em; }
+
+/* Dialog buttons */
+.cc-btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 18px; cursor: pointer; transition: all 0.2s; border: none; }
+.cc-btn-muted   { background: var(--steel-lift); border: 1px solid var(--rivet-hi); color: var(--muted); }
+.cc-btn-muted:hover { color: var(--text-hi); }
+.cc-btn-primary { background: var(--amber); color: #000; font-weight: 600; }
+.cc-btn-primary:hover { background: #f0a030; }
+.cc-btn-primary:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+.cc-btn-warning { background: var(--amber-dim); border: 1px solid var(--amber-line); color: var(--amber); }
+.cc-btn-warning:hover { background: var(--amber); color: #000; }
+.cc-btn-danger  { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.4); color: var(--red); }
+.cc-btn-danger:hover  { background: var(--red); color: #fff; }
+
+/* Export preview */
+.export-preview { display: flex; align-items: center; gap: 16px; padding: 16px 0 0; }
+.preview-stat   { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.stat-value     { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--white); }
+.stat-label     { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.preview-divider { font-size: 20px; color: var(--muted); }
+.export-empty-range,
+.export-empty   { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.export-empty p, .export-empty-range p { font-size: 12px; color: var(--muted); }
+.export-hint    { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+.export-loading { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+.export-error   { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--red); letter-spacing: 0.1em; }
+
+/* ── TOAST ── */
+.cc-toast {
+  position: fixed; top: 68px; right: 20px; z-index: 9999;
+  background: var(--steel); border: 1px solid var(--rivet);
+  padding: 11px 18px; font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.06em; color: var(--text-hi);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  transform: translateX(120%); opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  max-width: 320px;
+}
+.cc-toast--in      { transform: translateX(0); opacity: 1; }
+.cc-toast--success { border-left: 3px solid var(--green); }
+.cc-toast--error   { border-left: 3px solid var(--red); }
+.cc-toast--warning { border-left: 3px solid var(--amber); }
+.cc-toast--info    { border-left: 3px solid #3b82f6; }
+  </style>
+</head>
+<body style="visibility: hidden">
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="command-center.html">Dashboard</a>
+    <a class="nav-tab" href="route-cypher.html">Routes</a>
+    <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+    <a class="nav-tab active" href="my-routes.html">My Routes</a>
+    <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <strong id="userName">—</strong>
+      Claims Specialist
+    </div>
+    <button class="nav-logout" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-label">My Routes</div>
+      <div class="page-title">Route Lifecycle</div>
+      <div class="page-sub">Route management and IRS-ready mileage log exports</div>
+    </div>
+    <div class="header-badge">
+      <div class="hbadge">Total Routes <span id="hTotal">—</span></div>
+      <div class="hbadge green">Closed <span id="hClosed">—</span></div>
+      <div class="hbadge">Open <span id="hOpen">—</span></div>
+      <div class="hbadge">Total Miles <span id="hMiles">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-header">
+      <div class="filter-title">Filter Routes</div>
+      <div class="filter-line"></div>
+    </div>
+    <div class="filter-body">
+      <div class="filter-field">
+        <div class="filter-label">From Date</div>
+        <input class="filter-input" type="date" id="dateFromFilter">
+      </div>
+      <div class="filter-sep">→</div>
+      <div class="filter-field">
+        <div class="filter-label">To Date</div>
+        <input class="filter-input" type="date" id="dateToFilter">
+      </div>
+
+      <div class="filter-field">
+        <div class="filter-label">Status</div>
+        <div class="filter-pills">
+          <div class="pill active-all" data-filter="all">All</div>
+          <div class="pill" data-filter="open">Open</div>
+          <div class="pill" data-filter="closed">Closed</div>
+          <div class="pill" data-filter="void">Void</div>
         </div>
       </div>
-    </header>
 
-    <main class="my-routes-main main-content main-container">
-      <div class="my-routes-container">
-        <!-- Hero / Page Title Plate -->
-        <section class="hero-section elevation-3">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          <h1 class="hero-title cipher-hero-title">My Routes</h1>
-          <p class="hero-subtitle cipher-body">
-            Route lifecycle management and IRS-ready mileage logs
-          </p>
-        </section>
-
-        <!-- Filter Plate -->
-        <section class="filter-plate steel-plate">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          <h3 class="plate-engraved-title cipher-section-title">Filter Routes</h3>
-          <div class="filters-form">
-            <div class="filter-group">
-              <label for="dateFromFilter" class="input-label cipher-label">From Date</label>
-              <input type="date" id="dateFromFilter" class="filter-input" />
-            </div>
-            <div class="filter-group">
-              <label for="dateToFilter" class="input-label cipher-label">To Date</label>
-              <input type="date" id="dateToFilter" class="filter-input" />
-            </div>
-            <button id="applyFilters" class="cipher-btn plate-btn plate-btn--primary">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Apply Filter
-            </button>
-            <button id="clearFilters" class="cipher-btn plate-btn plate-btn--muted">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Clear
-            </button>
-          </div>
-        </section>
-
-        <!-- Routes List Section -->
-        <section class="routes-section">
-          <div class="routes-header">
-            <h3 class="routes-title cipher-section-title">
-              Routes <span id="routeCount" class="route-count"></span>
-            </h3>
-
-            <button id="exportCsvBtn" class="cipher-btn btn-export">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Export Mileage CSV
-            </button>
-          </div>
-
-          <div id="routesList" class="routes-list">
-            <div class="routes-loading">
-              <div class="cipher-spinner"></div>
-              <span>Loading routes...</span>
-            </div>
-          </div>
-        </section>
+      <div class="filter-btns">
+        <button class="f-btn f-btn-clear" id="clearFilters">Clear</button>
+        <button class="f-btn f-btn-apply" id="applyFilters">Apply Filter</button>
       </div>
+    </div>
+  </div>
 
-      <!-- CSV Export Modal -->
-      <div id="exportModal" class="cipher-modal" style="display: none">
-        <div class="cipher-modal-content">
-          <div class="cipher-modal-header">
-            <h3 class="cipher-section-title">Export Mileage Log</h3>
-            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeExportModal()">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              ×
-            </button>
-          </div>
-          <div class="cipher-modal-body">
-            <p class="modal-description cipher-body">
-              Export closed route mileage logs for IRS tax reporting. Only
-              closed routes with mileage logs are included.
-            </p>
-            <div class="form-group">
-              <label for="exportDateFrom" class="input-label cipher-label">From Date</label>
-              <input type="date" id="exportDateFrom" class="filter-input" required />
-            </div>
-            <div class="form-group">
-              <label for="exportDateTo" class="input-label cipher-label">To Date</label>
-              <input type="date" id="exportDateTo" class="filter-input" required />
-            </div>
-            <div id="exportSummary" class="export-summary"></div>
-          </div>
-          <div class="cipher-modal-footer">
-            <button class="cipher-btn plate-btn plate-btn--muted" onclick="closeExportModal()">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Cancel
-            </button>
-            <button id="confirmExportBtn" class="cipher-btn plate-btn plate-btn--primary">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Download CSV
-            </button>
-          </div>
-        </div>
+  <!-- ROUTES HEADER ROW -->
+  <div class="routes-header-row">
+    <div class="routes-count">Routes <span id="routeCount"></span></div>
+    <button class="export-btn" id="exportCsvBtn">↓ Export Mileage CSV</button>
+  </div>
+
+  <!-- ROUTE LIST -->
+  <div id="routesList" style="display:flex;flex-direction:column;gap:3px">
+    <div class="routes-state">
+      <div class="spinner"></div>
+      <div class="state-label">Loading routes...</div>
+    </div>
+  </div>
+
+  <!-- TOTALS STRIP -->
+  <div class="total-strip">
+    <div class="total-cell">
+      <div class="total-label">Total Routes</div>
+      <div class="total-val" id="sumTotal">—</div>
+    </div>
+    <div class="total-cell">
+      <div class="total-label">Total Miles</div>
+      <div class="total-val" id="sumTotalMiles">—</div>
+    </div>
+    <div class="total-cell">
+      <div class="total-label">Closed / Export Ready</div>
+      <div class="total-val green" id="sumClosed">—</div>
+    </div>
+    <div class="total-cell">
+      <div class="total-label">Avg Miles / Route</div>
+      <div class="total-val" id="sumAvg">—</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT MODAL -->
+<div id="exportModal" class="cc-overlay">
+  <div class="cc-dialog">
+    <div class="cc-dialog-header">
+      <div class="cc-dialog-title">Export Mileage Log</div>
+      <button class="cc-close-btn" onclick="closeExportModal()">×</button>
+    </div>
+    <div class="cc-dialog-body">
+      <p>Export closed route mileage logs for IRS tax reporting. Only closed, non-voided routes are included.</p>
+      <div class="cc-form-row">
+        <div class="cc-form-label">From Date</div>
+        <input type="date" id="exportDateFrom" class="filter-input" />
       </div>
-
-      <!-- Close Route Confirmation Modal -->
-      <div id="closeRouteModal" class="cipher-modal" style="display: none">
-        <div class="cipher-modal-content">
-          <div class="cipher-modal-header">
-            <h3 class="cipher-section-title">Close Route</h3>
-            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeCloseRouteModal()">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              ×
-            </button>
-          </div>
-          <div class="cipher-modal-body">
-            <p class="modal-warning cipher-body">
-              This creates a finalized <strong>mileage log</strong> for tax purposes.
-              Logs can be voided later if created in error.
-            </p>
-            <div class="route-summary" id="closeRouteSummary"></div>
-          </div>
-          <div class="cipher-modal-footer">
-            <button class="cipher-btn plate-btn plate-btn--muted" onclick="closeCloseRouteModal()">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Cancel
-            </button>
-            <button id="confirmCloseBtn" class="cipher-btn plate-btn plate-btn--warning">
-              <div class="rivet tl"></div>
-              <div class="rivet tr"></div>
-              <div class="rivet bl"></div>
-              <div class="rivet br"></div>
-              Close Route & Log Mileage
-            </button>
-          </div>
-        </div>
+      <div class="cc-form-row">
+        <div class="cc-form-label">To Date</div>
+        <input type="date" id="exportDateTo" class="filter-input" />
       </div>
-    </main>
+      <div id="exportSummary"></div>
+    </div>
+    <div class="cc-dialog-footer">
+      <button class="cc-btn cc-btn-muted" onclick="closeExportModal()">Cancel</button>
+      <button id="confirmExportBtn" class="cc-btn cc-btn-primary">Download CSV</button>
+    </div>
+  </div>
+</div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="scripts/supabase-config.js"></script>
-    <script src="scripts/supabase-auth.js"></script>
-    <script src="scripts/billing-guard.js"></script>
-    <script>
-      (async function () {
-        document.body.style.visibility = "hidden";
-        const allowed = await window.SupabaseAuth.protectPage();
-        if (!allowed) return;
+<!-- CLOSE ROUTE MODAL -->
+<div id="closeRouteModal" class="cc-overlay">
+  <div class="cc-dialog">
+    <div class="cc-dialog-header">
+      <div class="cc-dialog-title">Close Route</div>
+      <button class="cc-close-btn" onclick="closeCloseRouteModal()">×</button>
+    </div>
+    <div class="cc-dialog-body">
+      <p>This creates a finalized <strong>mileage log</strong> for tax purposes. Logs can be voided later if created in error.</p>
+      <div class="summary-grid" id="closeRouteSummary"></div>
+    </div>
+    <div class="cc-dialog-footer">
+      <button class="cc-btn cc-btn-muted" onclick="closeCloseRouteModal()">Cancel</button>
+      <button id="confirmCloseBtn" class="cc-btn cc-btn-warning">🔒 Close Route &amp; Log Mileage</button>
+    </div>
+  </div>
+</div>
 
-        const access = await window.BillingGuard.checkAccess();
-        if (!window.BillingGuard.hasAccess(access.profile)) {
-          window.location.href = "billing-required.html";
-          return;
-        }
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/supabase-config.js"></script>
+<script src="scripts/supabase-auth.js"></script>
+<script src="scripts/billing-guard.js"></script>
 
-        document.body.style.visibility = "visible";
-      })();
-    </script>
-    <script src="scripts/cipher-core.js"></script>
-    <script src="scripts/route-service.js"></script>
-    <script src="scripts/my-routes.js"></script>
-    <script src="scripts/claim-cipher-system-qa.js"></script>
-  </body>
+<!-- Auth / billing guard — runs before page renders -->
+<script>
+(async function () {
+  document.body.style.visibility = 'hidden';
+  const allowed = await window.SupabaseAuth.protectPage();
+  if (!allowed) return;
+
+  const access = await window.BillingGuard.checkAccess();
+  if (!window.BillingGuard.hasAccess(access.profile)) {
+    window.location.href = 'billing-required.html';
+    return;
+  }
+
+  document.body.style.visibility = 'visible';
+})();
+</script>
+
+<script src="scripts/cipher-core.js"></script>
+<script src="scripts/route-service.js"></script>
+<script src="scripts/my-routes.js"></script>
+
+<!-- Override cipher-core notification to match new design -->
+<script>
+window.showCipherNotification = function(message, type, duration) {
+  const toast = document.createElement('div');
+  toast.className = 'cc-toast cc-toast--' + (type || 'info');
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add('cc-toast--in'), 10);
+  setTimeout(() => {
+    toast.classList.remove('cc-toast--in');
+    setTimeout(() => toast.remove(), 300);
+  }, duration || 3500);
+};
+</script>
+
+</body>
 </html>

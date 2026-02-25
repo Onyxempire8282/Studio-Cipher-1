@@ -657,6 +657,9 @@ class RouteCipher {
       territoryType: document.getElementById("territoryType")?.value || "mixed",
       geographicClustering:
         document.getElementById("geographicClustering")?.checked ?? true,
+      returnStart: document.getElementById("returnStart")?.checked ?? false,
+      avoidHighways: document.getElementById("avoidHighways")?.checked ?? false,
+      avoidTolls: false,
     };
 
     return { startLocation, destinations, settings };
@@ -698,7 +701,12 @@ class RouteCipher {
 
     if (!settings.optimizeEnabled) {
       // Simple route without optimization
-      return await this.calculateSimpleRoute(startLocation, destinations);
+      const simpleRoute = await this.calculateSimpleRoute(startLocation, destinations);
+      if (settings.returnStart && simpleRoute.stops.length >= 2) {
+        const lastStop = simpleRoute.stops[simpleRoute.stops.length - 1];
+        simpleRoute.returnLeg = await this.fetchReturnLeg(lastStop, startLocation, settings);
+      }
+      return simpleRoute;
     }
 
     // Use Google Maps Directions API for optimization
@@ -709,7 +717,7 @@ class RouteCipher {
         destinations,
         settings
       );
-      const waypoints = sortedDestinations.map((dest) => ({
+      const allWaypoints = sortedDestinations.map((dest) => ({
         location: dest.address,
         stopover: true,
       }));
@@ -717,15 +725,18 @@ class RouteCipher {
       // Choose optimization mode based on settings
       const optimizeByDistance = settings.optimizationMode === "distance";
 
+      // Outbound request only — destination is always the last stop.
+      // Return leg is fetched via a dedicated fetchReturnLeg() call after this
+      // resolves, keeping waypoint optimization uncontaminated by round-trip logic.
       const request = {
         origin: startLocation,
-        destination: sortedDestinations[sortedDestinations.length - 1].address, // Last destination as endpoint
-        waypoints: waypoints.slice(0, -1), // All but last as waypoints
+        destination: sortedDestinations[sortedDestinations.length - 1].address,
+        waypoints: allWaypoints.slice(0, -1),
         optimizeWaypoints: true,
         travelMode: google.maps.TravelMode.DRIVING,
         unitSystem: google.maps.UnitSystem.IMPERIAL,
-        avoidHighways: false,
-        avoidTolls: false,
+        avoidHighways: settings.avoidHighways,
+        avoidTolls: settings.avoidTolls ?? false,
         // NOTE: No drivingOptions/departureTime - uses static durations only
         // ETA calculated locally from static duration values returned by API
       };
@@ -759,15 +770,25 @@ class RouteCipher {
           return;
         }
 
-        try {
-          const optimizedRoute = this.processDirectionsResult(result);
-          resolve(optimizedRoute);
-        } catch (error) {
-          const message = "Directions returned an invalid route payload.";
-          console.error("Directions processing failed:", error, result);
-          this.showError(message);
-          reject(new Error(message));
-        }
+        (async () => {
+          try {
+            const optimizedRoute = this.processDirectionsResult(result);
+            // Fetch return leg via a clean, dedicated Directions call — no heuristic.
+            // Done after outbound resolves so waypoint optimization is unaffected.
+            if (settings.returnStart && optimizedRoute.stops.length >= 2) {
+              const lastStop = optimizedRoute.stops[optimizedRoute.stops.length - 1];
+              optimizedRoute.returnLeg = await this.fetchReturnLeg(
+                lastStop, startLocation, settings
+              );
+            }
+            resolve(optimizedRoute);
+          } catch (error) {
+            const message = "Directions returned an invalid route payload.";
+            console.error("Directions processing failed:", error, result);
+            this.showError(message);
+            reject(new Error(message));
+          }
+        })();
       });
     });
   }
@@ -1404,8 +1425,10 @@ class RouteCipher {
     return null;
   }
 
-  estimateTime(origin, destination) {
-    const distance = this.estimateDistance(origin, destination);
+  estimateTime(origin, destination, resolvedDistance = null) {
+    const distance = resolvedDistance !== null
+      ? resolvedDistance
+      : this.estimateDistance(origin, destination);
 
     // Territory-specific time calculations
     const territoryType =
@@ -1532,46 +1555,93 @@ class RouteCipher {
       legs: [],
       totalDistance: 0,
       totalDuration: 0,
+      returnLeg: null,
       googleRoute: result,
     };
 
     legs.forEach((leg) => {
+      const miles   = leg.distance.value * 0.000621371;
+      const minutes = leg.duration.value / 60;
+
       processedRoute.stops.push(leg.end_address);
       processedRoute.legs.push({
-        origin: leg.start_address,
-        destination: leg.end_address,
-        distance: leg.distance.value * 0.000621371, // Convert to miles
-        duration: leg.duration.value / 60, // Convert to minutes
+        origin:       leg.start_address,
+        destination:  leg.end_address,
+        distance:     miles,
+        duration:     minutes,
         distanceText: leg.distance.text,
         durationText: leg.duration.text,
+        isEstimated:  false,
       });
 
-      processedRoute.totalDistance += leg.distance.value * 0.000621371;
-      processedRoute.totalDuration += leg.duration.value / 60;
+      processedRoute.totalDistance += miles;
+      processedRoute.totalDuration += minutes;
+
+      // Populate DistanceCache from Google-verified data so calculateReturnLeg()
+      // gets real values instead of falling through to heuristic estimation.
+      if (window.DistanceCache) {
+        window.DistanceCache.set(leg.start_address, leg.end_address, miles, 'google_api');
+      }
     });
+
+    // console.table audit — verify leg symmetry and that totals equal leg sum.
+    // Leave in place; cost is negligible and the data confirms math integrity.
+    if (console && console.table) {
+      const debugRows = legs.map((leg, i) => ({
+        index:               i,
+        start_address:       leg.start_address.substring(0, 45),
+        end_address:         leg.end_address.substring(0, 45),
+        'distance.value(m)': leg.distance.value,
+        'distance.text':     leg.distance.text,
+        'duration.value(s)': leg.duration.value,
+        'duration.text':     leg.duration.text,
+        'mi (computed)':     (leg.distance.value * 0.000621371).toFixed(2),
+        'min (computed)':    (leg.duration.value / 60).toFixed(1),
+      }));
+      console.group('\uD83D\uDD0D Google Directions legs — math integrity audit');
+      console.table(debugRows);
+      console.log(
+        `Leg sum \u2192 ${processedRoute.totalDistance.toFixed(2)} mi` +
+        ` | ${processedRoute.totalDuration.toFixed(1)} min` +
+        ` (${legs.length} leg${legs.length !== 1 ? 's' : ''})`
+      );
+      console.groupEnd();
+    }
 
     return processedRoute;
   }
 
   async applySplitting(route, settings) {
     if (!settings.splitEnabled) {
+      // Attach the Google-sourced return leg extracted by processDirectionsResult().
+      // route.totalDistance/Duration are outbound-only at this point; add return here
+      // so that overall totals always equal the sum of every displayed leg.
+      const returnLeg     = route.returnLeg || null;
+      const returnMiles   = returnLeg ? returnLeg.distance : 0;
+      const returnMinutes = returnLeg ? returnLeg.duration : 0;
+
+      const allLegs  = returnLeg ? [...route.legs, returnLeg]            : route.legs;
+      const allStops = returnLeg ? [...route.stops, returnLeg.destination] : route.stops;
+
+      const totalMiles   = Math.round((route.totalDistance + returnMiles)   * 10) / 10;
+      const totalMinutes = Math.round( route.totalDuration + returnMinutes);
+
       return {
         days: [
           {
             label: "Single Day",
-            stops: route.stops,
-            legs: route.legs,
-            totalMiles: Math.round(route.totalDistance * 10) / 10,
-            totalMinutes: Math.round(route.totalDuration),
+            stops: allStops,
+            legs:  allLegs,
+            totalMiles,
+            totalMinutes,
             appointmentTime: route.stops.length * settings.timePerAppointment,
-            totalDayTime:
-              Math.round(route.totalDuration) +
-              route.stops.length * settings.timePerAppointment,
+            totalDayTime:    totalMinutes + route.stops.length * settings.timePerAppointment,
           },
         ],
         overall: {
-          miles: Math.round(route.totalDistance * 10) / 10,
-          minutes: Math.round(route.totalDuration),
+          miles:     totalMiles,
+          minutes:   totalMinutes,
+          totalDays: 1,
         },
       };
     }
@@ -1713,13 +1783,18 @@ class RouteCipher {
       }
     }
 
-    // Finalize the last day with return to starting point
+    // Finalize the last day with return to starting point.
+    // If all stops fit in one day (no split occurred) and a Google-sourced return leg
+    // was pre-computed in processDirectionsResult(), use it directly — exact API data,
+    // no heuristic. For multi-day splits the final day calls calculateReturnLeg() which
+    // now benefits from the populated DistanceCache.
     if (currentDay.legs.length > 0) {
-      // Add return leg to starting point
-      const returnLeg = this.calculateReturnLeg(
-        currentDay.stops[currentDay.stops.length - 1],
-        startingPoint
-      );
+      const returnLeg = (route.returnLeg && days.length === 0)
+        ? route.returnLeg
+        : this.calculateReturnLeg(
+            currentDay.stops[currentDay.stops.length - 1],
+            startingPoint
+          );
       currentDay.legs.push(returnLeg);
       currentDay.stops.push(startingPoint);
       currentDay.totalMiles += returnLeg.distance;
@@ -1798,7 +1873,9 @@ class RouteCipher {
       console.log(`📏 Return leg using estimated distance: ${distance} mi`);
     }
 
-    const duration = this.estimateTime(lastStop, startingPoint);
+    // Pass the resolved distance so estimateTime() doesn't re-call estimateDistance()
+    // and overwrite a Google-sourced value with the cross-state 180 mi hardcode.
+    const duration = this.estimateTime(lastStop, startingPoint, isEstimated ? null : distance);
 
     return {
       origin: lastStop,
@@ -1810,6 +1887,80 @@ class RouteCipher {
       isReturn: true,
       isEstimated: isEstimated,
     };
+  }
+
+  // Fetch the return leg from Google Directions API — a clean, single-leg request
+  // with no waypoints and no waypoint optimization. Duration and distance come
+  // exclusively from directions.routes[0].legs[0].duration/distance.value.
+  // Returns null on API failure so callers can fall back to calculateReturnLeg().
+  fetchReturnLeg(origin, destination, settings) {
+    return new Promise((resolve) => {
+      if (typeof google === 'undefined' || !google.maps || !this.directionsService) {
+        console.warn('\u26A0\uFE0F fetchReturnLeg: Google Maps unavailable — skipping API call');
+        resolve(null);
+        return;
+      }
+
+      const request = {
+        origin,
+        destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.IMPERIAL,
+        avoidHighways: settings?.avoidHighways || false,
+        avoidTolls:    settings?.avoidTolls    || false,
+      };
+
+      console.log(
+        '\uD83D\uDD04 Return leg \u2192 Google Directions:',
+        origin.substring(0, 35), '\u2192', destination.substring(0, 35)
+      );
+
+      this.directionsService.route(request, (result, status) => {
+        if (
+          status === google.maps.DirectionsStatus.OK &&
+          result?.routes?.[0]?.legs?.[0]
+        ) {
+          const leg     = result.routes[0].legs[0];
+          const miles   = leg.distance.value * 0.000621371;
+          const minutes = leg.duration.value / 60;
+
+          // Cache so any downstream calculateReturnLeg() also gets Google data
+          if (window.DistanceCache) {
+            window.DistanceCache.set(origin, destination, miles, 'google_api');
+          }
+
+          // Audit log — confirms duration.value is the source, not estimation
+          if (console && console.table) {
+            console.group('\uD83D\uDD0D Return leg audit (Google Directions)');
+            console.table([{
+              start_address:       leg.start_address.substring(0, 45),
+              end_address:         leg.end_address.substring(0, 45),
+              'distance.value(m)': leg.distance.value,
+              'distance.text':     leg.distance.text,
+              'duration.value(s)': leg.duration.value,
+              'duration.text':     leg.duration.text,
+              'mi (computed)':     miles.toFixed(2),
+              'min (computed)':    minutes.toFixed(1),
+            }]);
+            console.groupEnd();
+          }
+
+          resolve({
+            origin:       leg.start_address,
+            destination:  leg.end_address,
+            distance:     miles,
+            duration:     minutes,
+            distanceText: leg.distance.text,
+            durationText: leg.duration.text,
+            isReturn:     true,
+            isEstimated:  false,
+          });
+        } else {
+          console.warn('\u26A0\uFE0F Return leg Directions failed:', status, '— estimate fallback will apply');
+          resolve(null);
+        }
+      });
+    });
   }
 
   calculateLegFromStart(startingPoint, destination) {
@@ -1852,6 +2003,24 @@ class RouteCipher {
     this.currentRoute = splitRoute;
     this.currentOriginalRoute = originalRoute;
 
+    // Populate sidebar Route Summary panel
+    const totalMins = splitRoute.overall.minutes || 0;
+    const hours = Math.floor(totalMins / 60);
+    const mins  = totalMins % 60;
+    const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
+    const distEl = document.getElementById('sumDistance');
+    const timeEl = document.getElementById('sumTime');
+    const daysEl = document.getElementById('sumDays');
+    const splitEl = document.getElementById('sumSplit');
+    const retEl  = document.getElementById('sumReturn');
+
+    if (distEl)  distEl.textContent = `${splitRoute.overall.miles} mi`;
+    if (timeEl)  timeEl.textContent = timeStr;
+    if (daysEl)  daysEl.textContent = splitRoute.overall.totalDays ?? splitRoute.days.length;
+    if (splitEl) splitEl.textContent = this.settings?.splitEnabled ? 'On' : 'Off';
+    if (retEl)   retEl.textContent  = this.settings?.returnStart   ? 'Yes' : 'No';
+
     // Show modal with route visualization
     this.showRouteModal(splitRoute, originalRoute);
   }
@@ -1877,7 +2046,7 @@ class RouteCipher {
     });
     dayTabsContainer.innerHTML = tabsHTML;
 
-    // Show stats
+    // Show stats (legacy target)
     modalStats.innerHTML = `
       <div style="display: flex; gap: var(--cipher-space-lg); font-size: 0.9rem;">
         <div><strong>Total:</strong> ${splitRoute.overall.miles} mi</div>
@@ -1887,6 +2056,24 @@ class RouteCipher {
         <div><strong>Days:</strong> ${splitRoute.days.length}</div>
       </div>
     `;
+
+    // Populate structured footer stat elements
+    const _totalMins = splitRoute.overall.minutes || 0;
+    const _totalHours = Math.floor(_totalMins / 60);
+    const _remMins = _totalMins % 60;
+    const _totalStops = splitRoute.days.reduce(
+      (acc, d) => acc + (d.stopsCount || (d.stops ? d.stops.length : 0)), 0
+    );
+    const _distEl  = document.getElementById('modalStatDist');
+    const _timeEl  = document.getElementById('modalStatTime');
+    const _daysEl  = document.getElementById('modalStatDays');
+    const _stopsEl = document.getElementById('modalStatStops');
+    if (_distEl)  _distEl.innerHTML  = `${splitRoute.overall.miles}<span> mi</span>`;
+    if (_timeEl)  _timeEl.innerHTML  = _totalHours > 0
+      ? `${_totalHours}<span>h ${_remMins}m</span>`
+      : `${_remMins}<span>m</span>`;
+    if (_daysEl)  _daysEl.textContent  = splitRoute.days.length;
+    if (_stopsEl) _stopsEl.textContent = _totalStops;
 
     // Show first day's timeline
     this.showDayTimeline(0, splitRoute, originalRoute);
@@ -1910,134 +2097,104 @@ class RouteCipher {
     }, 50);
   }
 
+  _extractCityState(address) {
+    if (!address || typeof address !== 'string') return address || '';
+    let s = address.replace(/,?\s*USA\s*$/i, '').trim();
+    const parts = s.split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length === 0) return s;
+    const last = parts[parts.length - 1];
+    let stateAbbr = '';
+    let cityPart = '';
+    const m1 = last.match(/^([A-Z]{2})(?:\s+\d+)?$/);
+    if (m1) {
+      stateAbbr = m1[1];
+      cityPart = parts.length >= 2 ? parts[parts.length - 2] : '';
+    } else {
+      const stateMap = {
+        'alabama':'AL','alaska':'AK','arizona':'AZ','arkansas':'AR','california':'CA',
+        'colorado':'CO','connecticut':'CT','delaware':'DE','florida':'FL','georgia':'GA',
+        'hawaii':'HI','idaho':'ID','illinois':'IL','indiana':'IN','iowa':'IA',
+        'kansas':'KS','kentucky':'KY','louisiana':'LA','maine':'ME','maryland':'MD',
+        'massachusetts':'MA','michigan':'MI','minnesota':'MN','mississippi':'MS','missouri':'MO',
+        'montana':'MT','nebraska':'NE','nevada':'NV','new hampshire':'NH','new jersey':'NJ',
+        'new mexico':'NM','new york':'NY','north carolina':'NC','north dakota':'ND','ohio':'OH',
+        'oklahoma':'OK','oregon':'OR','pennsylvania':'PA','rhode island':'RI','south carolina':'SC',
+        'south dakota':'SD','tennessee':'TN','texas':'TX','utah':'UT','vermont':'VT',
+        'virginia':'VA','washington':'WA','west virginia':'WV','wisconsin':'WI','wyoming':'WY',
+        'district of columbia':'DC'
+      };
+      const mapped = stateMap[last.toLowerCase()];
+      if (mapped) {
+        stateAbbr = mapped;
+        cityPart = parts.length >= 2 ? parts[parts.length - 2] : '';
+      } else {
+        return parts.length >= 2 ? `${parts[parts.length - 2]}, ${last}` : s;
+      }
+    }
+    const roadMatch = cityPart.match(/^(NC|US|I|SR|Hwy|Highway)\s*(\d+)\s*$/i);
+    if (roadMatch) {
+      cityPart = `${roadMatch[1].toUpperCase()}-${roadMatch[2]}`;
+    }
+    return cityPart ? `${cityPart}, ${stateAbbr}` : stateAbbr;
+  }
+
   showDayTimeline(dayIndex, splitRoute, originalRoute) {
     const modalTimeline = document.getElementById("modalTimeline");
     const day = splitRoute.days[dayIndex];
-    const dayNumber = dayIndex + 1;
-    let cumulativeTime = 0;
-
-    let html = `
-      <div class="day-section">
-        <div class="day-header">
-          <h4>📅 ${day.label}</h4>
-          ${
-            day.efficiency
-              ? `<span class="efficiency-badge">${day.efficiency}% efficient</span>`
-              : ""
-          }
-        </div>
-        <div class="day-stats">
-          <span class="stat"><strong>${day.totalMiles} mi</strong></span>
-          <span class="stat"><strong>${Math.floor(day.totalMinutes / 60)}h ${
-      day.totalMinutes % 60
-    }m driving</strong></span>
-          <span class="stat"><strong>${
-            day.stopsCount || day.stops.length
-          } stops</strong></span>
-          ${
-            day.totalDayTime
-              ? `<span class="stat total-time"><strong>${Math.floor(
-                  day.totalDayTime / 60
-                )}h ${day.totalDayTime % 60}m total</strong></span>`
-              : ""
-          }
-        </div>
-        <div class="route-timeline">
-    `;
+    let inspectionCount = 0;
+    let html = '';
 
     day.stops.forEach((stop, stopIndex) => {
-      const priority = this.getStopPriority(
-        stop,
-        originalRoute || this.currentRoute
-      );
-      const priorityIcon =
-        priority === "urgent" ? "🔴" : priority === "high" ? "🟡" : "🔵";
-      const stopId = `stop_${dayIndex}_${stopIndex}`;
       const isStartingPoint = stopIndex === 0;
       const isReturnToStart =
         stopIndex === day.stops.length - 1 && day.legs[stopIndex - 1]?.isReturn;
-      const isFinalReturn = isReturnToStart;
+      const city = this._extractCityState(stop);
 
-      // Generate stop label
-      let stopLabel;
+      let pillClass, pillText, stopType;
       if (isStartingPoint) {
-        stopLabel = "🚀";
-      } else if (isFinalReturn) {
-        stopLabel = "🏠";
+        pillClass = 'stop-pill-start';
+        pillText = 'S';
+        stopType = 'Starting location';
+      } else if (isReturnToStart) {
+        pillClass = 'stop-pill-finish';
+        pillText = '↩';
+        stopType = 'Return to base';
       } else {
-        const letter = String.fromCharCode(96 + stopIndex);
-        stopLabel = `${dayNumber}${letter}`;
-      }
-
-      // Calculate arrival time
-      let arrivalTime = "";
-      if (stopIndex > 0 && day.legs[stopIndex - 1]) {
-        cumulativeTime += day.legs[stopIndex - 1].duration;
-        const hours = Math.floor(cumulativeTime / 60);
-        const mins = Math.round(cumulativeTime % 60);
-        arrivalTime = `+${hours}h ${mins}m`;
+        inspectionCount++;
+        pillClass = 'stop-pill-stop';
+        pillText = String(inspectionCount).padStart(2, '0');
+        stopType = 'Inspection stop';
       }
 
       html += `
-        <div class="timeline-stop ${isStartingPoint ? "start-stop" : ""} ${
-        isFinalReturn ? "return-stop" : ""
-      }" data-stop-id="${stopId}">
-          <div class="stop-marker">
-            <div class="stop-number-badge ${priority}">${stopLabel}</div>
-            ${
-              !isStartingPoint && !isFinalReturn
-                ? `<div class="priority-badge ${priority}">${priorityIcon}</div>`
-                : ""
-            }
-          </div>
-          
-          <div class="stop-content">
-            <div class="stop-header-row">
-              <div class="stop-address-main">${this.shortenAddress(stop)}</div>
-              ${
-                arrivalTime
-                  ? `<div class="arrival-time">${arrivalTime} from start</div>`
-                  : ""
-              }
-            </div>
-            <div class="stop-note">${
-              isStartingPoint
-                ? "Starting location"
-                : isFinalReturn
-                ? "Return to base"
-                : "Inspection stop"
-            }</div>
+        <div class="stop-item-row">
+          <div class="stop-pill ${pillClass}">${pillText}</div>
+          <div class="stop-info">
+            <div class="stop-city">${city}</div>
+            <div class="stop-type">${stopType}</div>
           </div>
         </div>
       `;
 
-      // Add travel connector
       if (stopIndex < day.stops.length - 1 && day.legs[stopIndex]) {
         const leg = day.legs[stopIndex];
-        const isReturnLeg = leg.isReturn;
+        const mi = leg.distance.toFixed(1);
+        const totalMins = Math.round(leg.duration);
+        const timeStr = totalMins >= 60
+          ? `${Math.floor(totalMins / 60)}h ${totalMins % 60}m`
+          : `${totalMins} min`;
         html += `
-          <div class="travel-connector ${isReturnLeg ? "return-travel" : ""}">
-            <div class="connector-line"></div>
-            <div class="travel-info">
-              <div class="travel-badge">
-                <span class="travel-icon">🚗</span>
-                <span class="travel-distance">${leg.distance.toFixed(
-                  1
-                )} mi</span>
-                <span class="travel-separator">•</span>
-                <span class="travel-time">${Math.round(leg.duration)} min</span>
-              </div>
+          <div class="stop-connector">
+            <div class="connector-line-visual"></div>
+            <div class="connector-data">
+              <span class="connector-mi">${mi} mi</span>
+              <span class="connector-sep">·</span>
+              <span class="connector-time">${timeStr}</span>
             </div>
-            <div class="connector-arrow">▼</div>
           </div>
         `;
       }
     });
-
-    html += `
-        </div>
-      </div>
-    `;
 
     modalTimeline.innerHTML = html;
   }
@@ -2096,6 +2253,8 @@ class RouteCipher {
       waypoints: waypoints,
       travelMode: google.maps.TravelMode.DRIVING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,
+      avoidHighways: this.settings?.avoidHighways || false,
+      avoidTolls: this.settings?.avoidTolls || false,
     };
 
     this.modalDirectionsService.route(request, (result, status) => {
@@ -4291,51 +4450,50 @@ class RouteCipher {
       return;
     }
 
-    // Build dynamic day buttons based on actual route days
-    const dayButtons = this.currentRoute.days.map((day, index) => {
+    // Build dynamic day items based on actual route days
+    const dayItems = this.currentRoute.days.map((day, index) => {
       const dayName = this.getDayNameFromIndex(index);
-      const miles = day.totalMiles ? ` (${Math.round(day.totalMiles * 10) / 10} mi)` : '';
+      const miles = day.totalMiles ? `${Math.round(day.totalMiles * 10) / 10} mi` : '— mi';
       const stopsCount = day.stops ? day.stops.length : 0;
+      const isActive = index === 0 ? 'sr-day-active' : '';
       return `
-        <button class="modal-btn modal-btn-secondary save-day-btn" data-day="${dayName}" style="justify-content: flex-start; width: 100%;">
-          <span>📅</span>
-          <span>Day ${index + 1} - ${this.formatDayName(dayName)}${miles} - ${stopsCount} stops</span>
-        </button>
+        <div class="sr-day-item ${isActive}" data-day="${dayName}">
+          <div class="sr-day-pill">${index + 1}</div>
+          <div class="sr-day-info">
+            <div class="sr-day-name">Day ${index + 1} · ${this.formatDayName(dayName)}</div>
+            <div class="sr-day-meta">${miles} · ${stopsCount} stops</div>
+          </div>
+          <div class="sr-day-check">✓</div>
+        </div>
       `;
     }).join('');
 
     const modalHTML = `
       <div id="saveDayModal" class="route-map-modal">
-        <div class="modal-container" style="max-width: 450px; height: auto; margin: auto;">
-          <div class="modal-header">
-            <div class="modal-title">
-              <span>💾</span>
-              <span>Save Route</span>
+        <div class="sr-modal-inner">
+          <div class="sr-header">
+            <div class="sr-header-left">
+              <div class="sr-eyebrow">Route Cipher</div>
+              <div class="sr-title">Save Route</div>
             </div>
-            <button class="modal-close-btn" onclick="window.routeCipher.closeSaveDayModal()">×</button>
+            <button class="sr-close" onclick="window.routeCipher.closeSaveDayModal()">✕</button>
           </div>
-          <div class="modal-content" style="padding: var(--cipher-space-xl); display: block;">
-            <div style="margin-bottom: var(--cipher-space-lg);">
-              <label style="color: var(--cipher-text-secondary); display: block; margin-bottom: var(--cipher-space-xs); font-size: 0.85rem;">
-                Route Date (optional)
-              </label>
-              <input type="date" id="saveDayDatePicker" value="" style="
-                width: 100%; padding: 8px 12px; border-radius: 6px;
-                border: 1px solid var(--cipher-border, #333);
-                background: var(--cipher-bg-secondary, #1a1a2e);
-                color: var(--cipher-text-primary, #fff);
-                font-size: 0.9rem;
-              " />
-              <span style="color: var(--cipher-text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">
-                Leave blank to save without a date (session only)
-              </span>
+          <div class="sr-body">
+            <div class="sr-field">
+              <div class="sr-label">Route Date <span class="sr-optional">(optional)</span></div>
+              <input type="date" id="saveDayDatePicker" class="sr-date-input" value="">
+              <div class="sr-hint">Leave blank to save without a date (session only)</div>
             </div>
-            <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-md); font-size: 0.9rem;">
-              Select which day to save:
-            </p>
-            <div class="save-day-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-sm);">
-              ${dayButtons}
+            <div class="sr-field" style="margin-top:16px;">
+              <div class="sr-label">Select Day to Save</div>
+              <div class="sr-days" id="srDayList">
+                ${dayItems}
+              </div>
             </div>
+          </div>
+          <div class="sr-footer">
+            <button class="sr-btn-cancel" onclick="window.routeCipher.closeSaveDayModal()">Cancel</button>
+            <button class="sr-btn-save" id="srSaveBtn">Save Route →</button>
           </div>
         </div>
       </div>
@@ -4347,15 +4505,28 @@ class RouteCipher {
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-    // Attach click handlers to day buttons (reads date picker value at click time)
+    // Attach click handlers to day items and save button
     const modal = document.getElementById('saveDayModal');
-    modal.querySelectorAll('.save-day-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const datePicker = document.getElementById('saveDayDatePicker');
-        const routeDate = datePicker ? datePicker.value || null : null;
-        this.saveDayRoute(btn.dataset.day, routeDate);
+    let selectedDayName = this.currentRoute.days.length > 0
+      ? this.getDayNameFromIndex(0) : null;
+
+    modal.querySelectorAll('.sr-day-item').forEach(item => {
+      item.addEventListener('click', () => {
+        modal.querySelectorAll('.sr-day-item').forEach(i => i.classList.remove('sr-day-active'));
+        item.classList.add('sr-day-active');
+        selectedDayName = item.dataset.day;
       });
     });
+
+    const srSaveBtn = document.getElementById('srSaveBtn');
+    if (srSaveBtn) {
+      srSaveBtn.addEventListener('click', () => {
+        if (!selectedDayName) return;
+        const datePicker = document.getElementById('saveDayDatePicker');
+        const routeDate = datePicker ? datePicker.value || null : null;
+        this.saveDayRoute(selectedDayName, routeDate);
+      });
+    }
 
     // Pre-fill date picker when editing an existing route
     if (this.editingRouteId && this.editingRouteDate) {
@@ -4415,6 +4586,9 @@ async function initRouteCipher() {
     if (!allowed) return;
   }
 
+  // Warm FirmStore cache from Supabase before the RouteCipher constructor runs
+  if (window.FirmStore) { await window.FirmStore.getAll(); }
+
   if (window.routeCipher) {
     console.log("🔒 RouteCipher already exists, updating with Google Maps");
     const routeCipher = window.routeCipher;
@@ -4471,6 +4645,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const allowed = await window.BillingGuard.waitForAccess();
     if (!allowed) return;
   }
+
+  // Warm FirmStore cache from Supabase (fallback path — Google Maps not loaded)
+  if (window.FirmStore) { await window.FirmStore.getAll(); }
 
   // Only create if it doesn't exist
   if (!window.routeCipher) {

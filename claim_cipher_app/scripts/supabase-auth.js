@@ -425,6 +425,7 @@
     // Expose functions globally
     window.SupabaseAuth = {
         init: initSupabase,
+        getClient: initSupabase,       // Returns the shared Supabase client instance
         signIn: signIn,
         signUp: signUp,
         signOut: signOut,

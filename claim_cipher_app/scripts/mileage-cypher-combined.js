@@ -166,7 +166,7 @@ class MileageCypherCalculator {
 
     select.innerHTML = '<option value="">Choose insurance firm...</option>';
 
-    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
     firms.forEach((firm) => {
       const option = document.createElement("option");
       option.value = firm.id;
@@ -654,11 +654,10 @@ class MileageCypherCalculator {
       amountEl.textContent = '$' + totalFee.toFixed(2);
     }
     if (formulaEl) {
-      formulaEl.textContent = baseMiles.toFixed(1) + ' mi'
-        + (firm.freeMiles > 0
-          ? ' \u2212 ' + firm.freeMiles + ' free'
-          : '')
-        + ' \u00d7 $' + firm.ratePerMile.toFixed(2) + '/mi';
+      var fmiPart = firm.freeMiles > 0
+        ? baseMiles.toFixed(1) + ' mi \u2212 ' + firm.freeMiles + ' mi = ' + billableMiles.toFixed(1) + ' mi'
+        : baseMiles.toFixed(1) + ' mi';
+      formulaEl.textContent = fmiPart + ' \u00d7 $' + firm.ratePerMile.toFixed(2) + '/mi = $' + totalFee.toFixed(2);
     }
     if (freeNote && firm.freeMiles > 0) {
       freeNote.textContent = 'First ' + firm.freeMiles
@@ -854,7 +853,7 @@ class MileageCypherCalculator {
 
     firmsList.innerHTML = "";
 
-    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
     firms.forEach((firm) => {
       const firmElement = document.createElement("div");
       firmElement.className = "firm-item";
@@ -1037,7 +1036,7 @@ class MileageCypherCalculator {
   deleteFirm(firmId) {
     console.log("Delete firm requested for ID:", firmId);
 
-    const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
+    const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
     if (allFirms.length <= 1) {
       console.warn("Cannot delete last firm");
       return;
@@ -1061,7 +1060,7 @@ class MileageCypherCalculator {
 
         // Update selected firm if the deleted firm was selected
         if (window.FirmStore.getLastSelected() === firmId) {
-          const remaining = window.FirmStore.getAll();
+          const remaining = window.FirmStore.getAllSync();
           window.FirmStore.setLastSelected(remaining[0]?.id || "");
         }
       }
@@ -1343,7 +1342,7 @@ class MileageCypherCalculator {
     // Select a demo firm
     const firmSelect = document.getElementById('firmSelect');
     if (firmSelect && firmSelect.options.length > 1) {
-      const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
+      const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
       firmSelect.value = allFirms[0]?.id || '';
       firmSelect.disabled = true;
       this.onFirmChange(firmSelect.value);
@@ -1482,6 +1481,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } else {
     console.warn("API configuration not found - manual distance entry only");
+  }
+
+  // Warm the FirmStore cache from Supabase before constructing the calculator.
+  // The constructor calls refreshFirmDropdown() synchronously via getAllSync(),
+  // so the cloud data must be in the cache first.
+  if (window.FirmStore) {
+    await window.FirmStore.getAll();
   }
 
   // Initialize the calculator
