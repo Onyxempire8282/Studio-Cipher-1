@@ -145,25 +145,19 @@ class CommandCenterSecurity {
     }
 
     async secureLogout() {
+        // Log activity
+        if (window.commandCenter) {
+            window.commandCenter.logActivity('User initiated secure logout', 'auth');
+        }
 
+        this.showSecurityNotification('Logging out securely...', 'info');
 
-        const confirmed = confirm('Are you sure you want to logout?');
-
-        if (confirmed) {
-            // Log activity
-            if (window.commandCenter) {
-                window.commandCenter.logActivity('User initiated secure logout', 'auth');
-            }
-
-            this.showSecurityNotification('Logging out securely...', 'info');
-
-            // Use Supabase signOut - MUST await to ensure session is terminated
-            if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
-                await window.SupabaseAuth.signOut();
-                // signOut() handles redirect after session termination
-            } else {
-                window.location.href = 'login-cypher.html';
-            }
+        // Use Supabase signOut - MUST await to ensure session is terminated
+        if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+            await window.SupabaseAuth.signOut();
+            // signOut() handles redirect after session termination
+        } else {
+            window.location.href = 'login-cypher.html';
         }
     }
 

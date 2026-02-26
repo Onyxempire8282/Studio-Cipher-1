@@ -122,34 +122,27 @@ class CommandCenterManager {
     }
     
     async handleLogout() {
-        if (confirm('Are you sure you want to logout?')) {
+        this.logActivity('User logged out', 'auth');
 
-            this.logActivity('User logged out', 'auth');
+        // Demo mode logout - clear demo state and redirect (no Supabase session)
+        if (sessionStorage.getItem('demo_mode') === 'true') {
+            sessionStorage.removeItem('demo_mode');
+            sessionStorage.removeItem('claimCipherAuth');
+            if (window.FirmStore) window.FirmStore.clearDemo();
+            if (window.SessionManager) window.SessionManager.clearDemo();
+            window.location.replace('login-cypher.html');
+            return;
+        }
 
-            // Show logout message
-            this.showNotification('Logged out successfully', 'success');
-
-            // Demo mode logout - clear demo state and redirect (no Supabase session)
-            if (sessionStorage.getItem('demo_mode') === 'true') {
-
-                sessionStorage.removeItem('demo_mode');
-                sessionStorage.removeItem('claimCipherAuth');
-                if (window.FirmStore) window.FirmStore.clearDemo();
-                if (window.SessionManager) window.SessionManager.clearDemo();
-                window.location.replace('login-cypher.html');
-                return;
-            }
-
-            // Use Supabase signOut - MUST await to ensure session is terminated
-            if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
-                await window.SupabaseAuth.signOut();
-                // signOut() handles redirect after session termination
-            } else {
-                // Fallback: Clear session data and redirect
-                localStorage.removeItem('cc_user_session');
-                localStorage.removeItem('cc_auth_token');
-                window.location.href = 'login-cypher.html';
-            }
+        // Use Supabase signOut - MUST await to ensure session is terminated
+        if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
+            await window.SupabaseAuth.signOut();
+            // signOut() handles redirect after session termination
+        } else {
+            // Fallback: Clear session data and redirect
+            localStorage.removeItem('cc_user_session');
+            localStorage.removeItem('cc_auth_token');
+            window.location.href = 'login-cypher.html';
         }
     }
     
@@ -298,16 +291,18 @@ class CommandCenterManager {
     
     // Activity Management
     loadRecentActivity() {
+        const MAX_RENDERED = 5;
         const activities = this.getStoredActivities();
         const feed = document.getElementById('activityFeed');
-        
+
         if (activities.length === 0) {
             // Add some sample activities if none exist
             this.addSampleActivities();
             return;
         }
-        
-        feed.innerHTML = activities.map((activity, index) => this.createActivityHTML(activity, index, activities.length)).join('');
+
+        const toRender = activities.slice(0, MAX_RENDERED);
+        feed.innerHTML = toRender.map((activity, index) => this.createActivityHTML(activity, index, toRender.length)).join('');
     }
     
     getStoredActivities() {
@@ -323,8 +318,9 @@ class CommandCenterManager {
     }
     
     logActivity(description, type = 'general') {
+        const MAX_STORED = 25;
         const activities = this.getStoredActivities();
-        
+
         const newActivity = {
             id: Date.now(),
             description: description,
@@ -332,15 +328,11 @@ class CommandCenterManager {
             timestamp: new Date().toISOString(),
             timeAgo: 'Just now'
         };
-        
-        activities.unshift(newActivity);
-        
-        // Keep only latest 20 activities
-        if (activities.length > 20) {
-            activities.splice(20);
-        }
-        
-        localStorage.setItem('cc_recent_activities', JSON.stringify(activities));
+
+        activities.unshift(newActivity); // Newest first
+        // Cap to last 25
+        const capped = activities.slice(0, MAX_STORED);
+        localStorage.setItem('cc_recent_activities', JSON.stringify(capped));
         this.loadRecentActivity();
     }
     
@@ -1168,7 +1160,6 @@ function quickTest() {
 async function handleLogout() {
     // Demo mode logout - clear demo state and redirect (no Supabase session)
     if (sessionStorage.getItem('demo_mode') === 'true') {
-
         sessionStorage.removeItem('demo_mode');
         sessionStorage.removeItem('claimCipherAuth');
         if (window.FirmStore) window.FirmStore.clearDemo();
@@ -1177,11 +1168,11 @@ async function handleLogout() {
         return;
     }
 
-    if (window.commandCenter) {
-        await window.commandCenter.handleLogout();
-    } else if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
-        // Direct Supabase signOut fallback
+    // Direct Supabase signOut — no confirm dialog
+    if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
         await window.SupabaseAuth.signOut();
+    } else {
+        window.location.href = 'login-cypher.html';
     }
 }
 
