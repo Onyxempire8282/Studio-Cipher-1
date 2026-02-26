@@ -11,7 +11,7 @@
 class AuthenticationSystem {
     constructor() {
         // Intentionally empty - auth handled by Supabase
-        console.log('Legacy AuthenticationSystem loaded (disabled - using Supabase Auth)');
+
     }
 
     init() {

@@ -8,7 +8,7 @@ class CommandCenterTestSuite {
     }
     
     async runAllTests() {
-        console.log('🎤 Producer Agent: Running Command Center test suite...');
+
         
         // Test 1: HTML Structure
         this.testHtmlStructure();
@@ -50,7 +50,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.html_structure = tests;
-        console.log('✅ Producer: HTML structure tests completed');
+
     }
     
     testStyling() {
@@ -68,7 +68,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.styling = tests;
-        console.log('✅ Producer: Styling tests completed');
+
     }
     
     testJavaScriptFunctionality() {
@@ -84,7 +84,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.javascript = tests;
-        console.log('✅ Producer: JavaScript functionality tests completed');
+
     }
     
     testSecurityFeatures() {
@@ -97,7 +97,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.security = tests;
-        console.log('✅ Producer: Security features tests completed');
+
     }
     
     testModuleIntegration() {
@@ -119,7 +119,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.module_integration = tests;
-        console.log('✅ Producer: Module integration tests completed');
+
     }
     
     testResponsiveDesign() {
@@ -137,7 +137,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.responsive = tests;
-        console.log('✅ Producer: Responsive design tests completed');
+
     }
     
     testPerformance() {
@@ -159,7 +159,7 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.performance = tests;
-        console.log('✅ Producer: Performance tests completed');
+
     }
     
     testAccessibility() {
@@ -175,11 +175,11 @@ class CommandCenterTestSuite {
         };
         
         this.testResults.accessibility = tests;
-        console.log('✅ Producer: Accessibility tests completed');
+
     }
     
   generateTestReport() {
-    console.log('🎤 Producer Agent: Generating test report...');
+
 
     let totalTests = 0;
     let passedTests = 0;
@@ -206,7 +206,7 @@ class CommandCenterTestSuite {
     }
 
     // 🔹 2. Log individual failed tests
-    console.log('\n🔎 FAILED TESTS DETAIL');
+
     for (const [category, tests] of Object.entries(this.testResults)) {
         Object.entries(tests).forEach(([testName, passed]) => {
             if (!passed) {
@@ -218,24 +218,24 @@ class CommandCenterTestSuite {
     // 🔹 3. Overall summary
     const overallPercentage = Math.round((passedTests / totalTests) * 100);
 
-    console.log('\n🎤 PRODUCER AGENT - COMMAND CENTER TEST REPORT');
-    console.log('='.repeat(60));
+
+
 
     report.forEach(item => {
-        console.log(`${item.status} ${item.category.padEnd(20)} | ${item.passed}/${item.total} (${item.percentage}%)`);
+
     });
 
-    console.log('='.repeat(60));
-    console.log(`🏆 OVERALL SCORE: ${passedTests}/${totalTests} (${overallPercentage}%)`);
+
+
 
     if (overallPercentage >= 90) {
-        console.log('🌟 EXCELLENT - Command Center is production ready!');
+
     } else if (overallPercentage >= 80) {
-        console.log('✅ GOOD - Command Center meets quality standards');
+
     } else if (overallPercentage >= 70) {
-        console.log('⚠️ ACCEPTABLE - Minor issues to address');
+
     } else {
-        console.log('❌ NEEDS IMPROVEMENT - Major issues require attention');
+
     }
 
     // Store test results

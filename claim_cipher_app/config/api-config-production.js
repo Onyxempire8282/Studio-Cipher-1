@@ -78,7 +78,7 @@ window.ClaimCipherAPI = {
   // Prompt user to enter their own API key (DISABLED FOR DEVELOPMENT)
   promptUserForApiKey() {
     // API key prompt disabled - use google-config.js instead
-    console.log("🔒 API key prompt disabled - configure in google-config.js");
+
     return false;
   },
 
@@ -114,7 +114,7 @@ window.ClaimCipherAPI = {
     script.id = "google-maps-api";
 
     script.onload = function () {
-      console.log("🗺️ Google Maps API loaded successfully");
+
       // Update calculator settings if available
       if (window.mileageCipher) {
         window.mileageCipher.settings.googleMapsApiKey =
@@ -139,14 +139,14 @@ window.ClaimCipherAPI = {
 document.addEventListener("DOMContentLoaded", function () {
   // API key prompt disabled during development
   // Configure Google Maps API key in scripts/google-config.js instead
-  console.log("🔐 Production API Configuration loaded - prompt disabled");
+
 
   // Maps initialization is handled by google-config.js
   return;
 
   // Check if maps are disabled
   if (localStorage.getItem("disable_maps") === "true") {
-    console.log("🗺️ Maps disabled by user preference");
+
     return;
   }
 
@@ -161,4 +161,4 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-console.log("🔐 Production API Configuration loaded");
+

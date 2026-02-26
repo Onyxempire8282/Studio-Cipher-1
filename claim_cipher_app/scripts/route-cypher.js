@@ -4,7 +4,7 @@ let selectedJobs = [];
 let optimizedRoute = null;
 
 function initializeRouteCypher() {
-    console.log('🗺️ Initializing Route Cypher...');
+
     
     setupJobSelection();
     setupRouteOptimization();
@@ -35,7 +35,7 @@ function updateSelectedJobs() {
             : `⚡ Optimize ${selectedJobs.length} stops`;
     }
     
-    console.log('🎯 Selected jobs:', selectedJobs.length);
+
 }
 
 function setupRouteOptimization() {
@@ -142,4 +142,3 @@ function exportRoute() {
 window.initializeRouteCypher = initializeRouteCypher;
 window.exportRoute = exportRoute;
 
-console.log('🗺️ Route Cypher JavaScript loaded - Optimize those routes!');

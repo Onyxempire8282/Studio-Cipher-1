@@ -97,7 +97,7 @@ class MileageCypherCalculator {
       });
     }
 
-    console.log("Event listeners configured");
+
   }
 
   handleCalculation(e) {
@@ -112,24 +112,11 @@ class MileageCypherCalculator {
     const pointA = document.getElementById("pointA")?.value.trim() || "";
     const pointB = document.getElementById("pointB")?.value.trim() || "";
 
-    console.log(
-      "Calculate button clicked - Distance:",
-      distance,
-      "Point A:",
-      pointA,
-      "Point B:",
-      pointB
-    );
 
     if (distance <= 0 && pointA && pointB) {
-      console.log("Attempting auto-distance calculation...");
+
       this.triggerAutoDistance();
     } else if (distance > 0) {
-      console.log(
-        "Distance already set (" +
-          distance +
-          " miles), calculating billing now"
-      );
       this.performCalculation(false); // false = not silent, show results and errors
     } else {
       console.warn("Missing required data - cannot calculate");
@@ -197,7 +184,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
           if (homeAddress && homeAddress !== this.settings.homeLocation) {
             this.settings.homeLocation = homeAddress;
             this.saveSettings();
-            console.log("Home location saved:", homeAddress);
+
           }
         });
       }
@@ -218,7 +205,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
         input.addEventListener("input", () => {
           // Reset distance source when address changes (prevents stale data)
           this.currentDistanceSource = null;
-          console.log("Distance source reset (address changed)");
+
 
           if (this.settings.autoCalculateEnabled) {
             this.debounceAutoCalculate();
@@ -231,7 +218,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       distanceInput.addEventListener("input", () => {
         // Mark as manual entry when user types in the distance field
         this.currentDistanceSource = 'user_manual';
-        console.log("Distance source set to: user_manual (manual input)");
+
 
         if (this.settings.autoCalculateEnabled) {
           this.debounceAutoCalculate();
@@ -239,13 +226,13 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       });
     }
 
-    console.log("Auto-calculation setup complete");
+
   }
 
   initializeGooglePlacesAutocomplete() {
     // Wait for Google Maps API to load
     if (typeof google === "undefined" || !google.maps || !google.maps.places) {
-      console.log("Google Places not available - autocomplete disabled");
+
       return;
     }
 
@@ -265,11 +252,11 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
           // Save as home location
           this.settings.homeLocation = place.formatted_address;
           this.saveSettings();
-          console.log("Home location updated:", place.formatted_address);
+
         }
       });
 
-      console.log("Google Places Autocomplete enabled for Point A");
+
     }
 
     if (pointBInput) {
@@ -282,13 +269,13 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
         const place = autocompleteB.getPlace();
         if (place.formatted_address) {
           pointBInput.value = place.formatted_address;
-          console.log("Destination selected:", place.formatted_address);
+
           // Trigger auto-distance calculation
           setTimeout(() => this.triggerAutoDistance(), 300);
         }
       });
 
-      console.log("Google Places Autocomplete enabled for Point B");
+
     }
   }
 
@@ -312,7 +299,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
 
     // Reset distance source when firm changes (different billing rules may apply)
     this.currentDistanceSource = null;
-    console.log("Distance source reset (firm changed)");
+
 
     // Set round trip default based on firm preference
 
@@ -326,7 +313,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       this.debounceAutoCalculate();
     }
 
-    console.log(`Firm changed to: ${firm.name}`);
+
   }
 
   async triggerAutoDistance() {
@@ -334,36 +321,30 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
     const apiKey = window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY;
 
     if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
-      console.log("Auto-distance skipped: No API key configured");
+
       this.showNotification("Please enter distance manually", "info");
       this.showCalculateLoading(false);
       return;
     }
 
     if (typeof google === "undefined") {
-      console.log("Auto-distance skipped: Google Maps not loaded yet");
+
       this.showNotification("Please enter distance manually", "info");
       this.showCalculateLoading(false);
       return;
     }
 
-    console.log("Triggering auto-distance calculation...");
+
 
     const pointA = document.getElementById("pointA").value.trim();
     const pointB = document.getElementById("pointB").value.trim();
 
     if (!pointA || !pointB) {
-      console.log(
-        "🧮 Missing addresses - Point A:",
-        pointA,
-        "Point B:",
-        pointB
-      );
       this.showCalculateLoading(false);
       return;
     }
 
-    console.log("Calculating distance from:", pointA, "to:", pointB);
+
     this.updateDistanceStatus("Calculating distance...");
 
     try {
@@ -428,11 +409,11 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       this.currentDistanceSource = 'google_api';
 
       distanceInput.value = result;
-      console.log("Distance set to:", result, "miles (source: google_api)");
+
 
       // Automatically perform the billing calculation
       setTimeout(() => {
-        console.log("Starting automatic billing calculation...");
+
         this.performCalculation(true); // true = auto, no modal
         this.showCalculateLoading(false); // Hide loading state
       }, 1000); // Small delay to let user see the distance notification
@@ -450,17 +431,17 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
   }
 
   performCalculation(auto = false) {
-    console.log("performCalculation called, auto:", auto);
+
 
     const calculationData = this.gatherCalculationInputs();
-    console.log("Calculation data gathered:", calculationData);
+
 
     if (!this.validateCalculationInputs(calculationData, auto)) {
-      console.log("Validation failed, aborting calculation");
+
       return null;
     }
 
-    console.log("Validation passed, proceeding with calculation");
+
 
     try {
       const result = this.calculateMileageBilling(calculationData);
@@ -479,7 +460,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       // Only show success notification for manual calculations (when user clicks button)
       // Auto-calculations don't need success notifications
 
-      console.log("Calculation completed:", result);
+
       this.showCalculateLoading(false); // Hide loading state
       return result;
     } catch (error) {
@@ -500,12 +481,6 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
     const roundTrip = firm?.roundTripDefault || false;
     const note = document.getElementById("noteField")?.value?.trim() || "";
 
-    console.log(
-      "🧮 Gathering inputs - Distance field value:",
-      distanceValue,
-      "-> Parsed:",
-      distance
-    );
 
     return {
       firm,
@@ -552,7 +527,7 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
         );
         // If auto-calculation is enabled, try to trigger it first
         if (this.settings.autoCalculateEnabled && data.pointA && data.pointB) {
-          console.log("Attempting auto-distance calculation...");
+
           this.triggerAutoDistance();
         } else {
           this.showNotification("Please enter the distance in miles", "error");
@@ -589,15 +564,6 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       }
     }
 
-    console.log(
-      "🧮 Validation passed - Firm:",
-      data.firm.name,
-      "Distance:",
-      data.distance,
-      "miles",
-      "Source:",
-      this.currentDistanceSource
-    );
     return true;
   }
 
@@ -734,7 +700,7 @@ te,
 
     try {
       await navigator.clipboard.writeText(copyText);
-      console.log("Calculation copied to clipboard");
+
       this.showCopySuccess();
     } catch (error) {
       console.error("Copy failed:", error);
@@ -761,7 +727,7 @@ te,
       pointBInput.focus();
     }
 
-    console.log("New calculation started");
+
   }
 
   // Firm Management Functions
@@ -831,7 +797,7 @@ te,
         document.getElementById("firmRoundTripDefault")?.checked || false,
     };
 
-    console.log("Form data collected:", firmData);
+
 
     if (!this.validateFirmData(firmData)) return;
 
@@ -843,7 +809,7 @@ te,
       this.loadFirmsListInModal();
       this.loadFirmsToDropdown();
       this.resetAddFirmForm();
-      console.log("Firm updated:", firmData.name);
+
     } else {
       // Add new firm
       const firmId = this.generateFirmId(firmData.name);
@@ -864,12 +830,12 @@ te,
       this.loadFirmsToDropdown();
       event.target.reset();
 
-      console.log("Firm added:", firmData.name);
+
     }
   }
 
   editFirm(firmId) {
-    console.log("Edit firm requested for ID:", firmId);
+
 
     const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) {
@@ -914,7 +880,7 @@ te,
       addFirmSection.scrollIntoView({ behavior: "smooth" });
     }
 
-    console.log("Edit mode activated for firm:", firmId, firm.name);
+
   }
 
   resetAddFirmForm() {
@@ -933,7 +899,7 @@ te,
         cancelBtn.style.display = "none";
       }
     }
-    console.log("Form reset to add mode");
+
   }
 
   validateFirmData(data) {
@@ -959,7 +925,7 @@ te,
   }
 
   deleteFirm(firmId) {
-    console.log("Delete firm requested for ID:", firmId);
+
 
     const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
     if (allFirms.length <= 1) {
@@ -999,7 +965,7 @@ ing the deleted firm
         this.resetAddFirmForm();
       }
 
-      console.log("Firm deleted:", firm.name);
+
     }
   }
 
@@ -1050,7 +1016,7 @@ ing the deleted firm
     // 1. Recalculates with Google (authoritative)
     // 2. Manually enters/confirms distance (user_manual)
     this.currentDistanceSource = null;
-    console.log("Route imported - source NOT set (may contain estimates). Recalculate for billing.");
+
 
     // Import route points if available
     if (this.pendingRouteImport.route.days[0]?.stops) {
@@ -1072,7 +1038,7 @@ ing the deleted firm
     localStorage.removeItem("cc_route_export");
     this.pendingRouteImport = null;
 
-    console.log("Route data imported successfully");
+
   }
 
   closeRouteImportModal() {
@@ -1126,7 +1092,7 @@ ing the deleted firm
         "mileage_cypher_settings_v2",
         JSON.stringify(settingsToSave)
       );
-      console.log("Settings saved to localStorage");
+
     } catch (error) {
       console.error("Failed to save settings:", error);
     }
@@ -1196,7 +1162,7 @@ ing the deleted firm
       }, 5000);
     } else {
       // Fallback to console if no toast container
-      console.log(`${type.toUpperCase()}: ${message}`);
+
     }
   }
 
@@ -1243,7 +1209,7 @@ ing the deleted firm
    * Initialize demo mode with seeded data and locked inputs
    */
   initializeDemoMode() {
-    console.log("Demo mode detected - initializing demo mileage data");
+
 
     // Demo mileage entries - 3 California, 3 Oklahoma
     const demoEntries = [
@@ -1308,7 +1274,7 @@ ing the deleted firm
       this.performCalculation(false);
     }, 500);
 
-    console.log("Demo mode initialized with sample mileage data");
+
   }
 
   /**
@@ -1355,11 +1321,11 @@ function closeRouteImportModal() {
 }
 
 async function handleLogout() {
-  console.log("Logout requested");
+
 
   // Demo mode logout - clear demo state and redirect (no Supabase session)
   if (sessionStorage.getItem('demo_mode') === 'true') {
-    console.log("Demo mode logout - clearing demo state");
+
     sessionStorage.removeItem('demo_mode');
     sessionStorage.removeItem('claimCipherAuth');
     if (window.FirmStore) window.FirmStore.clearDemo();
@@ -1386,9 +1352,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY) {
     const apiKey = window.MILEAGE_CYPHER_CONFIG.GOOGLE_MAPS_API_KEY;
     if (apiKey !== "YOUR_API_KEY_HERE") {
-      console.log(
-        "Google Maps API key configured for auto-distance calculation"
-      );
     } else {
       console.warn(
         "Google Maps API key needs to be set in config/api-config.js"
@@ -1401,7 +1364,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Initialize the calculator
   window.mileageCipher = new MileageCypherCalculator();
 
-  console.log("Mileage Cypher Calculator fully loaded and ready!");
+
 });
 
 // Export for global access

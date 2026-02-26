@@ -1367,22 +1367,21 @@
   </div>
 
   <!-- Load API configuration first -->
-  <script src="config/github-pages-env.js"></script>
-  <script src="config/api-config-production.js"></script>
+  <script defer src="config/github-pages-env.js"></script>
+  <script defer src="config/api-config-production.js"></script>
 
   <!-- Supabase JS v2 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Supabase Configuration and Auth -->
-  <script src="scripts/supabase-config.js"></script>
-  <script src="scripts/supabase-auth.js"></script>
-  <script src="scripts/billing-guard.js"></script>
-  <script src="scripts/route-service.js"></script>
+  <script defer src="scripts/supabase-config.js"></script>
+  <script defer src="scripts/supabase-auth.js"></script>
+  <script defer src="scripts/billing-guard.js"></script>
+  <script defer src="scripts/route-service.js"></script>
 
   <!-- Supabase Page Protection - MUST run before page renders -->
   <script>
-  (async function() {
-    document.body.style.visibility = 'hidden';
+document.addEventListener('DOMContentLoaded', async function() {
     const allowed = await window.SupabaseAuth.protectPage();
     if (!allowed) return;
 
@@ -1393,22 +1392,23 @@
     }
 
     document.body.style.visibility = 'visible';
-  })();
-  </script>
+});
+</script>
 
   <!-- Core Scripts (utilities only, no auth) -->
-  <script src="scripts/cipher-core.js"></script>
+  <script defer src="scripts/cipher-core.js"></script>
 
   <!-- Shared Firm Storage & Session Manager -->
-  <script src="scripts/firm-store.js"></script>
-  <script src="scripts/session-manager.js"></script>
+  <script defer src="scripts/firm-store.js"></script>
+  <script defer src="scripts/session-manager.js"></script>
 
   <!-- Google Maps Configuration -->
-  <script src="scripts/google-config.js"></script>
+  <script defer src="scripts/google-config.js"></script>
 
   <!-- Google Maps API -->
-  <script>
-    if (
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+if (
       window.GOOGLE_MAPS_CONFIG &&
       window.GOOGLE_MAPS_CONFIG.apiKey &&
       window.GOOGLE_MAPS_CONFIG.apiKey !== "CONFIGURE_YOUR_GOOGLE_MAPS_API_KEY"
@@ -1427,13 +1427,14 @@
         }
       }, 100);
     }
-  </script>
+});
+</script>
 
   <!-- Distance Cache -->
-  <script src="scripts/distance-cache.js"></script>
+  <script defer src="scripts/distance-cache.js"></script>
 
   <!-- Route Cipher Script -->
-  <script src="scripts/route-cipher.js"></script>
+  <script defer src="scripts/route-cipher.js"></script>
 
   <!-- Modal Control Functions -->
   <script>
@@ -1561,7 +1562,7 @@
     }
   </script>
 
-  <script src="scripts/claim-cipher-system-qa.js"></script>
+  <script defer src="scripts/claim-cipher-system-qa.js"></script>
 
   <!-- Toggle summary sync -->
   <script>

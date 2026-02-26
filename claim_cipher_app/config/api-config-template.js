@@ -55,20 +55,20 @@ window.MILEAGE_CYPHER_CONFIG = {
         script.id = 'google-maps-api';
         
         script.onload = function() {
-            console.log('🗺️ Google Maps API loaded successfully');
-            console.log('🗺️ Google object available:', typeof google !== 'undefined');
+
+
             
             // Update mileage calculator settings if it exists
             if (window.mileageCipher) {
                 window.mileageCipher.settings.googleMapsApiKey = config.GOOGLE_MAPS_API_KEY;
-                console.log('🗺️ API key updated in calculator settings');
+
             }
             
             // Initialize route optimizer if we're on route cipher page and callback wasn't used
             if ((window.location.pathname.includes('route-cypher.html') || window.location.pathname.includes('route-cipher.html')) 
                 && typeof initRouteCipher === 'function' 
                 && !apiUrl.includes('callback=')) {
-                console.log('🗺️ Manually initializing Route Cipher');
+
                 initRouteCipher();
             }
         };
@@ -79,10 +79,9 @@ window.MILEAGE_CYPHER_CONFIG = {
         
         document.head.appendChild(script);
         
-        console.log('🗺️ Google Maps API loading...');
+
     } else {
         console.warn('🗺️ Google Maps API key not configured - distance auto-calculation disabled');
     }
 })();
 
-console.log('🔐 API Configuration loaded');

@@ -1,8 +1,8 @@
 /* 🌟 GLASSMORPHISM VALIDATION SYSTEM */
 /* Ensures universal frosted glass effects are applied correctly */
 
-console.log('🌟 GLASSMORPHISM VALIDATION INITIATED');
-console.log('=====================================');
+
+
 
 function validateGlassmorphism() {
     const testResults = {
@@ -27,7 +27,7 @@ function validateGlassmorphism() {
     
     if (backdropFilterCount > 0) {
         testResults.passed++;
-        console.log(`✨ PASS: ${backdropFilterCount} glassmorphism elements detected`);
+
     } else {
         testResults.failed++;
         testResults.issues.push('❌ FAIL: No glassmorphism effects detected');
@@ -47,7 +47,7 @@ function validateGlassmorphism() {
 
     if (glassCardCount > 0 || cards.length === 0) {
         testResults.passed++;
-        console.log(`✨ PASS: ${glassCardCount} frosted glass cards detected`);
+
     } else {
         testResults.failed++;
         testResults.issues.push('❌ FAIL: Glass cards not properly styled');
@@ -66,7 +66,7 @@ function validateGlassmorphism() {
 
     if (glassHeaderCount > 0 || headers.length === 0) {
         testResults.passed++;
-        console.log(`✨ PASS: ${glassHeaderCount} frosted glass headers detected`);
+
     } else {
         testResults.failed++;
         testResults.issues.push('❌ FAIL: Glass headers not properly styled');
@@ -85,7 +85,7 @@ function validateGlassmorphism() {
 
     if (glassFormCount > 0 || forms.length === 0) {
         testResults.passed++;
-        console.log(`✨ PASS: ${glassFormCount} frosted glass form elements detected`);
+
     } else {
         testResults.failed++;
         testResults.issues.push('❌ FAIL: Glass form elements not properly styled');
@@ -96,37 +96,37 @@ function validateGlassmorphism() {
     if (bodyStyles.background.includes('linear-gradient') || 
         bodyStyles.background.includes('135deg')) {
         testResults.passed++;
-        console.log('✨ PASS: Glassmorphism background gradient detected');
+
     } else {
         testResults.failed++;
         testResults.issues.push('❌ FAIL: Glassmorphism background not applied');
     }
 
     // Display Results
-    console.log('\n🌟 GLASSMORPHISM VALIDATION RESULTS:');
-    console.log(`✨ Tests Passed: ${testResults.passed}`);
-    console.log(`❌ Tests Failed: ${testResults.failed}`);
-    console.log(`🔮 Total Glass Elements: ${testResults.glassElements}`);
+
+
+
+
     
     if (testResults.issues.length > 0) {
-        console.log('\n🔧 ISSUES TO FIX:');
-        testResults.issues.forEach(issue => console.log(issue));
+
+        testResults.issues.forEach(issue =>
     }
 
     const glassScore = (testResults.passed / (testResults.passed + testResults.failed)) * 100;
-    console.log(`\n🏆 GLASSMORPHISM SCORE: ${glassScore.toFixed(1)}%`);
+
 
     if (glassScore >= 90) {
-        console.log('🌟 EXCELLENT! Perfect glassmorphism implementation!');
+
         if (testResults.glassElements >= 10) {
-            console.log('🔮 BONUS: Rich glassmorphism density achieved!');
+
         }
         return true;
     } else if (glassScore >= 70) {
-        console.log('✨ GOOD! Minor glassmorphism improvements needed.');
+
         return false;
     } else {
-        console.log('🚨 CRITICAL! Glassmorphism effects not properly implemented.');
+
         return false;
     }
 }

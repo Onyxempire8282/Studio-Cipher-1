@@ -27,7 +27,7 @@ function initializeCipherUserContext() {
         }
     }
     
-    console.log(`🎤 Cipher user context initialized: ${isDemoMode ? 'demo' : 'user'}`);
+
 }
 
 function applyBillingRole(detail) {
@@ -54,7 +54,7 @@ function setupCipherLogoutHandler() {
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function() {
-            console.log('🚪 User signing out of cipher');
+
             
             // Clear all cipher session data
             localStorage.removeItem('cipher_authenticated');
@@ -210,11 +210,11 @@ function generateCipherDemoData() {
 // Global logout function for onclick handlers
 // Delegates to Supabase Auth if available (proper session termination)
 async function handleLogout() {
-    console.log('🚪 User signing out of cipher');
+
 
     // Demo mode logout - clear demo state and redirect (no Supabase session)
     if (sessionStorage.getItem('demo_mode') === 'true') {
-        console.log('🎭 Demo mode logout - clearing demo state');
+
         sessionStorage.removeItem('demo_mode');
         sessionStorage.removeItem('claimCipherAuth');
         if (window.FirmStore) window.FirmStore.clearDemo();
@@ -225,14 +225,14 @@ async function handleLogout() {
 
     // Use Supabase Auth signOut if available (MUST be awaited)
     if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
-        console.log('🚪 Delegating logout to Supabase Auth');
+
         await window.SupabaseAuth.signOut();
         // signOut() handles redirect internally after session termination
         return;
     }
 
     // Fallback: Clear localStorage and redirect (legacy mode only)
-    console.log('🚪 Fallback: localStorage cleanup (Supabase not available)');
+
     localStorage.removeItem('cipher_authenticated');
     localStorage.removeItem('cipher_user_type');
     localStorage.removeItem('cipher_user_email');
@@ -255,7 +255,7 @@ window.formatCipherTime = formatCipherTime;
 window.generateCipherDemoData = generateCipherDemoData;
 window.handleLogout = handleLogout;
 
-console.log('🎤 Cipher Core JavaScript loaded - No Matter What!');
+
 
 // ─── NAV USER NAME — auto-runs on every page ───────────────────────────────
 // Reads the real user name from Supabase metadata and updates #userName.

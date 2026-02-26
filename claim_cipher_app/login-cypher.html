@@ -1096,15 +1096,15 @@ function handleDemoMode() {
 </script>
 
 <!-- Supabase JS v2 CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Supabase Configuration and Auth -->
-<script src="config/github-pages-env.js"></script>
-<script src="scripts/supabase-config.js"></script>
-<script src="scripts/supabase-auth.js"></script>
+<script defer src="config/github-pages-env.js"></script>
+<script defer src="scripts/supabase-config.js"></script>
+<script defer src="scripts/supabase-auth.js"></script>
 
 <!-- Legacy login script (kept for form toggle/UI functionality) -->
-<script src="scripts/login-cypher.js"></script>
+<script defer src="scripts/login-cypher.js"></script>
 
 <script>
 /**
@@ -1112,7 +1112,7 @@ function handleDemoMode() {
  * Overrides legacy login/signup handlers with Supabase Auth
  */
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('Supabase Auth: Initializing login page');
+
 
     document.body.style.visibility = 'visible';
 
@@ -1260,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             localStorage.removeItem('cipher_last_route');
             localStorage.removeItem('cipher_routes_by_day');
 
-            console.log('🎭 Demo mode activated - redirecting to dashboard');
+
 
             // Immediate redirect - no setTimeout, no delays
             window.location.replace('command-center.html');
@@ -1284,7 +1284,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         button.style.opacity = '1';
     });
 
-    console.log('Supabase Auth: Login page ready');
+
         const eyeSvg = `
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>

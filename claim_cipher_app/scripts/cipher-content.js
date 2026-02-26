@@ -36,7 +36,7 @@ const cipherMessages = {
 };
 
 function initializeCipherContent() {
-    console.log('✍️ Initializing Cipher Content System...');
+
     
     addHelpTooltips();
     enhanceErrorMessages();
@@ -158,4 +158,3 @@ function addEmptyStateMessages() {
 window.initializeCipherContent = initializeCipherContent;
 window.cipherMessages = cipherMessages;
 
-console.log('✍️ Cipher Content System loaded - messages on point!');

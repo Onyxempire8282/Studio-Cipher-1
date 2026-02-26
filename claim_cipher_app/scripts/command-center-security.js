@@ -13,7 +13,7 @@ class CommandCenterSecurity {
         this.warningTimeout = 25 * 60 * 1000; // 25 minutes
 
         this.initializeSecurity();
-        console.log('Command Center security initialized (Supabase Auth mode)');
+
     }
 
     initializeSecurity() {
@@ -34,7 +34,7 @@ class CommandCenterSecurity {
     verifyAuthentication() {
         // DISABLED - Supabase Auth handles authentication
         // This method is kept for backward compatibility but performs NO auth checks
-        console.log('Security: Auth verification delegated to Supabase');
+
         return true;
     }
 
@@ -109,7 +109,7 @@ class CommandCenterSecurity {
     }
 
     extendSession() {
-        console.log('Security: Session extended by user');
+
 
         // Close warning modal
         const modal = document.querySelector('.security-modal-overlay');
@@ -145,7 +145,7 @@ class CommandCenterSecurity {
     }
 
     async secureLogout() {
-        console.log('Security: Secure logout initiated');
+
 
         const confirmed = confirm('Are you sure you want to logout?');
 
@@ -310,6 +310,6 @@ class CommandCenterSecurity {
 
 // Initialize Security when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Security: Initializing Command Center security...');
+
     window.commandCenterSecurity = new CommandCenterSecurity();
 });

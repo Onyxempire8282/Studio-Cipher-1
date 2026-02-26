@@ -559,27 +559,26 @@ body::before {
 </script>
 
 <!-- Supabase JS v2 CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Supabase Configuration and Auth -->
-<script src="config/github-pages-env.js"></script>
-<script src="scripts/supabase-config.js"></script>
-<script src="scripts/supabase-auth.js"></script>
-<script src="scripts/billing-guard.js"></script>
-<script src="scripts/billing.js"></script>
+<script defer src="config/github-pages-env.js"></script>
+<script defer src="scripts/supabase-config.js"></script>
+<script defer src="scripts/supabase-auth.js"></script>
+<script defer src="scripts/billing-guard.js"></script>
+<script defer src="scripts/billing.js"></script>
 
 <!-- Core Scripts -->
-<script src="scripts/cipher-core.js"></script>
-<script src="scripts/route-service.js"></script>
-<script src="scripts/firm-store.js"></script>
+<script defer src="scripts/cipher-core.js"></script>
+<script defer src="scripts/route-service.js"></script>
+<script defer src="scripts/firm-store.js"></script>
 
-<script src="scripts/command-center-security.js"></script>
-<script src="scripts/command-center.js"></script>
+<script defer src="scripts/command-center-security.js"></script>
+<script defer src="scripts/command-center.js"></script>
 
 <!-- Auth + Billing Guard — must run before rendering -->
 <script>
-(async function() {
-  document.body.style.visibility = 'hidden';
+document.addEventListener('DOMContentLoaded', async function() {
   const allowed = await window.SupabaseAuth.protectPage();
   if (!allowed) return;
 
@@ -593,10 +592,10 @@ body::before {
   if (window.initCommandCenter) {
     window.initCommandCenter();
   }
-})();
+});
 </script>
 
-<script src="scripts/claim-cipher-system-qa.js"></script>
+<script defer src="scripts/claim-cipher-system-qa.js"></script>
 
 <script>
 function tickClock() {

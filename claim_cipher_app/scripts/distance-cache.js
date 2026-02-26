@@ -98,7 +98,7 @@
             // Expired - remove and return null
             delete cache[key];
             saveCache(cache);
-            console.log('📏 DistanceCache: Entry expired for', key);
+
             return null;
         }
 
@@ -143,7 +143,7 @@
         };
 
         saveCache(cache);
-        console.log(`📏 DistanceCache: Stored ${miles} mi (${source}) for canonical key`);
+
     }
 
     /**
@@ -158,7 +158,7 @@
         if (cache[key]) {
             delete cache[key];
             saveCache(cache);
-            console.log('📏 DistanceCache: Invalidated', key);
+
         }
     }
 
@@ -167,7 +167,7 @@
      */
     function clearAll() {
         localStorage.removeItem(CACHE_KEY);
-        console.log('📏 DistanceCache: Cleared all entries');
+
     }
 
     /**
@@ -246,5 +246,5 @@
         DEFAULT_TTL_MS
     };
 
-    console.log('📏 DistanceCache module loaded');
+
 })();

@@ -24,4 +24,4 @@ window.SUPABASE_CONFIG = {
     "",
 };
 
-console.log("Supabase config loaded");
+

@@ -19,7 +19,7 @@
    * Initialize the page
    */
   async function init() {
-    console.log("📋 My Routes initializing...");
+
     if (window.BillingGuard && window.BillingGuard.waitForAccess) {
       const allowed = await window.BillingGuard.waitForAccess();
       if (!allowed) return;
@@ -860,7 +860,7 @@
     if (window.showCipherNotification) {
       window.showCipherNotification(message, type);
     } else {
-      console.log(`[${type.toUpperCase()}] ${message}`);
+
       if (type === "error") alert(message);
     }
   }

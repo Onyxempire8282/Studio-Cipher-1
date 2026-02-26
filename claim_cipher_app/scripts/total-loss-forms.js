@@ -14,7 +14,7 @@ class TotalLossFormsProcessor {
     }
 
     async init() {
-        console.log('🚗 Total Loss Forms Processor initializing...');
+
         
         // Initialize field mapper and extractor
         this.fieldMapper = new BCIFFieldMapper();
@@ -26,7 +26,7 @@ class TotalLossFormsProcessor {
         // Initialize UI state
         this.updateProgressStep(1);
         
-        console.log('✅ Total Loss Forms Processor ready');
+
     }
 
     setupEventListeners() {
@@ -113,7 +113,7 @@ class TotalLossFormsProcessor {
     }
 
     async processUploadedFile(file) {
-        console.log('📄 Processing uploaded file:', file.name);
+
 
         // Validate file type
         if (!file.type.includes('pdf')) {
@@ -183,7 +183,7 @@ class TotalLossFormsProcessor {
        ================================ */
 
     async startExtractionProcess(file) {
-        console.log('🔍 Starting automatic extraction process...');
+
 
         // Show processing status
         this.updateStepStatus('uploadStep', 'processing', 'Processing...');
@@ -225,7 +225,7 @@ class TotalLossFormsProcessor {
             this.updateFilePreview(file);
             this.updatePreviewStatus('Extraction Complete', 'completed');
 
-            console.log('✅ Extraction completed successfully');
+
 
         } catch (error) {
             console.error('❌ Extraction failed:', error);
@@ -236,7 +236,7 @@ class TotalLossFormsProcessor {
 
     async callYourExtractionAPI(file) {
         // 🔍 YOUR SECRET SAUCE - CCC PDF Extraction System
-        console.log('🔒 Calling proprietary CCC extraction system...');
+
         
         try {
             // Use your custom PDF extractor
@@ -244,7 +244,7 @@ class TotalLossFormsProcessor {
             
             // Validate extraction quality
             const validation = this.pdfExtractor.validateExtraction(extractedData);
-            console.log(`🎯 Extraction confidence: ${validation.confidence}%`);
+
             
             if (validation.confidence < 50) {
                 console.warn('⚠️ Low confidence extraction, but proceeding...');
@@ -263,7 +263,7 @@ class TotalLossFormsProcessor {
        ================================ */
 
     async generateBCIFForm() {
-        console.log('📄 Generating BCIF form using Python API...');
+
         
         this.showProcessingModal('Generating CCC BCIF form via server...');
         this.updateStepStatus('previewStep', 'processing', 'Generating...');
@@ -284,7 +284,7 @@ class TotalLossFormsProcessor {
             const finalizeFormBtn = document.getElementById('finalizeFormBtn');
             if (finalizeFormBtn) finalizeFormBtn.disabled = false;
 
-            console.log('✅ BCIF form generated successfully via Python API');
+
 
         } catch (error) {
             console.error('❌ Form generation failed:', error);
@@ -296,16 +296,16 @@ class TotalLossFormsProcessor {
     }
 
     async fillBCIFFormViaAPI() {
-        console.log('🐍 Using Python API for BCIF form filling...');
+
         
         try {
             // Get the full text from the PDF for the API
             const pdfData = await this.pdfExtractor.extractWithCoordinates(await this.uploadedFile.arrayBuffer());
             const fullText = pdfData.fullText;
             
-            console.log(`📄 Sending ${fullText.length} characters to Python API`);
-            console.log('🔍 First 1000 characters of extracted text:');
-            console.log(fullText.substring(0, 1000));
+
+
+
             
             // Call the Python API
             const response = await fetch('http://localhost:5000/fill-bcif', {
@@ -326,7 +326,7 @@ class TotalLossFormsProcessor {
             
             // Get the filled PDF as blob
             const pdfBlob = await response.blob();
-            console.log(`✅ Received filled PDF: ${pdfBlob.size} bytes`);
+
             
             // Convert to array buffer for consistency
             return await pdfBlob.arrayBuffer();
@@ -335,13 +335,13 @@ class TotalLossFormsProcessor {
             console.error('❌ Python API call failed:', error);
             
             // Fallback to client-side approach if API fails
-            console.log('🔄 Falling back to client-side PDF generation...');
+
             return await this.createFallbackPDF(this.bcifData);
         }
     }
 
     async loadBCIFTemplate() {
-        console.log('📄 Loading BCIF form template...');
+
         
         try {
             // Load the blank BCIF form template (correct filename)
@@ -357,7 +357,7 @@ class TotalLossFormsProcessor {
                 throw new Error('Template PDF file is empty');
             }
             
-            console.log(`✅ BCIF template loaded: ${pdfBytes.byteLength} bytes`);
+
             return pdfBytes;
             
         } catch (error) {
@@ -367,8 +367,8 @@ class TotalLossFormsProcessor {
     }
 
     async fillBCIFForm(templateBytes, bcifData) {
-        console.log('📝 Filling BCIF form with extracted data...');
-        console.log('📊 BCIF data to fill:', bcifData);
+
+
         
         try {
             // Check PDF-lib availability
@@ -381,7 +381,7 @@ class TotalLossFormsProcessor {
             
         } catch (error) {
             console.error('❌ Standard form filling failed:', error);
-            console.log('🔄 Attempting fallback approach...');
+
             
             // Fallback: Create a summary PDF instead
             return await this.createFallbackPDF(bcifData);
@@ -389,7 +389,7 @@ class TotalLossFormsProcessor {
     }
 
     async simpleFillBCIFForm(templateBytes, bcifData) {
-        console.log('📄 Using simple PDF-lib approach...');
+
         
         // Use global PDFLib if available
         const PDFLibrary = window.PDFLib || PDFLib;
@@ -407,7 +407,7 @@ class TotalLossFormsProcessor {
             return await pdfDoc.save();
         }
         
-        console.log(`📋 Form loaded with ${form.getFields().length} fields`);
+
         
         // Simple text field filling
         const textFields = bcifData.textFields || {};
@@ -418,19 +418,19 @@ class TotalLossFormsProcessor {
                 const field = form.getTextField(fieldName);
                 field.setText(String(value || ''));
                 fieldsSet++;
-                console.log(`✅ Set: ${fieldName}`);
+
             } catch (error) {
                 // Silently skip fields that don't exist
                 continue;
             }
         }
         
-        console.log(`📊 Successfully set ${fieldsSet} fields`);
+
         return await pdfDoc.save();
     }
 
     async createFallbackPDF(bcifData) {
-        console.log('📄 Creating fallback PDF summary...');
+
         
         try {
             const PDFLibrary = window.PDFLib || PDFLib;
@@ -467,7 +467,7 @@ class TotalLossFormsProcessor {
                 yPosition -= 20;
             }
             
-            console.log('✅ Fallback PDF created successfully');
+
             return await pdfDoc.save();
             
         } catch (fallbackError) {
@@ -496,8 +496,8 @@ class TotalLossFormsProcessor {
     }
     
     async showInteractivePDFPreview() {
-        console.log('📄 Displaying interactive PDF preview...');
-        console.log('💾 BCIF Data:', this.bcifData);
+
+
         
         // Create a preview of the filled form with editable checkboxes
         const previewHTML = this.createInteractiveBCIFPreview();
@@ -678,7 +678,7 @@ class TotalLossFormsProcessor {
     }
     
     toggleOption(option, isChecked) {
-        console.log(`${isChecked ? '✅' : '❌'} Toggle option: ${option}`);
+
         
         if (!this.bcifData.checkboxFields) {
             this.bcifData.checkboxFields = [];
@@ -703,7 +703,7 @@ class TotalLossFormsProcessor {
     }
     
     async downloadFinalPDF() {
-        console.log('📥 Generating final PDF with user selections...');
+
         
         // Show processing
         this.showProcessingModal('Generating final PDF with your selections...');
@@ -741,7 +741,7 @@ class TotalLossFormsProcessor {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            console.log('✅ Final PDF downloaded:', filename);
+
             
         } catch (error) {
             console.error('❌ Final PDF generation failed:', error);
@@ -821,7 +821,7 @@ class TotalLossFormsProcessor {
     }
 
     editForm() {
-        console.log('✏️ Opening form editor...');
+
         
         // Convert current BCIF data to editable form
         if (!this.bcifData) {
@@ -916,14 +916,14 @@ class TotalLossFormsProcessor {
         this.closeEditModal();
         
         // Show success message
-        console.log('✅ Form data updated:', updates);
+
         
         // Re-generate the form with updated data
         this.generateBCIFForm();
     }
 
     finalizeForm() {
-        console.log('✅ Form finalized');
+
         
         // Update UI
         this.updateStepStatus('downloadStep', 'completed', 'Ready');
@@ -974,7 +974,7 @@ class TotalLossFormsProcessor {
             // Clean up
             URL.revokeObjectURL(url);
             
-            console.log('📥 PDF downloaded:', filename);
+
 
         } catch (error) {
             console.error('❌ Download failed:', error);

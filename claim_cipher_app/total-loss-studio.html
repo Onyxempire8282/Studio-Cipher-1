@@ -215,18 +215,17 @@
     </main>
 
     <!-- Supabase JS v2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Supabase Configuration and Auth -->
-    <script src="config/github-pages-env.js"></script>
-    <script src="scripts/supabase-config.js"></script>
-    <script src="scripts/supabase-auth.js"></script>
-    <script src="scripts/billing-guard.js"></script>
+    <script defer src="config/github-pages-env.js"></script>
+    <script defer src="scripts/supabase-config.js"></script>
+    <script defer src="scripts/supabase-auth.js"></script>
+    <script defer src="scripts/billing-guard.js"></script>
 
     <!-- Supabase Page Protection -->
     <script>
-    (async function() {
-        document.body.style.visibility = 'hidden';
+document.addEventListener('DOMContentLoaded', async function() {
         const allowed = await window.SupabaseAuth.protectPage();
         if (!allowed) return;
 
@@ -237,21 +236,23 @@
         }
 
         document.body.style.visibility = 'visible';
-    })();
-    </script>
+});
+</script>
 
     <!-- Core Scripts -->
-    <script src="scripts/cipher-core.js"></script>
+    <script defer src="scripts/cipher-core.js"></script>
 
     <!-- PDF.js — client-side PDF text extraction -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
+document.addEventListener('DOMContentLoaded', function() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
             'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
+});
+</script>
 
     <!-- pdf-lib — client-side BCIF PDF generation (no server needed) -->
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script defer src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <!-- Total Loss Studio Module -->
     <script type="module">
@@ -259,6 +260,6 @@
         initTotalLossStudio();
     </script>
 
-    <script src="scripts/claim-cipher-system-qa.js"></script>
+    <script defer src="scripts/claim-cipher-system-qa.js"></script>
 </body>
 </html>

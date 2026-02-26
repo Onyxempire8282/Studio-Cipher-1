@@ -533,16 +533,15 @@ body::before {
 </div>
 
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config/github-pages-env.js"></script>
-<script src="scripts/supabase-config.js"></script>
-<script src="scripts/supabase-auth.js"></script>
-<script src="scripts/billing-guard.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="config/github-pages-env.js"></script>
+<script defer src="scripts/supabase-config.js"></script>
+<script defer src="scripts/supabase-auth.js"></script>
+<script defer src="scripts/billing-guard.js"></script>
 
 <!-- Auth / billing guard — runs before page renders -->
 <script>
-(async function () {
-  document.body.style.visibility = 'hidden';
+document.addEventListener('DOMContentLoaded', async function() {
   const allowed = await window.SupabaseAuth.protectPage();
   if (!allowed) return;
 
@@ -553,15 +552,16 @@ body::before {
   }
 
   document.body.style.visibility = 'visible';
-})();
+});
 </script>
 
-<script src="scripts/cipher-core.js"></script>
-<script src="scripts/route-service.js"></script>
-<script src="scripts/my-routes.js"></script>
+<script defer src="scripts/cipher-core.js"></script>
+<script defer src="scripts/route-service.js"></script>
+<script defer src="scripts/my-routes.js"></script>
 
 <!-- Override cipher-core notification to match new design -->
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 window.showCipherNotification = function(message, type, duration) {
   const toast = document.createElement('div');
   toast.className = 'cc-toast cc-toast--' + (type || 'info');
@@ -573,6 +573,7 @@ window.showCipherNotification = function(message, type, duration) {
     setTimeout(() => toast.remove(), 300);
   }, duration || 3500);
 };
+});
 </script>
 
 </body>

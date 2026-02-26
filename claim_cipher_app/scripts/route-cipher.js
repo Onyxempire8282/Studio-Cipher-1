@@ -71,7 +71,7 @@ class RouteCipher {
    * Initialize demo mode with seeded data and locked inputs
    */
   initializeDemoMode() {
-    console.log('🎭 Demo mode detected - initializing demo route data');
+
 
     // Demo addresses - 3 Texas, 3 Florida
     const demoAddresses = [
@@ -135,7 +135,7 @@ class RouteCipher {
     }));
     this.settings = this.gatherRouteData().settings;
 
-    console.log('🎭 Demo mode initialized with 6 addresses');
+
   }
 
   /**
@@ -208,7 +208,7 @@ class RouteCipher {
       if (draftRaw) {
         const draft = JSON.parse(draftRaw);
         if (draft.editingRouteId) {
-          console.log('📝 Edit state found in draft — resuming via restoreLastRoute');
+
           // Let restoreLastRoute handle the full restore including edit flags
           setTimeout(() => this.restoreLastRoute(), 300);
           return true;
@@ -287,7 +287,7 @@ class RouteCipher {
     // Persist edit state to draft so refresh resumes correctly
     this.autoSaveRouteState();
 
-    console.log(`📝 Edit route loaded: ${payload.routeId} (${payload.status})`);
+
   }
 
   /**
@@ -369,7 +369,7 @@ class RouteCipher {
     this.renderEmptyRouteState();
 
     this.showToast('Edit cancelled.');
-    console.log('📝 Edit cancelled — form and state cleared');
+
   }
 
   /**
@@ -389,7 +389,7 @@ class RouteCipher {
     // Re-save draft without edit flags
     this.autoSaveRouteState();
 
-    console.log('📝 Edit state cleared after successful update');
+
   }
 
   /**
@@ -409,15 +409,15 @@ class RouteCipher {
   }
 
   setupEventListeners() {
-    console.log("🔒 Setting up event listeners...");
+
 
     const addBtn = document.getElementById("addDestination");
     if (addBtn) {
       addBtn.addEventListener("click", () => {
-        console.log("🔒 Add Destination clicked!");
+
         this.addDestination();
       });
-      console.log("🔒 Add Destination listener attached");
+
     } else {
       console.error("🔒 addDestination button not found!");
     }
@@ -425,7 +425,7 @@ class RouteCipher {
     const optimizeBtn = document.getElementById("optimizeRoute");
     if (optimizeBtn) {
       optimizeBtn.addEventListener("click", () => this.optimizeRoute());
-      console.log("🔒 Optimize Route listener attached");
+
     } else {
       console.error("🔒 optimizeRoute button not found!");
     }
@@ -489,7 +489,7 @@ class RouteCipher {
       );
     }
 
-    console.log("🔒 Event listeners setup complete");
+
   }
 
   toggleAdvancedSettings() {
@@ -507,15 +507,15 @@ class RouteCipher {
       toggleBtn.innerHTML = '<span class="btn-icon">⚙️</span>More Settings';
     }
 
-    console.log("🔒 Advanced settings toggled");
+
   }
 
   addDestination() {
-    console.log("🎵 Lyricist Emergency: Add Stop button clicked");
+
 
     // Block in demo mode
     if (this.isDemoMode()) {
-      console.log('🎭 Demo mode - cannot add destinations');
+
       return;
     }
 
@@ -547,20 +547,17 @@ class RouteCipher {
       }
     }
 
-    console.log(
-      "🎵 Lyricist Emergency: ONE destination input added successfully"
-    );
   }
 
   async optimizeRoute() {
-    console.log("🎵 Lyricist Emergency: Optimize Route button clicked");
+
 
     try {
       this.showLoading(true);
       this.hideError();
 
       const routeData = this.gatherRouteData();
-      console.log("🎵 Lyricist: Route data gathered:", routeData);
+
 
       // Clear distance cache for fresh optimization
       this.clearDistanceCache();
@@ -570,7 +567,7 @@ class RouteCipher {
         return;
       }
 
-      console.log("🎵 Lyricist: Starting route calculation...");
+
 
       // Show progress to user
       const optimizeBtn = document.getElementById("optimizeRoute");
@@ -586,17 +583,17 @@ class RouteCipher {
       }
 
       const optimizedRoute = await this.calculateOptimizedRoute(routeData);
-      console.log("🎵 Lyricist: Route optimized:", optimizedRoute);
+
 
       let splitRoute = await this.applySplitting(
         optimizedRoute,
         routeData.settings
       );
-      console.log("🎵 Lyricist: Route split applied:", splitRoute);
+
 
       // Check if we're editing a specific day - merge back into full route
       if (typeof this.editingDayIndex === 'number' && this.currentRoute?.days) {
-        console.log(`🎵 Merging edited Day ${this.editingDayIndex + 1} back into full route`);
+
         splitRoute = this.mergeEditedDay(splitRoute, this.editingDayIndex);
         this.editingDayIndex = null; // Clear editing state
       }
@@ -615,9 +612,6 @@ class RouteCipher {
       // Auto-save route state after successful optimization
       this.autoSaveRouteState();
 
-      console.log(
-        "🎵 Lyricist Emergency: Route optimization COMPLETED successfully!"
-      );
     } catch (error) {
       console.error("🎵 Lyricist Emergency: Route optimization error:", error);
       this.showError("Route optimization failed: " + error.message);
@@ -794,7 +788,7 @@ class RouteCipher {
   }
 
   async calculateFallbackRoute(startLocation, destinations, settings) {
-    console.log("🔒 Using fallback route calculation without Google Maps");
+
 
     // Show user notification about fallback mode
     this.showFallbackNotification();
@@ -868,11 +862,6 @@ class RouteCipher {
   }
 
   geographicallyOptimizeRoute(startLocation, destinations, settings) {
-    console.log(
-      "🗺️ Starting geographical optimization for",
-      settings.territoryType,
-      "territory"
-    );
 
     if (!settings.geographicClustering) {
       // Just use priority sorting
@@ -923,10 +912,6 @@ class RouteCipher {
       remaining.splice(index, 1);
     }
 
-    console.log(
-      "🗺️ Geographical optimization complete:",
-      optimized.map((d) => d.address)
-    );
     return optimized;
   }
 
@@ -999,9 +984,6 @@ class RouteCipher {
             0
           )}min (balanced)`;
 
-    console.log(
-      `🗺️ Next destination: ${best.destination.address} (${efficiency})`
-    );
 
     return best.destination;
   }
@@ -1166,9 +1148,9 @@ class RouteCipher {
       clusterId++;
     }
 
-    console.log(`🗺️ Built ${clusters.length} geographic clusters from ${n} stops`);
+
     clusters.forEach((c, i) => {
-      console.log(`  Cluster ${i + 1}: ${c.size} stops, ~${c.internalMileage} mi internal`);
+
     });
 
     return { clusters, stopToCluster };
@@ -1280,7 +1262,7 @@ class RouteCipher {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      console.log(`🗺️ Showing override modal for cluster with ${cluster.stops.length} stops`);
+
     });
   }
 
@@ -1299,7 +1281,7 @@ class RouteCipher {
     if (this._pendingCluster) {
       const clusterKey = this.getClusterKey(this._pendingCluster);
       this.clusterOverrideDecisions.set(clusterKey, decision);
-      console.log(`🗺️ Override decision stored: ${decision} for cluster key: ${clusterKey.substring(0, 50)}...`);
+
     }
 
     // Resolve the pending promise
@@ -1333,7 +1315,7 @@ class RouteCipher {
    */
   clearDistanceCache() {
     this._distanceCache.clear();
-    console.log('🗺️ Distance cache cleared');
+
   }
 
   getDefaultDate(dayIndex) {
@@ -1355,9 +1337,6 @@ class RouteCipher {
         ? window.settingsManager.getCalendarSystem()
         : "mobile");
 
-    console.log(
-      `📅 Exporting to preferred calendar system: ${preferredSystem}`
-    );
 
     switch (preferredSystem) {
       case "google":
@@ -1396,7 +1375,7 @@ class RouteCipher {
       window.open(outlookUrl, "_blank");
     });
 
-    console.log("Exported to Outlook Calendar:", appointments);
+
     this.showNotification(
       `${appointments.length} appointments exported to Outlook Calendar`
     );
@@ -1600,11 +1579,6 @@ class RouteCipher {
       }));
       console.group('\uD83D\uDD0D Google Directions legs — math integrity audit');
       console.table(debugRows);
-      console.log(
-        `Leg sum \u2192 ${processedRoute.totalDistance.toFixed(2)} mi` +
-        ` | ${processedRoute.totalDuration.toFixed(1)} min` +
-        ` (${legs.length} leg${legs.length !== 1 ? 's' : ''})`
-      );
       console.groupEnd();
     }
 
@@ -1658,7 +1632,7 @@ class RouteCipher {
     const destinationStops = route.stops.slice(1);
     const { clusters, stopToCluster } = this.buildGeographicClusters(destinationStops);
 
-    console.log(`🗺️ Day splitting with ${clusters.length} clusters from ${destinationStops.length} stops`);
+
 
     let currentDay = {
       label: `Day ${days.length + 1}`,
@@ -1729,7 +1703,7 @@ class RouteCipher {
             if (decision === 'keepTogether') {
               // User wants to keep them together - don't split
               shouldSplit = false;
-              console.log(`🗺️ Keeping cluster together (user override): ${cluster.stops.length} stops`);
+
             }
           }
         }
@@ -1863,14 +1837,14 @@ class RouteCipher {
       if (cached) {
         distance = cached.miles;
         isEstimated = false;
-        console.log(`📏 Return leg using cached distance: ${distance} mi`);
+
       }
     }
 
     // Fall back to heuristic estimation (visual only, not for billing)
     if (distance === undefined) {
       distance = this.estimateDistance(lastStop, startingPoint);
-      console.log(`📏 Return leg using estimated distance: ${distance} mi`);
+
     }
 
     // Pass the resolved distance so estimateTime() doesn't re-call estimateDistance()
@@ -1910,10 +1884,6 @@ class RouteCipher {
         avoidTolls:    settings?.avoidTolls    || false,
       };
 
-      console.log(
-        '\uD83D\uDD04 Return leg \u2192 Google Directions:',
-        origin.substring(0, 35), '\u2192', destination.substring(0, 35)
-      );
 
       this.directionsService.route(request, (result, status) => {
         if (
@@ -1974,14 +1944,14 @@ class RouteCipher {
       if (cached) {
         distance = cached.miles;
         isEstimated = false;
-        console.log(`📏 Start leg using cached distance: ${distance} mi`);
+
       }
     }
 
     // Fall back to heuristic estimation (visual only)
     if (distance === undefined) {
       distance = this.estimateDistance(startingPoint, destination);
-      console.log(`📏 Start leg using estimated distance: ${distance} mi`);
+
     }
 
     const duration = this.estimateTime(startingPoint, destination);
@@ -2385,9 +2355,6 @@ class RouteCipher {
     timeInput.disabled = true;
     durationSelect.disabled = true;
 
-    console.log(
-      `Appointment approved for stop ${stopId}: ${dateInput.value} at ${timeInput.value} for ${durationSelect.value} minutes`
-    );
 
     this.updateCalendarExportStatus();
   }
@@ -2441,7 +2408,7 @@ class RouteCipher {
       window.open(googleUrl, "_blank");
     });
 
-    console.log("Exported to Google Calendar:", appointments);
+
     this.showNotification(
       `${appointments.length} appointments exported to Google Calendar`
     );
@@ -2481,7 +2448,7 @@ class RouteCipher {
     }.ics`;
     a.click();
 
-    console.log("Exported to Apple Calendar:", appointments);
+
     this.showNotification(
       `${appointments.length} appointments exported to Apple Calendar`
     );
@@ -2510,7 +2477,7 @@ class RouteCipher {
       );
     });
 
-    console.log("Exported to Mobile Cipher:", routeData);
+
   }
 
   gatherApprovedAppointments() {
@@ -3004,7 +2971,7 @@ class RouteCipher {
   loadSettings() {
     // Load from global settings manager if available
     if (window.settingsManager) {
-      console.log("📋 Loading settings from Settings Manager");
+
 
       // Load route optimization settings
       const territoryType = window.settingsManager.getSetting("territoryType");
@@ -3097,13 +3064,10 @@ class RouteCipher {
   initializeGooglePlacesAutocomplete() {
     // Wait for Google Maps API to load
     if (typeof google === "undefined" || !google.maps || !google.maps.places) {
-      console.log("🗺️ Google Places not available - autocomplete disabled");
+
       return;
     }
 
-    console.log(
-      "🗺️ Initializing Google Places Autocomplete for Route Cipher"
-    );
 
     // Autocomplete for starting location
     const startLocationInput = document.getElementById("startLocation");
@@ -3120,10 +3084,6 @@ class RouteCipher {
         const place = autocompleteStart.getPlace();
         if (place.formatted_address) {
           startLocationInput.value = place.formatted_address;
-          console.log(
-            "🗺️ Starting location selected:",
-            place.formatted_address
-          );
         }
       });
     }
@@ -3131,12 +3091,12 @@ class RouteCipher {
     // Autocomplete for existing destination inputs
     this.addAutocompleteToDestinationInputs();
 
-    console.log("🗺️ Google Places Autocomplete initialized");
+
   }
 
   addAutocompleteToDestinationInputs() {
     if (typeof google === "undefined" || !google.maps || !google.maps.places) {
-      console.log("🗺️ Google Places not available, skipping autocomplete");
+
       return;
     }
 
@@ -3144,18 +3104,15 @@ class RouteCipher {
       ".destination-address-input"
     );
 
-    console.log(
-      `🗺️ Found ${destinationInputs.length} destination inputs to check for autocomplete`
-    );
 
     destinationInputs.forEach((input, index) => {
       // Check if autocomplete already initialized
       if (input.dataset.autocompleteInitialized === "true") {
-        console.log(`🗺️ Input ${index + 1} already has autocomplete`);
+
         return;
       }
 
-      console.log(`🗺️ Adding autocomplete to input ${index + 1}`);
+
 
       const autocomplete = new google.maps.places.Autocomplete(input, {
         types: ["address"],
@@ -3166,13 +3123,13 @@ class RouteCipher {
         const place = autocomplete.getPlace();
         if (place.formatted_address) {
           input.value = place.formatted_address;
-          console.log("🗺️ Destination selected:", place.formatted_address);
+
         }
       });
 
       // Mark as initialized
       input.dataset.autocompleteInitialized = "true";
-      console.log(`🗺️ Autocomplete initialized for input ${index + 1}`);
+
     });
   }
 
@@ -3258,7 +3215,7 @@ class RouteCipher {
       }
     });
 
-    console.log('Drop zone initialized successfully');
+
   }
 
   handleDragOver(e) {
@@ -3367,7 +3324,7 @@ class RouteCipher {
     this.renderDroppedClaims();
     this.saveClaims();
 
-    console.log('Claim added successfully:', normalizedClaim);
+
   }
 
   isDuplicateClaim(id) {
@@ -3378,7 +3335,7 @@ class RouteCipher {
     this.routeStops = this.routeStops.filter(stop => stop.id !== id);
     this.renderDroppedClaims();
     this.saveClaims();
-    console.log('Claim removed:', id);
+
   }
 
   renderDroppedClaims() {
@@ -3519,7 +3476,7 @@ class RouteCipher {
       this.optimizeRoute();
     }, 500);
 
-    console.log(`Routing ${this.routeStops.length} claims`);
+
   }
 
   saveClaims() {
@@ -3538,7 +3495,7 @@ class RouteCipher {
         if (Array.isArray(claims)) {
           this.routeStops = claims;
           this.renderDroppedClaims();
-          console.log(`Loaded ${claims.length} saved claims`);
+
         }
       }
     } catch (error) {
@@ -3584,12 +3541,12 @@ class RouteCipher {
   autoSaveRouteState() {
     // Don't save in demo mode
     if (this.isDemoMode()) {
-      console.log('📁 Demo mode active - skipping auto-save');
+
       return;
     }
 
     if (!this.currentRoute && !this.editingRouteId) {
-      console.log('📁 No route to save');
+
       return;
     }
 
@@ -3616,7 +3573,7 @@ class RouteCipher {
       }
 
       localStorage.setItem('cipher_optimizer_draft_state', JSON.stringify(routeState));
-      console.log('📁 Route state auto-saved to cipher_optimizer_draft_state');
+
     } catch (error) {
       console.error('📁 Error auto-saving route state:', error);
     }
@@ -3668,7 +3625,7 @@ class RouteCipher {
           settings: { ...this.settings }
         };
         window.SessionManager.addRouteToSession(sessionRouteData);
-        console.log(`📁 Saved ${dayName} route to SessionManager`);
+
       }
 
       // Clear start_fresh flag so resume modal can show again next session
@@ -3689,7 +3646,7 @@ class RouteCipher {
 
         if (result.success) {
           this.showToast(`Route updated (${totalMiles} mi).`);
-          console.log(`✅ Route updated in Supabase:`, result.data);
+
         } else {
           console.error('❌ Supabase update failed:', result.error);
           this.showToast(`Update failed: ${result.error}`);
@@ -3715,7 +3672,7 @@ class RouteCipher {
 
           if (activateResult.success) {
             this.showToast(`Route saved (${totalMiles} mi). Ready to close in My Routes.`);
-            console.log(`✅ Route persisted to Supabase (active):`, activateResult.data);
+
           } else {
             this.showToast(`Route saved as draft. Activate it in My Routes.`);
             console.warn('Route saved but activation failed:', activateResult.error);
@@ -3783,7 +3740,7 @@ class RouteCipher {
   checkForSavedRoutes() {
     // Check if user clicked "Start Fresh" this session - suppress modal
     if (sessionStorage.getItem('cipher_start_fresh') === 'true') {
-      console.log('📁 Start Fresh active - suppressing resume modal');
+
       return;
     }
 
@@ -3927,7 +3884,7 @@ class RouteCipher {
       if (destList) destList.innerHTML = '';
 
       this.showToast('Started fresh! All saved routes cleared.');
-      console.log('📁 Start Fresh: Cleared all route data and suppressed resume modal');
+
     } catch (error) {
       console.error('📁 Error in startFresh:', error);
       this.showError('Failed to start fresh');
@@ -3981,7 +3938,7 @@ class RouteCipher {
       this.currentRoute = { days: [dayData.day], overall: this.calculateOverall([dayData.day]) };
 
       this.showToast(`${this.formatDayName(dayName)} route restored!`);
-      console.log(`📁 Restored ${dayName} route`);
+
     } catch (error) {
       console.error('📁 Error restoring day route:', error);
       this.showError('Failed to restore route');
@@ -4038,7 +3995,7 @@ class RouteCipher {
       }
 
       this.showToast(`Session "${session.name}" restored with ${routes.length} route(s)!`);
-      console.log('📁 Restored session:', sessionId);
+
     } catch (error) {
       console.error('📁 Error restoring session:', error);
       this.showError('Failed to restore session');
@@ -4051,7 +4008,7 @@ class RouteCipher {
   restoreActiveSession() {
     this.closeRestoreModal();
     this.showToast('Continuing active session.');
-    console.log('📁 Continuing active session');
+
   }
 
   /**
@@ -4113,11 +4070,11 @@ class RouteCipher {
           total_miles: lastRoute.route?.overall?.miles || null,
           status: null
         });
-        console.log('📝 Edit state restored from draft:', this.editingRouteId);
+
       }
 
       this.showToast(lastRoute.editingRouteId ? 'Edit session restored!' : 'Last session restored!');
-      console.log('📁 Restored last route');
+
     } catch (error) {
       console.error('📁 Error restoring last route:', error);
       this.showError('Failed to restore route');
@@ -4210,7 +4167,7 @@ class RouteCipher {
     this.editingDayIndex = dayIndex;
 
     this.showToast(`Editing Day ${dayIndex + 1} - ${stops.length} stops loaded`);
-    console.log(`📁 Loaded Day ${dayIndex + 1} for editing`);
+
   }
 
   /**
@@ -4229,7 +4186,7 @@ class RouteCipher {
     const originalDays = [...this.currentRoute.days];
     const newDays = newDayRoute.days || [];
 
-    console.log(`🎵 Merging: replacing Day ${editedDayIndex + 1} with ${newDays.length} new day(s)`);
+
 
     if (newDays.length === 1) {
       // Simple case: edited day is still one day
@@ -4256,7 +4213,7 @@ class RouteCipher {
     // Recalculate overall stats
     const overall = this.calculateOverallStats(originalDays);
 
-    console.log(`🎵 Merge complete: ${originalDays.length} total days`);
+
 
     return {
       days: originalDays,
@@ -4310,7 +4267,7 @@ class RouteCipher {
       this.renderEmptyRouteState();
 
       this.showToast('All saved routes cleared');
-      console.log('📁 Cleared all saved routes and reset UI');
+
     } catch (error) {
       console.error('📁 Error clearing saved routes:', error);
       this.showError('Failed to clear saved routes');
@@ -4341,7 +4298,7 @@ class RouteCipher {
     this._overrideResolve = null;
     this._pendingCluster = null;
 
-    console.log('📁 Route state reset');
+
   }
 
   /**
@@ -4405,7 +4362,7 @@ class RouteCipher {
         : optimizeBtn.textContent;
     }
 
-    console.log('📁 UI reset to empty state');
+
   }
 
   /**
@@ -4570,7 +4527,7 @@ function removeDestination(button) {
   // Remove the destination
   destDiv.remove();
 
-  console.log("🎵 Lyricist: Destination removed:", address || "empty");
+
 }
 
 function hideError() {
@@ -4579,7 +4536,7 @@ function hideError() {
 
 // Initialize when Google Maps loads
 async function initRouteCipher() {
-  console.log("🔒 Security Agent: initRouteCipher called");
+
 
   if (window.BillingGuard && window.BillingGuard.waitForAccess) {
     const allowed = await window.BillingGuard.waitForAccess();
@@ -4590,7 +4547,7 @@ async function initRouteCipher() {
   if (window.FirmStore) { await window.FirmStore.getAll(); }
 
   if (window.routeCipher) {
-    console.log("🔒 RouteCipher already exists, updating with Google Maps");
+
     const routeCipher = window.routeCipher;
 
     // Initialize Google Maps for existing optimizer
@@ -4608,7 +4565,7 @@ async function initRouteCipher() {
       routeCipher.geocoder = new google.maps.Geocoder();
 
       routeCipher.directionsRenderer.setMap(routeCipher.map);
-      console.log("🔒 Google Maps initialized for existing RouteCipher");
+
     }
   } else {
     const routeCipher = new RouteCipher();
@@ -4628,9 +4585,9 @@ async function initRouteCipher() {
       routeCipher.geocoder = new google.maps.Geocoder();
 
       routeCipher.directionsRenderer.setMap(routeCipher.map);
-      console.log("🔒 New RouteCipher created with Google Maps");
+
     } else {
-      console.log("🔒 New RouteCipher created without Google Maps");
+
     }
 
     window.routeCipher = routeCipher;
@@ -4639,7 +4596,7 @@ async function initRouteCipher() {
 
 // Fallback initialization if Google Maps doesn't load
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("🔒 Security Agent: DOM loaded, initializing Route Cipher...");
+
 
   if (window.BillingGuard && window.BillingGuard.waitForAccess) {
     const allowed = await window.BillingGuard.waitForAccess();
@@ -4653,17 +4610,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!window.routeCipher) {
     const routeCipher = new RouteCipher();
     window.routeCipher = routeCipher;
-    console.log(
-      "🔒 Security Agent: Route Cipher initialized successfully (fallback mode)"
-    );
   } else {
-    console.log("🔒 Security Agent: Route Cipher already exists");
+
   }
 
   // Test if Add Stop button is working
   const addBtn = document.getElementById("addDestination");
   if (addBtn) {
-    console.log("🔒 Add Destination button found and ready");
+
   } else {
     console.error("🔒 Add Destination button NOT found!");
   }
@@ -4671,7 +4625,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Initialize fallback map container if needed
   const mapContainer = document.getElementById("routeMap");
   if (mapContainer && !mapContainer.innerHTML.trim()) {
-    console.log("🗺️ Initializing fallback map container");
+
     mapContainer.innerHTML = `
             <div style="
                 display: flex;

@@ -25,7 +25,7 @@
 
         try {
             supabaseClient = supabase.createClient(config.url, config.anonKey);
-            console.log('Supabase client initialized');
+
             return supabaseClient;
         } catch (error) {
             console.error('Failed to initialize Supabase:', error);
@@ -62,7 +62,7 @@
             // Mark as authenticated
             wasAuthenticated = true;
 
-            console.log('Sign in successful for:', email);
+
             return { success: true, user: data.user, session: data.session };
         } catch (error) {
             console.error('Sign in exception:', error);
@@ -107,7 +107,7 @@
                 };
             }
 
-            console.log('Sign up successful for:', email);
+
             return { success: true, user: data.user, session: data.session };
         } catch (error) {
             console.error('Sign up exception:', error);
@@ -141,7 +141,7 @@
                 console.error('Sign out error:', error.message);
             }
 
-            console.log('Sign out successful');
+
             window.location.href = 'login-cypher.html';
             return { success: !error };
         } catch (error) {
@@ -202,7 +202,7 @@
         authListenerInitialized = true;
 
         client.auth.onAuthStateChange((event, session) => {
-            console.log('Auth state changed:', event);
+
 
             if (event === 'SIGNED_OUT') {
                 // Only show "another session" message if:
@@ -238,11 +238,11 @@
             }
 
             if (event === 'TOKEN_REFRESHED') {
-                console.log('Session token refreshed');
+
             }
 
             if (event === 'SIGNED_IN') {
-                console.log('User signed in');
+
                 wasAuthenticated = true;
                 isManualLogout = false;
             }
@@ -293,7 +293,7 @@
     async function protectPage() {
         // Demo mode bypass - allow access without auth
         if (sessionStorage.getItem('demo_mode') === 'true') {
-            console.log('🎭 Demo mode detected — bypassing auth guards');
+
             return true;
         }
 
@@ -309,7 +309,7 @@
         const { session } = await getSession();
 
         if (!session) {
-            console.log('No active session - redirecting to login');
+
             cleanupOldAuthKeys();
             window.location.href = 'login-cypher.html';
             return false;
@@ -321,7 +321,7 @@
         // Setup listener for future auth state changes
         setupAuthStateListener();
 
-        console.log('Page access granted for:', session.user.email);
+
         return true;
     }
 
@@ -333,7 +333,7 @@
     async function loginPageGuard() {
         // Demo mode - stay on login page, let demo button handle redirect
         if (sessionStorage.getItem('demo_mode') === 'true') {
-            console.log('🎭 Demo mode active — redirecting to dashboard');
+
             window.location.replace('command-center.html');
             return false;
         }
@@ -350,7 +350,7 @@
         const { session } = await getSession();
 
         if (session) {
-            console.log('Already authenticated - redirecting to dashboard');
+
             window.location.href = 'command-center.html';
             return false;
         }
@@ -384,7 +384,7 @@
         sessionStorage.removeItem('claimCipherAuth');
         sessionStorage.removeItem('cipher_session');
 
-        console.log('Old auth keys cleaned up');
+
     }
 
     /**
@@ -443,7 +443,7 @@
     window.handleLogout = function() {
         // Demo mode logout - clear demo state and redirect (no Supabase session)
         if (sessionStorage.getItem('demo_mode') === 'true') {
-            console.log('🎭 Demo mode logout - clearing demo state');
+
             sessionStorage.removeItem('demo_mode');
             sessionStorage.removeItem('claimCipherAuth');
             if (window.FirmStore) window.FirmStore.clearDemo();
@@ -453,9 +453,9 @@
         }
 
         // Authenticated user logout via Supabase
-        console.log('Logout initiated via Supabase Auth');
+
         window.SupabaseAuth.signOut();
     };
 
-    console.log('Supabase Auth module loaded');
+
 })();

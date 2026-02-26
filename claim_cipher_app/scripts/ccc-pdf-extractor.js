@@ -10,7 +10,7 @@ class CCCPDFExtractor {
     }
 
     async init() {
-        console.log('🔍 CCC PDF Extractor initializing...');
+
         this.setupCoordinateZones();
         
         // Initialize professional mapper for pattern-based extraction
@@ -18,7 +18,7 @@ class CCCPDFExtractor {
         await this.professionalMapper.init();
         
         this.initialized = true;
-        console.log('✅ CCC PDF Extractor ready with professional mapping');
+
     }
 
     setupCoordinateZones() {
@@ -111,7 +111,7 @@ class CCCPDFExtractor {
      * @returns {Object} - Extracted data in BCIF format
      */
     async extractDataFromCCC(pdfFile) {
-        console.log('🔍 Starting advanced CCC PDF extraction...');
+
         
         // Ensure initialization is complete
         if (!this.initialized) {
@@ -126,16 +126,16 @@ class CCCPDFExtractor {
             const pdfData = await this.extractWithCoordinates(arrayBuffer);
             
             // Debug: Show what we extracted from PDF
-            console.log('📄 PDF parsed successfully, running test extraction...');
+
             this.testExtraction(pdfData);
             
             // Use professional pattern-based extraction as primary method
             const professionalData = this.professionalMapper.extractFromText(pdfData.fullText);
-            console.log('🏢 Professional extraction results:', professionalData);
+
             
             // Fall back to coordinate extraction for missing fields
             const coordinateData = this.parseCoordinateData(pdfData);
-            console.log('📍 Coordinate extraction results:', coordinateData);
+
             
             // Merge the results (professional takes priority)
             const extractedData = this.mergeExtractionResults(professionalData, coordinateData);
@@ -143,7 +143,7 @@ class CCCPDFExtractor {
             // Enhance with additional processing
             const enhancedData = this.enhanceExtractedData(extractedData);
             
-            console.log('✅ Coordinate-based extraction completed:', enhancedData);
+
             return enhancedData;
             
         } catch (error) {
@@ -158,14 +158,14 @@ class CCCPDFExtractor {
      * @returns {Object} - PDF data with text and coordinates
      */
     async extractWithCoordinates(pdfBuffer) {
-        console.log('📄 Extracting PDF with coordinate data...');
+
         
         // Configure PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
         // Load PDF document
         const pdf = await pdfjsLib.getDocument({ data: pdfBuffer }).promise;
-        console.log(`📄 PDF loaded: ${pdf.numPages} pages`);
+
         
         const pdfData = {
             pages: [],
@@ -204,8 +204,8 @@ class CCCPDFExtractor {
             pdfData.fullText += pageData.text + '\n';
         }
         
-        console.log(`📄 Coordinate data extracted from ${pdfData.pages.length} pages`);
-        console.log('📄 Sample text items:', pdfData.pages[0]?.textItems.slice(0, 5));
+
+
         
         return pdfData;
     }
@@ -216,7 +216,7 @@ class CCCPDFExtractor {
      * @returns {Object} - Extracted field data
      */
     parseCoordinateData(pdfData) {
-        console.log('🎯 Parsing data using coordinate zones...');
+
         
         const extractedData = {};
         
@@ -227,9 +227,9 @@ class CCCPDFExtractor {
             const value = this.extractFromZone(pdfData, zone);
             if (value) {
                 extractedData[fieldName] = value;
-                console.log(`✅ Found ${fieldName}: "${value}" at zone (${zone.x}, ${zone.y})`);
+
             } else {
-                console.log(`❌ No data found for ${fieldName} in zone (${zone.x}, ${zone.y})`);
+
             }
         }
         
@@ -301,7 +301,7 @@ class CCCPDFExtractor {
      * @returns {Array} - Detected vehicle options
      */
     extractVehicleOptionsFromZones(pdfData) {
-        console.log('🚗 Extracting vehicle options from zones...');
+
         
         const detectedOptions = [];
         
@@ -312,7 +312,7 @@ class CCCPDFExtractor {
             
             if (zone) {
                 const zoneText = this.extractFromZone(pdfData, zone);
-                console.log(`🔍 Zone ${zoneName}: "${zoneText}"`);
+
                 
                 if (zoneText) {
                     for (const keyword of keywords) {
@@ -327,12 +327,12 @@ class CCCPDFExtractor {
                                 .replace(/_{2,}/g, '_')
                                 .replace(/^_|_$/g, '');
                             detectedOptions.push(normalizedOption);
-                            console.log(`🔧 Found option: ${keyword} in ${zoneName} zone`);
+
                         }
                     }
                 }
             } else {
-                console.log(`⚠️ Zone ${zoneKey} not found in extraction zones`);
+
             }
         }
         
@@ -452,7 +452,7 @@ class CCCPDFExtractor {
      * @returns {Object} - Merged extraction results
      */
     mergeExtractionResults(professionalData, coordinateData) {
-        console.log('🔄 Merging extraction results...');
+
         
         const merged = {
             // Start with coordinate data as base
@@ -478,7 +478,7 @@ class CCCPDFExtractor {
         // Remove duplicates from vehicle options
         merged.vehicleOptions = [...new Set(merged.vehicleOptions)];
         
-        console.log(`🔄 Merged results: ${Object.keys(merged).length} total fields`);
+
         return merged;
     }
 
@@ -488,7 +488,7 @@ class CCCPDFExtractor {
      * @returns {Object} - Enhanced data ready for BCIF mapping
      */
     enhanceExtractedData(extractedData) {
-        console.log('✨ Enhancing extracted data...');
+
         
         // Clean up specific fields
         if (extractedData.odometer) {
@@ -552,7 +552,7 @@ class CCCPDFExtractor {
         for (const [field, defaultValue] of Object.entries(defaults)) {
             if (!extractedData[field] || (typeof extractedData[field] === 'string' && extractedData[field].trim() === '')) {
                 extractedData[field] = defaultValue;
-                console.log(`📝 Added default ${field}: ${defaultValue}`);
+
             }
         }
     }
@@ -614,21 +614,21 @@ class CCCPDFExtractor {
     debugCoordinates(pdfData, pageNum = 1) {
         const page = pdfData.pages[pageNum - 1];
         if (!page) {
-            console.log(`❌ Page ${pageNum} not found`);
+
             return;
         }
         
-        console.log(`🔍 Debug: Text items on page ${pageNum} (total: ${page.textItems.length}):`);
-        console.log(`📄 Page viewport:`, page.viewport);
+
+
         page.textItems.forEach((item, index) => {
-            console.log(`${index}: "${item.text}" at (${Math.round(item.x)}, ${Math.round(item.y)})`);
+
         });
         
         // Show our extraction zones for comparison
-        console.log('🎯 Configured extraction zones:');
+
         for (const [fieldName, zone] of Object.entries(this.extractionZones)) {
             if (zone.page === pageNum) {
-                console.log(`${fieldName}: (${zone.x}, ${zone.y}) ${zone.width}x${zone.height}`);
+
             }
         }
     }
@@ -638,22 +638,22 @@ class CCCPDFExtractor {
      * @param {Object} pdfData - PDF data to test
      */
     testExtraction(pdfData) {
-        console.log('🧪 Testing extraction with debug output...');
+
         
         // Debug coordinates first
         this.debugCoordinates(pdfData, 1);
         
         // Test each extraction zone
-        console.log('\n🎯 Testing extraction zones:');
+
         for (const [fieldName, zone] of Object.entries(this.extractionZones)) {
             const value = this.extractFromZone(pdfData, zone);
-            console.log(`${fieldName}: "${value}" from zone (${zone.x}, ${zone.y})`);
+
         }
         
         // Test vehicle options
-        console.log('\n🚗 Testing vehicle options:');
+
         const options = this.extractVehicleOptionsFromZones(pdfData);
-        console.log('Detected options:', options);
+
     }
 }
 

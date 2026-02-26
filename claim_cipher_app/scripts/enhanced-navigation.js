@@ -1,7 +1,7 @@
 // 🧭 Enhanced Navigation with Active States and Mobile Support
 
 function initializeEnhancedNavigation() {
-    console.log('🧭 Initializing Enhanced Navigation...');
+
     
     setupMobileToggle();
     setupActiveStates();
@@ -102,4 +102,3 @@ function setupPageTransitions() {
 // Export functions
 window.initializeEnhancedNavigation = initializeEnhancedNavigation;
 
-console.log('🧭 Enhanced Navigation JavaScript loaded!');

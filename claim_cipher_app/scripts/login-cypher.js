@@ -1,10 +1,10 @@
 // 🎵 LYRICIST EMERGENCY LOOP 1: Login System Complete Restoration
 // Ensuring 100% functionality with text input and authentication
 
-console.log('🎵 LYRICIST LOOP 1: Emergency JavaScript restoration initiated');
+
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎵 LYRICIST: DOM loaded, initializing all login functionality');
+
     
     // Critical Elements
     const loginForm = document.getElementById('login-cypher-form');
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // LYRICIST FIX 1: Force input field functionality
     function enableAllInputs() {
-        console.log('🎵 LYRICIST LOOP 3: Enhanced input field activation');
+
         
         const allInputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
         allInputs.forEach(input => {
@@ -51,13 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // LOOP 3 FIX: Force text entry capability
             input.addEventListener('click', function(e) {
-                console.log('🎵 LYRICIST LOOP 3: Input clicked:', this.id);
+
                 this.focus();
                 this.select();
             });
             
             input.addEventListener('focus', function(e) {
-                console.log('🎵 LYRICIST LOOP 3: Input focused:', this.id);
+
                 this.style.outline = '2px solid #ffd700';
                 this.style.backgroundColor = 'rgba(42, 42, 42, 0.95)';
             });
@@ -69,19 +69,19 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // LOOP 3 ENHANCEMENT: Multiple event listeners for text entry
             input.addEventListener('keydown', function(e) {
-                console.log('🎵 LYRICIST LOOP 3: Key pressed:', e.key, 'in', this.id);
+
             });
             
             input.addEventListener('keypress', function(e) {
-                console.log('🎵 LYRICIST LOOP 3: Key character:', e.key);
+
             });
             
             input.addEventListener('input', function(e) {
-                console.log('🎵 LYRICIST LOOP 3: Text entered in', this.id, '- Value:', this.value);
+
             });
             
             input.addEventListener('paste', function(e) {
-                console.log('🎵 LYRICIST LOOP 3: Text pasted in', this.id);
+
             });
         });
         
@@ -99,14 +99,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.disabled = false;
                 input.readOnly = false;
                 input.setAttribute('autocomplete', input.type === 'email' ? 'email' : 'off');
-                console.log('🎵 LYRICIST LOOP 3: Critical input enabled:', input.id);
+
             }
         });
     }
 
     // LYRICIST FIX 2: Form toggle functionality
     function setupFormToggle() {
-        console.log('🎵 LYRICIST SIGNUP LOOP 1: Setting up enhanced form toggle functionality');
+
         
         if (loginToggle) {
             // Remove any existing event listeners
@@ -115,13 +115,13 @@ document.addEventListener('DOMContentLoaded', function() {
             loginToggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🎵 LYRICIST SIGNUP: Login toggle clicked');
+
                 showForm('login');
             });
             
             // Add mousedown for immediate feedback
             loginToggle.addEventListener('mousedown', function(e) {
-                console.log('🎵 LYRICIST SIGNUP: Login toggle mousedown');
+
             });
         }
         
@@ -132,12 +132,12 @@ document.addEventListener('DOMContentLoaded', function() {
             signupToggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🎵 LYRICIST SIGNUP LOOP 1: Signup toggle CLICKED - this should work now!');
+
                 showForm('signup');
             });
             
             signupToggle.addEventListener('mousedown', function(e) {
-                console.log('🎵 LYRICIST SIGNUP: Signup toggle mousedown');
+
                 this.style.transform = 'scale(0.95)';
             });
             
@@ -151,12 +151,12 @@ document.addEventListener('DOMContentLoaded', function() {
             signupToggle.style.cursor = 'pointer';
             signupToggle.tabIndex = 0;
             
-            console.log('🎵 LYRICIST SIGNUP LOOP 1: Signup toggle fully enabled and event listeners added');
+
         }
     }
 
     function showForm(formType) {
-        console.log('🎵 LYRICIST SIGNUP LOOP 1: Showing form:', formType);
+
         
         // Get form elements
         const loginFormElement = document.getElementById('login-cypher-form');
@@ -172,11 +172,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show login form
             if (loginFormElement) {
                 loginFormElement.style.display = 'block';
-                console.log('🎵 LYRICIST: Login form displayed');
+
             }
             if (signupFormElement) {
                 signupFormElement.style.display = 'none';
-                console.log('🎵 LYRICIST: Signup form hidden');
+
             }
             if (loginToggleElement) loginToggleElement.classList.add('active');
             if (signupToggleElement) signupToggleElement.classList.remove('active');
@@ -189,11 +189,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // 🎵 SIGNUP LOOP 1 CRITICAL: Show signup form
             if (loginFormElement) {
                 loginFormElement.style.display = 'none';
-                console.log('🎵 LYRICIST SIGNUP LOOP 1: Login form hidden');
+
             }
             if (signupFormElement) {
                 signupFormElement.style.display = 'block';
-                console.log('🎵 LYRICIST SIGNUP LOOP 1: Signup form displayed - SUCCESS!');
+
             }
             if (loginToggleElement) loginToggleElement.classList.remove('active');
             if (signupToggleElement) signupToggleElement.classList.add('active');
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     input.readOnly = false;
                     input.style.pointerEvents = 'auto';
                     input.style.opacity = '1';
-                    console.log('🎵 LYRICIST SIGNUP: Enabled input:', input.id);
+
                 });
             }, 100);
         }
@@ -218,12 +218,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-enable inputs after form switch
         setTimeout(enableAllInputs, 150);
         
-        console.log('🎵 LYRICIST SIGNUP LOOP 1: Form switch complete for:', formType);
+
     }
 
     // 🔒 SECURITY QA ROUND 1: Comprehensive form validation
     function validateFormSecurity() {
-        console.log('🔒 SECURITY QA: Running comprehensive form validation');
+
         
         // Validate login form
         const loginEmail = document.getElementById('login-email');
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(this.value) && this.value.length > 0) {
                     this.style.borderColor = '#ff4757';
-                    console.log('🔒 SECURITY: Invalid email format detected');
+
                 } else {
                     this.style.borderColor = '#00bfff';
                 }
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loginPassword.addEventListener('input', function() {
                 if (this.value.length < 6 && this.value.length > 0) {
                     this.style.borderColor = '#ff4757';
-                    console.log('🔒 SECURITY: Weak password detected');
+
                 } else {
                     this.style.borderColor = '#00bfff';
                 }
@@ -279,30 +279,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (isLongEnough && hasUpper && hasLower && (hasNumber || hasSpecial)) {
                     this.style.borderColor = '#2ed573';
-                    console.log('🔒 SECURITY: Strong password detected');
+
                 } else if (this.value.length >= 6) {
                     this.style.borderColor = '#ffa502';
-                    console.log('🔒 SECURITY: Medium password strength');
+
                 } else if (this.value.length > 0) {
                     this.style.borderColor = '#ff4757';
-                    console.log('🔒 SECURITY: Weak password detected');
+
                 } else {
                     this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
                 }
             });
         }
         
-        console.log('🔒 SECURITY QA: Form validation enhanced');
+
     }    // LYRICIST FIX 3: Login form submission
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('🎵 LYRICIST: Login form submitted');
+
             
             const email = loginEmail ? loginEmail.value : '';
             const password = loginPassword ? loginPassword.value : '';
             
-            console.log('🎵 LYRICIST: Login attempt -', 'Email:', email, 'Password length:', password.length);
+
             
             if (!email || !password) {
                 showError('Please enter both email and password');
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Check master accounts
             if (masterAccounts[email] && masterAccounts[email] === password) {
-                console.log('🎵 LYRICIST: Master login successful!');
+
                 showSuccess('Login successful! Redirecting...');
                 
                 // Store authentication
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = 'command-center.html';
                 }, 1500);
             } else {
-                console.log('🎵 LYRICIST: Invalid login credentials');
+
                 showError('Invalid credentials. Try master@claimcipher.com / cipher123 or use demo mode.');
             }
         });
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (signupForm) {
         signupForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('🎵 LYRICIST SIGNUP LOOP 1: Signup form submitted');
+
             
             const name = document.getElementById('signup-name');
             const company = document.getElementById('signup-company');
@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const passwordValue = password ? password.value : '';
             const agreeTermsChecked = agreeTerms ? agreeTerms.checked : false;
             
-            console.log('🎵 LYRICIST SIGNUP: Form data -', 'Name:', nameValue, 'Email:', emailValue, 'Password length:', passwordValue.length);
+
             
             // Validation
             if (!nameValue) {
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fakeSignupAccounts[emailValue] = passwordValue;
                 
                 showSuccess('Account created successfully! Opening payment options...');
-                console.log('🎵 LYRICIST SIGNUP: Account created for:', emailValue);
+
                 
                 // Show payment modal after brief delay
                 setTimeout(() => {
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (demoCipherBtn) {
         demoCipherBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('🎵 LYRICIST: Demo mode activated');
+
 
             // Enable demo mode via sessionStorage (checked by router + mileage tools)
             sessionStorage.setItem('demo_mode', 'true');
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // LYRICIST FIX 5: Password toggle functionality
     function setupPasswordToggles() {
-        console.log('🎵 LYRICIST: Setting up password visibility toggles');
+
         const eyeSvg = `
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
@@ -459,14 +459,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const isHidden = passwordInput.type === 'password';
                 passwordInput.type = isHidden ? 'text' : 'password';
                 this.innerHTML = isHidden ? eyeOffSvg : eyeSvg;
-                console.log('🎵 LYRICIST: Password visibility toggled');
+
             });
         });
     }
 
     // 🎵 LYRICIST CHECKBOX LOOP 2: Setup checkbox functionality
     function setupCheckboxes() {
-        console.log('🎵 LYRICIST CHECKBOX LOOP 2: Setting up checkbox functionality');
+
         
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(checkbox => {
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (e.target !== checkbox) {
                         e.preventDefault();
                         checkbox.checked = !checkbox.checked;
-                        console.log('🎵 LYRICIST CHECKBOX: Toggled', checkbox.id, 'to', checkbox.checked);
+
                     }
                 });
                 
@@ -506,21 +506,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add direct checkbox click handler
             checkbox.addEventListener('click', function(e) {
                 e.stopPropagation();
-                console.log('🎵 LYRICIST CHECKBOX: Direct click on', this.id, 'checked:', this.checked);
+
             });
             
             // Add change handler
             checkbox.addEventListener('change', function(e) {
-                console.log('🎵 LYRICIST CHECKBOX: Changed', this.id, 'to', this.checked);
+
             });
             
-            console.log('🎵 LYRICIST CHECKBOX: Setup complete for', checkbox.id);
+
         });
     }
 
     // Utility functions
     function showError(message) {
-        console.log('🎵 LYRICIST: Showing error:', message);
+
         if (errorCypher) {
             errorCypher.textContent = message;
             errorCypher.style.display = 'block';
@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showSuccess(message) {
-        console.log('🎵 LYRICIST: Showing success:', message);
+
         if (errorCypher) {
             errorCypher.textContent = message;
             errorCypher.style.display = 'block';
@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // LYRICIST INITIALIZATION SEQUENCE
-    console.log('🎵 LYRICIST SIGNUP LOOP 4: Starting comprehensive initialization...');
+
     
     // Step 1: Enable all inputs immediately
     enableAllInputs();
@@ -561,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Step 3.6: 🔒 SECURITY QA ROUND 1: Setup form validation
     setTimeout(() => {
         validateFormSecurity();
-        console.log('🔒 SECURITY QA ROUND 1: Form security validation initialized');
+
     }, 300);
     
     // Step 4: Show login form by default
@@ -571,16 +571,16 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         const signupToggleElement = document.getElementById('signup-toggle');
         if (signupToggleElement) {
-            console.log('🎵 LYRICIST SIGNUP LOOP 4: Adding additional click handlers to signup tab');
+
             
             // Force multiple event listeners
             signupToggleElement.addEventListener('touchstart', function(e) {
-                console.log('🎵 LYRICIST SIGNUP: Touchstart event');
+
                 showForm('signup');
             });
             
             signupToggleElement.addEventListener('pointerdown', function(e) {
-                console.log('🎵 LYRICIST SIGNUP: Pointerdown event');
+
                 showForm('signup');
             });
             
@@ -603,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Step 5: LOOP 4 ADDITION - Test signup inputs
-        console.log('🎵 LYRICIST SIGNUP LOOP 4: Testing signup input field functionality...');
+
         
         const signupInputs = ['signup-name', 'signup-email', 'signup-password', 'signup-company'];
         signupInputs.forEach(inputId => {
@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.readOnly = false;
                 input.style.pointerEvents = 'auto';
                 input.style.opacity = '1';
-                console.log('🎵 LYRICIST SIGNUP LOOP 4: Enabled signup input:', inputId);
+
             }
         });
         
@@ -622,22 +622,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // LOOP 6 ADDITION: Global keypress handler for debugging
     document.addEventListener('keydown', function(e) {
         if (e.target.tagName === 'INPUT') {
-            console.log('🎵 LYRICIST SIGNUP LOOP 4: Key pressed in input:', e.target.id, 'Key:', e.key);
+
         }
     });
     
-    console.log('🎵 LYRICIST SIGNUP LOOP 4: Complete - Enhanced debugging and signup handling');
+
 });
 
 // Export functions for global access
 window.showCipherForm = function(formType) {
-    console.log('🎵 LYRICIST: Global form toggle called:', formType);
+
     document.dispatchEvent(new CustomEvent('showForm', { detail: formType }));
 };
 
 // LOOP 8 EMERGENCY OVERRIDE: Force everything to work
 window.emergencyOverride = function() {
-    console.log('🎵 LYRICIST SIGNUP LOOP 7: EMERGENCY OVERRIDE WITH SIGNUP FIXES');
+
     
     // Force enable all inputs
     document.querySelectorAll('input').forEach(input => {
@@ -670,16 +670,16 @@ window.emergencyOverride = function() {
         
         // Force click handler
         checkbox.onclick = function(e) {
-            console.log('🎵 LYRICIST CHECKBOX EMERGENCY: Clicked', this.id, 'checked:', this.checked);
+
         };
         
-        console.log('🎵 LYRICIST CHECKBOX EMERGENCY: Fixed', checkbox.id);
+
     });
     
     // 🎵 SIGNUP LOOP 7: CRITICAL SIGNUP TAB FIX
     const signupTab = document.getElementById('signup-toggle');
     if (signupTab) {
-        console.log('🎵 LYRICIST SIGNUP LOOP 7: Applying emergency signup tab fix');
+
         
         // Remove all existing event listeners
         const newSignupTab = signupTab.cloneNode(true);
@@ -689,7 +689,7 @@ window.emergencyOverride = function() {
         newSignupTab.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log('🎵 LYRICIST SIGNUP LOOP 7: EMERGENCY SIGNUP CLICK HANDLER');
+
             
             // Force form switch
             document.getElementById('login-cypher-form').style.display = 'none';
@@ -697,27 +697,27 @@ window.emergencyOverride = function() {
             document.getElementById('login-toggle').classList.remove('active');
             this.classList.add('active');
             
-            console.log('🎵 LYRICIST SIGNUP LOOP 7: Signup form should now be visible');
+
         });
         
         // Add multiple fallback handlers
         newSignupTab.addEventListener('mousedown', function(e) {
-            console.log('🎵 LYRICIST SIGNUP LOOP 7: Mousedown backup handler');
+
             this.click();
         });
         
         newSignupTab.addEventListener('touchend', function(e) {
-            console.log('🎵 LYRICIST SIGNUP LOOP 7: Touchend backup handler');
+
             this.click();
         });
     }
     
-    console.log('🎵 LYRICIST CHECKBOX LOOP 4: Emergency override complete - checkboxes enhanced');
+
 };
 
 // 🎵 SIGNUP LOOP 7: Force signup tab functionality
 window.forceSignupTab = function() {
-    console.log('🎵 LYRICIST SIGNUP LOOP 10: Force signup tab function called');
+
     
     // Direct DOM manipulation - most reliable method
     const loginForm = document.getElementById('login-cypher-form');
@@ -737,7 +737,7 @@ window.forceSignupTab = function() {
         input.readOnly = false;
         input.style.pointerEvents = 'auto';
         input.style.opacity = '1';
-        console.log('🎵 LYRICIST SIGNUP LOOP 10: Enabled:', input.id);
+
     });
     
     // Focus first signup input
@@ -746,32 +746,32 @@ window.forceSignupTab = function() {
         setTimeout(() => firstInput.focus(), 100);
     }
     
-    console.log('🎵 LYRICIST SIGNUP LOOP 10: Signup form fully activated');
+
 };
 
 // 🎵 SIGNUP LOOP 10: Add comprehensive tab click handlers on page load
 window.setupSignupTabFinal = function() {
-    console.log('🎵 LYRICIST SIGNUP LOOP 10: Setting up final signup tab handlers');
+
     
     const signupToggle = document.getElementById('signup-toggle');
     if (signupToggle) {
         // Method 1: Regular click
         signupToggle.onclick = function(e) {
-            console.log('🎵 LYRICIST SIGNUP LOOP 10: onclick handler');
+
             e.preventDefault();
             window.forceSignupTab();
         };
         
         // Method 2: addEventListener click
         signupToggle.addEventListener('click', function(e) {
-            console.log('🎵 LYRICIST SIGNUP LOOP 10: addEventListener click');
+
             e.preventDefault();
             window.forceSignupTab();
         });
         
         // Method 3: Mouse events
         signupToggle.addEventListener('mouseup', function(e) {
-            console.log('🎵 LYRICIST SIGNUP LOOP 10: mouseup event');
+
             window.forceSignupTab();
         });
         
@@ -780,7 +780,7 @@ window.setupSignupTabFinal = function() {
             this.style.backgroundColor = 'rgba(0, 191, 255, 0.1)';
         });
         
-        console.log('🎵 LYRICIST SIGNUP LOOP 10: All signup tab handlers installed');
+
     }
 };
 
@@ -791,13 +791,13 @@ setTimeout(() => {
 
 // 🔒 SECURITY QA ROUND 1: Enhanced checkbox test function
 window.testCheckboxes = function() {
-    console.log('🔒 SECURITY QA ROUND 1: Comprehensive checkbox testing');
+
     
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    console.log(`🔒 SECURITY: Found ${checkboxes.length} checkboxes to test`);
+
     
     checkboxes.forEach((checkbox, index) => {
-        console.log(`🔒 SECURITY TEST ${index + 1}: Checkbox ID:`, checkbox.id, 'Current state:', checkbox.checked);
+
         
         // SECURITY CHECK 1: Ensure checkbox is enabled and accessible
         checkbox.disabled = false;
@@ -828,7 +828,7 @@ window.testCheckboxes = function() {
             }
         }
         
-        console.log(`🔒 SECURITY: Checkbox ${checkbox.id} toggled from ${originalState} to ${checkbox.checked}`);
+
         
         // Auto-toggle back after delay to show functionality
         setTimeout(() => {
@@ -843,7 +843,7 @@ window.testCheckboxes = function() {
                     checkmark.style.border = '2px solid rgba(255, 255, 255, 0.3)';
                 }
             }
-            console.log(`🔒 SECURITY: Checkbox ${checkbox.id} restored to original state: ${originalState}`);
+
         }, (index + 1) * 2000);
     });
     
@@ -852,7 +852,7 @@ window.testCheckboxes = function() {
 
 // 🎬 PRODUCER QA ROUND 2: Comprehensive system test function
 window.producerQATest = function() {
-    console.log('🎬 PRODUCER QA ROUND 2: Initiating comprehensive system test');
+
     
     const testResults = {
         authentication: false,
@@ -864,7 +864,7 @@ window.producerQATest = function() {
     };
     
     // TEST 1: Authentication System
-    console.log('🎬 QA TEST 1: Authentication System');
+
     const loginEmail = document.getElementById('login-email');
     const loginPassword = document.getElementById('login-password');
     const loginBtn = document.getElementById('login-btn');
@@ -873,13 +873,13 @@ window.producerQATest = function() {
         loginEmail.value = 'test@claimcipher.com';
         loginPassword.value = 'test123';
         testResults.authentication = true;
-        console.log('✅ QA TEST 1: Authentication elements functional');
+
     } else {
-        console.log('❌ QA TEST 1: Authentication elements missing');
+
     }
     
     // TEST 2: Form Switching
-    console.log('🎬 QA TEST 2: Form Switching');
+
     const loginForm = document.getElementById('login-cypher-form');
     const signupForm = document.getElementById('signup-cypher-form');
     const signupToggle = document.getElementById('signup-toggle');
@@ -889,47 +889,47 @@ window.producerQATest = function() {
         setTimeout(() => {
             if (signupForm.style.display !== 'none') {
                 testResults.formSwitching = true;
-                console.log('✅ QA TEST 2: Form switching functional');
+
             } else {
-                console.log('❌ QA TEST 2: Form switching failed');
+
             }
         }, 500);
     }
     
     // TEST 3: Checkbox Functionality
-    console.log('🎬 QA TEST 3: Checkbox System');
+
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     if (checkboxes.length > 0) {
         checkboxes[0].checked = !checkboxes[0].checked;
         testResults.checkboxes = true;
-        console.log('✅ QA TEST 3: Checkboxes functional');
+
     } else {
-        console.log('❌ QA TEST 3: No checkboxes found');
+
     }
     
     // TEST 4: Button Visibility
-    console.log('🎬 QA TEST 4: Button Visibility');
+
     const loginBtnVisible = loginBtn && window.getComputedStyle(loginBtn).display !== 'none';
     const signupBtn = document.getElementById('signup-btn');
     if (loginBtnVisible || signupBtn) {
         testResults.buttons = true;
-        console.log('✅ QA TEST 4: Buttons visible');
+
     }
     
     // TEST 5: Validation System
-    console.log('🎬 QA TEST 5: Validation System');
+
     if (loginEmail) {
         loginEmail.value = 'invalid-email';
         loginEmail.dispatchEvent(new Event('input'));
         const borderColor = window.getComputedStyle(loginEmail).borderColor;
         if (borderColor.includes('255, 71, 87') || borderColor.includes('rgb(255, 71, 87)')) {
             testResults.validation = true;
-            console.log('✅ QA TEST 5: Validation system active');
+
         }
     }
     
     // TEST 6: Navigation System Test
-    console.log('🎬 QA TEST 6: Navigation System');
+
     const navigationPages = [
         'command-center.html',
         'route-cypher.html', 
@@ -948,22 +948,22 @@ window.producerQATest = function() {
             .then(response => {
                 if (response.ok) {
                     workingPages++;
-                    console.log(`✅ Page available: ${page}`);
+
                 } else {
-                    console.log(`❌ Page unavailable: ${page}`);
+
                 }
             })
             .catch(error => {
-                console.log(`❌ Page error: ${page}`, error.message);
+
             });
     });
     
     setTimeout(() => {
         if (workingPages >= 6) {
             testResults.navigation = true;
-            console.log('✅ QA TEST 6: Navigation system functional');
+
         } else {
-            console.log(`❌ QA TEST 6: Navigation issues - ${workingPages}/${navigationPages.length} pages available`);
+
         }
     }, 2000);
     
@@ -972,9 +972,9 @@ window.producerQATest = function() {
     const totalTests = Object.keys(testResults).length;
     
     setTimeout(() => {
-        console.log('🎬 PRODUCER QA ROUND 2 RESULTS:');
-        console.log(`📊 Tests Passed: ${passedTests}/${totalTests}`);
-        console.log('🔍 Detailed Results:', testResults);
+
+
+
         
         if (passedTests >= 4) {
             alert(`🎬 PRODUCER QA ROUND 2: PASSING! ${passedTests}/${totalTests} tests successful. Ready for Round 3!`);
@@ -986,7 +986,7 @@ window.producerQATest = function() {
 
 // 🎨 DESIGNER QA ROUND 2: Visual design assessment function
 window.designerVisualCheck = function() {
-    console.log('🎨 DESIGNER QA ROUND 2: Visual design assessment');
+
     
     const designChecks = {
         glassmorphism: false,
@@ -1002,9 +1002,9 @@ window.designerVisualCheck = function() {
         const cardStyles = window.getComputedStyle(loginCard);
         if (cardStyles.backdropFilter && cardStyles.backdropFilter !== 'none') {
             designChecks.glassmorphism = true;
-            console.log('✅ DESIGNER: Glassmorphism effects present');
+
         } else {
-            console.log('❌ DESIGNER: Glassmorphism effects missing');
+
         }
     }
     
@@ -1032,7 +1032,7 @@ window.designerVisualCheck = function() {
         designChecks.typography = firstHeading.fontFamily.includes('Segoe UI') || 
                                  firstHeading.fontFamily.includes('Inter') ||
                                  firstHeading.fontWeight >= '600';
-        console.log('✅ DESIGNER: Typography consistency checked');
+
     }
     
     // Check 4: Color scheme
@@ -1042,7 +1042,7 @@ window.designerVisualCheck = function() {
         const backgroundColor = buttonStyles.backgroundColor;
         if (backgroundColor.includes('0, 191, 255') || backgroundColor.includes('rgb(0, 191, 255)')) {
             designChecks.colors = true;
-            console.log('✅ DESIGNER: Hip-hop color scheme active');
+
         }
     }
     
@@ -1050,18 +1050,18 @@ window.designerVisualCheck = function() {
     const animatedElements = document.querySelectorAll('[style*="transition"], .cipher-btn');
     if (animatedElements.length > 0) {
         designChecks.animations = true;
-        console.log('✅ DESIGNER: Animations present');
+
     }
     
     const designScore = Object.values(designChecks).filter(check => check).length;
-    console.log(`🎨 DESIGNER ASSESSMENT: ${designScore}/5 design elements verified`);
+
     
     return designChecks;
 };
 
 // 🎵 LYRICIST QA ROUND 2: Content and messaging assessment
 window.lyricistContentCheck = function() {
-    console.log('🎵 LYRICIST QA ROUND 2: Content assessment');
+
     
     const contentChecks = {
         hipHopTerms: false,
@@ -1078,9 +1078,9 @@ window.lyricistContentCheck = function() {
     
     if (foundTerms.length >= 4) {
         contentChecks.hipHopTerms = true;
-        console.log(`✅ LYRICIST: Hip-hop terms present - ${foundTerms.length}/6 found`);
+
     } else {
-        console.log(`❌ LYRICIST: Insufficient hip-hop terms - ${foundTerms.length}/6 found`);
+
     }
     
     // Check 2: Message clarity
@@ -1111,53 +1111,53 @@ window.lyricistContentCheck = function() {
     contentChecks.errors = errorElements.length > 0;
     
     const contentScore = Object.values(contentChecks).filter(check => check).length;
-    console.log(`🎵 LYRICIST ASSESSMENT: ${contentScore}/5 content elements verified`);
+
     
     return contentChecks;
 };
 
 // 🎬 PRODUCER QA ROUND 2: Master comprehensive test suite
 window.masterQADashboard = function() {
-    console.log('🎬 PRODUCER QA ROUND 2: MASTER QA DASHBOARD INITIATED');
-    console.log('=====================================================');
+
+
     
     // Run all individual test suites
     setTimeout(() => {
-        console.log('🎬 Running Producer QA Tests...');
+
         window.producerQATest();
     }, 500);
     
     setTimeout(() => {
-        console.log('🎨 Running Designer Visual Check...');
+
         const designResults = window.designerVisualCheck();
         window.designResults = designResults;
     }, 1500);
     
     setTimeout(() => {
-        console.log('🎵 Running Lyricist Content Check...');  
+  
         const contentResults = window.lyricistContentCheck();
         window.contentResults = contentResults;
     }, 2500);
     
     setTimeout(() => {
-        console.log('✅ Running Enhanced Checkbox Tests...');
+
         window.testCheckboxes();
     }, 3500);
     
     // Generate comprehensive report
     setTimeout(() => {
-        console.log('📊 GENERATING COMPREHENSIVE QA REPORT...');
-        console.log('===========================================');
+
+
         
         const designScore = window.designResults ? 
             Object.values(window.designResults).filter(r => r).length : 0;
         const contentScore = window.contentResults ? 
             Object.values(window.contentResults).filter(r => r).length : 0;
             
-        console.log(`🎨 DESIGNER SCORE: ${designScore}/5`);
-        console.log(`🎵 LYRICIST SCORE: ${contentScore}/5`);
-        console.log(`🔒 SECURITY: Advanced validation active`);
-        console.log(`✅ CHECKBOXES: Enhanced testing completed`);
+
+
+
+
         
         const overallScore = Math.round(((designScore + contentScore) / 10) * 100);
         
@@ -1169,8 +1169,8 @@ window.masterQADashboard = function() {
             alert(`🎬 QA ROUND 2 NEEDS WORK! Score: ${overallScore}% - Significant improvements required.`);
         }
         
-        console.log('🎬 MASTER QA DASHBOARD COMPLETE');
-        console.log('================================');
+
+
         
     }, 5000);
     
@@ -1204,14 +1204,14 @@ setTimeout(() => {
     testButton.onmouseout = () => testButton.style.transform = 'scale(1)';
     
     document.body.appendChild(testButton);
-    console.log('🎬 MASTER QA DASHBOARD button added to page');
+
 }, 1000);
 */
 
 // 🎬 PRODUCER QA ROUND 3: Performance & Production Readiness Suite
 window.productionReadinessTest = function() {
-    console.log('🎬 PRODUCER QA ROUND 3: PRODUCTION READINESS ASSESSMENT');
-    console.log('========================================================');
+
+
     
     const performanceMetrics = {
         pageLoadTime: 0,
@@ -1241,17 +1241,17 @@ window.productionReadinessTest = function() {
     const pageLoadStart = performance.now();
     setTimeout(() => {
         performanceMetrics.pageLoadTime = performance.now() - pageLoadStart;
-        console.log(`⚡ Page Load Time: ${performanceMetrics.pageLoadTime.toFixed(2)}ms`);
+
     }, 100);
     
     // PERFORMANCE TEST 2: DOM Element Count
     performanceMetrics.domElements = document.querySelectorAll('*').length;
-    console.log(`📊 DOM Elements: ${performanceMetrics.domElements}`);
+
     
     // PERFORMANCE TEST 3: Memory Usage (approximation)
     if (performance.memory) {
         performanceMetrics.memoryUsage = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
-        console.log(`💾 Memory Usage: ~${performanceMetrics.memoryUsage}MB`);
+
     }
     
     // SECURITY TEST 1: XSS Protection
@@ -1259,9 +1259,9 @@ window.productionReadinessTest = function() {
     testInput.innerHTML = '<script>alert("xss")</script>';
     if (!testInput.querySelector('script')) {
         securityChecks.xssProtection = true;
-        console.log('✅ XSS Protection: Active');
+
     } else {
-        console.log('⚠️ XSS Protection: Needs enhancement');
+
     }
     
     // SECURITY TEST 2: Input Sanitization
@@ -1271,7 +1271,7 @@ window.productionReadinessTest = function() {
         const sanitizedValue = emailInput.value;
         if (!sanitizedValue.includes('<script>')) {
             securityChecks.inputSanitization = true;
-            console.log('✅ Input Sanitization: Active');
+
         }
         emailInput.value = ''; // Clean up
     }
@@ -1279,19 +1279,19 @@ window.productionReadinessTest = function() {
     // SECURITY TEST 3: Session Security
     if (localStorage.getItem('demo_mode') || sessionStorage.length > 0) {
         securityChecks.sessionSecurity = true;
-        console.log('✅ Session Management: Active');
+
     }
     
     // PRODUCTION TEST 1: Error Handling
     window.onerror = function(msg, url, line) {
-        console.log('✅ Global Error Handler: Active');
+
         productionReadiness.errorHandling = true;
     };
     
     // PRODUCTION TEST 2: Console Logging
     if (console && typeof console.log === 'function') {
         productionReadiness.logging = true;
-        console.log('✅ Logging System: Active');
+
     }
     
     // PRODUCTION TEST 3: Accessibility
@@ -1299,14 +1299,14 @@ window.productionReadinessTest = function() {
     const altImages = document.querySelectorAll('img[alt]');
     if (ariaElements.length > 0 || altImages.length > 0) {
         productionReadiness.accessibility = true;
-        console.log('✅ Accessibility Features: Present');
+
     }
     
     // PRODUCTION TEST 4: Fallback Systems
     const fallbackElements = document.querySelectorAll('[onclick*="window."], .cipher-btn--secondary');
     if (fallbackElements.length > 0) {
         productionReadiness.fallbacks = true;
-        console.log('✅ Fallback Systems: Present');
+
     }
     
     // Generate Production Report
@@ -1315,11 +1315,11 @@ window.productionReadinessTest = function() {
         const securityScore = Object.values(securityChecks).filter(check => check).length;
         const productionScore = Object.values(productionReadiness).filter(check => check).length;
         
-        console.log('🎬 PRODUCTION READINESS REPORT:');
-        console.log('===============================');
-        console.log(`⚡ Performance Score: ${performanceScore}/100`);
-        console.log(`🔒 Security Score: ${securityScore}/5`);
-        console.log(`🚀 Production Score: ${productionScore}/5`);
+
+
+
+
+
         
         const overallReadiness = Math.round((performanceScore + (securityScore * 20) + (productionScore * 20)) / 3);
         
@@ -1357,8 +1357,8 @@ window.productionReadinessTest = function() {
 
 // 🔒 SECURITY QA ROUND 3: Advanced security hardening
 window.securityHardeningTest = function() {
-    console.log('🔒 SECURITY QA ROUND 3: ADVANCED SECURITY HARDENING');
-    console.log('==================================================');
+
+
     
     // SECURITY HARDENING 1: Content Security Policy Check
     const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
@@ -1367,9 +1367,9 @@ window.securityHardeningTest = function() {
         csp.setAttribute('http-equiv', 'Content-Security-Policy');
         csp.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';");
         document.head.appendChild(csp);
-        console.log('✅ CSP: Added basic Content Security Policy');
+
     } else {
-        console.log('✅ CSP: Content Security Policy already present');
+
     }
     
     // SECURITY HARDENING 2: Input Validation Enhancement
@@ -1393,11 +1393,11 @@ window.securityHardeningTest = function() {
                 
                 if (value !== e.target.value) {
                     e.target.value = value;
-                    console.log('🔒 SECURITY: Sanitized input for', e.target.id);
+
                 }
             });
         });
-        console.log('✅ SECURITY: Enhanced input validation applied');
+
     }
     
     enhanceInputValidation();
@@ -1416,7 +1416,7 @@ window.securityHardeningTest = function() {
         const encodedSession = btoa(JSON.stringify(sessionData));
         sessionStorage.setItem('cipher_session', encodedSession);
         
-        console.log('✅ SECURITY: Enhanced session security implemented');
+
     }
     
     enhanceSessionSecurity();
@@ -1436,33 +1436,33 @@ window.securityHardeningTest = function() {
             form.addEventListener('submit', function(e) {
                 const csrfToken = this.querySelector('input[name="csrf_token"]');
                 if (!csrfToken || !csrfToken.value.startsWith('cipher_')) {
-                    console.log('🔒 SECURITY: CSRF protection triggered');
+
                     e.preventDefault();
                     return false;
                 }
-                console.log('✅ SECURITY: Form submission validated');
+
             });
         });
-        console.log('✅ SECURITY: Form protection implemented');
+
     }
     
     protectForms();
     
     // SECURITY HARDENING 5: Click-jacking Protection
     if (window.self !== window.top) {
-        console.log('⚠️ SECURITY: Potential click-jacking detected');
+
         window.top.location = window.self.location;
     } else {
-        console.log('✅ SECURITY: Click-jacking protection active');
+
     }
     
-    console.log('🔒 SECURITY HARDENING COMPLETE: All security measures enhanced');
+
 };
 
 // ⚡ PERFORMANCE QA ROUND 3: Advanced optimization
 window.performanceOptimizationTest = function() {
-    console.log('⚡ PERFORMANCE QA ROUND 3: ADVANCED OPTIMIZATION');
-    console.log('===============================================');
+
+
     
     const optimizations = [];
     
@@ -1491,7 +1491,7 @@ window.performanceOptimizationTest = function() {
     // OPTIMIZATION 3: CSS Optimization
     const styleSheets = document.querySelectorAll('link[rel="stylesheet"]');
     if (styleSheets.length > 3) {
-        console.log('⚠️ PERFORMANCE: Consider combining CSS files');
+
         optimizations.push('CSS file consolidation recommended');
     }
     
@@ -1511,7 +1511,7 @@ window.performanceOptimizationTest = function() {
         // Implement proper cleanup
         window.addEventListener('beforeunload', function() {
             // Cleanup any intervals, timeouts, or event listeners
-            console.log('⚡ PERFORMANCE: Cleaning up resources before page unload');
+
         });
         optimizations.push('Resource cleanup implemented');
     }
@@ -1523,7 +1523,7 @@ window.performanceOptimizationTest = function() {
         try {
             const storageItems = Object.keys(localStorage);
             if (storageItems.length > 10) {
-                console.log('⚠️ PERFORMANCE: Consider cleaning old localStorage items');
+
             }
             
             // Add storage size check
@@ -1533,12 +1533,12 @@ window.performanceOptimizationTest = function() {
             });
             
             if (totalSize > 1024 * 1024) { // 1MB
-                console.log('⚠️ PERFORMANCE: localStorage usage high, consider cleanup');
+
             }
             
             optimizations.push('Storage optimization checked');
         } catch (e) {
-            console.log('⚠️ PERFORMANCE: Storage access error');
+
         }
     }
     
@@ -1553,9 +1553,9 @@ window.performanceOptimizationTest = function() {
     optimizations.push('CSS animation performance enhanced');
     
     // Performance Report
-    console.log('⚡ PERFORMANCE OPTIMIZATIONS APPLIED:');
+
     optimizations.forEach((opt, index) => {
-        console.log(`${index + 1}. ${opt}`);
+
     });
     
     // Run performance measurement
@@ -1567,24 +1567,24 @@ window.performanceOptimizationTest = function() {
             cssCount: document.querySelectorAll('link[rel="stylesheet"]').length
         };
         
-        console.log('📊 CURRENT PERFORMANCE METRICS:');
-        console.log(`- DOM Elements: ${performanceMetrics.totalElements}`);
-        console.log(`- Script Files: ${performanceMetrics.scriptCount}`);
-        console.log(`- CSS Files: ${performanceMetrics.cssCount}`);
-        console.log(`- DOM Load Time: ${performanceMetrics.domContentLoaded.toFixed(2)}ms`);
+
+
+
+
+
         
         return performanceMetrics;
     }, 1000);
     
-    console.log('⚡ PERFORMANCE OPTIMIZATION COMPLETE');
+
     return optimizations.length;
 };
 
 // 🎬 PRODUCER QA ROUND 3: ULTIMATE COMPREHENSIVE MASTER TEST
 window.ultimateQATest = function() {
-    console.log('🎬 PRODUCER QA ROUND 3: ULTIMATE COMPREHENSIVE ASSESSMENT');
-    console.log('========================================================');
-    console.log('🚀 Running ALL QA systems in coordinated sequence...');
+
+
+
     
     const testSequence = [
         { name: 'Security Hardening', func: 'securityHardeningTest', delay: 500, emoji: '🔒' },
@@ -1599,7 +1599,7 @@ window.ultimateQATest = function() {
     // Execute test sequence
     testSequence.forEach(test => {
         setTimeout(() => {
-            console.log(`${test.emoji} EXECUTING: ${test.name}`);
+
             if (window[test.func]) {
                 try {
                     window[test.func]();
@@ -1614,8 +1614,8 @@ window.ultimateQATest = function() {
     
     // Generate final comprehensive report
     setTimeout(() => {
-        console.log('📊 GENERATING ULTIMATE QA REPORT...');
-        console.log('=====================================');
+
+
         
         const finalReport = {
             timestamp: new Date().toISOString(),
@@ -1636,17 +1636,17 @@ window.ultimateQATest = function() {
             production: '✅ Deployment ready'
         };
         
-        console.log('🎯 FINAL SYSTEM HEALTH REPORT:');
-        console.log('==============================');
+
+
         Object.entries(healthMetrics).forEach(([key, status]) => {
-            console.log(`${status}`);
+
         });
         
         const systemScore = Object.keys(healthMetrics).length * 12.5; // 8 components * 12.5 = 100%
         
-        console.log('🎬 ULTIMATE QA ROUND 3 COMPLETE!');
-        console.log(`🏆 FINAL SYSTEM SCORE: ${systemScore}%`);
-        console.log('🚀 STATUS: PRODUCTION DEPLOYMENT READY');
+
+
+
         
         alert(`🎬 ULTIMATE QA ROUND 3 COMPLETE!\n\n🏆 SYSTEM SCORE: ${systemScore}%\n🚀 STATUS: PRODUCTION READY\n\n✅ All 8 core systems validated\n✅ 7-layer QA suite operational\n✅ Security hardening complete\n✅ Performance optimized\n\nClaim Cipher is ready for deployment! 🎤`);
         
@@ -1693,7 +1693,7 @@ setTimeout(() => {
     };
     
     document.body.appendChild(ultimateButton);
-    console.log('🏆 ULTIMATE QA button added - Ready for comprehensive system assessment!');
+
 }, 1200);
 */
 
@@ -1704,7 +1704,7 @@ setTimeout(() => {
 
 // 🎬 PRODUCER QA ROUND 1: Comprehensive system test function
 window.producerQATest = function() {
-    console.log('🎬 PRODUCER QA ROUND 1: Starting comprehensive system test');
+
     
     const testResults = {
         authentication: 'TESTING',
@@ -1723,10 +1723,10 @@ window.producerQATest = function() {
     
     if (loginEmail && loginPassword && signupEmail && signupPassword) {
         testResults.authentication = 'PASS';
-        console.log('🎬 PRODUCER QA: ✅ Authentication elements present');
+
     } else {
         testResults.authentication = 'FAIL';
-        console.log('🎬 PRODUCER QA: ❌ Missing authentication elements');
+
     }
     
     // Test 2: Form switching
@@ -1737,10 +1737,10 @@ window.producerQATest = function() {
     
     if (loginToggle && signupToggle && loginForm && signupForm) {
         testResults.navigation = 'PASS';
-        console.log('🎬 PRODUCER QA: ✅ Form switching elements present');
+
     } else {
         testResults.navigation = 'FAIL';
-        console.log('🎬 PRODUCER QA: ❌ Missing navigation elements');
+
     }
     
     // Test 3: Buttons
@@ -1749,39 +1749,39 @@ window.producerQATest = function() {
     
     if (loginBtn && signupBtn) {
         testResults.buttons = 'PASS';
-        console.log('🎬 PRODUCER QA: ✅ Form buttons present');
+
     } else {
         testResults.buttons = 'FAIL';
-        console.log('🎬 PRODUCER QA: ❌ Missing form buttons');
+
     }
     
     // Test 4: Checkboxes
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     if (checkboxes.length >= 2) {
         testResults.checkboxes = 'PASS';
-        console.log(`🎬 PRODUCER QA: ✅ Found ${checkboxes.length} checkboxes`);
+
     } else {
         testResults.checkboxes = 'FAIL';
-        console.log('🎬 PRODUCER QA: ❌ Missing checkboxes');
+
     }
     
     // Test 5: Styling
     const cipherCard = document.querySelector('.login-cipher-card');
     if (cipherCard && getComputedStyle(cipherCard).background) {
         testResults.styling = 'PASS';
-        console.log('🎬 PRODUCER QA: ✅ Styling applied');
+
     } else {
         testResults.styling = 'FAIL';
-        console.log('🎬 PRODUCER QA: ❌ Missing or broken styling');
+
     }
     
     // Display results
     const passedTests = Object.values(testResults).filter(result => result === 'PASS').length;
     const totalTests = Object.keys(testResults).length;
     
-    console.log('🎬 PRODUCER QA ROUND 1 RESULTS:');
-    console.log(`✅ Passed: ${passedTests}/${totalTests} tests`);
-    console.log('Detailed results:', testResults);
+
+
+
     
     alert(`🎬 PRODUCER QA ROUND 1 COMPLETE\n\n✅ Passed: ${passedTests}/${totalTests} tests\n\nCheck console for detailed results.`);
     
@@ -1801,4 +1801,4 @@ document.addEventListener('click', function (e) {
     }
 });
 
-console.log('🎵 LYRICIST SIGNUP LOOP 7: JavaScript file loaded with signup emergency override');
+

@@ -113,7 +113,7 @@
       }
       const { firms, lastSelectedFirmId, ...rest } = settings;
       localStorage.setItem(OLD_SETTINGS_KEY, JSON.stringify(rest));
-      console.log('FirmStore: migrated', settings.firms.length, 'firms from settings_v2');
+
     } catch (e) {
       console.error('FirmStore: migration error', e);
     }
@@ -262,5 +262,5 @@
     },
   };
 
-  console.log('FirmStore loaded (Supabase-backed)');
+
 })();

@@ -19,9 +19,6 @@ class JobsStudioManager {
     this.supabase = null;
     this.realtimeSubscription = null;
 
-    console.log(
-      "🎵 Lyricist: Initializing Jobs Studio Manager (local mode)..."
-    );
     this.init();
   }
 
@@ -32,7 +29,7 @@ class JobsStudioManager {
       await this.fetchJobs();
       this.setupRealtimeSync();
     } else {
-      console.log("📋 Jobs Studio: Running in local mode (Supabase DB disabled)");
+
       this.loadDemoJobs();
     }
 
@@ -57,7 +54,7 @@ class JobsStudioManager {
   async initializeSupabase() {
     // DISTRO GUARD: Only runs if JOBS_STUDIO_SUPABASE_ENABLED = true
     if (!JOBS_STUDIO_SUPABASE_ENABLED) {
-      console.log("📋 Supabase DB disabled for distribution safety");
+
       return;
     }
 
@@ -76,7 +73,7 @@ class JobsStudioManager {
       // Create Supabase client from config (not localStorage)
       this.supabase = window.supabase.createClient(config.url, config.anonKey);
 
-      console.log("✅ Supabase client initialized successfully");
+
       this.showNotification("✅ Connected to Supabase database", "success");
     } catch (error) {
       console.error("❌ Failed to initialize Supabase:", error);
@@ -101,7 +98,7 @@ class JobsStudioManager {
 
     try {
       this.isLoading = true;
-      console.log("📥 Fetching real jobs from Supabase...");
+
 
       const { data, error } = await this.supabase
         .from("claims")
@@ -121,7 +118,7 @@ class JobsStudioManager {
       // Map Supabase data to job format
       this.jobs = data.map((claim) => this.mapClaimToJob(claim));
 
-      console.log(`✅ Loaded ${this.jobs.length} real jobs from Supabase`);
+
 
       if (this.jobs.length === 0) {
         this.showNotification(
@@ -217,7 +214,7 @@ class JobsStudioManager {
     if (!this.supabase) return;
 
     try {
-      console.log("🔄 Setting up real-time sync...");
+
 
       // Subscribe to changes on the claims table
       this.realtimeSubscription = this.supabase
@@ -226,7 +223,7 @@ class JobsStudioManager {
           "postgres_changes",
           { event: "*", schema: "public", table: "claims" },
           (payload) => {
-            console.log("🔔 Real-time update received:", payload);
+
 
             switch (payload.eventType) {
               case "INSERT":
@@ -245,7 +242,7 @@ class JobsStudioManager {
           }
         )
         .subscribe((status) => {
-          console.log("📡 Real-time subscription status:", status);
+
           if (status === "SUBSCRIBED") {
             this.showNotification("📡 Real-time sync active", "success");
           }
@@ -300,7 +297,7 @@ class JobsStudioManager {
         return false;
       }
 
-      console.log(`✅ Job ${jobId} updated in Supabase`);
+
       return true;
     } catch (error) {
       console.error("❌ Exception updating job:", error);
@@ -329,7 +326,7 @@ class JobsStudioManager {
         return null;
       }
 
-      console.log(`✅ Job inserted in Supabase:`, data);
+
       return data;
     } catch (error) {
       console.error("❌ Exception inserting job:", error);
@@ -339,7 +336,7 @@ class JobsStudioManager {
   }
 
   loadDemoJobs() {
-    console.log("📋 Loading demo jobs...");
+
 
     // Check if we have jobs in localStorage first
     const stored = localStorage.getItem("cipher_jobs");
@@ -434,11 +431,11 @@ class JobsStudioManager {
 
     // Action buttons
     const newJobBtn = document.getElementById("new-job-btn");
-    console.log("🎵 New job button element:", newJobBtn);
+
 
     if (newJobBtn) {
       newJobBtn.addEventListener("click", () => {
-        console.log("🎵 New job button clicked!");
+
         this.showNewJobModal();
       });
     } else {
@@ -1008,12 +1005,6 @@ class JobsStudioManager {
         // Use currentTarget to get the button, not the clicked child element
         const button = e.currentTarget;
         const jobId = button.dataset.jobId; // Don't parse as int - might be UUID string
-        console.log(
-          "🗑️ Delete button clicked for job ID:",
-          jobId,
-          "type:",
-          typeof jobId
-        );
         if (jobId) {
           this.deleteJob(jobId);
         } else {
@@ -1378,13 +1369,13 @@ class JobsStudioManager {
   }
 
   showNewJobModal() {
-    console.log("🎵 showNewJobModal called");
+
 
     const modalTitle = document.getElementById("job-modal-title");
     const modalContent = document.getElementById("job-modal-content");
     const modalOverlay = document.getElementById("job-modal-overlay");
 
-    console.log("Modal elements:", { modalTitle, modalContent, modalOverlay });
+
 
     if (!modalTitle || !modalContent || !modalOverlay) {
       console.error("❌ Modal elements not found!");
@@ -1709,20 +1700,20 @@ class JobsStudioManager {
         } = await this.supabase.auth.getUser();
         if (user) {
           assignedUserId = user.id;
-          console.log("✅ Found authenticated user ID:", assignedUserId);
+
         } else {
           // Try to get from localStorage (for mobile app sync)
           assignedUserId =
             localStorage.getItem("user_id") ||
             localStorage.getItem("assigned_user_id");
-          console.log("📦 Using localStorage user ID:", assignedUserId);
+
         }
       } catch (error) {
-        console.log("⚠️ No authenticated user, trying localStorage...");
+
         assignedUserId =
           localStorage.getItem("user_id") ||
           localStorage.getItem("assigned_user_id");
-        console.log("📦 Using localStorage user ID:", assignedUserId);
+
       }
     }
 
@@ -1751,8 +1742,8 @@ class JobsStudioManager {
       created_at: new Date().toISOString(),
     };
 
-    console.log("📝 Creating job with data:", jobData);
-    console.log("👤 Assigned to user ID:", assignedUserId);
+
+
 
     // Disable submit button
     const submitBtn = document.getElementById("create-job-btn");
@@ -1789,7 +1780,7 @@ class JobsStudioManager {
           `✅ Job ${newJob.claimNumber} created successfully!`,
           "success"
         );
-        console.log("New job created:", newJob);
+
       } else {
         // Fallback to localStorage
         const newJob = {
@@ -1881,16 +1872,8 @@ class JobsStudioManager {
   }
 
   async deleteJob(jobId) {
-    console.log("🗑️ deleteJob called with ID:", jobId, "type:", typeof jobId);
-    console.log("📊 Current jobs array:", this.jobs);
-    console.log(
-      "🔍 Job IDs in array:",
-      this.jobs.map((j) => ({
-        id: j.id,
-        type: typeof j.id,
-        claimNumber: j.claimNumber,
-      }))
-    );
+
+
 
     // Find job - handle both string and number IDs
     const job = this.jobs.find((j) => {
@@ -1904,7 +1887,7 @@ class JobsStudioManager {
       return false;
     });
 
-    console.log("🔍 Found job:", job);
+
 
     if (!job) {
       console.error("❌ Job not found with ID:", jobId);
@@ -1922,16 +1905,16 @@ class JobsStudioManager {
         `⚠️ Are you sure you want to delete job ${job.claimNumber}?\n\nThis action cannot be undone.`
       )
     ) {
-      console.log("❌ User cancelled deletion");
+
       return;
     }
 
-    console.log("✅ User confirmed deletion");
+
     this.showNotification(`🗑️ Deleting job ${job.claimNumber}...`, "info");
 
     try {
       if (this.supabase) {
-        console.log("🔄 Deleting from Supabase, job ID:", jobId);
+
 
         // Delete from Supabase
         const { data, error } = await this.supabase
@@ -1940,7 +1923,7 @@ class JobsStudioManager {
           .eq("id", jobId)
           .select();
 
-        console.log("📥 Supabase delete response:", { data, error });
+
 
         if (error) {
           console.error("❌ Supabase error deleting job:", error);
@@ -1951,13 +1934,13 @@ class JobsStudioManager {
           return;
         }
 
-        console.log("✅ Successfully deleted from Supabase");
+
         this.showNotification(
           `✅ Job ${job.claimNumber} deleted successfully!`,
           "success"
         );
       } else {
-        console.log("📦 Demo mode - skipping Supabase");
+
         // Delete from localStorage
         this.showNotification(
           `✅ Job ${job.claimNumber} deleted (demo mode)!`,
@@ -1966,7 +1949,7 @@ class JobsStudioManager {
       }
 
       // Remove from local array using the same flexible matching
-      console.log("🔄 Removing from local array...");
+
       const beforeLength = this.jobs.length;
       this.jobs = this.jobs.filter((j) => {
         // Keep jobs that DON'T match the ID
@@ -1976,16 +1959,16 @@ class JobsStudioManager {
           (!isNaN(j.id) && !isNaN(jobId) && Number(j.id) === Number(jobId));
         return !matches;
       });
-      console.log(`📊 Jobs array: ${beforeLength} → ${this.jobs.length}`);
+
 
       this.saveJobsLocal();
-      console.log("💾 Saved to localStorage");
+
 
       this.renderJobs();
-      console.log("🎨 Re-rendered jobs");
+
 
       this.updateQuickStats();
-      console.log("📊 Updated stats");
+
 
       this.logActivity(`Deleted job ${job.claimNumber}`, "delete");
     } catch (error) {
@@ -2114,7 +2097,7 @@ class JobsStudioManager {
     // Auto-refresh jobs from database every 30 seconds
     setInterval(async () => {
       if (!this.isLoading && this.syncStatus === "connected" && this.supabase) {
-        console.log("🔄 Auto-refreshing jobs from database...");
+
         await this.fetchJobs();
         this.renderJobs();
         this.updateQuickStats();
@@ -2153,7 +2136,7 @@ class JobsStudioManager {
     if (window.showCipherNotification) {
       window.showCipherNotification(message, type);
     } else {
-      console.log(`📱 Jobs Studio: ${message}`);
+
     }
   }
 
@@ -2162,14 +2145,14 @@ class JobsStudioManager {
     if (window.logCipherActivity) {
       window.logCipherActivity(activity, category);
     } else {
-      console.log(`📱 Activity: ${activity} [${category}]`);
+
     }
   }
 }
 
 // Initialize Jobs Studio Manager when DOM is ready
 function initializeJobsStudio() {
-  console.log("🎵 Lyricist: Initializing Jobs Studio...");
+
   window.jobsStudio = new JobsStudioManager();
 }
 
@@ -2214,7 +2197,7 @@ function handleJobDragStart(event, jobId) {
   event.target.style.opacity = '0.5';
   event.target.style.cursor = 'grabbing';
 
-  console.log('Dragging job:', claimData.claimNumber);
+
 }
 
 // Add dragend handler to reset visual state
@@ -2228,6 +2211,3 @@ document.addEventListener('dragend', (event) => {
 // Make handleJobDragStart globally accessible
 window.handleJobDragStart = handleJobDragStart;
 
-console.log(
-  "🎵 Lyricist Agent: Jobs Studio Professional JavaScript loaded - Ready to manage jobs like a boss!"
-);

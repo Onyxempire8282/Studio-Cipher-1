@@ -56,7 +56,7 @@
         if (window.showCipherNotification) {
             window.showCipherNotification(message, type);
         } else {
-            console.log(`RouteService [${type}]: ${message}`);
+
         }
     }
 
@@ -600,7 +600,7 @@
                 return { success: false, error: 'Log already voided or not found.' };
             }
 
-            console.log('Mileage log voided:', logId);
+
             return { success: true, data: data[0] };
         } catch (error) {
             console.error('RouteService.voidMileageLog error:', error);
@@ -691,5 +691,5 @@
         getDashboardStats
     };
 
-    console.log('RouteService initialized');
+
 })();

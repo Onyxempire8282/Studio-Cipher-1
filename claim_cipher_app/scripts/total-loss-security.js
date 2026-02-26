@@ -11,8 +11,8 @@ class TotalLossSecurityValidator {
     }
 
     init() {
-        console.log('🔒 Total Loss Security Validator initialized');
-        console.log('🛡️ Ready to validate CCC form data');
+
+
     }
 
     validateVIN(vin) {

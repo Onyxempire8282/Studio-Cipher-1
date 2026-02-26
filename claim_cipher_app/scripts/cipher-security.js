@@ -10,7 +10,7 @@ class CipherSecurity {
   }
 
   initializeSecurityMeasures() {
-    console.log("🔒 Initializing Cipher Security...");
+
 
     this.setupSessionManagement();
     this.setupFormValidation();
@@ -51,7 +51,7 @@ class CipherSecurity {
   handleSessionExpiry() {
     // DISABLED: Session expiry now handled by Supabase Auth
     // Only perform localStorage cleanup (no auth decisions)
-    console.log("⚠️ Session timeout - delegating to Supabase Auth");
+
 
     // Use Supabase signOut if available
     if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
@@ -67,7 +67,7 @@ class CipherSecurity {
     // DISABLED: No localStorage auth decisions
     // Supabase Auth handles all session validation via protectPage()
     // This method is kept for backward compatibility but performs NO auth checks
-    console.log("validateSession: Delegated to Supabase Auth (no localStorage auth)");
+
     return true;
   }
 
@@ -186,7 +186,7 @@ class CipherFunctionality {
   }
 
   initializeEnhancedFeatures() {
-    console.log("⚡ Initializing Enhanced Functionality...");
+
 
     this.setupRealTimeUpdates();
     this.setupDataPersistence();
@@ -278,7 +278,7 @@ class CipherFunctionality {
       a.click();
 
       // showCipherSuccess('data_saved');
-      console.log("✅ Data exported successfully");
+
     };
   }
 }
@@ -291,7 +291,7 @@ function initializeCipherSecurity() {
   cipherFunctionality = new CipherFunctionality();
 
   // showCipherNotification('Security systems active - you're protected!', 'success');
-  console.log("✅ Security systems active - you're protected!");
+
 }
 
 // Export classes and functions
@@ -299,4 +299,4 @@ window.CipherSecurity = CipherSecurity;
 window.CipherFunctionality = CipherFunctionality;
 window.initializeCipherSecurity = initializeCipherSecurity;
 
-console.log("🔒 Cipher Security and Functionality loaded - system secured!");
+

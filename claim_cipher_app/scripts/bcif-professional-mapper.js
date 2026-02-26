@@ -8,19 +8,19 @@ class BCIFProfessionalMapper {
     }
 
     async init() {
-        console.log('🏢 BCIF Professional Mapper initializing...');
+
         
         // Load the professional mapping configuration
         await this.loadMappingConfig();
         
-        console.log('✅ BCIF Professional Mapper ready');
+
     }
 
     async loadMappingConfig() {
         try {
             const response = await fetch('./config/bcif-mapping.json');
             this.mapping = await response.json();
-            console.log('📋 Loaded professional BCIF mapping configuration');
+
         } catch (error) {
             console.error('❌ Failed to load BCIF mapping config:', error);
             this.mapping = this.getFallbackMapping();
@@ -33,7 +33,7 @@ class BCIFProfessionalMapper {
      * @returns {Object} - Extracted data in BCIF format
      */
     extractFromText(pdfText) {
-        console.log('🔍 Starting professional pattern-based extraction...');
+
         
         const extractedData = {
             textFields: {},
@@ -59,7 +59,7 @@ class BCIFProfessionalMapper {
         // Calculate confidence
         extractedData.metadata = this.calculateConfidence(extractedData);
 
-        console.log('✅ Professional extraction completed:', extractedData.metadata);
+
         return extractedData;
     }
 
@@ -99,7 +99,7 @@ class BCIFProfessionalMapper {
 
             if (typeof finalValue === 'string') {
                 results[fieldName] = finalValue.trim();
-                console.log(`📝 Found ${fieldName}: "${finalValue}"`);
+
             }
         }
 
@@ -276,14 +276,14 @@ class BCIFProfessionalMapper {
 
             if (found) {
                 enabledFields.add(fieldName);
-                console.log(`☑️ Found checkbox: ${fieldName}`);
+
             }
         }
 
         // Apply preference rules (e.g., prefer 4DR over 2DR)
         if (checkboxRules.prefer_4dr_over_2dr && enabledFields.has('4DR') && enabledFields.has('2DR')) {
             enabledFields.delete('2DR');
-            console.log('🔄 Applied 4DR preference over 2DR');
+
         }
 
         return Array.from(enabledFields).sort();

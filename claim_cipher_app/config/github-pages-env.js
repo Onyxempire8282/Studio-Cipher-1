@@ -18,14 +18,4 @@ window.GITHUB_PAGES_ENV = {
     return "/";
   },
 
-  log: function () {
-    console.log(
-      "🌍 Environment:",
-      this.isGitHubPages ? "GitHub Pages" : "Development"
-    );
-    console.log("📂 Base Path:", this.getBasePath());
-  },
 };
-
-// Log environment on load
-window.GITHUB_PAGES_ENV.log();

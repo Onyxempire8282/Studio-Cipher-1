@@ -934,25 +934,24 @@ t.freeMiles + ' free = '
     </div>
 
     <!-- Load API configuration first -->
-    <script src="config/github-pages-env.js"></script>
+    <script defer src="config/github-pages-env.js"></script>
 
     <!-- Google Maps Configuration (must load BEFORE api-config-production.js) -->
-    <script src="scripts/google-config.js"></script>
+    <script defer src="scripts/google-config.js"></script>
 
-    <script src="config/api-config-production.js"></script>
+    <script defer src="config/api-config-production.js"></script>
 
     <!-- Supabase JS v2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Supabase Configuration and Auth -->
-    <script src="scripts/supabase-config.js"></script>
-    <script src="scripts/supabase-auth.js"></script>
-    <script src="scripts/billing-guard.js"></script>
+    <script defer src="scripts/supabase-config.js"></script>
+    <script defer src="scripts/supabase-auth.js"></script>
+    <script defer src="scripts/billing-guard.js"></script>
 
     <!-- Supabase Page Protection - MUST run before page renders -->
     <script>
-    (async function() {
-      document.body.style.visibility = 'hidden';
+document.addEventListener('DOMContentLoaded', async function() {
       const allowed = await window.SupabaseAuth.protectPage();
       if (!allowed) return;
 
@@ -963,12 +962,13 @@ t.freeMiles + ' free = '
       }
 
       document.body.style.visibility = 'visible';
-    })();
-    </script>
+});
+</script>
 
     <!-- Google Maps API Loader -->
-    <script>
-      // Load Google Maps API if key is configured
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Load Google Maps API if key is configured
       if (
         window.GOOGLE_MAPS_CONFIG?.apiKey &&
         window.GOOGLE_MAPS_CONFIG.apiKey !==
@@ -981,7 +981,7 @@ t.freeMiles + ' free = '
         script.async = true;
         script.defer = true;
         script.onload = () => {
-          console.log("Google Maps API loaded for Mileage Cypher");
+
           // Initialize Places Autocomplete after API loads
           if (window.mileageCipher) {
             window.mileageCipher.initializeGooglePlacesAutocomplete();
@@ -990,25 +990,22 @@ t.freeMiles + ' free = '
         script.onerror = () =>
           console.error("Failed to load Google Maps API");
         document.head.appendChild(script);
-      } else {
-        console.log(
-          "Google Maps API not configured - manual distance entry only"
-        );
       }
-    </script>
+});
+</script>
 
     <!-- Core Scripts -->
-    <script src="scripts/cipher-core.js"></script>
+    <script defer src="scripts/cipher-core.js"></script>
 
     <!-- Shared Firm Storage & Session Manager -->
-    <script src="scripts/firm-store.js"></script>
-    <script src="scripts/session-manager.js"></script>
+    <script defer src="scripts/firm-store.js"></script>
+    <script defer src="scripts/session-manager.js"></script>
 
     <!-- Distance Cache - authoritative distance storage -->
-    <script src="scripts/distance-cache.js"></script>
+    <script defer src="scripts/distance-cache.js"></script>
 
     <!-- Load combined mileage calculator -->
-    <script src="scripts/mileage-cypher-combined.js"></script>
-    <script src="scripts/claim-cipher-system-qa.js"></script>
+    <script defer src="scripts/mileage-cypher-combined.js"></script>
+    <script defer src="scripts/claim-cipher-system-qa.js"></script>
   </body>
 </html>

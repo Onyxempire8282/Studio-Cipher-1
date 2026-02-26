@@ -8,7 +8,7 @@ class CommandCenterManager {
         this.loadUserData();
         this.startPeriodicUpdates();
         
-        console.log('📝 Lyricist Agent: Command Center Manager initialized');
+
     }
     
     initializeOnLoad() {
@@ -65,7 +65,7 @@ class CommandCenterManager {
     }
     
     navigateToModule(url) {
-        console.log(`📝 Lyricist: Navigating to ${url}`);
+
         
         // Add loading state
         const targetCard = document.querySelector(`[onclick*="${url}"]`) || 
@@ -84,7 +84,7 @@ class CommandCenterManager {
     }
     
     handleQuickAction(action, element) {
-        console.log(`📝 Lyricist: Quick action - ${action}`);
+
         
         // Extract function name from onclick string
         const functionName = action.match(/(\w+)\(/)?.[1];
@@ -103,7 +103,7 @@ class CommandCenterManager {
                 this.handleLogout();
                 break;
             default:
-                console.log(`📝 Lyricist: Unknown action - ${functionName}`);
+
         }
     }
 
@@ -123,7 +123,7 @@ class CommandCenterManager {
     
     async handleLogout() {
         if (confirm('Are you sure you want to logout?')) {
-            console.log('📝 Lyricist: User logout initiated');
+
             this.logActivity('User logged out', 'auth');
 
             // Show logout message
@@ -131,7 +131,7 @@ class CommandCenterManager {
 
             // Demo mode logout - clear demo state and redirect (no Supabase session)
             if (sessionStorage.getItem('demo_mode') === 'true') {
-                console.log('🎭 Demo mode logout - clearing demo state');
+
                 sessionStorage.removeItem('demo_mode');
                 sessionStorage.removeItem('claimCipherAuth');
                 if (window.FirmStore) window.FirmStore.clearDemo();
@@ -567,7 +567,7 @@ class CommandCenterManager {
     // Mobile Suite and Help Page functionality
     
     showMobileSuiteModal() {
-        console.log('📝 Lyricist: Opening Mobile Suite Pro modal');
+
         
         const proFeatures = [
             { icon: '📱', title: 'Native Mobile Apps', desc: 'iOS and Android apps with full functionality' },
@@ -632,7 +632,7 @@ class CommandCenterManager {
     }
     
     downloadMobileApp() {
-        console.log('📝 Lyricist: Mobile app download initiated');
+
         
         this.showQuickModal('📱 Download Claim Cipher Mobile', `
             <div style="padding: 20px; text-align: center;">
@@ -693,7 +693,7 @@ class CommandCenterManager {
     }
     
     upgradeToPro() {
-        console.log('📝 Lyricist: Pro upgrade initiated');
+
         this.closeModal();
         
         this.showQuickModal('🚀 Upgrade to Pro', `
@@ -746,7 +746,7 @@ class CommandCenterManager {
     }
     
     showHelpModal() {
-        console.log('📝 Lyricist: Opening Help & Documentation modal');
+
         
         const helpSections = [
             { icon: '🎥', title: 'Video Tutorials', desc: 'Step-by-step walkthroughs of all features', action: 'showTutorials()' },
@@ -1052,7 +1052,7 @@ class CommandCenterManager {
         this.logActivity(`Submitted ${issueType} report: ${description.substring(0, 50)}...`, 'support');
         
         // In a real app, this would send the report to a backend service
-        console.log('Issue Report:', { type: issueType, description, email, timestamp: new Date().toISOString() });
+
     }
     
     contactSupport() {
@@ -1134,7 +1134,7 @@ class CommandCenterManager {
 
 function initCommandCenter() {
     if (window.commandCenter) return;
-    console.log('📝 Lyricist Agent: Initializing Command Center functionality...');
+
     window.commandCenter = new CommandCenterManager();
 }
 
@@ -1168,7 +1168,7 @@ function quickTest() {
 async function handleLogout() {
     // Demo mode logout - clear demo state and redirect (no Supabase session)
     if (sessionStorage.getItem('demo_mode') === 'true') {
-        console.log('🎭 Demo mode logout - clearing demo state');
+
         sessionStorage.removeItem('demo_mode');
         sessionStorage.removeItem('claimCipherAuth');
         if (window.FirmStore) window.FirmStore.clearDemo();

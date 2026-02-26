@@ -72,7 +72,7 @@
       const lastRoute = localStorage.getItem('cipher_last_route');
       if (lastRoute && !localStorage.getItem('cipher_optimizer_draft_state')) {
         localStorage.setItem('cipher_optimizer_draft_state', lastRoute);
-        console.log('SessionManager: Migrated cipher_last_route -> cipher_optimizer_draft_state');
+
       }
 
       // Migrate cipher_routes_by_day -> session + registry
@@ -111,7 +111,7 @@
           _write(KEYS.history, [{ id: session.id, name: session.name, createdAt: session.createdAt, routeCount: session.routeIds.length }]);
           _write(KEYS.registry, registry);
 
-          console.log('SessionManager: Migrated', dayKeys.length, 'day routes into session', sessionId);
+
         }
       }
 
@@ -189,7 +189,7 @@
       _write(KEYS.active, session);
       _write(KEYS.registry, registry);
 
-      console.log('SessionManager: Route', routeId, 'added to session', session.id);
+
       return routeId;
     },
 
@@ -321,5 +321,5 @@
     }
   };
 
-  console.log('SessionManager loaded');
+
 })();

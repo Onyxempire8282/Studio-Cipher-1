@@ -26,8 +26,8 @@ window.GOOGLE_MAPS_CONFIG = {
 
 // Security Agent: API Ready Handler
 window.onGoogleMapsAPIReady = function () {
-  console.log("🔒 Security Agent: Google Maps API loaded successfully");
-  console.log("🛡️ Security Agent: All services enabled and secured");
+
+
 
   // Initialize applications
   if (typeof initRouteCipher === "function") {

@@ -150,7 +150,7 @@ class SettingsManager {
             
             this.showNotification('Settings saved successfully!', 'success');
             
-            console.log('✅ Settings saved:', this.settings);
+
         } catch (error) {
             console.error('Failed to save settings:', error);
             this.showNotification('Failed to save settings', 'error');
@@ -160,7 +160,7 @@ class SettingsManager {
     updateRouteCipherSettings() {
         // Update route optimizer if it exists
         if (window.routeCipher) {
-            console.log('🗺️ Updating route optimizer settings');
+
             // The route optimizer will read from settings on next optimization
         }
 
@@ -176,7 +176,7 @@ class SettingsManager {
     updateMileageCipherSettings() {
         // Update mileage calculator settings if it exists
         if (window.mileageCipher) {
-            console.log('🧮 Updating mileage calculator settings');
+
             // The mileage calculator will read from settings on next calculation
         }
     }
