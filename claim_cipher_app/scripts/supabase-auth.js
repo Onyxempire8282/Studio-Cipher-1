@@ -18,8 +18,9 @@
         if (supabaseClient) return supabaseClient;
 
         const config = window.SUPABASE_CONFIG;
-        if (!config || !config.url || config.url === 'YOUR_SUPABASE_URL') {
-            console.error('Supabase not configured. Please update supabase-config.js');
+        if (!config || !config.url || !config.anonKey ||
+            config.url.includes('placeholder') || config.anonKey.includes('placeholder')) {
+            console.error('Supabase not configured: resolved URL or anon key is empty or a placeholder.');
             return null;
         }
 

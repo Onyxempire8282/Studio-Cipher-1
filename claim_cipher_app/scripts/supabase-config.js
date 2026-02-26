@@ -12,16 +12,21 @@
  * at runtime (e.g. from a secure server-side session bootstrap).
  */
 
-window.SUPABASE_CONFIG = {
-  url:
-    localStorage.getItem("SUPABASE_URL") ||
-    window.ENV_SUPABASE_URL ||
-    "",
 
-  anonKey:
-    localStorage.getItem("SUPABASE_ANON_KEY") ||
-    window.ENV_SUPABASE_ANON_KEY ||
-    "",
+// DEV FALLBACK — anon key is public by design, safe to commit
+const SUPABASE_URL =
+  window.ENV_SUPABASE_URL ||
+  localStorage.getItem('SUPABASE_URL') ||
+  'https://aviwltfqlunxxvkajpyt.supabase.co';
+
+const SUPABASE_ANON_KEY =
+  window.ENV_SUPABASE_ANON_KEY ||
+  localStorage.getItem('SUPABASE_ANON_KEY') ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2aXdsdGZxbHVueHh2a2FqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0MTQ4MTIsImV4cCI6MjA4Mzk5MDgxMn0._4Me4DsKHJ0SRleOmmOGPAcJKq8hmFUDIfNDH66Zu8o';
+
+window.SUPABASE_CONFIG = {
+  url: SUPABASE_URL,
+  anonKey: SUPABASE_ANON_KEY,
 };
 
 
