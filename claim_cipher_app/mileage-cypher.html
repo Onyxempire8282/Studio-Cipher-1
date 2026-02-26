@@ -351,41 +351,23 @@ tle>Mileage Cipher - Claim Cipher</title>
 
   </head>
   <body class="mileage-page" style="visibility: hidden;">
-    <header class="cipher-header">
-      <div class="header-content">
-        <div class="app-brand">
-          <img src="../branding/logo/claimcipher-mark.png" alt="Claim Cipher" class="nav-logo" />
-        </div>
-        <div class="nav-links">
-          <a href="command-center.html">Dashboard</a>
-          <a href="route-cypher.html">Routes</a>
-          <a href="mileage-cypher.html" class="active">Mileage</a>
-          <a href="my-routes.html">My Routes</a>
-          <!-- DISTRO: Hidden features - do not delete -->
-          <!-- <a href="jobs-studio.html">Jobs</a> -->
-          <!-- <a href="total-loss-forms.html">Forms</a> -->
-          <!-- <a href="firms-directory.html">Firms</a> -->
-          <!-- <a href="settings-booth.html">Settings</a> -->
-          <!-- <a href="functionality-test.html">Tests</a> -->
-        </div>
-        <div class="user-section">
-          <div class="user-info">
-            <div class="user-name" id="userName">Professional User</div>
-            <div class="user-role">Claims Specialist</div>
-          </div>
-          <button
-            class="cipher-btn logout-btn"
-            onclick="handleLogout()"
-          >
-            <div class="rivet tl"></div>
-            <div class="rivet tr"></div>
-            <div class="rivet bl"></div>
-            <div class="rivet br"></div>
-            Logout
-          </button>
-        </div>
+    <nav class="nav">
+      <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
+      <div class="nav-tabs">
+        <a class="nav-tab" href="command-center.html">Dashboard</a>
+        <a class="nav-tab active" href="mileage-cypher.html">Mileage</a>
+        <a class="nav-tab" href="route-cypher.html">Routes</a>
+        <a class="nav-tab" href="my-routes.html">My Routes</a>
+        <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
       </div>
-    </header>
+      <div class="nav-right">
+        <div class="nav-user">
+          <strong id="userName">Professional User</strong>
+          <span id="user-role">Claims Specialist</span>
+        </div>
+        <button class="nav-logout" onclick="handleLogout()">Logout</button>
+      </div>
+    </nav>
 
     <!-- PAGE HEADER -->
     <div class="mc-page-header">
