@@ -8,7 +8,6 @@ class MileageCypherCalculator {
     this.settings = this.initializeSettings();
     this.currentCalculation = null;
     this.calculationHistory = [];
-    this.isRoundTrip = false;
 
     // Distance source metadata (separate from distance value)
     // Tracks: 'google_api' | 'cache_google' | 'user_manual' | null
@@ -98,14 +97,6 @@ class MileageCypherCalculator {
       });
     }
 
-    const roundTripToggle = document.getElementById("roundTrip");
-    if (roundTripToggle) {
-      this.isRoundTrip = !!roundTripToggle.checked;
-      roundTripToggle.addEventListener("change", () => {
-        this.isRoundTrip = !!roundTripToggle.checked;
-      });
-    }
-
     console.log("Event listeners configured");
   }
 
@@ -166,11 +157,11 @@ class MileageCypherCalculator {
 
     select.innerHTML = '<option value="">Choose insurance firm...</option>';
 
-    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
     firms.forEach((firm) => {
       const option = document.createElement("option");
-      option.value = firm.id;
-      option.textContent = `${firm.name} (${firm.freeMiles} free, $${firm.ratePerMile}/mi)`;
+         const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       select.appendChild(option);
     });
 
@@ -319,26 +310,6 @@ class MileageCypherCalculator {
     const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
     if (!firm) return;
 
-    var rateEl = document.querySelector('[data-rate-display]')
-      || document.getElementById('rateDisplay');
-    var freeEl = document.querySelector('[data-free-display]')
-      || document.getElementById('freeDisplay');
-
-    if (rateEl) rateEl.textContent = '$' + firm.ratePerMile.toFixed(2);
-    if (freeEl) freeEl.textContent = firm.freeMiles > 0
-      ? firm.freeMiles + ' mi' : 'None';
-
-    const roundTripToggle = document.getElementById("roundTrip");
-    const roundTripThumb = document.getElementById("rtMainThumb");
-    if (roundTripToggle) {
-      roundTripToggle.checked = !!firm.roundTripDefault;
-      this.isRoundTrip = !!firm.roundTripDefault;
-    }
-    if (roundTripThumb && roundTripToggle) {
-      roundTripThumb.style.left = roundTripToggle.checked ? '21px' : '3px';
-      roundTripThumb.style.background = roundTripToggle.checked ? '#e8952a' : '#4a5058';
-    }
-
     // Reset distance source when firm changes (different billing rules may apply)
     this.currentDistanceSource = null;
     console.log("Distance source reset (firm changed)");
@@ -414,8 +385,6 @@ class MileageCypherCalculator {
       throw new Error("Google Maps API not loaded");
     }
 
-    this.setSessionIndicator(true);
-
     const distanceInput = document.getElementById("distanceMiles");
     const originalPlaceholder = distanceInput.placeholder;
 
@@ -483,8 +452,6 @@ class MileageCypherCalculator {
   performCalculation(auto = false) {
     console.log("performCalculation called, auto:", auto);
 
-    this.setSessionIndicator(true);
-
     const calculationData = this.gatherCalculationInputs();
     console.log("Calculation data gathered:", calculationData);
 
@@ -519,8 +486,6 @@ class MileageCypherCalculator {
       console.error("Calculation error:", error);
       this.showCalculateLoading(false); // Hide loading state
       return null;
-    } finally {
-      this.setSessionIndicator(false);
     }
   }
 
@@ -532,8 +497,7 @@ class MileageCypherCalculator {
     const distanceValue =
       document.getElementById("distanceMiles")?.value || "0";
     const distance = parseFloat(distanceValue);
-    const roundTripToggle = document.getElementById("roundTrip");
-    const roundTrip = roundTripToggle ? !!roundTripToggle.checked : (firm?.roundTripDefault || false);
+    const roundTrip = firm?.roundTripDefault || false;
     const note = document.getElementById("noteField")?.value?.trim() || "";
 
     console.log(
@@ -645,39 +609,15 @@ class MileageCypherCalculator {
     const billableMiles = Math.max(0, baseMiles - firm.freeMiles);
     const totalFee = billableMiles * firm.ratePerMile;
 
-    // Update billing display elements
-    var amountEl = document.getElementById('billingAmount');
-    var formulaEl = document.getElementById('billingFormula');
-    var freeNote = document.getElementById('freeMilesNote');
-
-    if (amountEl) {
-      amountEl.textContent = '$' + totalFee.toFixed(2);
-    }
-    if (formulaEl) {
-      var fmiPart = firm.freeMiles > 0
-        ? baseMiles.toFixed(1) + ' mi \u2212 ' + firm.freeMiles + ' mi = ' + billableMiles.toFixed(1) + ' mi'
-        : baseMiles.toFixed(1) + ' mi';
-      formulaEl.textContent = fmiPart + ' \u00d7 $' + firm.ratePerMile.toFixed(2) + '/mi = $' + totalFee.toFixed(2);
-    }
-    if (freeNote && firm.freeMiles > 0) {
-      freeNote.textContent = 'First ' + firm.freeMiles
-        + ' mi free per firm policy';
-      freeNote.style.display = 'block';
-    } else if (freeNote) {
-      freeNote.style.display = 'none';
-    }
-
     return {
       firm,
       route: { from: pointA, to: pointB },
       distance: this.roundTo(distance, 1),
-      roundTrip,
-      baseMiles: this.roundTo(baseMiles, 1),
-      freeMiles: firm.freeMiles,
-      billableMiles: this.roundTo(billableMiles, 1),
-      ratePerMile: firm.ratePerMile,
-      totalFee: this.roundTo(totalFee, 2),
-      note,
+      roundTrip      var fmiPart = firm.freeMiles > 0
+        ? baseMiles.toFixed(1) + ' mi \u2212 ' + firm.freeMiles + ' mi = ' + billableMiles.toFixed(1) + ' mi'
+        : baseMiles.toFixed(1) + ' mi';
+      formulaEl.textContent = fmiPart + ' \u00d7 $' + firm.ratePerMile.toFixed(2) + '/mi = $' + totalFee.toFixed(2);
+te,
       timestamp: new Date(),
       calculationId: this.generateCalculationId(),
     };
@@ -697,14 +637,13 @@ class MileageCypherCalculator {
       note,
     } = result;
 
-    const distanceLabel = roundTrip ? "One-way Distance:" : "Distance:";
     const breakdownHtml = `
             <div class="breakdown-item">
               <span class="label">Route:</span>
               <span class="value">${route.from} → ${route.to}</span>
             </div>
             <div class="breakdown-item">
-              <span class="label">${distanceLabel}</span>
+              <span class="label">One-way Distance:</span>
               <span class="value">${distance} miles</span>
             </div>
             <div class="breakdown-item">
@@ -794,24 +733,11 @@ class MileageCypherCalculator {
     if (!copyText) return;
 
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(copyText);
-      } else {
-        const textarea = document.createElement("textarea");
-        textarea.value = copyText;
-        textarea.setAttribute("readonly", "readonly");
-        textarea.style.position = "absolute";
-        textarea.style.left = "-9999px";
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-      }
+      await navigator.clipboard.writeText(copyText);
       console.log("Calculation copied to clipboard");
       this.showCopySuccess();
     } catch (error) {
       console.error("Copy failed:", error);
-      this.showNotification("Copy failed", "error");
     }
   }
 
@@ -853,7 +779,7 @@ class MileageCypherCalculator {
 
     firmsList.innerHTML = "";
 
-    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
     firms.forEach((firm) => {
       const firmElement = document.createElement("div");
       firmElement.className = "firm-item";
@@ -871,9 +797,8 @@ class MileageCypherCalculator {
                 </div>
                 <div class="firm-actions">
                     <button class="edit-btn" data-firm-id="${
-                      firm.id
-                    }">Edit</button>
-                    <button class="delete-btn" data-firm-id="${
+                    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+ <button class="delete-btn" data-firm-id="${
                       firm.id
                     }">Delete</button>
                 </div>
@@ -1036,7 +961,7 @@ class MileageCypherCalculator {
   deleteFirm(firmId) {
     console.log("Delete firm requested for ID:", firmId);
 
-    const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+    const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
     if (allFirms.length <= 1) {
       console.warn("Cannot delete last firm");
       return;
@@ -1060,16 +985,14 @@ class MileageCypherCalculator {
 
         // Update selected firm if the deleted firm was selected
         if (window.FirmStore.getLastSelected() === firmId) {
-          const remaining = window.FirmStore.getAllSync();
+          const remaining = window.FirmStore.getAll();
           window.FirmStore.setLastSelected(remaining[0]?.id || "");
         }
       }
 
       // Update UI
-      this.loadFirmsListInModal();
-      this.loadFirmsToDropdown();
-
-      // Reset form if we were editing the deleted firm
+      this.loadFirmsListInModal(    const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+ing the deleted firm
       const form = document.getElementById("addFirmForm");
       const submitBtn = form?.querySelector('button[type="submit"]');
       if (submitBtn?.dataset.editingId === firmId) {
@@ -1092,9 +1015,8 @@ class MileageCypherCalculator {
         } else {
           localStorage.removeItem("cc_route_export");
         }
-      } catch (error) {
-        console.error("Route import error:", error);
-        localStorage.removeItem("cc_route_export");
+      } catch (error)           const remaining = window.FirmStore.getAllSync();
+       localStorage.removeItem("cc_route_export");
       }
     }
   }
@@ -1254,12 +1176,6 @@ class MileageCypherCalculator {
     }
   }
 
-  setSessionIndicator(active) {
-    const indicator = document.getElementById("sessionIndicator");
-    if (!indicator) return;
-    indicator.classList.toggle("hidden", !active);
-  }
-
   showNotification(message, type = "info") {
     const notification = document.createElement("div");
     notification.className = `toast toast-${type}`;
@@ -1342,7 +1258,7 @@ class MileageCypherCalculator {
     // Select a demo firm
     const firmSelect = document.getElementById('firmSelect');
     if (firmSelect && firmSelect.options.length > 1) {
-      const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+      const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
       firmSelect.value = allFirms[0]?.id || '';
       firmSelect.disabled = true;
       this.onFirmChange(firmSelect.value);
@@ -1379,9 +1295,8 @@ class MileageCypherCalculator {
     }
 
     // Disable new calculation button's clearing functionality
-    const newCalcBtn = document.getElementById('newCalculation');
-    if (newCalcBtn) {
-      newCalcBtn.disabled = true;
+    const newCalcBtn = document.getEle      const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
+ = true;
       newCalcBtn.title = 'Disabled in demo mode';
     }
 
@@ -1483,13 +1398,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.warn("API configuration not found - manual distance entry only");
   }
 
-  // Warm the FirmStore cache from Supabase before constructing the calculator.
-  // The constructor calls refreshFirmDropdown() synchronously via getAllSync(),
-  // so the cloud data must be in the cache first.
-  if (window.FirmStore) {
-    await window.FirmStore.getAll();
-  }
-
   // Initialize the calculator
   window.mileageCipher = new MileageCypherCalculator();
 
@@ -1498,3 +1406,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Export for global access
 window.MileageCypherCalculator = MileageCypherCalculator;
+  // Warm the FirmStore cache from Supabase before constructing the calculator.
+  // The constructor calls refreshFirmDropdown() synchronously via getAllSync(),
+  // so the cloud data must be in the cache first.
+  if (window.FirmStore) {
+    await window.FirmStore.getAll();
+  }
+

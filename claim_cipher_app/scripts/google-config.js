@@ -5,9 +5,9 @@
 
 // Security Agent: API Configuration (Production Ready)
 window.GOOGLE_MAPS_CONFIG = {
-  // Replace with your actual Google Maps API key
-  // Get your key from: https://console.cloud.google.com/google/maps-apis/
-  apiKey: "AIzaSyByoixnma2_cQFwCR5Tqn3YGNy20qeStF4",
+  // Resolved at runtime: set localStorage key "GOOGLE_MAPS_API_KEY", or inject
+  // window.ENV_GOOGLE_MAPS_KEY at deploy time (e.g. via a server-rendered snippet).
+  apiKey: localStorage.getItem("GOOGLE_MAPS_API_KEY") || window.ENV_GOOGLE_MAPS_KEY || null,
   libraries: ["places", "geometry"],
   version: "weekly",
   services: {

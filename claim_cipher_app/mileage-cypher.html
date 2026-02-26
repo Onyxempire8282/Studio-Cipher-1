@@ -1,766 +1,813 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
-  <title>Mileage Cipher — Claim Cipher</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --plate:      #0e0f11;
-      --steel:      #161a1d;
-      --steel-mid:  #1e2328;
-      --steel-lift: #252b31;
-      --input-bg:   #0a0c0e;
-      --rivet:      #2e353d;
-      --rivet-hi:   #3d464f;
-      --amber:      #e8952a;
-      --amber-dim:  rgba(232,149,42,0.12);
-      --amber-line: rgba(232,149,42,0.35);
-      --white:      #edeae4;
-      --text:       #8f9399;
-      --text-hi:    #b8bdc2;
-      --muted:      #4a5058;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ti  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+tle>Mileage Cipher - Claim Cipher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    <style>
+      /* ── PAGE HEADER ── */
+      /* Use mc-page-header to avoid conflict with universal-system.css fixed positioning */
+      .mc-page-header {
+        background: #161a1d;
+        border-bottom: 1px solid #2e353d;
+        padding: 24px 40px;
+        margin-top: 72px; /* clear fixed nav */
+        position: relative; z-index: 1; flex-shrink: 0;
+      }
+      .mc-page-header-inner {
+        max-width: 1200px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .page-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.22em;
+        text-transform: uppercase; color: #e8952a; margin-bottom: 4px;
+      }
+      .page-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 32px; letter-spacing: 0.06em; color: #edeae4;
+      }
+      .page-sub { font-size: 12px; color: #4a5058; margin-top: 2px; }
+      .header-badge { display: flex; gap: 3px; }
+      .hbadge {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+        padding: 6px 14px; border: 1px solid #2e353d;
+        color: #4a5058; background: #1e2328;
+      }
+      .hbadge span { color: #e8952a; }
 
-    body {
-      background: var(--plate);
-      color: var(--text-hi);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 300;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-    }
+      /* ── CANCEL universal-system.css margin-top on main ── */
+      .mileage-cipher-main.main-content {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      }
 
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-    }
+      /* ── MAIN GRID ── */
+      .mc-main {
+        max-width: 1200px; margin: 0 auto; width: 100%;
+        padding: 32px 40px 100px;
+        position: relative; z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 3px;
+        align-items: start;
+      }
 
-    /* ── NAV ── */
-    .nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px 0 24px; height: 64px;
-      background: rgba(14,15,17,0.98);
-      border-bottom: 1px solid var(--rivet);
-      box-shadow: 0 1px 0 rgba(232,149,42,0.07);
-      flex-shrink: 0;
-    }
-    .nav-logo { font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.08em; color: var(--white); text-decoration: none; }
-    .nav-logo span { color: var(--amber); }
-    .nav-tabs { display: flex; gap: 0; height: 100%; }
-    .nav-tab { display: flex; align-items: center; padding: 0 20px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-right: 1px solid var(--rivet); border-left: 1px solid transparent; transition: all 0.2s; text-decoration: none; }
-    .nav-tab:first-child { border-left: 1px solid var(--rivet); }
-    .nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
-    .nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
-    .nav-right { display: flex; align-items: center; gap: 16px; }
-    .nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
-    .nav-user strong { color: var(--white); display: block; font-size: 12px; }
-    .nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
-    .nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+      /* ── CARD ── */
+      .mc-card {
+        background: #161a1d;
+        border: 1px solid #2e353d;
+        border-left: 3px solid #2e353d;
+        position: relative;
+      }
+      .mc-card.accent { border-left-color: #e8952a; }
+      .mc-card-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid #2e353d;
+        background: #1e2328;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .mc-card-title {
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.2em;
+        text-transform: uppercase; color: #e8952a;
+      }
+      .mc-card-line {
+        flex: 1; height: 1px;
+        background: linear-gradient(90deg, rgba(232,149,42,0.35), transparent);
+      }
+      .mc-card-meta {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; color: #4a5058; letter-spacing: 0.1em;
+      }
+      .mc-card-body { padding: 24px; }
 
-    /* ── PAGE HEADER ── */
-    .page-header {
-      background:
-        radial-gradient(ellipse 60% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
-        var(--steel);
-      border-bottom: 1px solid var(--rivet);
-      padding: 24px 40px;
-      position: relative; z-index: 1; flex-shrink: 0;
-    }
-    .page-header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-    .page-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
-    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.06em; color: var(--white); }
-    .page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .header-badge { display: flex; gap: 3px; }
-    .hbadge { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--rivet); color: var(--muted); background: var(--steel-mid); }
-    .hbadge span { color: var(--amber); }
+      /* ── FIELD ── */
+      .mc-field { display: flex; flex-direction: column; gap: 5px; }
+      .mc-field-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.14em;
+        text-transform: uppercase; color: #4a5058;
+      }
+      .mc-field-input {
+        background: #0a0c0e;
+        border: 1px solid #2e353d;
+        border-top: 1px solid #3d464f;
+        padding: 11px 14px;
+        color: #edeae4; font-size: 13px;
+        font-family: 'Barlow', sans-serif;
+        outline: none; width: 100%;
+        transition: border-color 0.2s;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+      }
+      .mc-field-input:focus { border-color: #e8952a; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2); }
+      .mc-field-input::placeholder { color: #4a5058; }
+      select.mc-field-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5058'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px; cursor: pointer;
+      }
+      .mc-field-hint { font-size: 11px; color: #4a5058; font-style: italic; }
 
-    /* ── MAIN ── */
-    .main {
-      max-width: 1200px; margin: 0 auto; width: 100%;
-      padding: 32px 40px 100px;
-      position: relative; z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 3px;
-      align-items: start;
-    }
-    .left-col { display: flex; flex-direction: column; gap: 3px; }
+      /* ── FIRM ROW ── */
+      .mc-firm-row { display: flex; gap: 8px; align-items: flex-end; }
+      .mc-firm-row .mc-field { flex: 1; }
+      .mc-manage-btn {
+        background: #252b31;
+        border: 1px solid #3d464f;
+        color: #b8bdc2;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+        padding: 11px 18px; cursor: pointer;
+        transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+      }
+      .mc-manage-btn:hover { border-color: rgba(232,149,42,0.35); color: #e8952a; }
 
-    /* ── CARD ── */
-    .card { background: var(--steel); border: 1px solid var(--rivet); border-left: 3px solid var(--rivet); position: relative; }
-    .card.accent { border-left-color: var(--amber); }
-    .card::before, .card::after { content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--rivet-hi); border: 1px solid var(--muted); }
-    .card::before { top: 10px; right: 12px; }
-    .card::after  { bottom: 10px; right: 12px; }
-    .card-header { padding: 14px 20px; border-bottom: 1px solid var(--rivet); background: var(--steel-mid); display: flex; align-items: center; gap: 10px; }
-    .card-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
-    .card-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
-    .card-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
-    .card-body { padding: 24px; }
+      /* ── RATE STRIP ── */
+      .mc-rate-strip {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid #2e353d; background: #1e2328;
+      }
+      .mc-rate-cell { padding: 12px 20px; border-right: 1px solid #2e353d; }
+      .mc-rate-cell:last-child { border-right: none; }
+      .mc-rate-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px; letter-spacing: 0.18em;
+        text-transform: uppercase; color: #4a5058; margin-bottom: 4px;
+      }
+      .mc-rate-val { font-size: 14px; color: #edeae4; }
+      .mc-rate-val.amber { color: #e8952a; font-family: 'DM Mono', monospace; }
 
-    /* ── FIELD ── */
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
-    .field-input {
-      background: var(--input-bg); border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
-      padding: 11px 14px; color: var(--white); font-size: 13px;
-      font-family: 'Barlow', sans-serif; outline: none; width: 100%;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-    }
-    .field-input:focus { border-color: var(--amber); box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2); }
-    .field-input::placeholder { color: var(--muted); }
-    .field-hint { font-size: 11px; color: var(--muted); font-style: italic; }
-    select.field-input {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5058'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer;
-    }
+      /* ── ROUTE GRID ── */
+      .mc-route-grid {
+        display: grid;
+        grid-template-columns: 1fr 40px 1fr;
+        align-items: center; margin-bottom: 20px;
+      }
+      .mc-route-arrow {
+        display: grid; place-items: center;
+        font-size: 16px; color: #e8952a; padding-top: 22px;
+      }
 
-    /* ── FIRM ROW ── */
-    .firm-row { display: flex; gap: 8px; align-items: flex-end; }
-    .firm-row .field { flex: 1; }
-    .manage-btn {
-      background: var(--steel-lift); border: 1px solid var(--rivet-hi);
-      color: var(--text-hi); font-family: 'DM Mono', monospace;
-      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 11px 18px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
-    }
-    .manage-btn:hover { border-color: var(--amber-line); color: var(--amber); }
+      /* ── DISTANCE DISPLAY ── */
+      .mc-distance-display {
+        background: #0a0c0e;
+        border: 1px solid #2e353d;
+        border-top: 1px solid #3d464f;
+        padding: 0 18px 0 0;
+        display: flex; align-items: center;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+      .mc-distance-display:focus-within {
+        border-color: #e8952a;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+      }
+      .mc-dist-input {
+        flex: 1; background: transparent; border: none; outline: none;
+        padding: 12px 18px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 36px; color: #edeae4;
+        letter-spacing: 0.02em; line-height: 1; width: 100%;
+        -moz-appearance: textfield;
+      }
+      .mc-dist-input::-webkit-outer-spin-button,
+      .mc-dist-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+      .mc-dist-input::placeholder { color: #2e353d; }
+      .mc-dist-status {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; color: #4a5058;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+      }
+      .mc-dist-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #4a5058; flex-shrink: 0;
+      }
+      .mc-dist-dot.live {
+        background: #e8952a;
+        box-shadow: 0 0 6px rgba(232,149,42,0.6);
+        animation: mc-pulse 2s ease-in-out infinite;
+      }
+      @keyframes mc-pulse {
+        0%,100% { box-shadow: 0 0 6px rgba(232,149,42,0.6); }
+        50%      { box-shadow: 0 0 12px rgba(232,149,42,1); }
+      }
 
-    /* ── RATE STRIP ── */
-    .firm-rate-strip { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--rivet); background: var(--steel-mid); }
-    .rate-cell { padding: 12px 20px; border-right: 1px solid var(--rivet); }
-    .rate-cell:last-child { border-right: none; }
-    .rate-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-    .rate-val { font-size: 14px; color: var(--white); }
-    .rate-val.amber { color: var(--amber); font-family: 'DM Mono', monospace; }
+      /* ── BILLING PREVIEW ── */
+      .mc-billing-preview {
+        background: #1e2328;
+        border: 1px solid #2e353d;
+        border-left: 2px solid rgba(232,149,42,0.35);
+        padding: 16px 18px;
+        display: flex; align-items: center; justify-content: space-between;
+        margin-top: 12px;
+      }
+      .mc-billing-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.14em;
+        text-transform: uppercase; color: #4a5058; margin-bottom: 4px;
+      }
+      .mc-billing-amount {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 28px; color: #e8952a;
+        letter-spacing: 0.03em; line-height: 1;
+      }
 
-    /* ── ROUTE GRID ── */
-    .route-grid { display: grid; grid-template-columns: 1fr 40px 1fr; align-items: center; margin-bottom: 20px; }
-    .route-arrow { display: grid; place-items: center; font-size: 16px; color: var(--amber); padding-top: 22px; }
+      /* ── RIGHT COL ── */
+      .mc-right-col {
+        display: flex; flex-direction: column;
+        gap: 3px; position: sticky; top: 84px;
+      }
+      .mc-log-items {
+        display: flex; flex-direction: column;
+        max-height: 280px; overflow-y: auto;
+      }
+      .mc-log-items::-webkit-scrollbar { width: 4px; }
+      .mc-log-items::-webkit-scrollbar-track { background: #2e353d; }
+      .mc-log-items::-webkit-scrollbar-thumb { background: #3d464f; }
+      .mc-session-total {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px;
+        background: #1e2328; border-top: 1px solid #2e353d;
+      }
+      .mc-session-total-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.14em;
+        text-transform: uppercase; color: #4a5058;
+      }
+      .mc-session-total-val {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 24px; color: #e8952a;
+      }
 
-    /* ── DISTANCE DISPLAY ── */
-    .distance-display {
-      background: var(--input-bg);
-      border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
-      padding: 0 18px 0 0;
-      display: flex; align-items: center;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-      overflow: hidden; transition: border-color 0.2s;
-    }
-    .distance-display:focus-within { border-color: var(--amber); box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2); }
-    .dist-input {
-      flex: 1; background: transparent; border: none; outline: none;
-      padding: 12px 18px;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 36px; color: var(--white);
-      letter-spacing: 0.02em; line-height: 1; width: 100%;
-      -moz-appearance: textfield;
-    }
-    .dist-input::-webkit-outer-spin-button, .dist-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .dist-input::placeholder { color: var(--rivet); }
-    .dist-status {
-      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
-      letter-spacing: 0.14em; text-transform: uppercase;
-      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-    }
-    .dist-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-    .dist-dot.live { background: var(--amber); box-shadow: 0 0 6px rgba(232,149,42,0.6); animation: mc-pulse 2s ease-in-out infinite; }
-    @keyframes mc-pulse { 0%,100%{box-shadow:0 0 6px rgba(232,149,42,0.6)}50%{box-shadow:0 0 12px rgba(232,149,42,1)} }
+      /* ── ACTION FOOTER ── */
+      .mc-footer {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(14,15,17,0.97);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid #2e353d;
+        box-shadow: 0 -1px 0 rgba(232,149,42,0.1), 0 -8px 32px rgba(0,0,0,0.5);
+        padding: 14px 40px; z-index: 100;
+      }
+      .mc-footer-inner {
+        max-width: 1200px; margin: 0 auto;
+        display: flex; align-items: center;
+        justify-content: space-between; gap: 16px;
+      }
+      .mc-footer-info { display: flex; flex-direction: column; gap: 2px; }
+      .mc-footer-main {
+        font-family: 'DM Mono', monospace; font-size: 11px;
+        color: #e8952a; letter-spacing: 0.1em;
+      }
+      .mc-footer-sub { font-size: 11px; color: #4a5058; }
+      .mc-footer-btns { display: flex; gap: 10px; }
+      .mc-btn {
+        font-family: 'DM Mono', monospace; font-size: 11px;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        padding: 12px 28px; border: none; cursor: pointer;
+        transition: all 0.2s; display: flex; align-items: center;
+        gap: 8px; white-space: nowrap;
+      }
+      .mc-btn-ghost {
+        background: transparent; border: 1px solid #2e353d; color: #4a5058;
+      }
+      .mc-btn-ghost:hover { border-color: #3d464f; color: #b8bdc2; }
+      .mc-btn-primary {
+        background: #e8952a; color: #000; font-weight: 600;
+        border: 1px solid #e8952a;
+        box-shadow: 0 0 20px rgba(232,149,42,0.25);
+      }
+      .mc-btn-primary:hover {
+        background: #f0a030;
+        box-shadow: 0 0 28px rgba(232,149,42,0.4);
+        transform: translateY(-1px);
+      }
 
-    /* ── BILLING PREVIEW ── */
-    .billing-preview {
-      background: var(--steel-mid);
-      border: 1px solid var(--rivet); border-left: 2px solid var(--amber-line);
-      padding: 16px 18px;
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 12px;
-    }
-    .billing-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-    .billing-amount { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--amber); letter-spacing: 0.03em; line-height: 1; }
-    .billing-formula { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); letter-spacing: 0.04em; margin-top: 4px; }
-    .billing-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
-    .copy-math-btn {
-      background: transparent; border: 1px solid var(--rivet);
-      color: var(--muted); font-family: 'DM Mono', monospace;
-      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 8px 14px; cursor: pointer; transition: all 0.2s;
-      white-space: nowrap; flex-shrink: 0; align-self: center;
-    }
-    .copy-math-btn:hover { border-color: var(--rivet-hi); color: var(--amber); }
+      /* ── LOGGING TOGGLES ── */
+      .mc-toggle-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 0; border-bottom: 1px solid #2e353d;
+      }
+      .mc-toggle-row:last-of-type { border-bottom: none; }
+      .mc-toggle-label {
+        font-size: 13px; color: #b8bdc2; margin-bottom: 2px;
+      }
+      .mc-toggle-sub {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; color: #4a5058;
+      }
+      .mc-toggle-wrap {
+        position: relative; width: 40px; height: 22px;
+        flex-shrink: 0; margin-left: 16px;
+      }
+      .mc-toggle-wrap input {
+        opacity: 0; width: 0; height: 0; position: absolute;
+      }
+      .mc-toggle-track {
+        position: absolute; inset: 0;
+        background: #2e353d; border: 1px solid #3d464f;
+        cursor: pointer; transition: background 0.2s;
+      }
+      .mc-toggle-thumb {
+        position: absolute; left: 3px; top: 3px;
+        width: 14px; height: 14px;
+        background: #4a5058; transition: all 0.2s; pointer-events: none;
+      }
 
-    /* ── RIGHT COL ── */
-    .right-col { display: flex; flex-direction: column; gap: 3px; position: sticky; top: 72px; }
-    .log-items { display: flex; flex-direction: column; max-height: 280px; overflow-y: auto; }
-    .log-items::-webkit-scrollbar { width: 4px; }
-    .log-items::-webkit-scrollbar-track { background: var(--rivet); }
-    .log-items::-webkit-scrollbar-thumb { background: var(--rivet-hi); }
-    .session-total { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--steel-mid); border-top: 1px solid var(--rivet); }
-    .session-total-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
-    .session-total-val { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--amber); }
+      /* ── BILLING FORMULA ── */
+      .mc-billing-formula {
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; color: #8f9399; letter-spacing: 0.04em;
+        margin-top: 4px;
+      }
+      .mc-billing-note {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; color: #4a5058; margin-top: 2px;
+      }
+      .mc-copy-math {
+        background: transparent; border: 1px solid #2e353d;
+        color: #4a5058; font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+        padding: 8px 14px; cursor: pointer; transition: all 0.2s;
+        white-space: nowrap; flex-shrink: 0; align-self: center;
+      }
+      .mc-copy-math:hover { border-color: #3d464f; color: #e8952a; }
+    </style>
 
-    /* ── BILLING SUMMARY ROWS ── */
-    .sum-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-    .sum-row:last-child { border-bottom: none; }
-    .sum-key { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-    .sum-val { font-size: 13px; color: var(--text-hi); }
-    .sum-val.amber { color: var(--amber); font-family: 'DM Mono', monospace; }
+    <!-- Universal System - Base styling -->
+    <link rel="stylesheet" href="styles/universal-system.css" />
 
-    /* ── ACTION FOOTER ── */
-    .action-footer {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(14,15,17,0.97); backdrop-filter: blur(12px);
-      border-top: 1px solid var(--rivet);
-      box-shadow: 0 -1px 0 rgba(232,149,42,0.1), 0 -8px 32px rgba(0,0,0,0.5);
-      padding: 14px 40px; z-index: 100;
-    }
-    .action-footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .footer-info { display: flex; flex-direction: column; gap: 2px; }
-    .footer-main { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--amber); letter-spacing: 0.1em; }
-    .footer-sub { font-size: 11px; color: var(--muted); }
-    .action-btns { display: flex; gap: 10px; }
-    .btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 28px; border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-    .btn-ghost { background: transparent; border: 1px solid var(--rivet); color: var(--muted); }
-    .btn-ghost:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
-    .btn-steel { background: var(--steel-lift); border: 1px solid var(--rivet-hi); color: var(--text-hi); }
-    .btn-steel:hover { border-color: var(--amber-line); color: var(--white); }
-    .btn-primary { background: var(--amber); color: #000; font-weight: 600; border: 1px solid var(--amber); box-shadow: 0 0 20px rgba(232,149,42,0.25); }
-    .btn-primary:hover { background: #f0a030; box-shadow: 0 0 28px rgba(232,149,42,0.4); transform: translateY(-1px); }
+    <!-- Industrial Plate System - Shared visual language -->
+    <link rel="stylesheet" href="styles/industrial-plates.css" />
 
-    /* ── TOGGLE ── */
-    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .toggle-track { position: absolute; inset: 0; background: var(--rivet); border: 1px solid var(--rivet-hi); cursor: pointer; transition: all 0.2s; }
-    .toggle-thumb { position: absolute; left: 3px; top: 3px; width: 14px; height: 14px; background: var(--muted); transition: all 0.2s; pointer-events: none; }
-    .toggle input:checked + .toggle-track { background: var(--amber-dim); border-color: var(--amber-line); }
-    .toggle input:checked ~ .toggle-thumb { background: var(--amber); left: 21px; box-shadow: 0 0 6px rgba(232,149,42,0.5); }
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--rivet); }
-    .toggle-row:last-of-type { border-bottom: none; padding-bottom: 0; }
-    .toggle-label { font-size: 13px; color: var(--text-hi); margin-bottom: 2px; }
-    .toggle-sub { font-size: 11px; color: var(--muted); }
+    <!-- Page Layout - Mileage Cipher specific -->
+    <link rel="stylesheet" href="styles/mileage-cypher-layout.css" />
 
-    /* ── SESSION INDICATOR ── */
-    .session-indicator {
-      position: fixed; right: 18px; top: 72px;
-      padding: 8px 14px; border: 1px solid var(--rivet);
-      background: rgba(22,26,29,0.95); color: var(--amber);
-      font-family: 'DM Mono', monospace; font-size: 10px;
-      letter-spacing: 0.12em; text-transform: uppercase; z-index: 9999;
-    }
-    .session-indicator.hidden { display: none; }
-
-    /* ── MODAL BASE ── */
-    .modal {
-      display: none; position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,0.8);
-      align-items: center; justify-content: center; padding: 12px;
-    }
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,0.8);
-      align-items: center; justify-content: center; padding: 12px;
-    }
-
-    /* ── LOADING SPINNER ── */
-    .loading-spinner {
-      display: inline-block; width: 12px; height: 12px;
-      border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
-      border-radius: 50%; animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── TOAST ── */
-    .toast-container { position: fixed; top: 72px; right: 18px; z-index: 9998; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-
-    @media (max-width: 900px) {
-      .main { grid-template-columns: 1fr; padding: 16px 16px 100px; }
-      .right-col { position: static; }
-      .nav { padding: 0 16px; }
-      .nav-tabs { display: none; }
-      .page-header { padding: 20px 16px; }
-      .action-footer { padding: 12px 16px; }
-    }
-  </style>
-</head>
-<body style="visibility: hidden;">
-
-  <!-- NAV -->
-  <nav class="nav">
-    <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
-    <div class="nav-tabs">
-      <a class="nav-tab" href="command-center.html">Dashboard</a>
-      <a class="nav-tab" href="route-cypher.html">Routes</a>
-      <a class="nav-tab active" href="mileage-cypher.html">Mileage</a>
-      <a class="nav-tab" href="my-routes.html">My Routes</a>
-      <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
-    </div>
-    <div class="nav-right">
-      <div class="nav-user"><strong id="userName">Professional User</strong>Claims Specialist</div>
-      <button class="nav-logout" onclick="handleLogout()">Logout</button>
-    </div>
-  </nav>
-
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div class="page-header-inner">
-      <div>
-        <div class="page-label">Mileage Cipher</div>
-        <div class="page-title">Calculate Mileage</div>
-        <div class="page-sub">Billable mileage for insurance claims — audit-ready, defensible logging</div>
+    <!-- Professional Calculator Interface -->
+    <link rel="stylesheet" href="styles/professional-calculator.css" />
+  </head>
+  <body class="mileage-page" style="visibility: hidden;">
+    <header class="cipher-header">
+      <div class="header-content">
+        <div class="app-brand">
+          <img src="../branding/logo/claimcipher-mark.png" alt="Claim Cipher" class="nav-logo" />
+        </div>
+        <div class="nav-links">
+          <a href="command-center.html">Dashboard</a>
+          <a href="route-cypher.html">Routes</a>
+          <a href="mileage-cypher.html" class="active">Mileage</a>
+          <a href="my-routes.html">My Routes</a>
+          <!-- DISTRO: Hidden features - do not delete -->
+          <!-- <a href="jobs-studio.html">Jobs</a> -->
+          <!-- <a href="total-loss-forms.html">Forms</a> -->
+          <!-- <a href="firms-directory.html">Firms</a> -->
+          <!-- <a href="settings-booth.html">Settings</a> -->
+          <!-- <a href="functionality-test.html">Tests</a> -->
+        </div>
+        <div class="user-section">
+          <div class="user-info">
+            <div class="user-name" id="userName">Professional User</div>
+            <div class="user-role">Claims Specialist</div>
+          </div>
+          <button
+            class="cipher-btn logout-btn"
+            onclick="handleLogout()"
+          >
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            Logout
+          </button>
+        </div>
       </div>
-      <div class="header-badge">
-        <div class="hbadge">Session Miles <span id="sessionMilesHeader">0.0</span></div>
-        <div class="hbadge">Entries <span id="sessionEntriesHeader">0</span></div>
-        <div class="hbadge">Billed <span id="sessionBilledHeader">$0.00</span></div>
+    </header>
+
+    <!-- PAGE HEADER -->
+    <div class="mc-page-header">
+      <div class="mc-page-header-inner">
+        <div>
+          <div class="page-label">Mileage Cipher</div>
+          <div class="page-title">Calculate Mileage</div>
+          <div class="page-sub">Billable mileage for insurance claims</div>
+        </div>
+        <div class="header-badge">
+          <div class="hbadge">Session Miles <span id="sessionMilesHeader">0.0</span></div>
+          <div class="hbadge">Entries <span id="sessionEntriesHeader">0</span></div>
+          <div class="hbadge">Billed <span id="sessionBilledHeader">$0.00</span></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="sessionIndicator" class="session-indicator hidden">Session in progress...</div>
+    <main class="mileage-cipher-main main-content">
 
-  <!-- MAIN GRID -->
-  <div class="main">
+      <!-- MAIN GRID -->
+      <div class="mc-main">
 
-    <!-- LEFT COL -->
-    <div class="calculator-form left-col">
+        <!-- LEFT COL -->
+        <div class="calculator-form" style="display:flex;flex-direction:column;gap:3px;">
 
-      <!-- Firm Selection -->
-      <div class="card accent">
-        <div class="card-header">
-          <div class="card-title">Insurance Firm</div>
-          <div class="card-line"></div>
-          <div class="card-meta">Rate auto-applied</div>
-        </div>
-        <div class="card-body">
-          <div class="firm-row">
-            <div class="field">
-              <div class="field-label">Select Your Firm</div>
-              <select id="firmSelect" class="field-input" required>
-                <option value="">Choose insurance firm...</option>
-              </select>
+          <!-- Firm Selection -->
+          <div class="mc-card accent">
+            <div class="mc-card-header">
+              <div class="mc-card-title">Insurance Firm</div>
+              <div class="mc-card-line"></div>
+              <div class="mc-card-meta">Rate auto-applied</div>
             </div>
-            <button id="manageFirmsBtn" class="manage-btn">Manage Firms</button>
-          </div>
-        </div>
-        <div class="firm-rate-strip">
-          <div class="rate-cell">
-            <div class="rate-label">Rate per Mile</div>
-            <div class="rate-val amber" id="rateDisplay">—</div>
-          </div>
-          <div class="rate-cell">
-            <div class="rate-label">Free Miles</div>
-            <div class="rate-val" id="freeDisplay">—</div>
-          </div>
-          <div class="rate-cell">
-            <div class="rate-label">This Session</div>
-            <div class="rate-val amber" id="sessionBilled">$0.00</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Route Information -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Route Information</div>
-          <div class="card-line"></div>
-        </div>
-        <div class="card-body">
-          <div class="route-grid">
-            <div class="field">
-              <div class="field-label">Starting Location</div>
-              <input type="text" id="pointA" class="field-input" placeholder="Enter your starting address...">
+            <div class="mc-card-body">
+              <div class="mc-firm-row">
+                <div class="mc-field">
+                  <div class="mc-field-label">Select Your Firm</div>
+                  <select id="firmSelect" class="mc-field-input" required>
+                    <option value="">Choose insurance firm...</option>
+                  </select>
+                </div>
+                <button id="manageFirmsBtn" class="mc-manage-btn">Manage Firms</button>
+              </div>
             </div>
-            <div class="route-arrow">→</div>
-            <div class="field">
-              <div class="field-label">Destination</div>
-              <input type="text" id="pointB" class="field-input" placeholder="Enter destination address...">
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
-            <div class="field-hint">Home base saved for future use</div>
-            <div class="field-hint">Distance calculated automatically</div>
-          </div>
-
-          <!-- Distance Display -->
-          <div style="margin-top:20px;">
-            <div class="field-label" style="margin-bottom:8px;">Distance (Miles)</div>
-            <div class="distance-display">
-              <input type="number" id="distanceMiles" class="dist-input" placeholder="0.0" step="0.1" min="0">
-              <div class="dist-status">
-                <div class="dist-dot" id="distDot"></div>
-                <span id="distanceStatus">Auto-calculating...</span>
+            <div class="mc-rate-strip">
+              <div class="mc-rate-cell">
+                <div class="mc-rate-label">Rate per Mile</div>
+                <div class="mc-rate-val amber" id="rateDisplay">—</div>
+              </div>
+              <div class="mc-rate-cell">
+                <div class="mc-rate-label">Free Miles</div>
+                <div class="mc-rate-val" id="freeDisplay">—</div>
+              </div>
+              <div class="mc-rate-cell">
+                <div class="mc-rate-label">This Session</div>
+                <div class="mc-rate-val amber" id="sessionBilled">$0.00</div>
               </div>
             </div>
           </div>
 
-          <!-- Billing Preview -->
-          <div class="billing-preview">
-            <div>
-              <div class="billing-label">Billable Amount</div>
-              <div class="billing-amount" id="billingAmount">$0.00</div>
-              <div class="billing-formula" id="billingFormula">—</div>
-              <div class="billing-note" id="freeMilesNote"></div>
+          <!-- Route Information -->
+          <div class="mc-card">
+            <div class="mc-card-header">
+              <div class="mc-card-title">Route Information</div>
+              <div class="mc-card-line"></div>
             </div>
-            <button id="copyMathBtn" class="copy-math-btn" onclick="copyBillingMath()">Copy Math</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Logging Options -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Logging Options</div>
-          <div class="card-line"></div>
-        </div>
-        <div class="card-body">
-
-          <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Round Trip</div>
-              <div class="toggle-sub">Double distance for billing</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="roundTrip">
-              <div class="toggle-track"></div>
-              <div class="toggle-thumb" id="rtMainThumb"></div>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Auto-Calculate</div>
-              <div class="toggle-sub">Calculate as you type</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="autoCalculateToggle" checked>
-              <div class="toggle-track"></div>
-              <div class="toggle-thumb" id="acToggleThumb"></div>
-            </label>
-          </div>
-
-          <div class="field" style="margin-top:14px;">
-            <div class="field-label">Note (optional)</div>
-            <input type="text" id="noteField" class="field-input" placeholder="Inspection, deposition, court date...">
-          </div>
-
-        </div>
-      </div>
-
-    </div><!-- /left-col -->
-
-    <!-- RIGHT COL -->
-    <div class="right-col">
-
-      <!-- Session Log -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Session Log</div>
-          <div class="card-line"></div>
-          <div class="card-meta" id="logCount">0 entries</div>
-        </div>
-        <div class="log-items" id="sessionLogList">
-          <div style="padding:24px 20px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">
-            No entries yet
-          </div>
-        </div>
-        <div class="session-total">
-          <div class="session-total-label">Session Total</div>
-          <div class="session-total-val" id="sessionTotal">0.0 mi</div>
-        </div>
-      </div>
-
-      <!-- Billing Summary -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Billing Summary</div>
-          <div class="card-line"></div>
-        </div>
-        <div>
-          <div class="sum-row">
-            <div class="sum-key">Firm</div>
-            <div class="sum-val" id="sumFirm">—</div>
-          </div>
-          <div class="sum-row">
-            <div class="sum-key">Rate</div>
-            <div class="sum-val amber" id="sumRate">—</div>
-          </div>
-          <div class="sum-row">
-            <div class="sum-key">Free Miles</div>
-            <div class="sum-val" id="sumFree">—</div>
-          </div>
-          <div class="sum-row">
-            <div class="sum-key">Miles This Entry</div>
-            <div class="sum-val amber" id="sumEntryMi">0.0 mi</div>
-          </div>
-          <div class="sum-row">
-            <div class="sum-key">Session Miles</div>
-            <div class="sum-val" id="sumSessionMi">0.0 mi</div>
-          </div>
-          <div class="sum-row">
-            <div class="sum-key">Billed This Session</div>
-            <div class="sum-val amber" id="sumBilled">$0.00</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Export -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Export</div>
-          <div class="card-line"></div>
-        </div>
-        <div style="padding:16px;display:flex;gap:8px;">
-          <button class="btn btn-ghost" style="flex:1;" onclick="exportSessionCSV()">Export CSV</button>
-          <button class="btn btn-ghost" style="flex:1;" onclick="exportSessionPDF()">Export PDF</button>
-        </div>
-      </div>
-
-    </div><!-- /right-col -->
-
-  </div><!-- /main -->
-
-  <!-- Billing Results Modal -->
-  <div id="billingModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;padding:12px;">
-    <div class="billing-modal" style="background:var(--steel);border:1px solid var(--rivet);border-top:2px solid var(--amber);min-width:400px;max-width:520px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.7);">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--steel-mid);border-bottom:1px solid var(--rivet);">
-        <div>
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--amber);margin-bottom:3px;">Mileage Cipher</div>
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.06em;color:var(--white);">Billing Summary</div>
-        </div>
-        <button onclick="window.mileageCipher.closeBillingModal()" style="background:transparent;border:1px solid var(--rivet);color:var(--muted);width:32px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:14px;transition:all 0.2s;"
-          onmouseover="this.style.borderColor='rgba(192,57,43,0.4)';this.style.color='#e05555'"
-          onmouseout="this.style.borderColor='var(--rivet)';this.style.color='var(--muted)'">✕</button>
-      </div>
-      <div id="breakdownDisplay" class="billing-breakdown" style="padding:20px;color:var(--text-hi);font-size:13px;"></div>
-      <div id="billingTotal" style="padding:0 20px 4px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--amber);"></div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--rivet);background:var(--steel-mid);">
-        <button id="copyBtn" class="btn btn-steel">
-          <span class="btn-text">Copy for Billing</span>
-          <span class="btn-success" style="display:none;">Copied</span>
-        </button>
-        <button id="newCalculation" class="btn btn-primary">New Calculation</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Firms Management Modal -->
-  <div id="firmsModal" class="modal" style="display:none;">
-    <div style="background:#161a1d;border:1px solid #2e353d;border-top:2px solid #e8952a;min-width:480px;max-width:560px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.7);position:relative;">
-
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#1e2328;border-bottom:1px solid #2e353d;">
-        <div>
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:#e8952a;margin-bottom:3px;">Mileage Cipher</div>
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.06em;color:#edeae4;">Manage Firms</div>
-        </div>
-        <button onclick="closeFirmsModal()" style="background:transparent;border:1px solid #2e353d;color:#4a5058;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:14px;transition:all 0.2s;"
-          onmouseover="this.style.borderColor='rgba(192,57,43,0.4)';this.style.color='#e05555'"
-          onmouseout="this.style.borderColor='#2e353d';this.style.color='#4a5058'">✕</button>
-      </div>
-
-      <div class="firms-list" style="background:#161a1d;border-bottom:1px solid #2e353d;">
-        <div style="padding:12px 20px;background:#1e2328;border-bottom:1px solid #2e353d;display:flex;align-items:center;gap:10px;">
-          <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#e8952a;">Current Firms</span>
-          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(232,149,42,0.35),transparent);"></div>
-        </div>
-        <div id="firmsList"></div>
-      </div>
-
-      <div class="add-firm-section">
-        <div style="padding:12px 20px;background:#1e2328;border-bottom:1px solid #2e353d;border-top:1px solid #2e353d;display:flex;align-items:center;gap:10px;">
-          <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#e8952a;">Add New Firm</span>
-          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(232,149,42,0.35),transparent);"></div>
-        </div>
-        <form id="addFirmForm">
-          <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-
-            <input type="text" id="firmName" placeholder="Firm Name" required
-              style="grid-column:span 2;background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;"
-              onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
-              onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'">
-
-            <input type="number" id="firmFreeMiles" placeholder="Free Miles" min="0" step="1" required
-              style="background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;"
-              onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
-              onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'">
-
-            <input type="number" id="firmRate" placeholder="Rate per Mile ($)" min="0" step="0.01" required
-              style="background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;"
-              onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
-              onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'">
-
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;align-self:center;">
-              <div>
-                <div style="font-size:13px;color:#b8bdc2;">Round Trip Default</div>
-                <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a5058;margin-top:2px;">Double miles by default</div>
+            <div class="mc-card-body">
+              <div class="mc-route-grid">
+                <div class="mc-field">
+                  <div class="mc-field-label">Starting Location</div>
+                  <input type="text" id="pointA" class="mc-field-input" placeholder="Enter your starting address...">
+                </div>
+                <div class="mc-route-arrow">→</div>
+                <div class="mc-field">
+                  <div class="mc-field-label">Destination</div>
+                  <input type="text" id="pointB" class="mc-field-input" placeholder="Enter destination address...">
+                </div>
               </div>
-              <label style="position:relative;width:40px;height:22px;flex-shrink:0;margin-left:12px;display:block;">
-                <input type="checkbox" id="firmRoundTripDefault" style="opacity:0;width:0;height:0;position:absolute;">
-                <div style="position:absolute;inset:0;background:#2e353d;border:1px solid #3d464f;cursor:pointer;transition:all 0.2s;"></div>
-                <div id="rtToggleThumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;background:#4a5058;transition:all 0.2s;pointer-events:none;"></div>
-              </label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+                <div class="mc-field-hint">Home base saved for future use</div>
+                <div class="mc-field-hint">Distance calculated automatically</div>
+              </div>
+              <!-- Distance Display -->
+              <div style="margin-top:20px;">
+                <div class="mc-field-label" style="margin-bottom:8px;">Distance (Miles)</div>
+                <div class="mc-distance-display">
+                  <input type="number" id="distanceMiles" class="mc-dist-input" placeholder="0.0" step="0.1" min="0">
+                  <div class="mc-dist-status">
+                    <div class="mc-dist-dot" id="distDot"></div>
+                    <span id="distanceStatus">Auto-calculating...</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Billing Preview -->
+              <div class="mc-billing-preview">
+                <div>
+                  <div class="mc-billing-label">Billable Amount</div>
+                  <div class="mc-billing-amount" id="billingAmount">$0.00</div>
+                  <div class="mc-billing-formula" id="billingFormula">—</div>
+                  <div class="mc-billing-note" id="freeMilesNote"></div>
+                </div>
+                <button id="copyMathBtn" class="mc-copy-math" onclick="copyBillingMath()">Copy Math</button>
+              </div>
             </div>
-
           </div>
 
-          <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid #2e353d;background:#1e2328;">
-            <button type="button" onclick="closeFirmsModal()"
-              style="background:transparent;border:1px solid #2e353d;color:#4a5058;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all 0.2s;"
-              onmouseover="this.style.borderColor='#3d464f';this.style.color='#b8bdc2'"
-              onmouseout="this.style.borderColor='#2e353d';this.style.color='#4a5058'">Cancel</button>
-            <button type="submit"
-              style="background:#e8952a;border:1px solid #e8952a;color:#000;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;padding:12px 32px;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(232,149,42,0.25);"
-              onmouseover="this.style.background='#f0a030';this.style.boxShadow='0 0 28px rgba(232,149,42,0.4)'"
-              onmouseout="this.style.background='#e8952a';this.style.boxShadow='0 0 20px rgba(232,149,42,0.25)'">Add Firm →</button>
+
+          <!-- Logging Options -->
+          <div class="mc-card">
+            <div class="mc-card-header">
+              <div class="mc-card-title">Logging Options</div>
+              <div class="mc-card-line"></div>
+            </div>
+            <div class="mc-card-body">
+              <!-- Round Trip -->
+              <div class="mc-toggle-row">
+                <div>
+                  <div class="mc-toggle-label">Round Trip</div>
+                  <div class="mc-toggle-sub">Double distance for billing</div>
+                </div>
+                <div class="mc-toggle-wrap">
+                  <input type="checkbox" id="roundTrip">
+                  <div class="mc-toggle-track"></div>
+                  <div class="mc-toggle-thumb" id="rtMainThumb"></div>
+                </div>
+              </div>
+              <!-- Auto-Calculate -->
+              <div class="mc-toggle-row">
+                <div>
+                  <div class="mc-toggle-label">Auto-Calculate</div>
+                  <div class="mc-toggle-sub">Calculate as you type</div>
+                </div>
+                <div class="mc-toggle-wrap">
+                  <input type="checkbox" id="autoCalculateToggle" checked>
+                  <div class="mc-toggle-track"></div>
+                  <div class="mc-toggle-thumb" id="acToggleThumb"></div>
+                </div>
+              </div>
+              <!-- Note field -->
+              <div class="mc-field" style="margin-top:14px;">
+                <div class="mc-field-label">Note (optional)</div>
+                <input type="text" id="noteField" class="mc-field-input" placeholder="Inspection, deposition, court date...">
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
 
-    </div>
-  </div>
+        </div><!-- /left-col -->
 
-  <!-- Import from Route Modal -->
-  <div id="routeImportModal" class="modal" style="display:none;">
-    <div style="background:var(--steel);border:1px solid var(--rivet);border-top:2px solid var(--amber);min-width:340px;max-width:460px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.7);">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--steel-mid);border-bottom:1px solid var(--rivet);">
-        <div>
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--amber);margin-bottom:3px;">Route Import</div>
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.06em;color:var(--white);">Import from Route</div>
+        <!-- RIGHT COL -->
+        <div class="mc-right-col">
+
+          <!-- Session Log -->
+          <div class="mc-card">
+            <div class="mc-card-header">
+              <div class="mc-card-title">Session Log</div>
+              <div class="mc-card-line"></div>
+              <div class="mc-card-meta" id="logCount">0 entries</div>
+            </div>
+            <div class="mc-log-items" id="sessionLogList">
+              <div style="padding:24px 20px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#4a5058;">
+                No entries yet
+              </div>
+            </div>
+            <div class="mc-session-total">
+              <div class="mc-session-total-label">Session Total</div>
+              <div class="mc-session-total-val" id="sessionTotal">0.0 mi</div>
+            </div>
+          </div>
+
+          <!-- Export -->
+          <div class="mc-card">
+            <div class="mc-card-header">
+              <div class="mc-card-title">Export</div>
+              <div class="mc-card-line"></div>
+            </div>
+            <div style="padding:16px;display:flex;gap:8px;">
+              <button class="mc-btn mc-btn-ghost" style="flex:1;" onclick="exportSessionCSV()">Export CSV</button>
+              <button class="mc-btn mc-btn-ghost" style="flex:1;" onclick="exportSessionPDF()">Export PDF</button>
+            </div>
+          </div>
+
+        </div><!-- /right-col -->
+
+      </div><!-- /mc-main -->
+
+      <!-- Billing Results Modal -->
+      <div id="billingModal" class="modal-overlay" style="display: none">
+        <div class="cipher-plate elevation-3 billing-modal">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
+
+          <h2 class="plate-engraved-title cipher-section-title">Billing Summary</h2>
+          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="window.mileageCipher.closeBillingModal()">
+            <div class="rivet tl"></div>
+            <div class="rivet tr"></div>
+            <div class="rivet bl"></div>
+            <div class="rivet br"></div>
+            ×
+          </button>
+
+          <div id="breakdownDisplay" class="billing-breakdown"></div>
+          <div id="billingTotal" class="cipher-plate elevation-2 total-row"></div>
+
+          <div class="modal-actions">
+            <button id="copyBtn" class="cipher-btn copy-btn">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              <span class="btn-text">Copy for Billing</span>
+              <span class="btn-success" style="display: none">Copied</span>
+            </button>
+
+            <button id="newCalculation" class="cipher-btn primary-action-btn secondary">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              New Calculation
+            </button>
+          </div>
         </div>
-        <button onclick="closeRouteImportModal()" style="background:transparent;border:1px solid var(--rivet);color:var(--muted);width:32px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:14px;transition:all 0.2s;"
-          onmouseover="this.style.borderColor='rgba(192,57,43,0.4)';this.style.color='#e05555'"
-          onmouseout="this.style.borderColor='var(--rivet)';this.style.color='var(--muted)'">✕</button>
       </div>
-      <div style="padding:20px;">
-        <p style="font-size:13px;color:var(--text-hi);margin-bottom:12px;">Route data detected! Would you like to import the distance?</p>
-        <div id="routeImportData" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:16px;"></div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <button id="importRouteBtn" class="btn btn-primary">Import</button>
-          <button onclick="closeRouteImportModal()" class="btn btn-ghost">Cancel</button>
+
+      <!-- Firms Management Modal -->
+      <div id="firmsModal" class="modal" style="display: none">
+        <div style="background:#161a1d;border:1px solid #2e353d;border-top:2px solid #e8952a;min-width:480px;max-width:560px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.7);position:relative;">
+
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#1e2328;border-bottom:1px solid #2e353d;">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:#e8952a;margin-bottom:3px;">Mileage Cipher</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.06em;color:#edeae4;">Manage Firms</div>
+            </div>
+            <button onclick="closeFirmsModal()" style="background:transparent;border:1px solid #2e353d;color:#4a5058;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:14px;transition:all 0.2s;"
+              onmouseover="this.style.borderColor='rgba(192,57,43,0.4)';this.style.color='#e05555'"
+              onmouseout="this.style.borderColor='#2e353d';this.style.color='#4a5058'">✕</button>
+          </div>
+
+          <!-- Current Firms -->
+          <div class="firms-list" style="background:#161a1d;border-bottom:1px solid #2e353d;">
+            <div style="padding:12px 20px;background:#1e2328;border-bottom:1px solid #2e353d;display:flex;align-items:center;gap:10px;">
+              <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#e8952a;">Current Firms</span>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(232,149,42,0.35),transparent);"></div>
+            </div>
+            <div id="firmsList"></div>
+          </div>
+
+          <!-- Add New Firm -->
+          <div class="add-firm-section">
+            <div style="padding:12px 20px;background:#1e2328;border-bottom:1px solid #2e353d;border-top:1px solid #2e353d;display:flex;align-items:center;gap:10px;">
+              <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#e8952a;">Add New Firm</span>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(232,149,42,0.35),transparent);"></div>
+            </div>
+            <form id="addFirmForm">
+              <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+
+                <input type="text" id="firmName" placeholder="Firm Name" required
+                  style="grid-column:span 2;background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;border-radius:0 !important;"
+                  onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
+                  onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'"
+                  placeholder="Firm Name">
+
+                <input type="number" id="firmFreeMiles" placeholder="Free Miles" min="0" step="1" required
+                  style="background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;border-radius:0 !important;"
+                  onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
+                  onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'"
+                  placeholder="Free Miles">
+
+                <input type="number" id="firmRate" placeholder="Rate per Mile ($)" min="0" step="0.01" required
+                  style="background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;border-radius:0 !important;"
+                  onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
+                  onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'"
+                  placeholder="Rate per Mile ($)">
+
+                <!-- Round Trip Toggle -->
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;align-self:center;">
+                  <div>
+                    <div style="font-size:13px;color:#b8bdc2;">Round Trip Default</div>
+                    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a5058;margin-top:2px;">Double miles by default</div>
+                  </div>
+                  <label style="position:relative;width:40px;height:22px;flex-shrink:0;margin-left:12px;display:block;">
+                    <input type="checkbox" id="firmRoundTripDefault" style="opacity:0;width:0;height:0;position:absolute;">
+                    <div style="position:absolute;inset:0;background:#2e353d;border:1px solid #3d464f;cursor:pointer;transition:all 0.2s;"></div>
+                    <div id="rtToggleThumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;background:#4a5058;transition:all 0.2s;pointer-events:none;"></div>
+                  </label>
+                </div>
+
+              </div>
+
+              <!-- Form Footer -->
+              <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid #2e353d;background:#1e2328;">
+                <button type="button" onclick="closeFirmsModal()"
+                  style="background:transparent;border:1px solid #2e353d;color:#4a5058;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all 0.2s;"
+                  onmouseover="this.style.borderColor='#3d464f';this.style.color='#b8bdc2'"
+                  onmouseout="this.style.borderColor='#2e353d';this.style.color='#4a5058'">Cancel</button>
+                <button type="submit"
+                  style="background:#e8952a;border:1px solid #e8952a;color:#000;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;padding:12px 32px;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(232,149,42,0.25);border-radius:0 !important;"
+                  onmouseover="this.style.background='#f0a030';this.style.boxShadow='0 0 28px rgba(232,149,42,0.4)'"
+                  onmouseout="this.style.background='#e8952a';this.style.boxShadow='0 0 20px rgba(232,149,42,0.25)'">Add Firm →</button>
+              </div>
+            </form>
+          </div>
+
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Toast notifications -->
-  <div id="toastContainer" class="toast-container"></div>
-  <div id="resultsSection" style="display:none;"></div>
-  <textarea id="copyText" style="display:none;"></textarea>
+      <script>
+      // ── Manage Firms modal toggle (firmRoundTripDefault) ──
+      (function(){
+        var cb = document.getElementById('firmRoundTripDefault');
+        var thumb = document.getElementById('rtToggleThumb');
+        if (cb && thumb) {
+          cb.addEventListener('change', function() {
+            thumb.style.left = cb.checked ? '21px' : '3px';
+            thumb.style.background = cb.checked ? '#e8952a' : '#4a5058';
+          });
+        }
+      })();
 
-  <script>
-  // ── Manage Firms modal toggle (firmRoundTripDefault) ──
-  (function(){
-    var cb = document.getElementById('firmRoundTripDefault');
-    var thumb = document.getElementById('rtToggleThumb');
-    if (cb && thumb) {
-      cb.addEventListener('change', function() {
-        thumb.style.left = cb.checked ? '21px' : '3px';
-        thumb.style.background = cb.checked ? '#e8952a' : '#4a5058';
+      // ── Logging Options toggles ──
+      function wireToggle(inputId, thumbId, onChange) {
+        var cb = document.getElementById(inputId);
+        var thumb = document.getElementById(thumbId);
+        if (!cb || !thumb) return;
+        function updateThumb() {
+          thumb.style.left = cb.checked ? '21px' : '3px';
+          thumb.style.background = cb.checked ? '#e8952a' : '#4a5058';
+        }
+        updateThumb();
+        cb.addEventListener('change', function() { updateThumb(); if (onChange) onChange(cb.checked); });
+      }
+
+      wireToggle('roundTrip', 'rtMainThumb', function(checked) {
+        // Notify calculator if available
+        if (window.mileageCipher && window.mileageCipher.performCalculation) {
+          window.mileageCipher.performCalculation(true);
+        }
       });
-    }
-  })();
 
-  // ── Logging Options toggles ──
-  function wireToggle(inputId, thumbId, onChange) {
-    var cb = document.getElementById(inputId);
-    var thumb = document.getElementById(thumbId);
-    if (!cb || !thumb) return;
-    function updateThumb() {
-      thumb.style.left = cb.checked ? '21px' : '3px';
-      thumb.style.background = cb.checked ? '#e8952a' : '#4a5058';
-    }
-    updateThumb();
-    cb.addEventListener('change', function() { updateThumb(); if (onChange) onChange(cb.checked); });
-  }
+      wireToggle('autoCalculateToggle', 'acToggleThumb', function(checked) {
+        if (window.mileageCipher) {
+          window.mileageCipher.settings.autoCalculateEnabled = checked;
+          window.mileageCipher.saveSettings();
+        }
+      });
+      </script>
 
-  wireToggle('roundTrip', 'rtMainThumb', function(checked) {
-    if (window.mileageCipher && window.mileageCipher.performCalculation) {
-      window.mileageCipher.performCalculation(true);
-    }
-  });
-
-  wireToggle('autoCalculateToggle', 'acToggleThumb', function(checked) {
-    if (window.mileageCipher) {
-      window.mileageCipher.settings.autoCalculateEnabled = checked;
-      window.mileageCipher.saveSettings();
-    }
-  });
-  </script>
-
-  <!-- ACTION FOOTER -->
-  <div class="action-footer">
-    <div class="action-footer-inner">
-      <div class="footer-info">
-        <div class="footer-main" id="footerStatus">Mileage Cipher — Ready</div>
-        <div class="footer-sub" id="footerSub">Enter addresses to calculate billable mileage</div>
+      <!-- Import from Route Modal -->
+      <div id="routeImportModal" class="modal" style="display: none">
+        <div class="cipher-plate elevation-3 modal-content">
+          <div class="rivet tl"></div>
+          <div class="rivet tr"></div>
+          <div class="rivet bl"></div>
+          <div class="rivet br"></div>
+          <div class="modal-header">
+            <h3 class="cipher-section-title">Import from Route</h3>
+            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeRouteImportModal()">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              ×
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="cipher-plate elevation-1 modal-inner-plate">
+              <div class="rivet tl"></div>
+              <div class="rivet tr"></div>
+              <div class="rivet bl"></div>
+              <div class="rivet br"></div>
+              <p>Route data detected! Would you like to import the distance?</p>
+              <div id="routeImportData"></div>
+              <div class="modal-actions">
+                <button id="importRouteBtn" class="cipher-btn import-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
+                  Import
+                </button>
+                <button onclick="closeRouteImportModal()" class="cipher-btn cancel-btn">
+                  <div class="rivet tl"></div>
+                  <div class="rivet tr"></div>
+                  <div class="rivet bl"></div>
+                  <div class="rivet br"></div>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="action-btns">
-        <button class="btn btn-ghost" onclick="window.mileageCipher && window.mileageCipher.startNewCalculation && window.mileageCipher.startNewCalculation()">⟳ Clear Entry</button>
-        <button id="calculateBtn" class="btn btn-primary">
-          <span class="btn-text">Calculate Mileage</span>
-          <span class="btn-loading" style="display:none;"><span class="loading-spinner"></span> Calculating...</span>
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Copy billing math — own isolated block so it survives any error elsewhere -->
-  <script>
-  window.copyBillingMath = function() {
-    var formula = document.getElementById('billingFormula');
-    var btn     = document.getElementById('copyMathBtn');
-    var copyText = formula ? formula.textContent.trim() : '';
-    if (!copyText || copyText === '\u2014') {
-      if (btn) { btn.textContent = 'No result yet'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1800); }
-      return;
-    }
-    function onSuccess() {
-      if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1800); }
-    }
-    function onFail() {
-      if (btn) { btn.textContent = 'Copy Math'; }
-      window.prompt('Copy this result:', copyText);
-    }
-    function execCommandFallback() {
-      try {
-        var ta = document.createElement('textarea');
-        ta.value = copyText;
-        ta.setAttribute('readonly', '');
-        ta.style.cssText = 'position:absolute;left:-9999px;top:0';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select(); ta.setSelectionRange(0, ta.value.length);
-        var ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        if (ok) { onSuccess(); } else { onFail(); }
-      } catch(e) { onFail(); }
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(copyText).then(onSuccess).catch(execCommandFallback);
-    } else {
-      execCommandFallback();
-    }
-  };
-  </script>
+      <!-- Toast notifications -->
+      <div id="toastContainer" class="toast-container"></div>
 
-  <!-- BILLING MATH PATCH + EXPORT STUBS + SESSION LOG -->
-  <script>
-  // ── Billing math display patch ──
-  (function patchCalculator() {
-    if (!window.mileageCipher) { setTimeout(patchCalculator, 150); return; }
+      <div id="resultsSection" style="display:none;"></div>
+      <textarea id="copyText" style="display:none;"></textarea>
+    </main>
 
-    // Patch onFirmChange → populate Billing Summary firm/rate/free
+    <!-- BILLING MATH PATCH + EXPORT STUBS + SESSION LOG -->
+    <script>
+    // ── Billing math display patch ──
+    // Runs after mileage-cypher-combined.js initializes the calculator
+    (function patchCalculator() {
+      if (!window.mileageCipher) { setTimeout(patchCalculator, 150); return; }
+
+      var orig = window.mileageCipher.displayCalculationResults.bind(window.mileageCipher);
+      window.mileageCipher.displayCalculationResults = function(result) {
+        orig(result);
+        var formula = document.getElementById('billingFormula');
+        var noteEl  = document.getElementById('freeMilesNote');
+        var amountEl = document.getElementById('billingAmount');
+        if (formula) {
+          formula.textContent = result.baseMiles + 'mi \u2212 ' + resul    // Patch onFirmChange → populate Billing Summary firm/rate/free
     var origFirmChange = window.mileageCipher.onFirmChange.bind(window.mileageCipher);
     window.mileageCipher.onFirmChange = function(firmId) {
       origFirmChange(firmId);
@@ -775,193 +822,215 @@
       }
     };
 
-    var orig = window.mileageCipher.displayCalculationResults.bind(window.mileageCipher);
-    window.mileageCipher.displayCalculationResults = function(result) {
-      orig(result);
-      var formula  = document.getElementById('billingFormula');
-      var noteEl   = document.getElementById('freeMilesNote');
-      var amountEl = document.getElementById('billingAmount');
-      if (formula) {
-        var fmiPart = result.freeMiles > 0
-          ? result.baseMiles + ' mi \u2212 ' + result.freeMiles + ' mi = ' + result.billableMiles + ' mi'
-          : result.baseMiles + ' mi';
-        formula.textContent = fmiPart + ' \u00d7 $' + result.ratePerMile + '/mi = $' + result.totalFee;
-      }
-      if (noteEl) {
-        noteEl.textContent = result.freeMiles > 0
-          ? result.freeMiles + ' free miles applied (' + result.firm.name + ')'
-          : '';
-      }
-      if (amountEl) {
-        amountEl.textContent = '$' + result.totalFee;
-      }
-      // Update right-col billing summary
-      var sumEntryMi  = document.getElementById('sumEntryMi');
-      var sumSessionMi = document.getElementById('sumSessionMi');
-      var sumBilled   = document.getElementById('sumBilled');
-      if (sumEntryMi) sumEntryMi.textContent = (result.baseMiles || 0) + ' mi';
-      updateSessionLogPanel();
-    };
+t.freeMiles + ' free = '
+            + result.billableMiles + ' \u00d7 $' + result.ratePerMile;
+        }
+        if (noteEl) {
+          noteEl.textContent = result.freeMiles > 0
+            ? result.freeMiles + ' free miles applied (' + result.firm.name + ')'
+            : '';
+        }
+        if (amountEl) {
+          amountEl.textContent = '$' + result.totalFee;
+        }
+        // Update session log panel
+        updateSessionLogPanel();
+      };
 
-    // Sync auto-calculate toggle with saved setting
-    var acCb = document.getElementById('autoCalculateToggle');
-    var acThumb = document.getElementById('acToggleThumb');
-    if (acCb && window.mileageCipher.settings) {
-      acCb.checked = window.mileageCipher.settings.autoCalculateEnabled !== false;
-      if (acThumb) {
-        acThumb.style.left = acCb.checked ? '21px' : '3px';
-        acThumb.style.background = acCb.checked ? '#e8952a' : '#4a5058';
+      // Sync auto-calculate toggle with saved setting
+      var acCb = document.getElementById('autoCalculateToggle');
+      var acThumb = document.getElementById('acToggleThumb');
+      if (acCb && window.mileageCipher.settings) {
+        acCb.checked = window.mileageCipher.settings.autoCalculateEnabled !== false;
+        if (acThumb) {
+          acThumb.style.left = acCb.checked ? '21px' : '3px';
+          acThumb.style.background = acCb.checked ? '#e8952a' : '#4a5058';
+        }
+      }
+    })();
+
+    // ── Copy billing math ──
+    function copyBillingMath() {
+      var formula = document.getElementById('billingFormula');
+      var btn = document.getElementById('copyMathBtn');
+      if (!formula || formula.textContent === '\u2014') return;
+      navigator.clipboard.writeText(formula.textContent).then(function() {
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600); }
+      }).catch(function() {
+        if (btn) { btn.textContent = 'Copy Math'; }
+      });
+    }
+
+    // ── Session log panel updater ──
+    function updateSessionLogPanel() {
+      if (!window.mileageCipher) return;
+      var history = window.mileageCipher.calculationHistory || [];
+      var logList = document.getElementById('sessionLogList');
+      var logCount = document.getElementById('logCount');
+      var sessionTotal = document.getElementById('sessionTotal');
+      var sessionMilesHeader = document.getElementById('sessionMilesHeader');
+      var sessionEntriesHeader = document.getElementById('sessionEntriesHeader');
+      var sessionBilledHeader = document.getElementById('sessionBilledHeader');
+
+      var totalMiles = 0, totalBilled = 0;
+      history.forEach(function(r) { totalMiles += r.baseMiles || 0; totalBilled += r.totalFee || 0; });
+
+      if (logCount) logCount.textContent = history.length + ' entr' + (history.length === 1 ? 'y' : 'ies');
+      if (sessionTotal) sessionTotal.textContent = totalMiles.toFixed(1) + ' mi';
+      if (sessionMilesHeader) sessionMilesHeader.textContent = totalMiles.toFixed(1);
+      if (sessionEntriesHeader) sessionEntriesHeader.textContent = history.length;
+      if (sessionBilledHeader) sessionBilledHeader.textContent = '$' + totalBilled.toFixed(2);
+
+      if (logList) {
+        if (history.length === 0) {
+          logList.innerHTML = '<div style="padding:24px 20px;text-align:center;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#4a5058;">No entries yet</div>';
+        } else {
+          logList.innerHTML = history.map(function(r, i) {
+            return '<div style="padding:12px 20px;border-bottom:1px solid #2e353d;display:flex;justify-content:space-between;align-items:center;">'
+              + '<div><div style="font-size:12px;color:#b8bdc2;">' + (r.route ? r.route.to : 'Route ' + (i+1)) + '</div>'
+              + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:#4a5058;margin-top:2px;">' + r.baseMiles + ' mi</div></div>'
+              + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:#e8952a;">$' + r.totalFee + '</div>'
+              + '</div>';
+          }).join('');
+        }
       }
     }
-  })();
 
-  // ── Session log panel updater ──
-  function updateSessionLogPanel() {
-    if (!window.mileageCipher) return;
-    var history = window.mileageCipher.calculationHistory || [];
-    var logList  = document.getElementById('sessionLogList');
-    var logCount = document.getElementById('logCount');
-    var sessionTotal = document.getElementById('sessionTotal');
-    var sessionBilledEl = document.getElementById('sessionBilled');
-    var sessionMilesHeader   = document.getElementById('sessionMilesHeader');
-    var sessionEntriesHeader = document.getElementById('sessionEntriesHeader');
-    var sessionBilledHeader  = document.getElementById('sessionBilledHeader');
-    var sumSessionMi = document.getElementById('sumSessionMi');
-    var sumBilled    = document.getElementById('sumBilled');
+    // ── Export CSV ──
+    function exportSessionCSV() {
+      if (!window.mileageCipher) return;
+      var history = window.mileageCipher.calculationHistory || [];
+      if (!history.length) { alert('No calculations to export.'); return; }
+      var rows = [['From','To','Distance (mi)','Free Miles','Billable Miles','Rate','Total ($)','Note']];
+      history.forEach(function(r) {
+        rows.push([
+          r.route ? r.route.from : '',
+          r.route ? r.route.to : '',
+          r.baseMiles, r.freeMiles, r.billableMiles,
+          r.ratePerMile, r.totalFee, r.note || ''
+        ]);
+      });
+      var csv = rows.map(function(r){ return r.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
+      var a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = 'mileage-session.csv';
+      a.click();
+    }
 
-    var totalMiles = 0, totalBilled = 0;
-    history.forEach(function(r) { totalMiles += r.baseMiles || 0; totalBilled += r.totalFee || 0; });
+    // ── Export PDF (print fallback) ──
+    function exportSessionPDF() {
+      if (!window.mileageCipher) return;
+      var history = window.mileageCipher.calculationHistory || [];
+      if (!history.length) { alert('No calculations to export.'); return; }
+      var html = '<html><head><title>Mileage Session</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f5f5f5}</style></head><body>'
+        + '<h2>Mileage Session Report</h2>'
+        + '<table><thead><tr><th>From</th><th>To</th><th>Distance</th><th>Free Mi</th><th>Billable</th><th>Rate</th><th>Total</th><th>Note</th></tr></thead><tbody>'
+        + history.map(function(r){ return '<tr><td>' + [r.route&&r.route.from||'',r.route&&r.route.to||'',r.baseMiles+' mi',r.freeMiles+' mi',r.billableMiles+' mi','$'+r.ratePerMile,'$'+r.totalFee,r.note||''].join('</td><td>') + '</td></tr>'; }).join('')
+        + '</tbody></table></body></html>';
+      var w = window.open('', '_blank');
+      w.document.write(html);
+      w.document.close();
+      w.print();
+    }
+    </script>
 
-    if (logCount) logCount.textContent = history.length + ' entr' + (history.length === 1 ? 'y' : 'ies');
-    if (sessionTotal) sessionTotal.textContent = totalMiles.toFixed(1) + ' mi';
-    if (sessionBilledEl) sessionBilledEl.textContent = '$' + totalBilled.toFixed(2);
-    if (sessionMilesHeader)   sessionMilesHeader.textContent   = totalMiles.toFixed(1);
-    if (sessionEntriesHeader) sessionEntriesHeader.textContent = history.length;
-    if (sessionBilledHeader)  sessionBilledHeader.textContent  = '$' + totalBilled.toFixed(2);
-    if (sumSessionMi) sumSessionMi.textContent = totalMiles.toFixed(1) + ' mi';
-    if (sumBilled)    sumBilled.textContent    = '$' + totalBilled.toFixed(2);
+    <!-- ACTION FOOTER -->
+    <div class="mc-footer">
+      <div class="mc-footer-inner">
+        <div class="mc-footer-info">
+          <div class="mc-footer-main" id="footerStatus">Mileage Cipher — Ready</div>
+          <div class="mc-footer-sub" id="footerSub">Enter addresses to calculate billable mileage</div>
+        </div>
+        <div class="mc-footer-btns">
+          <button class="mc-btn mc-btn-ghost" onclick="window.mileageCipher && window.mileageCipher.startNewCalculation && window.mileageCipher.startNewCalculation()">
+            ⟳ Clear Entry
+          </button>
+          <button id="calculateBtn" class="mc-btn mc-btn-primary">
+            <span class="btn-text">Calculate Mileage</span>
+            <span class="btn-loading" style="display:none;">
+              <span class="loading-spinner"></span> Calculating...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
 
-    if (logList) {
-      if (history.length === 0) {
-        logList.innerHTML = '<div style="padding:24px 20px;text-align:center;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">No entries yet</div>';
+    <!-- Load API configuration first -->
+    <script src="config/github-pages-env.js"></script>
+
+    <!-- Google Maps Configuration (must load BEFORE api-config-production.js) -->
+    <script src="scripts/google-config.js"></script>
+
+    <script src="config/api-config-production.js"></script>
+
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration and Auth -->
+    <script src="scripts/supabase-config.js"></script>
+    <script src="scripts/supabase-auth.js"></script>
+    <script src="scripts/billing-guard.js"></script>
+
+    <!-- Supabase Page Protection - MUST run before page renders -->
+    <script>
+    (async function() {
+      document.body.style.visibility = 'hidden';
+      const allowed = await window.SupabaseAuth.protectPage();
+      if (!allowed) return;
+
+      const access = await window.BillingGuard.checkAccess();
+      if (!window.BillingGuard.hasAccess(access.profile)) {
+        window.location.href = "billing-required.html";
+        return;
+      }
+
+      document.body.style.visibility = 'visible';
+    })();
+    </script>
+
+    <!-- Google Maps API Loader -->
+    <script>
+      // Load Google Maps API if key is configured
+      if (
+        window.GOOGLE_MAPS_CONFIG?.apiKey &&
+        window.GOOGLE_MAPS_CONFIG.apiKey !==
+          "YOUR_ACTUAL_GOOGLE_MAPS_API_KEY_HERE"
+      ) {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${
+          window.GOOGLE_MAPS_CONFIG.apiKey
+        }&libraries=${window.GOOGLE_MAPS_CONFIG.libraries.join(",")}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          console.log("Google Maps API loaded for Mileage Cypher");
+          // Initialize Places Autocomplete after API loads
+          if (window.mileageCipher) {
+            window.mileageCipher.initializeGooglePlacesAutocomplete();
+          }
+        };
+        script.onerror = () =>
+          console.error("Failed to load Google Maps API");
+        document.head.appendChild(script);
       } else {
-        logList.innerHTML = history.map(function(r, i) {
-          return '<div style="padding:12px 20px;border-bottom:1px solid var(--rivet);display:flex;justify-content:space-between;align-items:center;">'
-            + '<div><div style="font-size:12px;color:var(--text-hi);">' + (r.route ? r.route.to : 'Route ' + (i+1)) + '</div>'
-            + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:2px;">' + r.baseMiles + ' mi</div></div>'
-            + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:var(--amber);">$' + r.totalFee + '</div>'
-            + '</div>';
-        }).join('');
+        console.log(
+          "Google Maps API not configured - manual distance entry only"
+        );
       }
-    }
-  }
+    </script>
 
-  // ── Export CSV ──
-  function exportSessionCSV() {
-    if (!window.mileageCipher) return;
-    var history = window.mileageCipher.calculationHistory || [];
-    if (!history.length) { alert('No calculations to export.'); return; }
-    var rows = [['From','To','Distance (mi)','Free Miles','Billable Miles','Rate','Total ($)','Note']];
-    history.forEach(function(r) {
-      rows.push([
-        r.route ? r.route.from : '',
-        r.route ? r.route.to : '',
-        r.baseMiles, r.freeMiles, r.billableMiles,
-        r.ratePerMile, r.totalFee, r.note || ''
-      ]);
-    });
-    var csv = rows.map(function(r){ return r.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
-    var a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-    a.download = 'mileage-session.csv';
-    a.click();
-  }
+    <!-- Core Scripts -->
+    <script src="scripts/cipher-core.js"></script>
 
-  // ── Export PDF (print fallback) ──
-  function exportSessionPDF() {
-    if (!window.mileageCipher) return;
-    var history = window.mileageCipher.calculationHistory || [];
-    if (!history.length) { alert('No calculations to export.'); return; }
-    var html = '<html><head><title>Mileage Session</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f5f5f5}</style></head><body>'
-      + '<h2>Mileage Session Report</h2>'
-      + '<table><thead><tr><th>From</th><th>To</th><th>Distance</th><th>Free Mi</th><th>Billable</th><th>Rate</th><th>Total</th><th>Note</th></tr></thead><tbody>'
-      + history.map(function(r){ return '<tr><td>' + [r.route&&r.route.from||'',r.route&&r.route.to||'',r.baseMiles+' mi',r.freeMiles+' mi',r.billableMiles+' mi','$'+r.ratePerMile,'$'+r.totalFee,r.note||''].join('</td><td>') + '</td></tr>'; }).join('')
-      + '</tbody></table></body></html>';
-    var w = window.open('', '_blank');
-    w.document.write(html);
-    w.document.close();
-    w.print();
-  }
-  </script>
+    <!-- Shared Firm Storage & Session Manager -->
+    <script src="scripts/firm-store.js"></script>
+    <script src="scripts/session-manager.js"></script>
 
-  <!-- Load API configuration first -->
-  <script src="config/github-pages-env.js"></script>
+    <!-- Distance Cache - authoritative distance storage -->
+    <script src="scripts/distance-cache.js"></script>
 
-  <!-- Google Maps Configuration (must load BEFORE api-config-production.js) -->
-  <script src="scripts/google-config.js"></script>
-
-  <script src="config/api-config-production.js"></script>
-
-  <!-- Supabase JS v2 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Supabase Configuration and Auth -->
-  <script src="scripts/supabase-config.js"></script>
-  <script src="scripts/supabase-auth.js"></script>
-  <script src="scripts/billing-guard.js"></script>
-
-  <!-- Supabase Page Protection - MUST run before page renders -->
-  <script>
-  (async function() {
-    document.body.style.visibility = 'hidden';
-    const allowed = await window.SupabaseAuth.protectPage();
-    if (!allowed) return;
-
-    const access = await window.BillingGuard.checkAccess();
-    if (!window.BillingGuard.hasAccess(access.profile)) {
-      window.location.href = "billing-required.html";
-      return;
-    }
-
-    document.body.style.visibility = 'visible';
-  })();
-  </script>
-
-  <!-- Google Maps API Loader -->
-  <script>
-  if (
-    window.GOOGLE_MAPS_CONFIG?.apiKey &&
-    window.GOOGLE_MAPS_CONFIG.apiKey !== "YOUR_ACTUAL_GOOGLE_MAPS_API_KEY_HERE"
-  ) {
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${
-      window.GOOGLE_MAPS_CONFIG.apiKey
-    }&libraries=${window.GOOGLE_MAPS_CONFIG.libraries.join(",")}`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      if (window.mileageCipher) {
-        window.mileageCipher.initializeGooglePlacesAutocomplete();
-      }
-    };
-    script.onerror = () => console.error("Failed to load Google Maps API");
-    document.head.appendChild(script);
-  }
-  </script>
-
-  <!-- Core Scripts -->
-  <script src="scripts/cipher-core.js"></script>
-
-  <!-- Shared Firm Storage & Session Manager -->
-  <script src="scripts/firm-store.js"></script>
-  <script src="scripts/session-manager.js"></script>
-
-  <!-- Distance Cache - authoritative distance storage -->
-  <script src="scripts/distance-cache.js"></script>
-
-  <!-- Load combined mileage calculator -->
-  <script src="scripts/mileage-cypher-combined.js"></script>
-  <script src="scripts/claim-cipher-system-qa.js"></script>
-
-</body>
+    <!-- Load combined mileage calculator -->
+    <script src="scripts/mileage-cypher-combined.js"></script>
+    <script src="scripts/claim-cipher-system-qa.js"></script>
+  </body>
 </html>

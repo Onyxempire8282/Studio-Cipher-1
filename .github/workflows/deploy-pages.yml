@@ -32,16 +32,32 @@ jobs:
       run: |
         mkdir -p claim_cipher_app/config
         echo "// GitHub Pages API Configuration" > claim_cipher_app/config/github-pages-env.js
+
         if [ -n "${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}" ]; then
-          echo "Using GitHub Secret for API key"
           echo "window.GITHUB_PAGES_API_KEY = '${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}';" >> claim_cipher_app/config/github-pages-env.js
+          echo "window.ENV_GOOGLE_MAPS_KEY = '${{ secrets.GOOGLE_MAPS_API_KEY_RESTRICTED }}';" >> claim_cipher_app/config/github-pages-env.js
         else
-          echo "WARNING: GitHub Secret not found, using placeholder"
           echo "window.GITHUB_PAGES_API_KEY = null;" >> claim_cipher_app/config/github-pages-env.js
+          echo "window.ENV_GOOGLE_MAPS_KEY = null;" >> claim_cipher_app/config/github-pages-env.js
           echo "console.error('GitHub Secret GOOGLE_MAPS_API_KEY_RESTRICTED not configured');" >> claim_cipher_app/config/github-pages-env.js
         fi
-        echo "Generated environment file:"
-        cat claim_cipher_app/config/github-pages-env.js
+
+        if [ -n "${{ secrets.ENV_SUPABASE_URL }}" ]; then
+          echo "window.ENV_SUPABASE_URL = '${{ secrets.ENV_SUPABASE_URL }}';" >> claim_cipher_app/config/github-pages-env.js
+        else
+          echo "window.ENV_SUPABASE_URL = '';" >> claim_cipher_app/config/github-pages-env.js
+          echo "console.error('GitHub Secret ENV_SUPABASE_URL not configured');" >> claim_cipher_app/config/github-pages-env.js
+        fi
+
+        if [ -n "${{ secrets.ENV_SUPABASE_ANON_KEY }}" ]; then
+          echo "window.ENV_SUPABASE_ANON_KEY = '${{ secrets.ENV_SUPABASE_ANON_KEY }}';" >> claim_cipher_app/config/github-pages-env.js
+        else
+          echo "window.ENV_SUPABASE_ANON_KEY = '';" >> claim_cipher_app/config/github-pages-env.js
+          echo "console.error('GitHub Secret ENV_SUPABASE_ANON_KEY not configured');" >> claim_cipher_app/config/github-pages-env.js
+        fi
+
+        echo "Generated environment file (values redacted):"
+        grep "^window\." claim_cipher_app/config/github-pages-env.js | sed 's/= .*/= [REDACTED];/'
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

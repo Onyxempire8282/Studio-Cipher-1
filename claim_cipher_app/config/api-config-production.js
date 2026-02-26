@@ -3,38 +3,45 @@
  * This handles API keys securely for public deployment
  */
 
+// Seed the canonical localStorage key from a deploy-time env-var injection.
+// At deploy time, inject: window.ENV_GOOGLE_MAPS_KEY = "<key>" via a
+// server-rendered <script> snippet before this file loads.
+if (window.ENV_GOOGLE_MAPS_KEY && !localStorage.getItem("GOOGLE_MAPS_API_KEY")) {
+  localStorage.setItem("GOOGLE_MAPS_API_KEY", window.ENV_GOOGLE_MAPS_KEY);
+}
+
 // Multi-user API configuration
 window.MILEAGE_CYPHER_CONFIG = {
   // Multi-user API key strategy
   GOOGLE_MAPS_API_KEY: (() => {
-    // 0. Local development key from google-config.js (highest priority)
-    if (
-      window.GOOGLE_MAPS_CONFIG?.apiKey &&
-      window.GOOGLE_MAPS_CONFIG.apiKey !==
-        "YOUR_ACTUAL_GOOGLE_MAPS_API_KEY_HERE"
-    ) {
+    // 0. Canonical key — set via ENV injection or user localStorage
+    const canonicalKey = localStorage.getItem("GOOGLE_MAPS_API_KEY");
+    if (canonicalKey) return canonicalKey;
+
+    // 1. Legacy: key resolved inside google-config.js (load-order dependent)
+    if (window.GOOGLE_MAPS_CONFIG?.apiKey) {
       return window.GOOGLE_MAPS_CONFIG.apiKey;
     }
 
-    // 1. GitHub Pages with domain restrictions (recommended for public deployment)
+    // 2. GitHub Pages with domain restrictions (recommended for public deployment)
     if (window.location.hostname.includes("github.io")) {
       // This key should be domain-restricted to your GitHub Pages URL
       return window.GITHUB_PAGES_API_KEY || null;
     }
 
-    // 2. User-provided API key (let users bring their own)
+    // 3. Legacy user-provided key
     const userKey = localStorage.getItem("user_google_maps_api_key");
     if (userKey && userKey !== "YOUR_API_KEY_HERE") {
       return userKey;
     }
 
-    // 3. Demo mode key (highly restricted, for demo purposes only)
+    // 4. Demo mode key (highly restricted, for demo purposes only)
     const demoKey = sessionStorage.getItem("demo_api_key");
     if (demoKey) {
       return demoKey;
     }
 
-    // 4. No key available - prompt user
+    // 5. No key available - prompt user
     return null;
   })(),
 
