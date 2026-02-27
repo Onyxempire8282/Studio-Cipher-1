@@ -6,14 +6,21 @@
     <title>Subscription Activated - Claim Cipher</title>
     <link rel="stylesheet" href="styles/universal-system.css" />
     <link rel="stylesheet" href="styles/industrial-plates.css" />
+    <style>
+      .main-container { padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+      .stat-plate { padding: 32px; }
+      .cipher-hero-title { margin-bottom: 12px; }
+      #billing-message { margin-bottom: 16px; }
+      #billing-detail { margin-bottom: 24px; }
+    </style>
 </head>
 <body>
-    <main class="main-container" style="padding: 48px 24px; max-width: 720px; margin: 0 auto;">
-        <section class="stat-plate" style="padding: 32px;">
+    <main class="main-container">
+        <section class="stat-plate">
             <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-            <h1 class="cipher-hero-title" style="margin-bottom: 12px;">Subscription Activated</h1>
-            <p id="billing-message" class="cipher-body" style="margin-bottom: 16px;">Finalizing your subscription...</p>
-            <div id="billing-detail" class="cipher-body" style="margin-bottom: 24px;"></div>
+            <h1 class="cipher-hero-title">Subscription Activated</h1>
+            <p id="billing-message" class="cipher-body">Finalizing your subscription...</p>
+            <div id="billing-detail" class="cipher-body"></div>
             <button class="cipher-btn" onclick="window.location.href='command-center.html'">Return to Command Center</button>
         </section>
     </main>

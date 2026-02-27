@@ -340,6 +340,9 @@
         white-space: nowrap; flex-shrink: 0; align-self: center;
       }
       .mc-copy-math:hover { border-color: #3d464f; color: #e8952a; }
+      .nav-logo { display: flex; align-items: center; flex-shrink: 0; width: 48px; height: 48px; text-decoration: none; }
+      .nav-logo img { height: 48px; width: 48px; min-height: 48px; min-width: 48px; border-radius: 50%; object-fit: cover; object-position: center; display: block; border: 1px solid #2e353d; box-shadow: 0 0 0 3px rgba(232,149,42,0.08), 0 0 14px rgba(232,149,42,0.18); }
+      .calculator-form { display: flex; flex-direction: column; gap: 3px; }
     </style>
 
     <!-- Universal System - Base styling -->
@@ -352,7 +355,7 @@
   </head>
   <body class="mileage-page" style="visibility: hidden;">
     <nav class="nav">
-      <a href="command-center.html" class="nav-logo" style="display:flex;align-items:center;flex-shrink:0;width:48px;height:48px;text-decoration:none;"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" style="height:48px;width:48px;min-height:48px;min-width:48px;border-radius:50%;object-fit:cover;object-position:center;display:block;border:1px solid #2e353d;box-shadow:0 0 0 3px rgba(232,149,42,0.08),0 0 14px rgba(232,149,42,0.18);"></a>
+      <a href="command-center.html" class="nav-logo"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher"></a>
       <div class="nav-tabs">
         <a class="nav-tab" href="command-center.html">Dashboard</a>
         <a class="nav-tab active" href="mileage-cypher.html">Mileage</a>
@@ -391,7 +394,7 @@
       <div class="mc-main">
 
         <!-- LEFT COL -->
-        <div class="calculator-form" style="display:flex;flex-direction:column;gap:3px;">
+        <div class="calculator-form">
 
           <!-- Firm Selection -->
           <div class="mc-card accent">
