@@ -1,3 +1,5 @@
+// Global flag to track Google Maps initialization
+window._routeCipherMapInitialized = false;
 /**
  * Route Cipher - Claim Cipher
  * Full-featured route optimization with day splitting
@@ -4559,6 +4561,8 @@ async function initRouteCipher() {
           center: { lat: 40.7128, lng: -74.006 }, // Default to NYC
         }
       );
+      // Set global flag after map is created
+      window._routeCipherMapInitialized = true;
 
       routeCipher.directionsService = new google.maps.DirectionsService();
       routeCipher.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -4622,23 +4626,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("🔒 Add Destination button NOT found!");
   }
 
-  // Initialize fallback map container if needed
-  const mapContainer = document.getElementById("routeMap");
-  if (mapContainer && !mapContainer.innerHTML.trim()) {
-
+    // Initialize fallback map container ONLY if map not initialized
+    const mapContainer = document.getElementById("routeMap");
+    if (mapContainer && !window._routeCipherMapInitialized) {
     mapContainer.innerHTML = `
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(30, 30, 30, 0.95));
-                border-radius: var(--cipher-radius-lg);
-                color: var(--cipher-text-secondary);
-                font-size: 1rem;
-            ">
-                🗺️ Ready for route visualization
-            </div>
-        `;
-  }
+        <div style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(30, 30, 30, 0.95));
+          border-radius: var(--cipher-radius-lg);
+          color: var(--cipher-text-secondary);
+          font-size: 1rem;
+        ">
+          🗺️ Ready for route visualization
+        </div>
+      `;
+    }
 });

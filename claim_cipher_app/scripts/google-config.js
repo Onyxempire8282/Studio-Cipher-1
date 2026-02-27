@@ -3,11 +3,27 @@
  * SECURE API KEY INTEGRATION
  */
 
-// Security Agent: API Configuration (Production Ready)
+
+// --- Google Maps API Key Resolution ---
+const DEV_GOOGLE_MAPS_KEY = "AIzaSyByoixnma2_cQFwCR5Tqn3YGNy20qeStF4"; // <-- Set your dev key here
+
+function isLocalhost() {
+  return (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  );
+}
+
+function resolveGoogleMapsKey() {
+  const localKey = localStorage.getItem("GOOGLE_MAPS_API_KEY");
+  if (localKey) return localKey;
+  if (window.ENV_GOOGLE_MAPS_KEY) return window.ENV_GOOGLE_MAPS_KEY;
+  if (isLocalhost()) return DEV_GOOGLE_MAPS_KEY;
+  return null;
+}
+
 window.GOOGLE_MAPS_CONFIG = {
-  // Resolved at runtime: set localStorage key "GOOGLE_MAPS_API_KEY", or inject
-  // window.ENV_GOOGLE_MAPS_KEY at deploy time (e.g. via a server-rendered snippet).
-  apiKey: localStorage.getItem("GOOGLE_MAPS_API_KEY") || window.ENV_GOOGLE_MAPS_KEY || null,
+  apiKey: resolveGoogleMapsKey(),
   libraries: ["places", "geometry"],
   version: "weekly",
   services: {
