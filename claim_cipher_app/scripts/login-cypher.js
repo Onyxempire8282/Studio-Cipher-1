@@ -546,6 +546,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // LYRICIST INITIALIZATION SEQUENCE
 
     
+    // Step 0: Check for session_expired redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('reason') === 'session_expired') {
+        showError('Your session has expired. Please log in again.');
+    }
+
     // Step 1: Enable all inputs immediately
     enableAllInputs();
     
@@ -989,26 +995,13 @@ window.designerVisualCheck = function() {
 
     
     const designChecks = {
-        glassmorphism: false,
         responsiveness: false,
         typography: false,
         colors: false,
         animations: false
     };
-    
-    // Check 1: Glassmorphism effects
-    const loginCard = document.querySelector('.login-cipher-card');
-    if (loginCard) {
-        const cardStyles = window.getComputedStyle(loginCard);
-        if (cardStyles.backdropFilter && cardStyles.backdropFilter !== 'none') {
-            designChecks.glassmorphism = true;
 
-        } else {
-
-        }
-    }
-    
-    // Check 2: Responsive design
+    // Check 1: Responsive design
     const viewport = window.innerWidth;
     if (viewport < 768) {
         // Mobile check

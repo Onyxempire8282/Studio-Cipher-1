@@ -310,9 +310,8 @@
         const { session } = await getSession();
 
         if (!session) {
-
             cleanupOldAuthKeys();
-            window.location.href = 'login-cypher.html';
+            window.location.href = 'login-cypher.html?reason=session_expired';
             return false;
         }
 

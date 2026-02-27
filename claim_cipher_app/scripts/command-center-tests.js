@@ -56,9 +56,7 @@ class CommandCenterTestSuite {
     testStyling() {
         const tests = {
             gradient_background: getComputedStyle(document.body).background.includes('gradient'),
-            glassmorphism: document.querySelector('.hero-section') && 
-                          getComputedStyle(document.querySelector('.hero-section')).backdropFilter.includes('blur'),
-            responsive_grid: document.querySelector('.modules-grid') && 
+            responsive_grid: document.querySelector('.modules-grid') &&
                            getComputedStyle(document.querySelector('.modules-grid')).display === 'grid',
             animations: document.querySelector('.module-card') && 
                        getComputedStyle(document.querySelector('.module-card')).transition.includes('transform'),

@@ -888,7 +888,7 @@
 
   <!-- NAV -->
   <nav class="nav">
-    <a href="command-center.html" class="nav-logo"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher"></a>
+    <a href="command-center.html" class="nav-logo"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" width="48" height="48"></a>
     <div class="nav-tabs">
       <a class="nav-tab" href="command-center.html">Dashboard</a>
       <a class="nav-tab active" href="route-cypher.html">Routes</a>
@@ -1549,6 +1549,10 @@ if (
         }
       } catch (error) {
         console.error("Route Cipher init error:", error);
+        var errMsg = document.getElementById("errorMessage");
+        var errDisp = document.getElementById("errorDisplay");
+        if (errMsg) errMsg.textContent = "Route Cipher failed to initialize. Maps may be unavailable.";
+        if (errDisp) errDisp.style.display = "block";
       }
     }
 

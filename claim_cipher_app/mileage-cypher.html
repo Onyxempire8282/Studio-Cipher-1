@@ -82,7 +82,7 @@
       .nav-right { display: flex; align-items: center; gap: 16px; }
       .nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
       .nav-user strong { color: var(--white); display: block; font-size: 12px; }
-      .nav-logout { all: unset; padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+      .nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
       .nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
 
       /* ── PAGE HEADER ── */
@@ -428,18 +428,18 @@
   </head>
   <body class="mileage-page" style="visibility: hidden;">
     <nav class="nav">
-      <a href="command-center.html" class="nav-logo"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher"></a>
+      <a href="command-center.html" class="nav-logo"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher" width="48" height="48"></a>
       <div class="nav-tabs">
         <a class="nav-tab" href="command-center.html">Dashboard</a>
-        <a class="nav-tab active" href="mileage-cypher.html">Mileage</a>
         <a class="nav-tab" href="route-cypher.html">Routes</a>
+        <a class="nav-tab active" href="mileage-cypher.html">Mileage</a>
         <a class="nav-tab" href="my-routes.html">My Routes</a>
         <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
       </div>
       <div class="nav-right">
         <div class="nav-user">
           <strong id="userName">Professional User</strong>
-          <span id="user-role">Claims Specialist</span>
+          Claims Specialist
         </div>
         <button class="nav-logout" onclick="handleLogout()">Logout</button>
       </div>
@@ -462,6 +462,12 @@
     </div>
 
     <main class="mileage-cipher-main main-content">
+
+      <!-- Maps unavailable notice (hidden by default, shown by JS) -->
+      <div id="maps-unavailable-notice" style="display:none; align-items:center; gap:10px; padding:10px 40px; background:rgba(232,149,42,0.08); border-bottom:1px solid rgba(232,149,42,0.2); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.06em; color:#e8952a;">
+        <span style="font-size:14px;">&#9888;</span>
+        <span>Google Maps unavailable — enter distances manually in the mileage field.</span>
+      </div>
 
       <!-- MAIN GRID -->
       <div class="mc-main">
@@ -1063,9 +1069,16 @@ document.addEventListener('DOMContentLoaded', function() {
             window.mileageCipher.initializeGooglePlacesAutocomplete();
           }
         };
-        script.onerror = () =>
+        script.onerror = () => {
           console.error("Failed to load Google Maps API");
+          const notice = document.getElementById('maps-unavailable-notice');
+          if (notice) notice.style.display = 'flex';
+        };
         document.head.appendChild(script);
+      } else {
+        // No Maps API key configured — show manual mode notice
+        const notice = document.getElementById('maps-unavailable-notice');
+        if (notice) notice.style.display = 'flex';
       }
 });
 </script>
