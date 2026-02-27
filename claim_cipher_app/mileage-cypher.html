@@ -90,7 +90,6 @@
         background: #161a1d;
         border-bottom: 1px solid #2e353d;
         padding: 24px 40px;
-        margin-top: 72px; /* clear fixed nav */
         position: relative; z-index: 1; flex-shrink: 0;
       }
       .mc-page-header-inner {
@@ -385,7 +384,7 @@
         flex-shrink: 0; margin-left: 16px;
       }
       .mc-toggle-wrap input {
-        opacity: 0; width: 0; height: 0; position: absolute;
+        opacity: 0; position: absolute; inset: 0; cursor: pointer; margin: 0;
       }
       .mc-toggle-track {
         position: absolute; inset: 0;
@@ -855,22 +854,7 @@
         var noteEl  = document.getElementById('freeMilesNote');
         var amountEl = document.getElementById('billingAmount');
         if (formula) {
-          formula.textContent = result.baseMiles + 'mi \u2212 ' + resul    // Patch onFirmChange → populate Billing Summary firm/rate/free
-    var origFirmChange = window.mileageCipher.onFirmChange.bind(window.mileageCipher);
-    window.mileageCipher.onFirmChange = function(firmId) {
-      origFirmChange(firmId);
-      var firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
-      if (firm) {
-        var sf = document.getElementById('sumFirm');
-        var sr = document.getElementById('sumRate');
-        var sfr = document.getElementById('sumFree');
-        if (sf)  sf.textContent  = firm.name;
-        if (sr)  sr.textContent  = '$' + firm.ratePerMile.toFixed(2) + ' / mi';
-        if (sfr) sfr.textContent = firm.freeMiles > 0 ? firm.freeMiles + ' mi' : 'None';
-      }
-    };
-
-t.freeMiles + ' free = '
+          formula.textContent = result.baseMiles + 'mi \u2212 ' + result.freeMiles + ' free = '
             + result.billableMiles + ' \u00d7 $' + result.ratePerMile;
         }
         if (noteEl) {
@@ -883,6 +867,21 @@ t.freeMiles + ' free = '
         }
         // Update session log panel
         updateSessionLogPanel();
+      };
+
+      // Patch onFirmChange → populate Billing Summary firm/rate/free
+      var origFirmChange = window.mileageCipher.onFirmChange.bind(window.mileageCipher);
+      window.mileageCipher.onFirmChange = function(firmId) {
+        origFirmChange(firmId);
+        var firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
+        if (firm) {
+          var sf = document.getElementById('sumFirm');
+          var sr = document.getElementById('sumRate');
+          var sfr = document.getElementById('sumFree');
+          if (sf)  sf.textContent  = firm.name;
+          if (sr)  sr.textContent  = '$' + firm.ratePerMile.toFixed(2) + ' / mi';
+          if (sfr) sfr.textContent = firm.freeMiles > 0 ? firm.freeMiles + ' mi' : 'None';
+        }
       };
 
       // Sync auto-calculate toggle with saved setting
