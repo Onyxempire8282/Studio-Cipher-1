@@ -1,6 +1,6 @@
 /* TOTAL LOSS V2 — Scoped layout styles
-   Visuals come from universal-system.css + industrial-plates.css.
-   This file handles only TL-V2 layout, spacing, and state.
+   Base visuals come from css/app.css.
+   This file handles TL-V2 layout, spacing, state, and cipher-* aliases.
    All rules scoped under .total-loss-v2-scope.
 */
 
@@ -1802,4 +1802,42 @@
 
 .total-loss-v2-scope .sv-tread-depth-input {
     width: 110px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Extracted from total-loss-studio.html inline <style>
+   ═══════════════════════════════════════════════════ */
+
+/* cipher-* aliases consumed by total-loss-v2.css rules */
+:root {
+  --cipher-accent:          #e8952a;
+  --cipher-text-primary:    #edeae4;
+  --cipher-text-secondary:  #b8bdc2;
+  --cipher-text-muted:      #4a5058;
+  --cipher-font-mono:       'DM Mono', monospace;
+  --cipher-space-xs:        0.5rem;
+  --cipher-space-sm:        1rem;
+  --cipher-space-md:        1.5rem;
+  --cipher-space-lg:        2rem;
+  --cipher-space-xl:        2.5rem;
+  --cipher-space-xxl:       3rem;
+  --cipher-font-weight-medium: 500;
+  --cipher-success:         #27ae60;
+  --cipher-danger:          #e74c3c;
+}
+
+/* Header meta — right-side info block on TLS page header */
+.header-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+  text-align: right; line-height: 1.8;
+}
+.header-meta span { color: var(--text-hi); }
+
+/* Main content — clear any inherited margin/padding */
+.main-content.main-container {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  width: 100%;
+  position: relative; z-index: 1;
 }
