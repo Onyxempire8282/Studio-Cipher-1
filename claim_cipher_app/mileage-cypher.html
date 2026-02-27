@@ -423,6 +423,64 @@
       }
       .mc-copy-math:hover { border-color: #3d464f; color: #e8952a; }
       .calculator-form { display: flex; flex-direction: column; gap: 3px; }
+
+      /* ── SQUARE CORNERS — match Route Cipher sharp-edge style ──
+         Overrides universal-system.css and industrial-plates.css
+         border-radius on all form/UI elements for this page only. */
+      input,
+      input[type="text"],
+      input[type="number"],
+      input[type="email"],
+      input[type="date"],
+      select,
+      textarea,
+      button,
+      .mc-btn,
+      .mc-btn-ghost,
+      .mc-btn-primary,
+      .mc-copy-math,
+      .mc-card,
+      .mc-card-header,
+      .mc-log-item,
+      .mc-toggle-track,
+      .hbadge,
+      .cipher-btn,
+      .cipher-input,
+      .cipher-card,
+      .cipher-plate,
+      .cipher-select,
+      .filter-input,
+      .stat-plate,
+      .module-card,
+      .section-banner,
+      .glass-card,
+      .glass-button,
+      .glass-button-secondary,
+      .glass-panel,
+      .modal,
+      .modal-overlay,
+      .modal-content,
+      .modal-inner-plate,
+      .billing-modal,
+      .modal-close-btn,
+      .close-btn,
+      .cancel-btn {
+        border-radius: 0 !important;
+        -webkit-border-radius: 0 !important;
+      }
+      /* Force select appearance override for browsers that add radius */
+      select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
+      /* Preserve circular shapes */
+      .nav-logo img,
+      .rivet,
+      .mc-rivet,
+      .spinner {
+        border-radius: 50% !important;
+      }
     </style>
 
   </head>

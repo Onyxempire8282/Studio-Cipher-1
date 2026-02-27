@@ -1286,7 +1286,7 @@ ing the deleted firm
       banner.style.cssText = `
         background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.1));
         border: 1px solid rgba(255, 193, 7, 0.4);
-        border-radius: 8px;
+        border-radius: 0;
         padding: 12px 16px;
         margin-bottom: 16px;
         display: flex;
