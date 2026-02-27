@@ -35,10 +35,10 @@ class CommandCenterManager {
             });
         });
         
-        // Quick action listeners
+        // Quick action listeners (skip logout — handled by global window.handleLogout)
         document.addEventListener('click', (e) => {
             const target = e.target;
-            if (target.matches('[onclick]')) {
+            if (target.matches('[onclick]') && !target.classList.contains('nav-logout')) {
                 e.preventDefault();
                 const action = target.getAttribute('onclick');
                 this.handleQuickAction(action, target);

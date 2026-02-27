@@ -144,11 +144,11 @@ class MileageCypherCalculator {
 
     select.innerHTML = '<option value="">Choose insurance firm...</option>';
 
-    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
     firms.forEach((firm) => {
       const option = document.createElement("option");
-         const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
-irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
+      option.value = firm.id;
+      option.textContent = `${firm.name} (${firm.freeMiles} free, $${firm.ratePerMile}/mi)`;
       select.appendChild(option);
     });
 
@@ -478,7 +478,8 @@ irm.freeMiles} free, $${firm.ratePerMile}/mi)`;
     const distanceValue =
       document.getElementById("distanceMiles")?.value || "0";
     const distance = parseFloat(distanceValue);
-    const roundTrip = firm?.roundTripDefault || false;
+    const roundTripCheckbox = document.getElementById("roundTrip");
+    const roundTrip = roundTripCheckbox ? roundTripCheckbox.checked : (firm?.roundTripDefault || false);
     const note = document.getElementById("noteField")?.value?.trim() || "";
 
 
@@ -762,11 +763,8 @@ te,
                     </div>
                 </div>
                 <div class="firm-actions">
-                    <button class="edit-btn" data-firm-id="${
-                    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
- <button class="delete-btn" data-firm-id="${
-                      firm.id
-                    }">Delete</button>
+                    <button class="edit-btn" data-firm-id="${firm.id}">Edit</button>
+                    <button class="delete-btn" data-firm-id="${firm.id}">Delete</button>
                 </div>
             `;
 
@@ -1320,27 +1318,7 @@ function closeRouteImportModal() {
   }
 }
 
-async function handleLogout() {
-
-
-  // Demo mode logout - clear demo state and redirect (no Supabase session)
-  if (sessionStorage.getItem('demo_mode') === 'true') {
-
-    sessionStorage.removeItem('demo_mode');
-    sessionStorage.removeItem('claimCipherAuth');
-    if (window.FirmStore) window.FirmStore.clearDemo();
-    if (window.SessionManager) window.SessionManager.clearDemo();
-    window.location.replace('login-cypher.html');
-    return;
-  }
-
-  // Delegate to Supabase Auth for proper session termination
-  if (window.SupabaseAuth && window.SupabaseAuth.signOut) {
-    await window.SupabaseAuth.signOut();
-  } else {
-    window.location.href = './login-cypher.html';
-  }
-}
+// handleLogout is defined globally by supabase-auth.js (window.handleLogout)
 
 // Initialize when DOM is ready
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1348,31 +1326,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const allowed = await window.BillingGuard.waitForAccess();
     if (!allowed) return;
   }
-  // Check if API configuration is available
-  if (window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY) {
-    const apiKey = window.MILEAGE_CYPHER_CONFIG.GOOGLE_MAPS_API_KEY;
-    if (apiKey !== "YOUR_API_KEY_HERE") {
-    } else {
-      console.warn(
-        "Google Maps API key needs to be set in config/api-config.js"
-      );
-    }
-  } else {
-    console.warn("API configuration not found - manual distance entry only");
+
+  // Warm the FirmStore cache from Supabase before constructing the calculator.
+  // The constructor calls refreshFirmDropdown() synchronously via getAllSync(),
+  // so the cloud data must be in the cache first.
+  if (window.FirmStore && window.FirmStore.getAll) {
+    await window.FirmStore.getAll();
   }
 
   // Initialize the calculator
   window.mileageCipher = new MileageCypherCalculator();
-
-
 });
 
 // Export for global access
 window.MileageCypherCalculator = MileageCypherCalculator;
-  // Warm the FirmStore cache from Supabase before constructing the calculator.
-  // The constructor calls refreshFirmDropdown() synchronously via getAllSync(),
-  // so the cloud data must be in the cache first.
-  if (window.FirmStore) {
-    await window.FirmStore.getAll();
-  }
 

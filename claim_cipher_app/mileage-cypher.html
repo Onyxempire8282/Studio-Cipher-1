@@ -397,6 +397,12 @@
         width: 14px; height: 14px;
         background: #4a5058; transition: all 0.2s; pointer-events: none;
       }
+      .mc-toggle-wrap input:checked ~ .mc-toggle-track {
+        background: rgba(232,149,42,0.25); border-color: rgba(232,149,42,0.5);
+      }
+      .mc-toggle-wrap input:checked ~ .mc-toggle-thumb {
+        left: 21px; background: #e8952a;
+      }
 
       /* ── BILLING FORMULA ── */
       .mc-billing-formula {

@@ -121,8 +121,12 @@
           const accessToken = sessionData?.session?.access_token;
 
           if (!accessToken) {
-            console.error("Missing access token");
-            alert("Authentication error. Please log in again.");
+            if (errorEl) {
+              errorEl.textContent = "Authentication error. Please log in again.";
+              errorEl.style.display = "block";
+            }
+            activateButton.disabled = false;
+            activateButton.textContent = originalText;
             return;
           }
 
@@ -147,7 +151,7 @@
               const errorText = await response.text();
               message = errorText || message;
             }
-            console.error("Checkout session error:", message);
+            void 0; // checkout session error
             if (errorEl) {
               errorEl.textContent = message;
               errorEl.style.display = "block";
@@ -165,7 +169,7 @@
 
           throw new Error("Checkout session missing URL");
         } catch (error) {
-          console.error("Checkout handler error:", error);
+          void 0; // checkout handler error
           if (errorEl) {
             errorEl.textContent = error.message || "Unable to start checkout.";
             errorEl.style.display = "block";
