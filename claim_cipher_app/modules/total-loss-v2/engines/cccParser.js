@@ -63,14 +63,60 @@ const MAKE_ABBREV = {
 
 export function parseCCCText(rawText) {
     const text = normalizeWhitespace(rawText);
+
+    // ── 1. Format guard ───────────────────────────────────────────────
+    if (!looksLikeCCCDocument(text)) {
+        return {
+            success: false,
+            error:   'UNSUPPORTED_FORMAT',
+            message: 'This does not appear to be a CCC Preliminary Estimate. ' +
+                     'Required document markers (Preliminary Estimate, Claim #, VIN) were not found.'
+        };
+    }
+
+    // ── 2. Extract required fields first ─────────────────────────────
+    const claimNumber = extractFieldSameLine(text, /claim\s*#\s*:?/i);
+    const vin         = extractVIN(text);
+    const options     = extractOptions(text);
+
+    // ── 3. Required field guards ──────────────────────────────────────
+    if (!claimNumber) {
+        return {
+            success: false,
+            error:   'MISSING_CLAIM_NUMBER',
+            message: 'Claim number could not be found in this estimate. ' +
+                     'Verify the PDF is a complete CCC Preliminary Estimate.'
+        };
+    }
+
+    if (!vin) {
+        return {
+            success: false,
+            error:   'MISSING_VIN',
+            message: 'VIN could not be extracted from this estimate. ' +
+                     'Expected a 17-character alphanumeric identifier after "VIN:".'
+        };
+    }
+
+    if (!options || options.length === 0) {
+        return {
+            success: false,
+            error:   'EMPTY_OPTIONS',
+            message: 'No vehicle options or equipment features could be extracted. ' +
+                     'The TRANSMISSION / options section may be missing or formatted unexpectedly.'
+        };
+    }
+
+    // ── 4. Full parse ─────────────────────────────────────────────────
     const veh = parseVehicleLine(text);
 
     return {
+        success:                  true,
         ownerName:                extractOwnerName(text),
         insuredName:              extractInsured(text),
         ownerPhone:               extractOwnerPhone(text),
         carrierName:              extractCarrier(text),
-        claimNumber:              extractFieldSameLine(text, /claim\s*#\s*:?/i),
+        claimNumber,
         policyNumber:             extractFieldSameLine(text, /policy\s*#\s*:?/i),
         dateOfLoss:               extractDateOfLoss(text),
         lossType:                 extractLossType(text),
@@ -83,7 +129,7 @@ export function parseCCCText(rawText) {
         cylinders:                veh.cylinders,
         engineSize:               veh.engineSize,
         transmission:             veh.transmission,
-        vin:                      extractVIN(text),
+        vin,
         mileage:                  extractMileage(text),
         conditionRating:          extractCondition(text),
         pointOfImpact:            extractPointOfImpact(text),
@@ -92,7 +138,7 @@ export function parseCCCText(rawText) {
         estimateTimestamp:        extractTimestamp(text),
         oemOnly:                  detectOEMOnly(text),
         alternativePartsDetected: detectAlternativeParts(text),
-        options:                  extractOptions(text)
+        options
     };
 }
 
@@ -501,6 +547,15 @@ function extractTimestamp(text) {
 // =========================================
 //  HELPERS
 // =========================================
+
+function looksLikeCCCDocument(text) {
+    // CCC ONE Preliminary Estimates always contain at least one of these structural markers.
+    return (
+        /Preliminary\s+Estimate/i.test(text) ||
+        /\bCCC\s+ONE\b/i.test(text) ||
+        /CCC\s+Information\s+Services/i.test(text)
+    );
+}
 
 function extractFieldSameLine(text, anchorPattern) {
     const anchorMatch = text.match(anchorPattern);

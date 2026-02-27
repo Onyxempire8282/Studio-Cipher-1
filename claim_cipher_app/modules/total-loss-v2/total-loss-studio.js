@@ -262,6 +262,13 @@ async function handleFile(file) {
 
         // 2. Parse with CCC parser
         const parsed = parseCCCText(rawText);
+
+        if (!parsed.success) {
+            unmountProcessingView();
+            showError(parsed.message);
+            return;
+        }
+
         const assetIndex = await loadAssetIndex();
 
         // Asset-index extraction (2-char code matching)
@@ -274,16 +281,11 @@ async function handleFile(file) {
         const patternTokens = mapEstimateOptionsToBCIF(optionLines);
         console.log('[TLS] Pattern-matched tokens:', patternTokens);
 
-        // Merge both sources (deduplicated)
+        // Merge both sources (deduplicated) — overrides parser's raw text options
         const mergedOptions = [...new Set([...assetOptions, ...patternTokens])];
         parsed.options = mergedOptions;
         console.log('[TLS] Raw options (merged):', mergedOptions);
         console.log(`[TLS] Parsed options count: ${parsed.options.length}`);
-
-        if (!parsed.vin && !parsed.claimNumber && !parsed.ownerName) {
-            showError('This PDF does not appear to be a CCC Preliminary Estimate. No claim, VIN, or owner data could be identified.');
-            return;
-        }
 
         // 3. Store in shared state
         state.parsedEstimate = parsed;
