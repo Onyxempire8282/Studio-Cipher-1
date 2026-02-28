@@ -1175,6 +1175,7 @@ ing the deleted firm
     modal.style.display = "flex";
     const modalPanel = modal.querySelector(".billing-modal");
     if (modalPanel) {
+      // WARNING: dead v1 class reference — cipher-plate, elevation-3 no longer defined in any CSS
       if (!modalPanel.classList.contains("cipher-plate")) {
         modalPanel.classList.add("cipher-plate", "elevation-3");
       }

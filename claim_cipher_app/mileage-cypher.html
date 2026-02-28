@@ -220,14 +220,14 @@
 
       <!-- Billing Results Modal -->
       <div id="billingModal" class="modal-overlay" style="display: none">
-        <div class="cipher-plate elevation-3 billing-modal">
+        <div class="billing-modal">
           <div class="rivet tl"></div>
           <div class="rivet tr"></div>
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
 
-          <h2 class="plate-engraved-title cipher-section-title">Billing Summary</h2>
-          <button class="cipher-btn cipher-btn--small modal-close-btn" onclick="window.mileageCipher.closeBillingModal()">
+          <h2 class="cipher-section-title">Billing Summary</h2>
+          <button class="cipher-btn modal-close-btn" onclick="window.mileageCipher.closeBillingModal()">
             <div class="rivet tl"></div>
             <div class="rivet tr"></div>
             <div class="rivet bl"></div>
@@ -235,10 +235,10 @@
             ×
           </button>
 
-          <div id="breakdownDisplay" class="billing-breakdown"></div>
-          <div id="billingTotal" class="cipher-plate elevation-2 total-row"></div>
+          <div id="breakdownDisplay"></div>
+          <div id="billingTotal"></div>
 
-          <div class="modal-actions">
+          <div>
             <button id="copyBtn" class="cipher-btn copy-btn">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
@@ -248,7 +248,7 @@
               <span class="btn-success" style="display: none">Copied</span>
             </button>
 
-            <button id="newCalculation" class="cipher-btn primary-action-btn secondary">
+            <button id="newCalculation" class="cipher-btn primary-action-btn">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
@@ -365,14 +365,14 @@
 
       <!-- Import from Route Modal -->
       <div id="routeImportModal" class="modal" style="display: none">
-        <div class="cipher-plate elevation-3 modal-content">
+        <div class="modal-content">
           <div class="rivet tl"></div>
           <div class="rivet tr"></div>
           <div class="rivet bl"></div>
           <div class="rivet br"></div>
           <div class="modal-header">
             <h3 class="cipher-section-title">Import from Route</h3>
-            <button class="cipher-btn cipher-btn--small close-btn" onclick="closeRouteImportModal()">
+            <button class="cipher-btn close-btn" onclick="closeRouteImportModal()">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
@@ -381,14 +381,14 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="cipher-plate elevation-1 modal-inner-plate">
+            <div class="modal-inner-plate">
               <div class="rivet tl"></div>
               <div class="rivet tr"></div>
               <div class="rivet bl"></div>
               <div class="rivet br"></div>
               <p>Route data detected! Would you like to import the distance?</p>
               <div id="routeImportData"></div>
-              <div class="modal-actions">
+              <div>
                 <button id="importRouteBtn" class="cipher-btn import-btn">
                   <div class="rivet tl"></div>
                   <div class="rivet tr"></div>
