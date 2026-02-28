@@ -108,6 +108,12 @@
   }
 
   async function loadBillingStatus() {
+    // Demo mode bypass — skip billing API call entirely
+    if (sessionStorage.getItem('demo_mode') === 'true') {
+      applyBillingState({ tier: 'demo', status: 'active', dispatch_enabled: true });
+      return;
+    }
+
     try {
       const data = await fetchBillingStatus();
       applyBillingState(data);

@@ -680,17 +680,14 @@ footer {
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="nav-logo">
-    <img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher"
-      style="height:36px;width:36px;object-fit:contain;">
-  </a>
+  <a href="#" class="nav-logo"><span>CLAIM</span>CIPHER</a>
   <ul class="nav-links">
     <li><a href="#system">The System</a></li>
     <li><a href="#field">From the Field</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="/demo">Try Demo</a></li>
+    <li><a href="/claim_cipher_app/login-cypher.html" id="nav-demo-link">Try Demo</a></li>
   </ul>
-  <a href="/claim_cipher_app/login-cypher.html?tab=signup" class="nav-cta">Start Running Volume →</a>
+  <a href="#pricing" class="nav-cta">Start Running Volume →</a>
 </nav>
 
 <!-- HERO -->
@@ -702,7 +699,9 @@ footer {
     <div class="hero-brand">
       <div class="hero-logo-mark">
         <!-- Replace src with your actual logo image path -->
-        <img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher">
+        <img src="" alt="Claim Cipher"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+        <div class="hero-logo-mark-fallback" style="display:none">CC</div>
       </div>
       <div class="hero-brand-text">
         <div class="hero-brand-name"><span>CLAIM</span>CIPHER</div>
@@ -726,7 +725,7 @@ footer {
     </p>
 
     <div class="hero-ctas">
-      <a href="/claim_cipher_app/login-cypher.html?tab=signup" class="btn-primary">Start Running Volume →</a>
+      <a href="#pricing" class="btn-primary">Start Running Volume →</a>
       <a href="#system" class="btn-secondary">See How It Works ↓</a>
     </div>
 
@@ -932,17 +931,14 @@ footer {
 
 <!-- FOOTER -->
 <footer>
-  <div class="foot-logo"><img src="/branding/logo/claimcipher-wordmark.png" alt="Claim Cipher" style="height:20px;object-fit:contain;opacity:0.5;"></div>
+  <div class="foot-logo"><span>CLAIM</span>CIPHER</div>
   <ul class="foot-links">
     <li><a href="#system">The System</a></li>
     <li><a href="#field">From the Field</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="/claim_cipher_app/login-cypher.html">Sign In</a></li>
   </ul>
-  <div class="foot-copy">© 2026 Claim Cipher · claimcipherhq.com</div>
-  <div class="foot-support" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;">
-    <a href="mailto:support@claimcipherhq.com" style="color:var(--muted);text-decoration:none;transition:color 0.2s;">support@claimcipherhq.com</a>
-  </div>
+  <div class="foot-copy">© 2026 Claim Cipher. Built for high-volume operators.</div>
 </footer>
 
 <script>
