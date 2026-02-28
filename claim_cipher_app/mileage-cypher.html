@@ -7,481 +7,8 @@
     <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Base systems — loaded first so the inline <style> block below overrides them -->
-    <link rel="stylesheet" href="styles/universal-system.css" />
-    <link rel="stylesheet" href="styles/industrial-plates.css" />
-
-    <style>
-      /* ── DESIGN TOKENS ── */
-      :root {
-        --plate:      #0e0f11;
-        --steel:      #161a1d;
-        --steel-mid:  #1e2328;
-        --steel-lift: #252b31;
-        --input-bg:   #0a0c0e;
-        --rivet:      #2e353d;
-        --rivet-hi:   #3d464f;
-        --amber:      #e8952a;
-        --amber-dim:  rgba(232,149,42,0.12);
-        --amber-line: rgba(232,149,42,0.35);
-        --white:      #edeae4;
-        --text:       #8f9399;
-        --text-hi:    #b8bdc2;
-        --muted:      #4a5058;
-      }
-
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html { scroll-behavior: smooth; }
-
-      body {
-        background: var(--plate) !important;
-        background-image: none !important;
-        color: var(--text-hi);
-        font-family: 'Barlow', sans-serif;
-        font-weight: 300;
-        min-height: 100vh;
-        display: flex; flex-direction: column;
-        overflow-x: hidden;
-      }
-
-      body::before {
-        content: '';
-        position: fixed; inset: 0; z-index: 0;
-        background-image:
-          linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
-        background-size: 48px 48px;
-        pointer-events: none;
-      }
-
-      /* ── NAV ── */
-      .nav {
-        position: sticky; top: 0; z-index: 100;
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 40px 0 24px; height: 64px;
-        background: rgba(14,15,17,0.98);
-        border-bottom: 1px solid var(--rivet);
-        box-shadow: 0 1px 0 rgba(232,149,42,0.07);
-        flex-shrink: 0;
-      }
-      .nav-logo { display: flex; align-items: center; flex-shrink: 0; width: 48px; height: 48px; text-decoration: none; }
-      .nav-logo img { height: 48px; width: 48px; min-height: 48px; min-width: 48px; border-radius: 50%; object-fit: cover; object-position: center; display: block; border: 1px solid #2e353d; box-shadow: 0 0 0 3px rgba(232,149,42,0.08), 0 0 14px rgba(232,149,42,0.18); }
-      .nav-tabs { display: flex; gap: 0; height: 100%; }
-      .nav-tab {
-        display: flex; align-items: center; padding: 0 20px;
-        font-family: 'DM Mono', monospace;
-        font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-        color: var(--muted); cursor: pointer;
-        border-right: 1px solid var(--rivet);
-        border-left: 1px solid transparent;
-        transition: all 0.2s; text-decoration: none;
-      }
-      .nav-tab:first-child { border-left: 1px solid var(--rivet); }
-      .nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
-      .nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
-      .nav-right { display: flex; align-items: center; gap: 16px; }
-      .nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
-      .nav-user strong { color: var(--white); display: block; font-size: 12px; }
-      .nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
-      .nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
-
-      /* ── PAGE HEADER ── */
-      /* Use mc-page-header to avoid conflict with universal-system.css fixed positioning */
-      .mc-page-header {
-        background: #161a1d;
-        border-bottom: 1px solid #2e353d;
-        padding: 24px 40px;
-        position: relative; z-index: 1; flex-shrink: 0;
-      }
-      .mc-page-header-inner {
-        max-width: 1200px; margin: 0 auto;
-        display: flex; align-items: center; justify-content: space-between;
-      }
-      .page-label {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; letter-spacing: 0.22em;
-        text-transform: uppercase; color: #e8952a; margin-bottom: 4px;
-      }
-      .page-title {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 32px; letter-spacing: 0.06em; color: #edeae4;
-      }
-      .page-sub { font-size: 12px; color: #4a5058; margin-top: 2px; }
-      .header-badge { display: flex; gap: 3px; }
-      .hbadge {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-        padding: 6px 14px; border: 1px solid #2e353d;
-        color: #4a5058; background: #1e2328;
-      }
-      .hbadge span { color: #e8952a; }
-
-      /* ── CANCEL universal-system.css margin-top on main ── */
-      .mileage-cipher-main.main-content {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-      }
-
-      /* ── MAIN GRID ── */
-      .mc-main {
-        max-width: 1200px; margin: 0 auto; width: 100%;
-        padding: 32px 40px 100px;
-        position: relative; z-index: 1;
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 3px;
-        align-items: start;
-      }
-
-      /* ── CARD ── */
-      .mc-card {
-        background: #161a1d;
-        border: 1px solid #2e353d;
-        border-left: 3px solid #2e353d;
-        position: relative;
-      }
-      .mc-card.accent { border-left-color: #e8952a; }
-      .mc-card-header {
-        padding: 14px 20px;
-        border-bottom: 1px solid #2e353d;
-        background: #1e2328;
-        display: flex; align-items: center; gap: 10px;
-      }
-      .mc-card-title {
-        font-family: 'DM Mono', monospace;
-        font-size: 11px; letter-spacing: 0.2em;
-        text-transform: uppercase; color: #e8952a;
-      }
-      .mc-card-line {
-        flex: 1; height: 1px;
-        background: linear-gradient(90deg, rgba(232,149,42,0.35), transparent);
-      }
-      .mc-card-meta {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; color: #4a5058; letter-spacing: 0.1em;
-      }
-      .mc-card-body { padding: 24px; }
-
-      /* ── FIELD ── */
-      .mc-field { display: flex; flex-direction: column; gap: 5px; }
-      .mc-field-label {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; letter-spacing: 0.14em;
-        text-transform: uppercase; color: #4a5058;
-      }
-      .mc-field-input {
-        background: #0a0c0e;
-        border: 1px solid #2e353d;
-        border-top: 1px solid #3d464f;
-        padding: 11px 14px;
-        color: #edeae4; font-size: 13px;
-        font-family: 'Barlow', sans-serif;
-        outline: none; width: 100%;
-        transition: border-color 0.2s;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-      }
-      .mc-field-input:focus { border-color: #e8952a; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2); }
-      .mc-field-input::placeholder { color: #4a5058; }
-      select.mc-field-input {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5058'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 14px center;
-        padding-right: 36px; cursor: pointer;
-      }
-      .mc-field-hint { font-size: 11px; color: #4a5058; font-style: italic; }
-
-      /* ── FIRM ROW ── */
-      .mc-firm-row { display: flex; gap: 8px; align-items: flex-end; }
-      .mc-firm-row .mc-field { flex: 1; }
-      .mc-manage-btn {
-        background: #252b31;
-        border: 1px solid #3d464f;
-        color: #b8bdc2;
-        font-family: 'DM Mono', monospace;
-        font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-        padding: 11px 18px; cursor: pointer;
-        transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
-      }
-      .mc-manage-btn:hover { border-color: rgba(232,149,42,0.35); color: #e8952a; }
-
-      /* ── RATE STRIP ── */
-      .mc-rate-strip {
-        display: grid; grid-template-columns: repeat(3, 1fr);
-        border-top: 1px solid #2e353d; background: #1e2328;
-      }
-      .mc-rate-cell { padding: 12px 20px; border-right: 1px solid #2e353d; }
-      .mc-rate-cell:last-child { border-right: none; }
-      .mc-rate-label {
-        font-family: 'DM Mono', monospace;
-        font-size: 9px; letter-spacing: 0.18em;
-        text-transform: uppercase; color: #4a5058; margin-bottom: 4px;
-      }
-      .mc-rate-val { font-size: 14px; color: #edeae4; }
-      .mc-rate-val.amber { color: #e8952a; font-family: 'DM Mono', monospace; }
-
-      /* ── ROUTE GRID ── */
-      .mc-route-grid {
-        display: grid;
-        grid-template-columns: 1fr 40px 1fr;
-        align-items: center; margin-bottom: 20px;
-      }
-      .mc-route-arrow {
-        display: grid; place-items: center;
-        font-size: 16px; color: #e8952a; padding-top: 22px;
-      }
-
-      /* ── DISTANCE DISPLAY ── */
-      .mc-distance-display {
-        background: #0a0c0e;
-        border: 1px solid #2e353d;
-        border-top: 1px solid #3d464f;
-        padding: 0 18px 0 0;
-        display: flex; align-items: center;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-        overflow: hidden;
-        transition: border-color 0.2s;
-      }
-      .mc-distance-display:focus-within {
-        border-color: #e8952a;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
-      }
-      .mc-dist-input {
-        flex: 1; background: transparent; border: none; outline: none;
-        padding: 12px 18px;
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 36px; color: #edeae4;
-        letter-spacing: 0.02em; line-height: 1; width: 100%;
-        -moz-appearance: textfield;
-      }
-      .mc-dist-input::-webkit-outer-spin-button,
-      .mc-dist-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-      .mc-dist-input::placeholder { color: #2e353d; }
-      .mc-dist-status {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; color: #4a5058;
-        letter-spacing: 0.14em; text-transform: uppercase;
-        display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-      }
-      .mc-dist-dot {
-        width: 6px; height: 6px; border-radius: 50%;
-        background: #4a5058; flex-shrink: 0;
-      }
-      .mc-dist-dot.live {
-        background: #e8952a;
-        box-shadow: 0 0 6px rgba(232,149,42,0.6);
-        animation: mc-pulse 2s ease-in-out infinite;
-      }
-      @keyframes mc-pulse {
-        0%,100% { box-shadow: 0 0 6px rgba(232,149,42,0.6); }
-        50%      { box-shadow: 0 0 12px rgba(232,149,42,1); }
-      }
-
-      /* ── BILLING PREVIEW ── */
-      .mc-billing-preview {
-        background: #1e2328;
-        border: 1px solid #2e353d;
-        border-left: 2px solid rgba(232,149,42,0.35);
-        padding: 16px 18px;
-        display: flex; align-items: center; justify-content: space-between;
-        margin-top: 12px;
-      }
-      .mc-billing-label {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; letter-spacing: 0.14em;
-        text-transform: uppercase; color: #4a5058; margin-bottom: 4px;
-      }
-      .mc-billing-amount {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 28px; color: #e8952a;
-        letter-spacing: 0.03em; line-height: 1;
-      }
-
-      /* ── RIGHT COL ── */
-      .mc-right-col {
-        display: flex; flex-direction: column;
-        gap: 3px; position: sticky; top: 84px;
-      }
-      .mc-log-items {
-        display: flex; flex-direction: column;
-        max-height: 280px; overflow-y: auto;
-      }
-      .mc-log-items::-webkit-scrollbar { width: 4px; }
-      .mc-log-items::-webkit-scrollbar-track { background: #2e353d; }
-      .mc-log-items::-webkit-scrollbar-thumb { background: #3d464f; }
-      .mc-session-total {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 14px 20px;
-        background: #1e2328; border-top: 1px solid #2e353d;
-      }
-      .mc-session-total-label {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; letter-spacing: 0.14em;
-        text-transform: uppercase; color: #4a5058;
-      }
-      .mc-session-total-val {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 24px; color: #e8952a;
-      }
-
-      /* ── ACTION FOOTER ── */
-      .mc-footer {
-        position: fixed; bottom: 0; left: 0; right: 0;
-        background: rgba(14,15,17,0.97);
-        backdrop-filter: blur(12px);
-        border-top: 1px solid #2e353d;
-        box-shadow: 0 -1px 0 rgba(232,149,42,0.1), 0 -8px 32px rgba(0,0,0,0.5);
-        padding: 14px 40px; z-index: 100;
-      }
-      .mc-footer-inner {
-        max-width: 1200px; margin: 0 auto;
-        display: flex; align-items: center;
-        justify-content: space-between; gap: 16px;
-      }
-      .mc-footer-info { display: flex; flex-direction: column; gap: 2px; }
-      .mc-footer-main {
-        font-family: 'DM Mono', monospace; font-size: 11px;
-        color: #e8952a; letter-spacing: 0.1em;
-      }
-      .mc-footer-sub { font-size: 11px; color: #4a5058; }
-      .mc-footer-btns { display: flex; gap: 10px; }
-      .mc-btn {
-        font-family: 'DM Mono', monospace; font-size: 11px;
-        letter-spacing: 0.12em; text-transform: uppercase;
-        padding: 12px 28px; border: none; cursor: pointer;
-        transition: all 0.2s; display: flex; align-items: center;
-        gap: 8px; white-space: nowrap;
-      }
-      .mc-btn-ghost {
-        background: transparent; border: 1px solid #2e353d; color: #4a5058;
-      }
-      .mc-btn-ghost:hover { border-color: #3d464f; color: #b8bdc2; }
-      .mc-btn-primary {
-        background: #e8952a; color: #000; font-weight: 600;
-        border: 1px solid #e8952a;
-        box-shadow: 0 0 20px rgba(232,149,42,0.25);
-      }
-      .mc-btn-primary:hover {
-        background: #f0a030;
-        box-shadow: 0 0 28px rgba(232,149,42,0.4);
-        transform: translateY(-1px);
-      }
-
-      /* ── LOGGING TOGGLES ── */
-      .mc-toggle-row {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 10px 0; border-bottom: 1px solid #2e353d;
-      }
-      .mc-toggle-row:last-of-type { border-bottom: none; }
-      .mc-toggle-label {
-        font-size: 13px; color: #b8bdc2; margin-bottom: 2px;
-      }
-      .mc-toggle-sub {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; color: #4a5058;
-      }
-      .mc-toggle-wrap {
-        position: relative; width: 40px; height: 22px;
-        flex-shrink: 0; margin-left: 16px;
-      }
-      .mc-toggle-wrap input {
-        opacity: 0; position: absolute; inset: 0; cursor: pointer; margin: 0;
-      }
-      .mc-toggle-track {
-        position: absolute; inset: 0;
-        background: #2e353d; border: 1px solid #3d464f;
-        cursor: pointer; transition: background 0.2s;
-      }
-      .mc-toggle-thumb {
-        position: absolute; left: 3px; top: 3px;
-        width: 14px; height: 14px;
-        background: #4a5058; transition: all 0.2s; pointer-events: none;
-      }
-      .mc-toggle-wrap input:checked ~ .mc-toggle-track {
-        background: rgba(232,149,42,0.25); border-color: rgba(232,149,42,0.5);
-      }
-      .mc-toggle-wrap input:checked ~ .mc-toggle-thumb {
-        left: 21px; background: #e8952a;
-      }
-
-      /* ── BILLING FORMULA ── */
-      .mc-billing-formula {
-        font-family: 'DM Mono', monospace;
-        font-size: 11px; color: #8f9399; letter-spacing: 0.04em;
-        margin-top: 4px;
-      }
-      .mc-billing-note {
-        font-family: 'DM Mono', monospace;
-        font-size: 10px; color: #4a5058; margin-top: 2px;
-      }
-      .mc-copy-math {
-        background: transparent; border: 1px solid #2e353d;
-        color: #4a5058; font-family: 'DM Mono', monospace;
-        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-        padding: 8px 14px; cursor: pointer; transition: all 0.2s;
-        white-space: nowrap; flex-shrink: 0; align-self: center;
-      }
-      .mc-copy-math:hover { border-color: #3d464f; color: #e8952a; }
-      .calculator-form { display: flex; flex-direction: column; gap: 3px; }
-
-      /* ── SQUARE CORNERS — match Route Cipher sharp-edge style ──
-         Overrides universal-system.css and industrial-plates.css
-         border-radius on all form/UI elements for this page only. */
-      input,
-      input[type="text"],
-      input[type="number"],
-      input[type="email"],
-      input[type="date"],
-      select,
-      textarea,
-      button,
-      .mc-btn,
-      .mc-btn-ghost,
-      .mc-btn-primary,
-      .mc-copy-math,
-      .mc-card,
-      .mc-card-header,
-      .mc-log-item,
-      .mc-toggle-track,
-      .hbadge,
-      .cipher-btn,
-      .cipher-input,
-      .cipher-card,
-      .cipher-plate,
-      .cipher-select,
-      .filter-input,
-      .stat-plate,
-      .module-card,
-      .section-banner,
-      .glass-card,
-      .glass-button,
-      .glass-button-secondary,
-      .glass-panel,
-      .modal,
-      .modal-overlay,
-      .modal-content,
-      .modal-inner-plate,
-      .billing-modal,
-      .modal-close-btn,
-      .close-btn,
-      .cancel-btn {
-        border-radius: 0 !important;
-        -webkit-border-radius: 0 !important;
-      }
-      /* Force select appearance override for browsers that add radius */
-      select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-      }
-      /* Preserve circular shapes */
-      .nav-logo img,
-      .rivet,
-      .mc-rivet,
-      .spinner {
-        border-radius: 50% !important;
-      }
-    </style>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/mileage-cipher.css">
 
   </head>
   <body class="mileage-page" style="visibility: hidden;">
@@ -522,8 +49,8 @@
     <main class="mileage-cipher-main main-content">
 
       <!-- Maps unavailable notice (hidden by default, shown by JS) -->
-      <div id="maps-unavailable-notice" style="display:none; align-items:center; gap:10px; padding:10px 40px; background:rgba(232,149,42,0.08); border-bottom:1px solid rgba(232,149,42,0.2); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.06em; color:#e8952a;">
-        <span style="font-size:14px;">&#9888;</span>
+      <div id="maps-unavailable-notice" class="mc-maps-notice" style="display:none;">
+        <span class="mc-maps-notice-icon">&#9888;</span>
         <span>Google Maps unavailable — enter distances manually in the mileage field.</span>
       </div>
 
@@ -585,13 +112,13 @@
                   <input type="text" id="pointB" class="mc-field-input" placeholder="Enter destination address...">
                 </div>
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+              <div class="mc-hints-row">
                 <div class="mc-field-hint">Home base saved for future use</div>
                 <div class="mc-field-hint">Distance calculated automatically</div>
               </div>
               <!-- Distance Display -->
-              <div style="margin-top:20px;">
-                <div class="mc-field-label" style="margin-bottom:8px;">Distance (Miles)</div>
+              <div class="mc-distance-section">
+                <div class="mc-field-label">Distance (Miles)</div>
                 <div class="mc-distance-display">
                   <input type="number" id="distanceMiles" class="mc-dist-input" placeholder="0.0" step="0.1" min="0">
                   <div class="mc-dist-status">
@@ -647,7 +174,7 @@
                 </div>
               </div>
               <!-- Note field -->
-              <div class="mc-field" style="margin-top:14px;">
+              <div class="mc-field mc-note-field">
                 <div class="mc-field-label">Note (optional)</div>
                 <input type="text" id="noteField" class="mc-field-input" placeholder="Inspection, deposition, court date...">
               </div>
@@ -667,9 +194,7 @@
               <div class="mc-card-meta" id="logCount">0 entries</div>
             </div>
             <div class="mc-log-items" id="sessionLogList">
-              <div style="padding:24px 20px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#4a5058;">
-                No entries yet
-              </div>
+              <div class="mc-log-empty">No entries yet</div>
             </div>
             <div class="mc-session-total">
               <div class="mc-session-total-label">Session Total</div>
@@ -683,9 +208,9 @@
               <div class="mc-card-title">Export</div>
               <div class="mc-card-line"></div>
             </div>
-            <div style="padding:16px;display:flex;gap:8px;">
-              <button class="mc-btn mc-btn-ghost" style="flex:1;" onclick="exportSessionCSV()">Export CSV</button>
-              <button class="mc-btn mc-btn-ghost" style="flex:1;" onclick="exportSessionPDF()">Export PDF</button>
+            <div class="mc-export-btns">
+              <button class="mc-btn mc-btn-ghost" onclick="exportSessionCSV()">Export CSV</button>
+              <button class="mc-btn mc-btn-ghost" onclick="exportSessionPDF()">Export PDF</button>
             </div>
           </div>
 
@@ -736,80 +261,60 @@
 
       <!-- Firms Management Modal -->
       <div id="firmsModal" class="modal" style="display: none">
-        <div style="background:#161a1d;border:1px solid #2e353d;border-top:2px solid #e8952a;min-width:480px;max-width:560px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.7);position:relative;">
+        <div class="mc-modal-panel">
 
           <!-- Header -->
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#1e2328;border-bottom:1px solid #2e353d;">
+          <div class="mc-modal-header">
             <div>
-              <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:#e8952a;margin-bottom:3px;">Mileage Cipher</div>
-              <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.06em;color:#edeae4;">Manage Firms</div>
+              <div class="mc-modal-header-label">Mileage Cipher</div>
+              <div class="mc-modal-header-title">Manage Firms</div>
             </div>
-            <button onclick="closeFirmsModal()" style="background:transparent;border:1px solid #2e353d;color:#4a5058;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:14px;transition:all 0.2s;"
-              onmouseover="this.style.borderColor='rgba(192,57,43,0.4)';this.style.color='#e05555'"
-              onmouseout="this.style.borderColor='#2e353d';this.style.color='#4a5058'">✕</button>
+            <button class="mc-modal-close" onclick="closeFirmsModal()">✕</button>
           </div>
 
           <!-- Current Firms -->
-          <div class="firms-list" style="background:#161a1d;border-bottom:1px solid #2e353d;">
-            <div style="padding:12px 20px;background:#1e2328;border-bottom:1px solid #2e353d;display:flex;align-items:center;gap:10px;">
-              <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#e8952a;">Current Firms</span>
-              <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(232,149,42,0.35),transparent);"></div>
+          <div class="firms-list mc-firms-list">
+            <div class="mc-modal-section-header">
+              <span class="mc-modal-section-title">Current Firms</span>
+              <div class="mc-modal-section-line"></div>
             </div>
             <div id="firmsList"></div>
           </div>
 
           <!-- Add New Firm -->
           <div class="add-firm-section">
-            <div style="padding:12px 20px;background:#1e2328;border-bottom:1px solid #2e353d;border-top:1px solid #2e353d;display:flex;align-items:center;gap:10px;">
-              <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#e8952a;">Add New Firm</span>
-              <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(232,149,42,0.35),transparent);"></div>
+            <div class="mc-modal-section-header mc-modal-section-header--bordered">
+              <span class="mc-modal-section-title">Add New Firm</span>
+              <div class="mc-modal-section-line"></div>
             </div>
             <form id="addFirmForm">
-              <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="mc-modal-form-grid">
 
-                <input type="text" id="firmName" placeholder="Firm Name" required
-                  style="grid-column:span 2;background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;border-radius:0 !important;"
-                  onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
-                  onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'"
-                  placeholder="Firm Name">
+                <input type="text" id="firmName" class="mc-modal-input mc-modal-input--full" placeholder="Firm Name" required>
 
-                <input type="number" id="firmFreeMiles" placeholder="Free Miles" min="0" step="1" required
-                  style="background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;border-radius:0 !important;"
-                  onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
-                  onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'"
-                  placeholder="Free Miles">
+                <input type="number" id="firmFreeMiles" class="mc-modal-input" placeholder="Free Miles" min="0" step="1" required>
 
-                <input type="number" id="firmRate" placeholder="Rate per Mile ($)" min="0" step="0.01" required
-                  style="background:#0a0c0e;border:1px solid #2e353d;border-top:1px solid #3d464f;padding:11px 14px;color:#edeae4;font-size:13px;font-family:'Barlow',sans-serif;outline:none;width:100%;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4);transition:border-color 0.2s;border-radius:0 !important;"
-                  onfocus="this.style.borderColor='#e8952a';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4),0 0 0 1px rgba(232,149,42,0.2)'"
-                  onblur="this.style.borderColor='#2e353d';this.style.borderTopColor='#3d464f';this.style.boxShadow='inset 0 1px 3px rgba(0,0,0,0.4)'"
-                  placeholder="Rate per Mile ($)">
+                <input type="number" id="firmRate" class="mc-modal-input" placeholder="Rate per Mile ($)" min="0" step="0.01" required>
 
                 <!-- Round Trip Toggle -->
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;align-self:center;">
+                <div class="mc-modal-toggle-row">
                   <div>
-                    <div style="font-size:13px;color:#b8bdc2;">Round Trip Default</div>
-                    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a5058;margin-top:2px;">Double miles by default</div>
+                    <div class="mc-modal-toggle-label">Round Trip Default</div>
+                    <div class="mc-modal-toggle-sub">Double miles by default</div>
                   </div>
-                  <label style="position:relative;width:40px;height:22px;flex-shrink:0;margin-left:12px;display:block;">
+                  <label class="mc-modal-toggle-wrap">
                     <input type="checkbox" id="firmRoundTripDefault" style="opacity:0;width:0;height:0;position:absolute;">
-                    <div style="position:absolute;inset:0;background:#2e353d;border:1px solid #3d464f;cursor:pointer;transition:all 0.2s;"></div>
-                    <div id="rtToggleThumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;background:#4a5058;transition:all 0.2s;pointer-events:none;"></div>
+                    <div class="mc-toggle-track"></div>
+                    <div id="rtToggleThumb" class="mc-toggle-thumb"></div>
                   </label>
                 </div>
 
               </div>
 
               <!-- Form Footer -->
-              <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid #2e353d;background:#1e2328;">
-                <button type="button" onclick="closeFirmsModal()"
-                  style="background:transparent;border:1px solid #2e353d;color:#4a5058;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all 0.2s;"
-                  onmouseover="this.style.borderColor='#3d464f';this.style.color='#b8bdc2'"
-                  onmouseout="this.style.borderColor='#2e353d';this.style.color='#4a5058'">Cancel</button>
-                <button type="submit"
-                  style="background:#e8952a;border:1px solid #e8952a;color:#000;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;padding:12px 32px;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(232,149,42,0.25);border-radius:0 !important;"
-                  onmouseover="this.style.background='#f0a030';this.style.boxShadow='0 0 28px rgba(232,149,42,0.4)'"
-                  onmouseout="this.style.background='#e8952a';this.style.boxShadow='0 0 20px rgba(232,149,42,0.25)'">Add Firm →</button>
+              <div class="mc-modal-footer">
+                <button type="button" class="mc-modal-btn-cancel" onclick="closeFirmsModal()">Cancel</button>
+                <button type="submit" class="mc-modal-btn-submit">Add Firm →</button>
               </div>
             </form>
           </div>
@@ -1001,13 +506,13 @@
 
       if (logList) {
         if (history.length === 0) {
-          logList.innerHTML = '<div style="padding:24px 20px;text-align:center;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#4a5058;">No entries yet</div>';
+          logList.innerHTML = '<div class="mc-log-empty">No entries yet</div>';
         } else {
           logList.innerHTML = history.map(function(r, i) {
-            return '<div style="padding:12px 20px;border-bottom:1px solid #2e353d;display:flex;justify-content:space-between;align-items:center;">'
-              + '<div><div style="font-size:12px;color:#b8bdc2;">' + (r.route ? r.route.to : 'Route ' + (i+1)) + '</div>'
-              + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:#4a5058;margin-top:2px;">' + r.baseMiles + ' mi</div></div>'
-              + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:#e8952a;">$' + r.totalFee + '</div>'
+            return '<div class="mc-log-item">'
+              + '<div><div class="mc-log-item-name">' + (r.route ? r.route.to : 'Route ' + (i+1)) + '</div>'
+              + '<div class="mc-log-item-miles">' + r.baseMiles + ' mi</div></div>'
+              + '<div class="mc-log-item-fee">$' + r.totalFee + '</div>'
               + '</div>';
           }).join('');
         }
