@@ -10,6 +10,11 @@
   }
 
   async function checkAccess() {
+    // Demo mode bypass — no subscription required
+    if (sessionStorage.getItem('demo_mode') === 'true') {
+      return { allowed: true, profile: { role: 'demo', subscription_tier: 'demo' } };
+    }
+
     const client = window.SupabaseAuth && window.SupabaseAuth.init
       ? window.SupabaseAuth.init()
       : null;

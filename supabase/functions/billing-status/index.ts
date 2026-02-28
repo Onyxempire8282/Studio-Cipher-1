@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
       .select(
         "subscription_tier,subscription_status,current_period_end,dispatch_enabled,email,stripe_customer_id"
       )
-      .eq("id", user.id)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (error) {
@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
       const { data: inserted, error: insertError } = await admin
         .from("profiles")
         .insert({
-          id: user.id,
+          user_id: user.id,
           email: user.email,
           subscription_tier: "none",
           subscription_status: "inactive",

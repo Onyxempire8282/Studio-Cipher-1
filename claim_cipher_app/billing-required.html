@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Billing Required - Claim Cipher</title>
+  <title>Activate Your Account - Claim Cipher</title>
+  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
   <link rel="stylesheet" href="css/app.css" />
   <style>
     .billing-required-page {
@@ -21,20 +22,71 @@
       background: #ffffff;
       border-radius: 16px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-      padding: 32px;
+      padding: 40px 32px;
       text-align: center;
     }
 
     .billing-required-card h1 {
-      margin: 0 0 12px;
+      margin: 0 0 8px;
       font-size: 28px;
       color: #1f2933;
     }
 
-    .billing-required-card p {
+    .billing-welcome {
       margin: 0 0 24px;
       color: #4b5563;
       line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .billing-price {
+      margin: 0 0 20px;
+      padding: 16px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+    }
+
+    .billing-price-amount {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1f2933;
+      line-height: 1;
+    }
+
+    .billing-price-period {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .billing-price-note {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+
+    .billing-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+      text-align: left;
+    }
+
+    .billing-features li {
+      padding: 6px 0;
+      font-size: 14px;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .billing-features li::before {
+      content: "\2713";
+      color: #e8952a;
+      font-weight: 700;
+      flex-shrink: 0;
     }
 
     .billing-actions {
@@ -47,18 +99,66 @@
       width: 100%;
       justify-content: center;
     }
-    #billing-error { display: none; margin: 0 0 16px; color: #b42318; }
+
+    .billing-demo-link {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 13px;
+      color: #6b7280;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .billing-demo-link:hover {
+      color: #374151;
+    }
+
+    .billing-signout {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #9ca3af;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .billing-signout:hover {
+      color: #6b7280;
+      text-decoration: underline;
+    }
+
+    #billing-error { display: none; margin: 0 0 16px; color: #b42318; font-size: 14px; }
   </style>
 </head>
 <body>
   <main class="billing-required-page">
     <div class="billing-required-card">
-      <h1>Subscription Required</h1>
-      <p>
-        An active Basic or Pro subscription is required to access Claim Cipher.
-        Activate your Basic plan to continue.
+      <h1>You're almost in.</h1>
+      <p class="billing-welcome">
+        Your account is ready. Activate your subscription to unlock Claim Cipher.
       </p>
+
+      <div class="billing-price">
+        <div class="billing-price-amount">$39.99</div>
+        <div class="billing-price-period">per month</div>
+        <div class="billing-price-note">Cancel anytime. No contracts. No setup fees.</div>
+      </div>
+
+      <ul class="billing-features">
+        <li>Route Cipher — multi-stop optimization</li>
+        <li>Mileage Cipher — automatic IRS-ready logging</li>
+        <li>Total Loss Studio — BCIF generation</li>
+        <li>All future modules included</li>
+      </ul>
+
       <div id="billing-error"></div>
+
       <div class="billing-actions">
         <button id="activateClaimCipher" class="cipher-btn primary-action-btn">
           <div class="rivet tl"></div>
@@ -67,14 +167,12 @@
           <div class="rivet br"></div>
           Activate Claim Cipher
         </button>
-        <button class="cipher-btn secondary-btn" onclick="handleLogout()">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          Sign Out
+        <button class="billing-demo-link" onclick="startDemo()">
+          Explore Demo First
         </button>
       </div>
+
+      <button class="billing-signout" onclick="handleLogout()">Sign out</button>
     </div>
   </main>
 
@@ -84,6 +182,12 @@
   <script defer src="scripts/supabase-auth.js"></script>
   <script defer src="scripts/billing.js"></script>
   <script>
+    function startDemo() {
+      sessionStorage.setItem('demo_mode', 'true');
+      sessionStorage.removeItem('claimCipherAuth');
+      window.location.href = 'command-center.html';
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
 
       document.body.style.visibility = "visible";
@@ -129,8 +233,6 @@
             return;
           }
 
-
-
           const baseUrl = window.SUPABASE_CONFIG?.url || "";
           const response = await fetch(`${baseUrl}/functions/v1/create-checkout-session`, {
             method: "POST",
@@ -150,7 +252,7 @@
               const errorText = await response.text();
               message = errorText || message;
             }
-            void 0; // checkout session error
+            console.error("[Billing] Checkout session error:", message);
             if (errorEl) {
               errorEl.textContent = message;
               errorEl.style.display = "block";
@@ -168,7 +270,7 @@
 
           throw new Error("Checkout session missing URL");
         } catch (error) {
-          void 0; // checkout handler error
+          console.error("[Billing] Checkout handler error:", error);
           if (errorEl) {
             errorEl.textContent = error.message || "Unable to start checkout.";
             errorEl.style.display = "block";

@@ -24,8 +24,8 @@ Deno.serve(async (req) => {
 
     const { data: profile, error: profileError } = await admin
       .from("profiles")
-      .select("id,email,stripe_customer_id")
-      .eq("id", user.id)
+      .select("user_id,email,stripe_customer_id")
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (profileError) {
@@ -45,10 +45,10 @@ Deno.serve(async (req) => {
       const { error: upsertError } = await admin
         .from("profiles")
         .upsert({
-          id: user.id,
+          user_id: user.id,
           email: email,
           stripe_customer_id: stripeCustomerId,
-        }, { onConflict: "id" });
+        }, { onConflict: "user_id" });
 
       if (upsertError) {
         throw upsertError;

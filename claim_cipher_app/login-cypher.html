@@ -243,108 +243,6 @@
     </div>
 </div>
 
-<!-- Signup Payment Modal -->
-<div id="signup-payment-modal" class="cipher-modal" style="display: none;">
-    <div class="cipher-modal-content">
-        <div class="cipher-modal-header">
-            <h2>Complete Your Sign Up</h2>
-            <button class="cipher-modal-close"
-                    onclick="closeSignupModal()">&times;</button>
-        </div>
-        <div class="cipher-modal-body">
-            <form id="payment-form">
-                <div class="form-cipher-row">
-                    <div class="form-cipher-group">
-                        <label class="form-cipher-label">Full Name *</label>
-                        <input type="text" id="payment-name"
-                               class="form-cipher-input" required>
-                    </div>
-                    <div class="form-cipher-group">
-                        <label class="form-cipher-label">Phone Number *</label>
-                        <input type="tel" id="payment-phone"
-                               class="form-cipher-input" required>
-                    </div>
-                </div>
-
-                <div class="form-cipher-group">
-                    <label class="form-cipher-label">Email Address *</label>
-                    <input type="email" id="payment-email"
-                           class="form-cipher-input" required>
-                </div>
-
-                <div class="payment-cipher-options">
-                    <h3>Payment Method</h3>
-                    <div class="payment-cipher-tabs">
-                        <button type="button" class="payment-tab active"
-                                data-method="card">Credit/Debit Card</button>
-                        <button type="button" class="payment-tab"
-                                data-method="paypal">PayPal</button>
-                    </div>
-
-                    <div id="card-payment" class="payment-cipher-method active">
-                        <div class="form-cipher-row">
-                            <div class="form-cipher-group">
-                                <label class="form-cipher-label">Card Number *</label>
-                                <input type="text" id="card-number"
-                                       class="form-cipher-input"
-                                       placeholder="1234 5678 9012 3456" required>
-                            </div>
-                            <div class="form-cipher-group">
-                                <label class="form-cipher-label">CVV *</label>
-                                <input type="text" id="card-cvv"
-                                       class="form-cipher-input"
-                                       placeholder="123" maxlength="4" required>
-                            </div>
-                        </div>
-                        <div class="form-cipher-row">
-                            <div class="form-cipher-group">
-                                <label class="form-cipher-label">Expiry Date *</label>
-                                <input type="text" id="card-expiry"
-                                       class="form-cipher-input"
-                                       placeholder="MM/YY" maxlength="5" required>
-                            </div>
-                            <div class="form-cipher-group">
-                                <label class="form-cipher-label">Cardholder Name *</label>
-                                <input type="text" id="card-name"
-                                       class="form-cipher-input" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="paypal-payment" class="payment-cipher-method">
-                        <div class="paypal-cipher-info">
-                            <div class="paypal-icon">🅿️</div>
-                            <p>You'll be redirected to PayPal to complete your payment securely.</p>
-                            <div class="paypal-benefits">
-                                <span>✓ Secure Payment</span>
-                                <span>✓ Buyer Protection</span>
-                                <span>✓ No Card Details Required</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pricing-cipher-summary">
-                    <div class="price-row">
-                        <span>Claim Cipher Pro (Monthly)</span>
-                        <span class="price">$47/month</span>
-                    </div>
-                    <div class="price-row total">
-                        <span>Total Today</span>
-                        <span class="price">$47.00</span>
-                    </div>
-                    <div class="trial-info">🎯 Includes 7-day free trial</div>
-                </div>
-
-                <button type="submit"
-                        class="cipher-btn cipher-btn--primary cipher-btn--full">
-                    Start My Trial ($0 Today)
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
 <!-- Demo Timer -->
 <div id="demo-timer" class="demo-cipher-timer" style="display: none;">
     <div class="timer-content">
@@ -443,6 +341,14 @@ function handleDemoMode() {
     var btn = document.getElementById('demo-cipher-btn');
     if (btn) btn.click();
 }
+
+// Auto-switch to signup tab if ?tab=signup is in URL
+(function() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'signup') {
+        switchTab('signup');
+    }
+})();
 </script>
 
 <!-- Supabase JS v2 CDN -->
@@ -452,9 +358,6 @@ function handleDemoMode() {
 <script defer src="config/github-pages-env.js"></script>
 <script defer src="scripts/supabase-config.js"></script>
 <script defer src="scripts/supabase-auth.js"></script>
-
-<!-- Legacy login script (kept for form toggle/UI functionality) -->
-<script defer src="scripts/login-cypher.js"></script>
 
 <script>
 /**
@@ -587,7 +490,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 } else {
                     showMessage('Account created! Redirecting...', false);
                     setTimeout(() => {
-                        window.location.href = 'command-center.html';
+                        window.location.href = 'billing-required.html';
                     }, 1000);
                 }
             } else {
@@ -684,7 +587,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return;
             }
 
-            const redirectTo = `${window.location.origin}/reset-password.html`;
+            const basePath = window.GITHUB_PAGES_ENV?.getBasePath?.() || '/';
+            const redirectTo = `${window.location.origin}${basePath}reset-password.html`;
             const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
 
             if (error) {
@@ -712,6 +616,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             e.preventDefault();
             e.stopPropagation();
             openLegalModal('privacy-modal');
+        });
+    }
+
+    // Forgot password link
+    const forgotLink = document.getElementById('forgot-password-link');
+    if (forgotLink) {
+        forgotLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            openResetModal();
         });
     }
 
@@ -768,6 +681,18 @@ document.addEventListener('click', function(e) {
     if (e.target.classList.contains('legal-modal')) {
         e.target.style.display = 'none';
         document.body.style.overflow = '';
+    }
+});
+
+// Close modals on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.legal-modal, .cipher-modal').forEach(function(modal) {
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
     }
 });
 </script>

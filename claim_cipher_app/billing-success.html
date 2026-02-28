@@ -4,138 +4,554 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Subscription Activated - Claim Cipher</title>
+    <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
     <link rel="stylesheet" href="css/app.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-      .main-container { padding: 48px 24px; max-width: 720px; margin: 0 auto; }
-      .stat-plate { padding: 32px; }
-      .cipher-hero-title { margin-bottom: 12px; }
-      #billing-message { margin-bottom: 16px; }
-      #billing-detail { margin-bottom: 24px; }
+      :root {
+        --plate:       #0e0f11;
+        --steel:       #161a1d;
+        --steel-mid:   #1e2328;
+        --amber:       #e8952a;
+        --amber-dim:   rgba(232,149,42,0.12);
+        --amber-line:  rgba(232,149,42,0.35);
+        --white:       #edeae4;
+        --text-hi:     #b8bdc2;
+        --muted:       #4a5058;
+        --rivet:       #2e353d;
+        --rivet-hi:    #3d464f;
+      }
+
+      body {
+        background: var(--plate);
+        font-family: 'Barlow', sans-serif;
+        font-weight: 300;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      /* grid texture */
+      body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+      }
+
+      /* ambient glow */
+      body::after {
+        content: '';
+        position: fixed;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(232,149,42,0.06) 0%, transparent 70%);
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none; z-index: 0;
+        animation: breathe 5s ease-in-out infinite;
+      }
+      @keyframes breathe {
+        0%,100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+        50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.1); }
+      }
+
+      .success-wrap {
+        position: relative; z-index: 1;
+        width: 100%; max-width: 480px;
+        padding: 24px;
+      }
+
+      .success-card {
+        background: var(--steel);
+        border: 1px solid var(--rivet);
+        border-top: 2px solid var(--amber);
+        box-shadow:
+          0 0 0 1px rgba(232,149,42,0.06),
+          0 40px 80px rgba(0,0,0,0.8),
+          0 8px 32px rgba(0,0,0,0.5);
+        padding: 48px 36px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        text-align: center;
+        position: relative;
+      }
+
+      /* corner brackets */
+      .success-card::before, .success-card::after {
+        content: '';
+        position: absolute;
+        width: 10px; height: 10px;
+        border-color: var(--amber);
+        border-style: solid;
+        opacity: 0.3;
+      }
+      .success-card::before { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+      .success-card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+      /* rivets */
+      .success-card .rivet {
+        position: absolute;
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--rivet-hi); border: 1px solid var(--muted);
+      }
+      .success-card .rivet.tl { top: 10px; left: 12px; }
+      .success-card .rivet.tr { top: 10px; right: 12px; }
+      .success-card .rivet.bl { bottom: 10px; left: 12px; }
+      .success-card .rivet.br { bottom: 10px; right: 12px; }
+
+      /* INDUSTRIAL SPINNER */
+      .spinner-housing {
+        width: 72px; height: 72px;
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+
+      /* outer ring */
+      .spinner-ring-outer {
+        position: absolute; inset: 0;
+        border: 2px solid var(--rivet);
+        border-top-color: var(--amber);
+        border-right-color: var(--amber);
+        border-radius: 50%;
+        animation: spin-outer 2.4s linear infinite;
+      }
+
+      /* inner ring */
+      .spinner-ring-inner {
+        position: absolute;
+        inset: 10px;
+        border: 1px solid rgba(232,149,42,0.15);
+        border-bottom-color: var(--amber);
+        border-radius: 50%;
+        animation: spin-inner 1.6s linear infinite reverse;
+      }
+
+      /* center dot */
+      .spinner-core {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--amber);
+        box-shadow: 0 0 12px rgba(232,149,42,0.6);
+        animation: core-pulse 1.2s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+      }
+
+      @keyframes spin-outer {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes spin-inner {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes core-pulse {
+        0%, 100% { opacity: 0.6; box-shadow: 0 0 8px rgba(232,149,42,0.4); }
+        50%      { opacity: 1;   box-shadow: 0 0 18px rgba(232,149,42,0.8); }
+      }
+
+      /* TEXT */
+      .success-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 26px;
+        letter-spacing: 0.06em;
+        color: var(--white);
+        line-height: 1.1;
+      }
+
+      #billing-message {
+        font-family: 'DM Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--amber);
+        min-height: 18px;
+      }
+
+      #billing-detail {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        min-height: 16px;
+      }
+
+      /* progress steps */
+      .progress-steps {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .step-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--rivet);
+        flex-shrink: 0;
+        transition: all 0.4s ease;
+      }
+      .step-dot.active {
+        background: var(--amber);
+        box-shadow: 0 0 8px rgba(232,149,42,0.5);
+      }
+      .step-dot.done {
+        background: var(--amber);
+        opacity: 0.5;
+      }
+      .step-line {
+        flex: 1;
+        height: 1px;
+        background: var(--rivet);
+        transition: background 0.4s ease;
+      }
+      .step-line.active {
+        background: var(--amber-line);
+      }
+
+      .step-labels {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 280px;
+        margin-top: -4px;
+      }
+      .step-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 8px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        transition: color 0.4s ease;
+      }
+      .step-label.active {
+        color: var(--amber);
+      }
+      .step-label.done {
+        color: var(--text-hi);
+      }
+
+      /* divider */
+      .card-divider {
+        width: 100%;
+        height: 1px;
+        background: var(--rivet);
+      }
+
+      /* CTA button */
+      .btn-command-center {
+        width: 100%;
+        padding: 14px;
+        background: var(--amber);
+        border: 1px solid var(--amber);
+        color: #000;
+        font-family: 'DM Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 0 24px rgba(232,149,42,0.3);
+        display: none;
+        border-radius: 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-command-center:hover {
+        background: #f0a030;
+        box-shadow: 0 0 36px rgba(232,149,42,0.5);
+        transform: translateY(-1px);
+      }
+      .btn-command-center::after {
+        content: '';
+        position: absolute; top: 0; left: -100%;
+        width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        transition: left 0.4s;
+      }
+      .btn-command-center:hover::after { left: 140%; }
+
+      /* confirmed checkmark */
+      .success-check {
+        display: none;
+        width: 72px; height: 72px;
+        position: relative;
+      }
+      .success-check-ring {
+        width: 100%; height: 100%;
+        border: 2px solid var(--amber);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        animation: check-appear 0.4s ease forwards;
+      }
+      .success-check-mark {
+        font-size: 28px;
+        color: var(--amber);
+        line-height: 1;
+      }
+      @keyframes check-appear {
+        from { transform: scale(0.8); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+      }
+
+      /* footer */
+      .success-card .card-footer {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .footer-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--amber); opacity: 0.5;
+        animation: fpulse 2s ease-in-out infinite;
+      }
+      @keyframes fpulse {
+        0%,100% { opacity: 0.4; }
+        50%     { opacity: 0.9; box-shadow: 0 0 6px rgba(232,149,42,0.6); }
+      }
+      .footer-text {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* version strip */
+      .version-strip {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0 0;
+      }
+      .version-text {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--rivet-hi);
+      }
     </style>
 </head>
 <body>
-    <main class="main-container">
-        <section class="stat-plate">
-            <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-            <h1 class="cipher-hero-title">Subscription Activated</h1>
-            <p id="billing-message" class="cipher-body">Finalizing your subscription...</p>
-            <div id="billing-detail" class="cipher-body"></div>
-            <button class="cipher-btn" onclick="window.location.href='command-center.html'">Return to Command Center</button>
-        </section>
-    </main>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script defer src="config/github-pages-env.js"></script>
-    <script defer src="scripts/supabase-config.js"></script>
-    <script defer src="scripts/supabase-auth.js"></script>
+  <div class="success-wrap">
+    <div class="success-card">
+      <div class="rivet tl"></div>
+      <div class="rivet tr"></div>
+      <div class="rivet bl"></div>
+      <div class="rivet br"></div>
 
-    <script>
+      <!-- Spinner (visible during polling) -->
+      <div class="spinner-housing" id="spinner">
+        <div class="spinner-ring-outer"></div>
+        <div class="spinner-ring-inner"></div>
+        <div class="spinner-core"></div>
+      </div>
+
+      <!-- Checkmark (visible after confirmed) -->
+      <div class="success-check" id="check-icon">
+        <div class="success-check-ring">
+          <div class="success-check-mark">&#10003;</div>
+        </div>
+      </div>
+
+      <h1 class="success-title" id="billing-title">Confirming with Stripe</h1>
+      <p id="billing-message">Verifying subscription status...</p>
+
+      <!-- Progress dots -->
+      <div class="progress-steps" id="progress-steps">
+        <div class="step-dot done" id="dot-1"></div>
+        <div class="step-line active" id="line-1"></div>
+        <div class="step-dot active" id="dot-2"></div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+      </div>
+      <div class="step-labels">
+        <span class="step-label done" id="label-1">Payment</span>
+        <span class="step-label active" id="label-2">Verifying</span>
+        <span class="step-label" id="label-3">Active</span>
+      </div>
+
+      <div id="billing-detail"></div>
+
+      <div class="card-divider"></div>
+
+      <!-- Button hidden until confirmed -->
+      <button class="btn-command-center" id="go-btn" onclick="window.location.href='command-center.html'">
+        Enter Command Center &#8594;
+      </button>
+
+      <div class="card-footer">
+        <div class="footer-dot"></div>
+        <div class="footer-text">Secure · Encrypted · Operator-grade</div>
+      </div>
+    </div>
+
+    <div class="version-strip">
+      <div class="version-text">v2.8</div>
+      <div class="version-text">ClaimCipher.io</div>
+    </div>
+  </div>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="config/github-pages-env.js"></script>
+  <script defer src="scripts/supabase-config.js"></script>
+  <script defer src="scripts/supabase-auth.js"></script>
+
+  <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-            const messageEl = document.getElementById("billing-message");
-            const detailEl = document.getElementById("billing-detail");
-            const dashboardUrl = "command-center.html";
-            const maxAttempts = 4;
-            const delayMs = 4000;
-            const timeoutMs = 15000;
+    const titleEl    = document.getElementById("billing-title");
+    const messageEl  = document.getElementById("billing-message");
+    const detailEl   = document.getElementById("billing-detail");
+    const spinnerEl  = document.getElementById("spinner");
+    const checkEl    = document.getElementById("check-icon");
+    const goBtn      = document.getElementById("go-btn");
 
-            function setMessage(text) {
-                if (messageEl) {
-                    messageEl.textContent = text;
-                }
-            }
+    // Progress elements
+    const dot2   = document.getElementById("dot-2");
+    const dot3   = document.getElementById("dot-3");
+    const line2  = document.getElementById("line-2");
+    const label2 = document.getElementById("label-2");
+    const label3 = document.getElementById("label-3");
 
-            function setDetail(text) {
-                if (detailEl) {
-                    detailEl.textContent = text;
-                }
-            }
+    const dashboardUrl = "command-center.html";
+    const maxAttempts  = 4;
+    const delayMs      = 4000;
+    const timeoutMs    = 15000;
 
-            function hasAccess(profile) {
-                if (!profile) return false;
-                if (profile.role === "admin") return true;
-                if (profile.subscription_tier === "basic" || profile.subscription_tier === "pro") return true;
-                return false;
-            }
+    function setMessage(text) {
+        if (messageEl) messageEl.textContent = text;
+    }
 
-            function getSessionId() {
-                const params = new URLSearchParams(window.location.search);
-                return params.get("session_id");
-            }
+    function setDetail(text) {
+        if (detailEl) detailEl.textContent = text;
+    }
 
-            async function fetchBillingStatus() {
-                const supabase = window.SupabaseAuth?.init?.();
-                if (!supabase) {
-                    throw new Error("Supabase not initialized");
-                }
+    function showConfirmed() {
+        // Swap spinner for checkmark
+        if (spinnerEl) spinnerEl.style.display = "none";
+        if (checkEl)   checkEl.style.display = "block";
 
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    throw new Error("No active session");
-                }
+        // Update title
+        if (titleEl) titleEl.textContent = "Subscription Activated";
 
-                const baseUrl = window.SUPABASE_CONFIG?.url || "";
-                const response = await fetch(`${baseUrl}/functions/v1/billing-status`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${session.access_token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+        // Complete progress steps
+        if (dot2)   { dot2.classList.remove("active"); dot2.classList.add("done"); }
+        if (line2)  { line2.classList.add("active"); }
+        if (dot3)   { dot3.classList.add("active"); }
+        if (label2) { label2.classList.remove("active"); label2.classList.add("done"); }
+        if (label3) { label3.classList.add("active"); }
 
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(text || "billing-status failed");
-                }
+        // Show button
+        if (goBtn) goBtn.style.display = "block";
+    }
 
-                return response.json();
-            }
+    function showTimeout() {
+        if (spinnerEl) spinnerEl.style.display = "none";
+        if (titleEl) titleEl.textContent = "Still Processing";
+    }
 
-            async function pollBillingStatus() {
-                const sessionId = getSessionId();
-                if (!sessionId) {
-                    setMessage("Missing session ID. Please refresh or contact support.");
+    function hasAccess(profile) {
+        if (!profile) return false;
+        if (profile.role === "admin") return true;
+        if (profile.subscription_tier === "basic" || profile.subscription_tier === "pro") return true;
+        return false;
+    }
+
+    function getSessionId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("session_id");
+    }
+
+    async function fetchBillingStatus() {
+        var supabase = window.SupabaseAuth?.init?.();
+        if (!supabase) throw new Error("Supabase not initialized");
+
+        var sessionResult = await supabase.auth.getSession();
+        var session = sessionResult.data.session;
+        if (!session) throw new Error("No active session");
+
+        var baseUrl = window.SUPABASE_CONFIG?.url || "";
+        var response = await fetch(baseUrl + "/functions/v1/billing-status", {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + session.access_token,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            var text = await response.text();
+            throw new Error(text || "billing-status failed");
+        }
+
+        return response.json();
+    }
+
+    async function pollBillingStatus() {
+        var sessionId = getSessionId();
+        if (!sessionId) {
+            setMessage("Missing session ID. Please refresh or contact support.");
+            showTimeout();
+            return;
+        }
+
+        setMessage("Verifying subscription status...");
+        var startTime = Date.now();
+
+        for (var attempt = 1; attempt <= maxAttempts; attempt += 1) {
+            if (Date.now() - startTime > timeoutMs) break;
+
+            setDetail("Attempt " + attempt + " of " + maxAttempts + "...");
+
+            try {
+                var data = await fetchBillingStatus();
+                var profile = {
+                    role: data?.role || null,
+                    subscription_tier: data?.tier || "none",
+                    subscription_status: data?.status || "inactive",
+                };
+
+                if (hasAccess(profile)) {
+                    setMessage("Subscription confirmed.");
+                    setDetail("");
+                    showConfirmed();
+
+                    // Auto-redirect after brief pause to show confirmation
+                    setTimeout(function() {
+                        window.location.replace(dashboardUrl);
+                    }, 2200);
                     return;
                 }
 
-                setMessage("Finalizing your subscription...");
-                const startTime = Date.now();
-
-                for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-                    if (Date.now() - startTime > timeoutMs) {
-                        break;
-                    }
-
-                    try {
-                        const data = await fetchBillingStatus();
-                        const profile = {
-                            role: data?.role || null,
-                            subscription_tier: data?.tier || "none",
-                            subscription_status: data?.status || "inactive",
-                        };
-
-                        if (hasAccess(profile)) {
-                            setMessage("Subscription confirmed. Redirecting...");
-                            window.location.replace(dashboardUrl);
-                            return;
-                        }
-
-                        setDetail(`Status: ${profile.subscription_status} | Tier: ${profile.subscription_tier}`);
-                    } catch (error) {
-                        console.error("Billing status error:", error);
-                        setDetail("Waiting for confirmation...");
-                    }
-
-                    if (attempt < maxAttempts) {
-                        await new Promise((resolve) => setTimeout(resolve, delayMs));
-                    }
-                }
-
-                setMessage("Still processing. Please refresh this page in a few seconds.");
+                setDetail("Status: " + profile.subscription_status + " · Tier: " + profile.subscription_tier);
+            } catch (error) {
+                console.error("Billing status error:", error);
+                setDetail("Waiting for Stripe confirmation...");
             }
 
-            pollBillingStatus();
+            if (attempt < maxAttempts) {
+                await new Promise(function(resolve) { setTimeout(resolve, delayMs); });
+            }
+        }
+
+        setMessage("Still processing. Please refresh in a few seconds.");
+        setDetail("If this persists, contact support@claimcipherhq.com");
+        showTimeout();
+    }
+
+    pollBillingStatus();
 });
-</script>
+  </script>
 </body>
 </html>
