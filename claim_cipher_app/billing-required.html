@@ -3,178 +3,459 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Activate Your Account - Claim Cipher</title>
+  <title>Activate — Claim Cipher</title>
   <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
-  <link rel="stylesheet" href="css/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    .billing-required-page {
+    :root {
+      --plate:       #0e0f11;
+      --steel:       #161a1d;
+      --steel-mid:   #1e2328;
+      --steel-lift:  #252b31;
+      --amber:       #e8952a;
+      --amber-dim:   rgba(232,149,42,0.12);
+      --amber-line:  rgba(232,149,42,0.35);
+      --white:       #edeae4;
+      --text-hi:     #b8bdc2;
+      --muted:       #4a5058;
+      --rivet:       #2e353d;
+      --rivet-hi:    #3d464f;
+      --red:         #b42318;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--plate);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at top, #f7f7f7, #e6e6e6);
-      padding: 40px 20px;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
-    .billing-required-card {
-      max-width: 520px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-      padding: 40px 32px;
+    /* grid texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ambient glow */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,149,42,0.05) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none; z-index: 0;
+      animation: breathe 6s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%,100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+      50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.15); }
+    }
+
+    .billing-wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 440px;
+      padding: 20px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--steel);
+      border: 1px solid var(--rivet);
+      border-top: 2px solid var(--amber);
+      box-shadow:
+        0 0 0 1px rgba(232,149,42,0.06),
+        0 40px 80px rgba(0,0,0,0.8),
+        0 8px 32px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 10px; height: 10px;
+      border-color: var(--amber);
+      border-style: solid;
+      opacity: 0.3;
+    }
+    .card::before { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+    .rivet {
+      position: absolute;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--rivet-hi); border: 1px solid var(--muted);
+    }
+    .rivet-tl { top: 10px; left: 12px; }
+    .rivet-tr { top: 10px; right: 12px; }
+
+    /* ── HEADER SECTION ── */
+    .card-header {
+      padding: 36px 32px 24px;
+      border-bottom: 1px solid var(--rivet);
+      background: var(--steel-mid);
       text-align: center;
-    }
-
-    .billing-required-card h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      color: #1f2933;
-    }
-
-    .billing-welcome {
-      margin: 0 0 24px;
-      color: #4b5563;
-      line-height: 1.6;
-      font-size: 15px;
-    }
-
-    .billing-price {
-      margin: 0 0 20px;
-      padding: 16px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-    }
-
-    .billing-price-amount {
-      font-size: 36px;
-      font-weight: 700;
-      color: #1f2933;
-      line-height: 1;
-    }
-
-    .billing-price-period {
-      font-size: 14px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-
-    .billing-price-note {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 8px;
-    }
-
-    .billing-features {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 24px;
-      text-align: left;
-    }
-
-    .billing-features li {
-      padding: 6px 0;
-      font-size: 14px;
-      color: #374151;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .billing-features li::before {
-      content: "\2713";
-      color: #e8952a;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .billing-actions {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 12px;
     }
 
-    .billing-actions .cipher-btn {
-      width: 100%;
-      justify-content: center;
+    .status-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      border: 1px solid var(--amber-line);
+      background: var(--amber-dim);
+      padding: 4px 12px;
+      display: inline-block;
     }
 
-    .billing-demo-link {
-      display: inline-block;
-      margin-top: 4px;
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .card-subtitle {
       font-size: 13px;
-      color: #6b7280;
-      text-decoration: underline;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
+      color: var(--text-hi);
+      line-height: 1.5;
+      max-width: 320px;
     }
 
-    .billing-demo-link:hover {
-      color: #374151;
+    /* ── PRICE SECTION ── */
+    .price-section {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--rivet);
+      text-align: center;
+      background: var(--steel);
     }
 
-    .billing-signout {
-      display: inline-block;
-      margin-top: 12px;
+    .price-plate {
+      background: var(--steel-mid);
+      border: 1px solid var(--rivet);
+      border-left: 3px solid var(--amber);
+      padding: 20px 24px;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .price-dollar {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: 0.01em;
+    }
+
+    .price-cents {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      color: var(--text-hi);
+      line-height: 1;
+    }
+
+    .price-period {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    .price-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--rivet);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .feature-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-hi);
+    }
+
+    .feature-check {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--amber);
+      flex-shrink: 0;
+      width: 16px;
+      text-align: center;
+    }
+
+    .feature-row strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    /* ── ERROR ── */
+    #billing-error {
+      display: none;
+      padding: 10px 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      line-height: 1.5;
+      border-bottom: 1px solid var(--rivet);
+    }
+
+    /* ── ACTIONS ── */
+    .actions {
+      padding: 24px 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    /* Primary button */
+    .btn-activate {
+      width: 100%;
+      padding: 14px;
+      background: var(--amber);
+      border: 1px solid var(--amber);
+      color: #000;
+      font-family: 'DM Mono', monospace;
       font-size: 12px;
-      color: #9ca3af;
-      text-decoration: none;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 24px rgba(232,149,42,0.3);
+      position: relative;
+      overflow: hidden;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-activate:hover {
+      background: #f0a030;
+      box-shadow: 0 0 36px rgba(232,149,42,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-activate:active { transform: translateY(0); }
+    .btn-activate:disabled {
+      opacity: 0.7; cursor: not-allowed; transform: none;
+    }
+    .btn-activate::after {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: left 0.4s;
+    }
+    .btn-activate:hover::after { left: 140%; }
+
+    /* Spinner inside button */
+    .btn-spinner {
+      display: none;
+      width: 12px; height: 12px;
+      border: 2px solid rgba(0,0,0,0.25);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Demo link */
+    .btn-demo {
+      background: transparent;
+      border: 1px solid var(--rivet);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 0;
+      width: 100%;
+      text-align: center;
+    }
+    .btn-demo:hover {
+      border-color: var(--amber-line);
+      color: var(--text-hi);
+      background: var(--amber-dim);
+    }
+
+    /* Sign out link */
+    .signout-link {
       background: none;
       border: none;
-      padding: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 0;
+      transition: color 0.2s;
+      border-radius: 0;
+    }
+    .signout-link:hover { color: var(--text-hi); }
+
+    /* ── CARD FOOTER ── */
+    .card-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--rivet);
+      background: var(--steel-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .billing-signout:hover {
-      color: #6b7280;
-      text-decoration: underline;
+    .footer-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--amber); opacity: 0.5;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 0.4; }
+      50% { opacity: 0.9; box-shadow: 0 0 6px rgba(232,149,42,0.6); }
     }
 
-    #billing-error { display: none; margin: 0 0 16px; color: #b42318; font-size: 14px; }
+    .footer-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── VERSION ── */
+    .version-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 0;
+    }
+    .version-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--rivet-hi);
+    }
   </style>
 </head>
 <body>
-  <main class="billing-required-page">
-    <div class="billing-required-card">
-      <h1>You're almost in.</h1>
-      <p class="billing-welcome">
-        Your account is ready. Activate your subscription to unlock Claim Cipher.
-      </p>
 
-      <div class="billing-price">
-        <div class="billing-price-amount">$39.99</div>
-        <div class="billing-price-period">per month</div>
-        <div class="billing-price-note">Cancel anytime. No contracts. No setup fees.</div>
+  <div class="billing-wrap">
+    <div class="card">
+      <div class="rivet rivet-tl"></div>
+      <div class="rivet rivet-tr"></div>
+
+      <!-- HEADER -->
+      <div class="card-header">
+        <div class="status-badge">Account Ready</div>
+        <h1 class="card-title">You're Almost In.</h1>
+        <p class="card-subtitle">
+          Activate your subscription to unlock Claim Cipher.
+        </p>
       </div>
 
-      <ul class="billing-features">
-        <li>Route Cipher — multi-stop optimization</li>
-        <li>Mileage Cipher — automatic IRS-ready logging</li>
-        <li>Total Loss Studio — BCIF generation</li>
-        <li>All future modules included</li>
-      </ul>
+      <!-- PRICE -->
+      <div class="price-section">
+        <div class="price-plate">
+          <span class="price-dollar">$39</span>
+          <span class="price-cents">.99</span>
+          <span class="price-period">/ month</span>
+        </div>
+        <div class="price-note">Cancel anytime · No contracts · No setup fees</div>
+      </div>
 
+      <!-- FEATURES -->
+      <div class="features">
+        <div class="feature-row">
+          <span class="feature-check">→</span>
+          <span><strong>Route Cipher</strong> — multi-stop optimization</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-check">→</span>
+          <span><strong>Mileage Cipher</strong> — automatic IRS-ready logging</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-check">→</span>
+          <span><strong>Total Loss Studio</strong> — BCIF generation</span>
+        </div>
+        <div class="feature-row">
+          <span class="feature-check">→</span>
+          <span>All future modules included</span>
+        </div>
+      </div>
+
+      <!-- ERROR -->
       <div id="billing-error"></div>
 
-      <div class="billing-actions">
-        <button id="activateClaimCipher" class="cipher-btn primary-action-btn">
-          <div class="rivet tl"></div>
-          <div class="rivet tr"></div>
-          <div class="rivet bl"></div>
-          <div class="rivet br"></div>
-          Activate Claim Cipher
+      <!-- ACTIONS -->
+      <div class="actions">
+        <button id="activateClaimCipher" class="btn-activate">
+          <div class="btn-spinner" id="activate-spinner"></div>
+          <span id="activate-text">Activate Claim Cipher →</span>
         </button>
-        <button class="billing-demo-link" onclick="startDemo()">
-          Explore Demo First
+
+        <button id="demoBtnBilling" class="btn-demo">
+          Explore Demo First →
+        </button>
+
+        <button class="signout-link" onclick="handleLogout()">
+          Sign out
         </button>
       </div>
 
-      <button class="billing-signout" onclick="handleLogout()">Sign out</button>
+      <!-- FOOTER -->
+      <div class="card-footer">
+        <div class="footer-dot"></div>
+        <div class="footer-text">Secure · Encrypted · Operator-grade</div>
+      </div>
     </div>
-  </main>
+
+    <!-- VERSION -->
+    <div class="version-strip">
+      <div class="version-text">v2.8</div>
+      <div class="version-text">ClaimCipher.io</div>
+    </div>
+  </div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="config/github-pages-env.js"></script>
@@ -182,103 +463,118 @@
   <script defer src="scripts/supabase-auth.js"></script>
   <script defer src="scripts/billing.js"></script>
   <script>
-    function startDemo() {
-      sessionStorage.setItem('demo_mode', 'true');
-      sessionStorage.removeItem('claimCipherAuth');
-      window.location.href = 'command-center.html';
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", function() {
 
       document.body.style.visibility = "visible";
 
-      const activateButton = document.getElementById("activateClaimCipher");
-      const errorEl = document.getElementById("billing-error");
-      if (!activateButton) return;
+      var activateButton = document.getElementById("activateClaimCipher");
+      var activateText   = document.getElementById("activate-text");
+      var activateSpinner = document.getElementById("activate-spinner");
+      var errorEl        = document.getElementById("billing-error");
+      var demoBtn        = document.getElementById("demoBtnBilling");
 
-      const originalText = activateButton.textContent;
+      var originalText = "Activate Claim Cipher →";
 
-      activateButton.addEventListener("click", async () => {
-        activateButton.disabled = true;
-        activateButton.textContent = "Redirecting...";
-        if (errorEl) {
-          errorEl.textContent = "";
-          errorEl.style.display = "none";
-        }
-
-        try {
-          const supabase = window.SupabaseAuth?.init?.();
-          if (!supabase) {
-            window.location.href = "login-cypher.html";
-            return;
-          }
-
-          const { data: userData, error: userError } = await supabase.auth.getUser();
-
-          if (userError || !userData?.user) {
-            window.location.href = "login-cypher.html";
-            return;
-          }
-
-          const { data: sessionData } = await supabase.auth.getSession();
-          const accessToken = sessionData?.session?.access_token;
-
-          if (!accessToken) {
-            if (errorEl) {
-              errorEl.textContent = "Authentication error. Please log in again.";
-              errorEl.style.display = "block";
-            }
-            activateButton.disabled = false;
-            activateButton.textContent = originalText;
-            return;
-          }
-
-          const baseUrl = window.SUPABASE_CONFIG?.url || "";
-          const response = await fetch(`${baseUrl}/functions/v1/create-checkout-session`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ plan: "basic" }),
-          });
-
-          if (!response.ok) {
-            let message = "Unable to start checkout.";
-            try {
-              const payload = await response.json();
-              message = payload?.error || JSON.stringify(payload) || message;
-            } catch (jsonError) {
-              const errorText = await response.text();
-              message = errorText || message;
-            }
-            console.error("[Billing] Checkout session error:", message);
-            if (errorEl) {
-              errorEl.textContent = message;
-              errorEl.style.display = "block";
-            }
-            activateButton.disabled = false;
-            activateButton.textContent = originalText;
-            return;
-          }
-
-          const data = await response.json();
-          if (data?.url) {
-            window.location.href = data.url;
-            return;
-          }
-
-          throw new Error("Checkout session missing URL");
-        } catch (error) {
-          console.error("[Billing] Checkout handler error:", error);
+      // ── ACTIVATE BUTTON ──
+      if (activateButton) {
+        activateButton.addEventListener("click", async function() {
+          activateButton.disabled = true;
+          if (activateText)   activateText.textContent = "Redirecting...";
+          if (activateSpinner) activateSpinner.style.display = "block";
           if (errorEl) {
-            errorEl.textContent = error.message || "Unable to start checkout.";
-            errorEl.style.display = "block";
+            errorEl.textContent = "";
+            errorEl.style.display = "none";
           }
-          activateButton.disabled = false;
-          activateButton.textContent = originalText;
-        }
-      });
+
+          try {
+            var supabase = window.SupabaseAuth?.init?.();
+            if (!supabase) {
+              window.location.href = "login-cypher.html";
+              return;
+            }
+
+            var userResult = await supabase.auth.getUser();
+            if (userResult.error || !userResult.data?.user) {
+              window.location.href = "login-cypher.html";
+              return;
+            }
+
+            var sessionResult = await supabase.auth.getSession();
+            var accessToken = sessionResult.data?.session?.access_token;
+
+            if (!accessToken) {
+              if (errorEl) {
+                errorEl.textContent = "Authentication error. Please log in again.";
+                errorEl.style.display = "block";
+              }
+              activateButton.disabled = false;
+              if (activateText)   activateText.textContent = originalText;
+              if (activateSpinner) activateSpinner.style.display = "none";
+              return;
+            }
+
+            var baseUrl = window.SUPABASE_CONFIG?.url || "";
+            var response = await fetch(baseUrl + "/functions/v1/create-checkout-session", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken,
+              },
+              body: JSON.stringify({ plan: "basic" }),
+            });
+
+            if (!response.ok) {
+              var message = "Unable to start checkout.";
+              try {
+                var payload = await response.json();
+                message = payload?.error || JSON.stringify(payload) || message;
+              } catch (jsonErr) {
+                var errorText = await response.text();
+                message = errorText || message;
+              }
+              console.error("[Billing] Checkout session error:", message);
+              if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.style.display = "block";
+              }
+              activateButton.disabled = false;
+              if (activateText)   activateText.textContent = originalText;
+              if (activateSpinner) activateSpinner.style.display = "none";
+              return;
+            }
+
+            var data = await response.json();
+            if (data?.url) {
+              window.location.href = data.url;
+              return;
+            }
+
+            throw new Error("Checkout session missing URL");
+          } catch (error) {
+            console.error("[Billing] Checkout handler error:", error);
+            if (errorEl) {
+              errorEl.textContent = error.message || "Unable to start checkout.";
+              errorEl.style.display = "block";
+            }
+            activateButton.disabled = false;
+            if (activateText)   activateText.textContent = originalText;
+            if (activateSpinner) activateSpinner.style.display = "none";
+          }
+        });
+      }
+
+      // ── DEMO MODE BUTTON ──
+      if (demoBtn) {
+        demoBtn.addEventListener("click", function(e) {
+          e.preventDefault();
+          sessionStorage.setItem("demo_mode", "true");
+          sessionStorage.removeItem("claimCipherAuth");
+          localStorage.removeItem("cipher_last_route");
+          localStorage.removeItem("cipher_routes_by_day");
+          window.location.replace("command-center.html");
+        });
+      }
+
     });
   </script>
 </body>
