@@ -92,10 +92,17 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- pdf-lib — client-side BCIF PDF generation (no server needed) -->
     <script defer src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
+    <!-- Demo data (sets window.__tlsDemoPayload before module runs) -->
+    <script defer src="scripts/demo-data.js"></script>
+
     <!-- Total Loss Studio Module -->
     <script type="module">
-        import { initTotalLossStudio } from './modules/total-loss-v2/total-loss-studio.js';
-        initTotalLossStudio();
+        import { initTotalLossStudio, initTotalLossDemo } from './modules/total-loss-v2/total-loss-studio.js';
+        if (sessionStorage.getItem('demo_mode') === 'true' && window.__tlsDemoPayload) {
+            initTotalLossDemo(window.__tlsDemoPayload, window.__tlsDemoParsed);
+        } else {
+            initTotalLossStudio();
+        }
     </script>
 
     <script defer src="scripts/claim-cipher-system-qa.js"></script>

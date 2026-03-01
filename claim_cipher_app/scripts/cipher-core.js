@@ -219,6 +219,7 @@ async function handleLogout() {
         sessionStorage.removeItem('claimCipherAuth');
         if (window.FirmStore) window.FirmStore.clearDemo();
         if (window.SessionManager) window.SessionManager.clearDemo();
+        localStorage.removeItem('cc_recent_activities');
         window.location.replace('login-cypher.html');
         return;
     }

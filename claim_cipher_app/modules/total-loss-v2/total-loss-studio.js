@@ -54,6 +54,71 @@ export function initTotalLossStudio() {
     renderDropZone();
 }
 
+export function initTotalLossDemo(demoPayload, demoParsed) {
+    if (!container) return;
+
+    // Stage 1: Render normal drop zone, then flip to "file selected" state
+    renderDropZone();
+
+    const defaultState  = document.getElementById('defaultState');
+    const selectedState = document.getElementById('selectedState');
+    const fileNameEl    = document.getElementById('fileName');
+    const fileSizeEl    = document.getElementById('fileSize');
+    const dropzone      = document.getElementById('dropzone');
+    const proceedBtn    = document.getElementById('proceedBtn');
+    const cancelBtn     = document.getElementById('cancelBtn');
+
+    if (defaultState)  defaultState.style.display = 'none';
+    if (selectedState) selectedState.style.display = 'flex';
+    if (fileNameEl)    fileNameEl.textContent = 'CCC_Estimate_CLM-2026-00142.pdf';
+    if (fileSizeEl)    fileSizeEl.textContent = '0.2 MB';
+    if (dropzone) {
+        dropzone.style.borderColor = 'var(--amber, #e8952a)';
+        dropzone.style.borderStyle = 'solid';
+    }
+
+    // Disable cancel — there's no real file to remove
+    if (cancelBtn) cancelBtn.style.display = 'none';
+
+    // Stage 2 & 3: On click, run the processing animation then show summary
+    if (proceedBtn) {
+        proceedBtn.addEventListener('click', async function demoProcess() {
+            proceedBtn.removeEventListener('click', demoProcess);
+
+            // Processing animation — same stages as handleFile()
+            mountProcessingView();
+            updateStage(0);
+            await delay(800);
+
+            state.parsedEstimate = demoParsed;
+            state.bcifPayload = demoPayload;
+            updateStage(1);
+            await delay(600);
+
+            updateStage(2);
+            await delay(600);
+
+            state.tokenMap = renderBCIFPayload(demoPayload);
+            updateStage(3);
+            await delay(500);
+
+            updateStage(4);
+            await delay(400);
+
+            unmountProcessingView();
+
+            // Fade in summary
+            container.style.transition = 'opacity 200ms';
+            container.style.opacity = '0';
+            await delay(200);
+            container.innerHTML = renderSummaryView(demoPayload);
+            container.style.opacity = '1';
+            updateSummaryHeaderFooter(demoPayload);
+            attachSummaryListeners();
+        });
+    }
+}
+
 // =========================================
 //  DROP ZONE
 // =========================================
