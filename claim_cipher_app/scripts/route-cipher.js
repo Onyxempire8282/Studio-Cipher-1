@@ -3766,51 +3766,34 @@ class RouteCipher {
    * @param {Array} sessionHistory - past session summaries
    */
   showRestoreModal(hasDraft, activeSession, sessionHistory) {
+    // Shared button styles
+    const restoreBtnStyle = 'display:block;width:100%;padding:10px 16px;background:rgba(232,149,42,0.12);border:1px solid rgba(232,149,42,0.35);color:#e8952a;font-family:"DM Mono",monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-align:left;cursor:pointer;transition:all 0.2s;';
+    const freshBtnStyle = 'display:block;width:100%;padding:10px 16px;background:transparent;border:1px solid #2e353d;color:#4a5058;font-family:"DM Mono",monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;text-align:center;cursor:pointer;transition:all 0.2s;margin-top:2px;';
+
     // Build session history buttons
-    const historyButtons = (sessionHistory || []).slice(0, 5).map(s => `
-      <button class="restore-day-btn modal-btn modal-btn-secondary" onclick="window.routeCipher.restoreSession('${s.id || s.sessionId}')" style="justify-content: flex-start; width: 100%;">
-        <span>📂</span>
-        <span>${s.name} (${s.routeCount || 0} routes)</span>
-      </button>
-    `).join('');
+    const historyButtons = (sessionHistory || []).slice(0, 5).map(s =>
+      `<button onclick="window.routeCipher.restoreSession('${s.id || s.sessionId}')" style="${restoreBtnStyle}">RESTORE \u00b7 ${s.name} \u00b7 ${s.routeCount || 0} ROUTE${(s.routeCount || 0) === 1 ? '' : 'S'}</button>`
+    ).join('');
 
     // Build active session info
-    const activeInfo = activeSession && (activeSession.routeIds || []).length > 0 ? `
-      <button class="restore-day-btn modal-btn modal-btn-secondary" onclick="window.routeCipher.restoreActiveSession()" style="justify-content: flex-start; width: 100%;">
-        <span>📋</span>
-        <span>Continue ${activeSession.name} (${activeSession.routeIds.length} routes)</span>
-      </button>
-    ` : '';
+    const activeInfo = activeSession && (activeSession.routeIds || []).length > 0
+      ? `<button onclick="window.routeCipher.restoreActiveSession()" style="${restoreBtnStyle}">CONTINUE \u00b7 ${activeSession.name} \u00b7 ${activeSession.routeIds.length} ROUTE${activeSession.routeIds.length === 1 ? '' : 'S'}</button>`
+      : '';
 
     // Create modal HTML
     const modalHTML = `
       <div id="restoreRouteModal" class="route-map-modal">
-        <div class="modal-container" style="max-width: 500px; height: auto; margin: auto;">
-          <div class="modal-header">
-            <div class="modal-title">
-              <span>📂</span>
-              <span>Resume a Saved Route?</span>
-            </div>
-            <button class="modal-close-btn" onclick="window.routeCipher.closeRestoreModal()">×</button>
-          </div>
-          <div class="modal-content" style="padding: var(--cipher-space-xl); display: block;">
-            <p style="color: var(--cipher-text-secondary); margin-bottom: var(--cipher-space-lg);">
-              We found saved routes. Would you like to restore one?
-            </p>
-            <div class="restore-options" style="display: flex; flex-direction: column; gap: var(--cipher-space-md);">
-              ${hasDraft ? `
-                <button class="restore-last-btn modal-btn modal-btn-secondary" onclick="window.routeCipher.restoreLastRoute()" style="justify-content: flex-start; width: 100%;">
-                  <span>🔄</span>
-                  <span>Resume Draft (unsaved work)</span>
-                </button>
-              ` : ''}
-              ${activeInfo}
-              ${historyButtons}
-              <button class="start-fresh-btn modal-btn modal-btn-primary" onclick="window.routeCipher.startFresh()" style="justify-content: center; width: 100%; margin-top: var(--cipher-space-md);">
-                <span>✨</span>
-                <span>Start Fresh</span>
-              </button>
-            </div>
+        <div style="position:relative;max-width:380px;width:100%;margin:auto;background:#161a1d;border:1px solid #2e353d;border-top:2px solid #e8952a;box-shadow:0 0 0 1px rgba(232,149,42,0.06),0 20px 60px rgba(0,0,0,0.7);padding:24px 28px;">
+          <div style="position:absolute;bottom:0;left:0;width:14px;height:14px;border-left:2px solid rgba(232,149,42,0.3);border-bottom:2px solid rgba(232,149,42,0.3);"></div>
+          <div style="position:absolute;bottom:0;right:0;width:14px;height:14px;border-right:2px solid rgba(232,149,42,0.3);border-bottom:2px solid rgba(232,149,42,0.3);"></div>
+          <button onclick="window.routeCipher.closeRestoreModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#4a5058;font-family:'DM Mono',monospace;font-size:16px;cursor:pointer;padding:4px;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='#b8bdc2'" onmouseout="this.style.color='#4a5058'">\u2715</button>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.06em;color:#edeae4;margin-bottom:8px;">\u2192 Resume a Saved Route?</div>
+          <p style="font-family:'Barlow',sans-serif;font-weight:300;font-size:13px;color:#b8bdc2;margin:0 0 16px;">We found saved routes from a previous session. Restore one or start over.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${hasDraft ? `<button onclick="window.routeCipher.restoreLastRoute()" style="${restoreBtnStyle}">RESUME DRAFT \u00b7 UNSAVED WORK</button>` : ''}
+            ${activeInfo}
+            ${historyButtons}
+            <button onclick="window.routeCipher.startFresh()" style="${freshBtnStyle}">START FRESH</button>
           </div>
         </div>
       </div>
