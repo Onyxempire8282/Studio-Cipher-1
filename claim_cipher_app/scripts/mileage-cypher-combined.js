@@ -580,11 +580,13 @@ class MileageCypherCalculator {
       firm,
       route: { from: pointA, to: pointB },
       distance: this.roundTo(distance, 1),
-      roundTrip      var fmiPart = firm.freeMiles > 0
-        ? baseMiles.toFixed(1) + ' mi \u2212 ' + firm.freeMiles + ' mi = ' + billableMiles.toFixed(1) + ' mi'
-        : baseMiles.toFixed(1) + ' mi';
-      formulaEl.textContent = fmiPart + ' \u00d7 $' + firm.ratePerMile.toFixed(2) + '/mi = $' + totalFee.toFixed(2);
-te,
+      roundTrip,
+      baseMiles: this.roundTo(baseMiles, 1),
+      freeMiles: firm.freeMiles,
+      billableMiles: this.roundTo(billableMiles, 1),
+      ratePerMile: firm.ratePerMile,
+      totalFee: this.roundTo(totalFee, 2),
+      note,
       timestamp: new Date(),
       calculationId: this.generateCalculationId(),
     };
@@ -955,8 +957,10 @@ te,
       }
 
       // Update UI
-      this.loadFirmsListInModal(    const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
-ing the deleted firm
+      this.loadFirmsListInModal();
+      this.refreshFirmDropdown();
+
+      // Clear editing state if editing the deleted firm
       const form = document.getElementById("addFirmForm");
       const submitBtn = form?.querySelector('button[type="submit"]');
       if (submitBtn?.dataset.editingId === firmId) {
