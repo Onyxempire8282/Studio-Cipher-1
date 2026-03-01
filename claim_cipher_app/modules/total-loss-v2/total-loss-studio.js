@@ -333,7 +333,7 @@ function renderDropZone() {
 //  Prevents non-option lines from spamming "Unmapped option" warnings.
 // =========================================
 
-const OPTION_KEYWORDS = /\b(power|pwr|air\s*cond|a\/c|cruise|tilt|leather|cloth|alloy|chrome|heated|sunroof|moonroof|roof|airbag|abs|traction|radio|stereo|cd|bluetooth|navigation|nav|keyless|remote|seat|bucket|captain|spoiler|fog|tint|privacy|rack|tonneau|bedliner|running\s*board|tow|xenon|hid|led|sensor|camera|blind\s*spot|lane|parking|alarm|anti.?theft|turbo|diesel|4wd|awd|4x4|dual|premium|deluxe|conv(ertible)?|woodgrain|vinyl|wiper|defog|console|overhead|memory|homelink)\b/i;
+const OPTION_KEYWORDS = /\b(power|pwr|air\s*cond|air\s*bag|a\/c|cruise|tilt|telescop|leather|cloth|alloy|chrome|heated|sunroof|moonroof|roof|airbag|abs|anti.?lock|traction|stability|radio|stereo|cd|bluetooth|navigation|nav|keyless|remote|seat|bucket|captain|spoiler|fog|tint|privacy|rack|tonneau|bedliner|running\s*board|tow|xenon|hid|led|sensor|camera|blind\s*spot|lane|departure|detection|intelligent|parking|alarm|anti.?theft|turbo|diesel|4wd|awd|4x4|dual|premium|deluxe|conv(ertible)?|woodgrain|wood|vinyl|wiper|defog|defrost|climate|console|overhead|memory|homelink|mirror|signal|integrated|brake|disc|paint|coat|glass|electric|message|entry|steering|wheel|window|lock|door|antenna|pedal|gate|hatch|trunk|liftgate|auxiliary|audio|satellite|hands\s*free|search|seek|variable)\b/i;
 
 const OPTION_REJECT = /^\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\$[\d,.]+|page\s+\d|^\d+$|claim\s*#|policy\s*#|insured|claimant|vehicle\s*identification|preliminary|supplement|estimate\s*total)/i;
 
@@ -475,9 +475,9 @@ function buildPayloadFromParsed(parsed) {
     const condition = mapConditionFromCCC(parsed.conditionRating);
     payload.condition = { ...payload.condition, ...condition };
 
-    // Options — run through pattern matcher to get 2-char BCIF token codes
-    payload.options = mapEstimateOptionsToBCIF(parsed.options || []);
-    console.log('[TLS] Matched tokens:', Array.from(payload.options));
+    // Options — already 2-char BCIF codes from handleFile merge (asset-index + pattern matcher)
+    payload.options = (parsed.options || []).filter(c => typeof c === 'string' && c.length <= 4);
+    console.log('[TLS] Payload options:', payload.options);
 
     // Loss evaluation → conclusion
     const lossResult = evaluateLossType({
@@ -1164,11 +1164,7 @@ function renderOptionsCheckboxes() {
     const optionsEl = document.getElementById('optionsContainer');
     if (!optionsEl) return;
 
-    const parsedSet = new Set(
-        (state.parsedEstimate?.options || []).map(o =>
-            typeof o === 'object' ? o.code : o
-        )
-    );
+    const parsedSet = new Set(state.parsedEstimate?.options || []);
 
     const groups = {};
     for (const [code, meta] of Object.entries(TOKEN_META)) {
@@ -1240,6 +1236,12 @@ async function loadAssetIndex() {
     return assetIndexPromise;
 }
 
+const STOP_TOKENS = new Set([
+    'BY', 'IN', 'OF', 'TO', 'OR', 'AN', 'AT', 'ON', 'UP',
+    'DO', 'GO', 'NO', 'IF', 'IS', 'IT', 'AS', 'BE', 'HE',
+    'WE', 'SO', 'US', 'MY'
+]);
+
 function extractOptionsFromText(rawText, assetIndex) {
     const optionList = assetIndex?.schema?.parts?.options || [];
     if (!rawText || optionList.length === 0) return [];
@@ -1253,7 +1255,10 @@ function extractOptionsFromText(rawText, assetIndex) {
             .filter(Boolean)
     );
 
-    return optionList.filter(code => tokens.has(String(code).toUpperCase()));
+    return optionList.filter(code => {
+        const upper = String(code).toUpperCase();
+        return tokens.has(upper) && !STOP_TOKENS.has(upper);
+    });
 }
 
 // =========================================

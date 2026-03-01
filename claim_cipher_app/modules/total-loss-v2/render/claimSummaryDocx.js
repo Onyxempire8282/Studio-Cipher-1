@@ -3,6 +3,7 @@
 // Layout: Claim block → [pg break] → Narrative block → Estimates → Appraiser Statement
 
 import { buildClaimSummarySections } from "../summaryEngine.js";
+import { TOKEN_META } from "../bcifPayloadBuilder.js";
 
 let _lib = null;
 
@@ -31,7 +32,12 @@ export async function generateClaimSummaryDocx(state) {
     const poiRaw      = parsed.pointOfImpact || '';
     const poiCode     = parseInt(poiRaw, 10);
     const poiLabel    = poiRaw.replace(/^\d+\s*/, '').trim();
-    const isTotalLoss = poiCode === 15;
+
+    // Total loss detection — POI 15 OR cost-to-ACV ratio >= 75%
+    const estimateTotal = _toNumber(parsed.estimateTotal);
+    const acv = _toNumber(parsed.acv);
+    const isTotalLoss = poiCode === 15
+        || (acv > 0 && estimateTotal > 0 && (estimateTotal / acv) >= 0.75);
 
     // ─── Typography / spacing constants ─────────────────────────────────────────
     const FONT = 'Times New Roman';
@@ -128,6 +134,10 @@ export async function generateClaimSummaryDocx(state) {
     // ─── Section builders ────────────────────────────────────────────────────────
 
     function docTitle() {
+        const subtitle = isTotalLoss
+            ? 'Total Loss Evaluation \u2013 Automobile'
+            : 'Vehicle Damage Assessment \u2013 Automobile';
+
         return [
             new Paragraph({
                 children:  [new TextRun({ text: 'CLAIM SUMMARY REPORT', font: FONT, size: SZ_TITLE, bold: true })],
@@ -135,7 +145,7 @@ export async function generateClaimSummaryDocx(state) {
                 spacing:   { before: 0, after: 80 },
             }),
             new Paragraph({
-                children:  [new TextRun({ text: 'Total Loss Evaluation \u2013 Automobile', font: FONT, size: SZ_BODY, italics: true })],
+                children:  [new TextRun({ text: subtitle, font: FONT, size: SZ_BODY, italics: true })],
                 alignment: AlignmentType.CENTER,
                 spacing:   { after: SP_TITLE_BELOW },
             }),
@@ -230,6 +240,133 @@ export async function generateClaimSummaryDocx(state) {
         return blocks;
     }
 
+    function damageBreakdown() {
+        const blocks = [sectionHeader('Damage Breakdown')];
+
+        // Extract damage areas from POI label
+        const damageAreas = poiLabel || 'documented areas per estimate';
+        blocks.push(bodyPara(`Primary impact area: ${damageAreas}.`));
+
+        // Cost breakdown if available
+        const laborTotal = _toNumber(parsed.laborTotal);
+        const partsTotal = _toNumber(parsed.partsTotal);
+        const paintTotal = _toNumber(parsed.paintTotal);
+        const hasCostBreakdown = laborTotal > 0 || partsTotal > 0 || paintTotal > 0;
+
+        if (hasCostBreakdown) {
+            blocks.push(subLabel('Cost Summary'));
+            if (laborTotal > 0) blocks.push(bulletPara(`Labor: ${_formatCurrency(laborTotal)}`));
+            if (partsTotal > 0) blocks.push(bulletPara(`Parts: ${_formatCurrency(partsTotal)}`));
+            if (paintTotal > 0) blocks.push(bulletPara(`Paint / Refinish: ${_formatCurrency(paintTotal)}`));
+        }
+
+        if (estimateTotal > 0) {
+            blocks.push(bodyPara(`Estimate Total: ${_formatCurrency(estimateTotal)}`));
+        }
+
+        return blocks;
+    }
+
+    function repairAssessment() {
+        const blocks = [sectionHeader('Repair Assessment')];
+        const repairDays = parsed.repairDays || 0;
+
+        if (isTotalLoss) {
+            let text = 'Repair costs exceed the economic threshold for this vehicle.';
+            if (estimateTotal > 0) {
+                text += ` Estimate total: ${_formatCurrency(estimateTotal)}.`;
+            }
+            if (acv > 0 && estimateTotal > 0) {
+                const ratio = ((estimateTotal / acv) * 100).toFixed(1);
+                text += ` The repair-to-value ratio is ${ratio}% of the actual cash value (${_formatCurrency(acv)}).`;
+            }
+            blocks.push(bodyPara(text));
+        } else {
+            let text = 'Vehicle is repairable within economic guidelines.';
+            if (repairDays > 0) {
+                text += ` Estimated repair time: ${repairDays} day${repairDays !== 1 ? 's' : ''}.`;
+            }
+            // Structural assessment
+            const hasStructural = /structural|frame|rail|apron|pillar/i.test(poiLabel);
+            text += hasStructural
+                ? ' Structural repairs are indicated based on the documented point of impact.'
+                : ' No structural repairs are indicated at this time.';
+            text += ' A supplement may be required following teardown.';
+            blocks.push(bodyPara(text));
+        }
+
+        return blocks;
+    }
+
+    function vehicleConditionEquipment() {
+        const blocks = [sectionHeader('Vehicle Condition & Equipment')];
+
+        // Condition ratings
+        const cond = payload.condition || {};
+        const ratingLabels = ['Excellent', 'Normal', 'Fair', 'Poor'];
+        const conditionComponents = [
+            ['Paint',        cond.paint],
+            ['Sheet Metal',  cond.sheetMetal],
+            ['Glass',        cond.glass],
+            ['Trim',         cond.trim],
+            ['Seats',        cond.seats],
+            ['Carpet',       cond.carpet],
+            ['Dashboard',    cond.dashboard],
+            ['Headliner',    cond.headliner],
+            ['Front Tires',  cond.frontTires],
+            ['Rear Tires',   cond.rearTires],
+            ['Engine',       cond.engine],
+            ['Transmission', cond.transmission],
+        ];
+
+        const hasAnyRating = conditionComponents.some(([, c]) => c && c.rating !== null && c.rating !== undefined);
+        if (hasAnyRating) {
+            blocks.push(subLabel('Condition Ratings'));
+            for (const [label, comp] of conditionComponents) {
+                if (!comp || comp.rating === null || comp.rating === undefined) continue;
+                const ratingText = ratingLabels[comp.rating] || `Rating ${comp.rating}`;
+                const commentText = comp.comment ? ` - ${comp.comment}` : '';
+                blocks.push(bulletPara(`${label}: ${ratingText}${commentText}`));
+            }
+        }
+
+        // Equipment list from options
+        const options = payload.options || [];
+        if (options.length > 0) {
+            blocks.push(subLabel('Vehicle Equipment'));
+            const labels = options
+                .map(code => {
+                    const meta = TOKEN_META[code];
+                    return meta ? meta.label : code;
+                })
+                .sort();
+            // Group into comma-separated lines by category or just list
+            const chunkSize = 4;
+            for (let i = 0; i < labels.length; i += chunkSize) {
+                const chunk = labels.slice(i, i + chunkSize);
+                blocks.push(bulletPara(chunk.join(', ')));
+            }
+        }
+
+        return blocks;
+    }
+
+    function priorDamageRecalls() {
+        const priorDamage = parsed.priorDamage || '';
+        if (!priorDamage) return [];
+
+        const blocks = [sectionHeader('Prior Damage')];
+
+        const normalized = priorDamage.toUpperCase().trim();
+        if (normalized === 'NO UPD VISIBLE' || normalized === 'NONE') {
+            blocks.push(bodyPara('No unrelated prior damage was observed during inspection.'));
+        } else {
+            blocks.push(bodyPara(`Prior damage noted: ${priorDamage}.`));
+        }
+
+        return blocks;
+    }
+
     function renderSummarySections(sections) {
         return (sections || []).flatMap((section) => {
             const content = String(section?.content || '').trim();
@@ -238,7 +375,7 @@ export async function generateClaimSummaryDocx(state) {
         });
     }
 
-    function estimateTotal() {
+    function estimateTotalSection() {
         const total = _toNumber(parsed.estimateTotal);
         if (!total) return [];
         return [sectionHeader('Estimate Total'), bodyPara(_formatCurrency(total))];
@@ -246,13 +383,18 @@ export async function generateClaimSummaryDocx(state) {
 
     function appraiserStatement() {
         const writer = (payload.claim?.writer || '').trim();
+
+        const statementText = isTotalLoss
+            ? 'This report was prepared based on physical inspection of the referenced vehicle and ' +
+              'review of the associated estimate documentation. The information contained herein is ' +
+              'submitted in accordance with standard total loss evaluation guidelines.'
+            : 'This report was prepared based on physical inspection of the referenced vehicle and ' +
+              'review of the associated estimate documentation. The information contained herein is ' +
+              'submitted in accordance with standard vehicle damage assessment guidelines.';
+
         const blocks = [
             sectionHeader('Appraiser Statement'),
-            bodyPara(
-                'This report was prepared based on physical inspection of the referenced vehicle and ' +
-                'review of the associated estimate documentation. The information contained herein is ' +
-                'submitted in accordance with standard total loss evaluation guidelines.'
-            ),
+            bodyPara(statementText),
         ];
         if (writer) {
             blocks.push(bodyPara(`Prepared by: ${writer}`));
@@ -275,14 +417,22 @@ export async function generateClaimSummaryDocx(state) {
         ...vehicleInformation(),
         pageBreak(),
         ...lossDescription(),
+        ...damageBreakdown(),
+        ...repairAssessment(),
+        ...vehicleConditionEquipment(),
+        ...priorDamageRecalls(),
         ...renderSummarySections(additionalSections),
-        ...estimateTotal(),
+        ...estimateTotalSection(),
         ...appraiserStatement(),
     ].filter(Boolean);
 
+    const description = isTotalLoss
+        ? 'Claim Summary Report \u2014 Total Loss Evaluation'
+        : 'Claim Summary Report \u2014 Vehicle Damage Assessment';
+
     const doc = new Document({
         creator:     'Claim Cipher',
-        description: 'Claim Summary Report — Total Loss Evaluation',
+        description,
         sections:    [{ properties: {}, children }],
     });
 

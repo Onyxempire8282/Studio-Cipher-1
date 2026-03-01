@@ -365,7 +365,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "KW", patterns: [/locking\s*wheels?/i] },
         { token: "LC", patterns: [/locking\s*wheel\s*covers?/i] },
         // ROOF
-        { token: "EG", patterns: [/electric\s*glass\s*roof/i] },
+        { token: "EG", patterns: [/electric\s*glass\s*(sun)?roof/i, /\bsunroof\b/i] },
         { token: "ES", patterns: [/electric\s*steel\s*roof/i] },
         { token: "OR", patterns: [/skyview\s*roof/i] },
         { token: "SD", patterns: [/dual\s*power\s*sunroof/i, /dual\s*sunroof/i] },
@@ -383,7 +383,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "PV", patterns: [/padded\s*vinyl\s*roof/i] },
         { token: "HT", patterns: [/hard\s*top/i] },
         // SAFETY / BRAKES
-        { token: "AG", patterns: [/driver['’]s\s*side\s*air\s*bag/i, /driver\s*air\s*bag/i] },
+        { token: "AG", patterns: [/driver[‘’]?s?\s*side\s*air\s*bag/i, /driver\s*air\s*bag/i] },
         { token: "RG", patterns: [/passenger\s*air\s*bag/i] },
         { token: "XG", patterns: [/front\s*side\s*impact\s*air\s*bags?/i] },
         { token: "ZG", patterns: [/rear\s*side\s*impact\s*air\s*bags?/i] },
@@ -471,15 +471,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         }
     }
 
-    return Array.from(tokens).reduce((acc, code) => {
-        const meta = TOKEN_META[code];
-        if (!meta) {
-            console.warn("Missing TOKEN_META entry for:", code);
-            return acc;
-        }
-        acc.push({ code, label: meta.label, category: meta.category });
-        return acc;
-    }, []);
+    return Array.from(tokens);
 }
 
 export function buildBCIFPayload(parsedEstimate) {
@@ -587,12 +579,12 @@ export function buildBCIFPayload(parsedEstimate) {
     setText(tokenMap, "MILEAGE", mileage ? mileage : "UNK");
 
     const optionTokens = mapEstimateOptionsToBCIF(est.features || []);
-    for (const opt of optionTokens) {
-        if (!(opt.code in tokenMap)) {
-            console.warn("[TLS] Option token not in MASTER_TOKENS:", opt.code);
+    for (const code of optionTokens) {
+        if (!(code in tokenMap)) {
+            console.warn("[TLS] Option token not in MASTER_TOKENS:", code);
             continue;
         }
-        setCheck(tokenMap, opt.code);
+        setCheck(tokenMap, code);
     }
 
     const ratings = est.conditionRatings || {};

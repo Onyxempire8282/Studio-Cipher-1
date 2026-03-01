@@ -109,6 +109,7 @@ export function parseCCCText(rawText) {
 
     // ── 4. Full parse ─────────────────────────────────────────────────
     const veh = parseVehicleLine(text);
+    const costBreakdown = extractCostBreakdown(text);
 
     return {
         success:                  true,
@@ -138,7 +139,12 @@ export function parseCCCText(rawText) {
         estimateTimestamp:        extractTimestamp(text),
         oemOnly:                  detectOEMOnly(text),
         alternativePartsDetected: detectAlternativeParts(text),
-        options
+        options,
+        repairDays:               extractRepairDays(text),
+        priorDamage:              extractPriorDamage(text),
+        laborTotal:               costBreakdown.labor,
+        partsTotal:               costBreakdown.parts,
+        paintTotal:               costBreakdown.paint,
     };
 }
 
@@ -542,6 +548,47 @@ function extractOptions(text) {
 function extractTimestamp(text) {
     const match = text.match(/(\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}:\d{2}\s*(?:AM|PM))/i);
     return match ? match[1] : "";
+}
+
+// =========================================
+//  REPAIR DAYS / PRIOR DAMAGE / COST BREAKDOWN
+// =========================================
+
+function extractRepairDays(text) {
+    const match = text.match(/(?:Repair|Labor)\s*Days?\s*:?\s*(\d+(?:\.\d+)?)/i);
+    if (match) return parseFloat(match[1]);
+
+    const hrsMatch = text.match(/(?:Total\s*)?Labor\s*Hours?\s*:?\s*(\d+(?:\.\d+)?)/i);
+    if (hrsMatch) {
+        const hours = parseFloat(hrsMatch[1]);
+        return Math.ceil(hours / 8);
+    }
+    return 0;
+}
+
+function extractPriorDamage(text) {
+    const updMatch = text.match(/(?:Unrelated\s*Prior\s*Damage|UPD)\s*:?\s*([^\n]+)/i);
+    if (updMatch) return updMatch[1].trim();
+
+    if (/NO\s+UPD\s+VISIBLE/i.test(text)) return "NO UPD VISIBLE";
+    if (/PRIOR\s+DAMAGE\s*:\s*NONE/i.test(text)) return "NONE";
+
+    return "";
+}
+
+function extractCostBreakdown(text) {
+    const result = { labor: 0, parts: 0, paint: 0 };
+
+    const laborMatch = text.match(/(?:Total\s+)?Labor\s*(?:Cost|Amount)?\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
+    if (laborMatch) result.labor = parseFloat(laborMatch[1].replace(/,/g, ""));
+
+    const partsMatch = text.match(/(?:Total\s+)?Parts?\s*(?:Cost|Amount)?\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
+    if (partsMatch) result.parts = parseFloat(partsMatch[1].replace(/,/g, ""));
+
+    const paintMatch = text.match(/(?:Total\s+)?(?:Paint|Refinish)\s*(?:Cost|Amount|Material)?\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
+    if (paintMatch) result.paint = parseFloat(paintMatch[1].replace(/,/g, ""));
+
+    return result;
 }
 
 // =========================================

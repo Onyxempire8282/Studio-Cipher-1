@@ -20,7 +20,10 @@ function buildSummaryParts(parsedEstimate, payload) {
     const poiLabel = extractPOILabel(poiRaw);
 
     const estimateTotalNum = toNumber(est.estimateTotal);
+    const acvNum           = toNumber(est.acv);
     const deductibleNum    = toNumber(est.deductible);
+    const isTotalLoss      = poiCode === 15
+        || (acvNum > 0 && estimateTotalNum > 0 && (estimateTotalNum / acvNum) >= 0.75);
 
     const data = {
         claimNumber:   est.claimNumber  || payload.claim.claimNumber || "",
@@ -39,11 +42,14 @@ function buildSummaryParts(parsedEstimate, payload) {
         poiLabel,
         damageAreas:   poiLabel         || "documented areas per estimate",
         estimateTotal: estimateTotalNum ? formatCurrency(estimateTotalNum) : "",
+        acv:           acvNum           ? formatCurrency(acvNum)           : "",
         deductible:    deductibleNum    ? formatCurrency(deductibleNum)    : "",
+        repairDays:    est.repairDays   || 0,
+        isTotalLoss,
     };
 
     const header          = buildSummaryHeader(data);
-    const narrative       = routeNarrative(data, poiCode);
+    const narrative       = routeNarrative(data, poiCode, isTotalLoss);
     const estimateSummary = buildEstimateSummary(data);
 
     return { header, narrative, estimateSummary };
@@ -85,8 +91,8 @@ function extractPOILabel(poiRaw) {
 //  NARRATIVE ROUTING
 // =========================================
 
-function routeNarrative(data, poiCode) {
-    if (poiCode === 15) {
+function routeNarrative(data, poiCode, isTotalLoss) {
+    if (isTotalLoss) {
         return buildTotalLossSummary(data);
     }
     if ([16, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29].includes(poiCode)) {
@@ -148,17 +154,25 @@ function buildEstimateSummary(data) {
 // =========================================
 
 function buildStandardCollisionSummary(data) {
+    const repairNote = data.repairDays > 0
+        ? ` Estimated repair time: ${data.repairDays} day${data.repairDays !== 1 ? 's' : ''}.`
+        : '';
+
     return `The vehicle sustained collision-related damage primarily to the ${data.damageAreas} as reflected by the CCC point of impact classification.
 
 Visible damage includes: ${data.damageAreas}.
 
-Based on the current inspection and estimate documentation, the vehicle appears repairable within economic guidelines. Final repair costs may be subject to supplemental findings following teardown.`.trim();
+Based on the current inspection and estimate documentation, the vehicle appears repairable within economic guidelines.${repairNote} A supplement may be required following teardown. Final repair costs may be subject to supplemental findings.`.trim();
 }
 
 function buildTotalLossSummary(data) {
+    const acvNote = data.acv
+        ? ` Estimate total of ${data.estimateTotal} exceeds the economic repair threshold relative to the vehicle's actual cash value of ${data.acv}.`
+        : '';
+
     return `The point of impact classification within the CCC estimating platform is designated as ${data.poiLabel}.
 
-Based on the severity threshold reached within CCC, the amount of visible structural and mechanical damage meets total loss criteria and is not considered economically repairable.`.trim();
+Based on the severity threshold reached within CCC, the amount of visible structural and mechanical damage meets total loss criteria and is not considered economically repairable.${acvNote}`.trim();
 }
 
 function buildSpecialEventSummary(data) {
