@@ -199,10 +199,7 @@
       transmission: 2,
       tireDepth: '6/32'
     },
-    options: {
-      AC: true,  PW: true,  PL: true,  PM: true,  CC: true,
-      TL: true,  KE: true,  AB: true,  SB: true,  AW: true
-    },
+    options: ['AC', 'PW', 'PL', 'PM', 'CC', 'TL', 'KE', 'AB', 'SB', 'AW'],
     summary: {
       lossType: 'Total Loss',
       estimateTotal: '$14,287.52',

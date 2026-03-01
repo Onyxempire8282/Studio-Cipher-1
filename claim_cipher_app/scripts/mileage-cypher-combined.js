@@ -1256,16 +1256,10 @@ class MileageCypherCalculator {
       noteField.disabled = true;
     }
 
-    // Lock management buttons
-    const manageFirmsBtn = document.getElementById('manageFirms');
-    if (manageFirmsBtn) {
-      manageFirmsBtn.disabled = true;
-      manageFirmsBtn.title = 'Disabled in demo mode';
-    }
-
     // Disable new calculation button's clearing functionality
-    const newCalcBtn = document.getEle      const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
- = true;
+    const newCalcBtn = document.getElementById('newCalculation');
+    if (newCalcBtn) {
+      newCalcBtn.disabled = true;
       newCalcBtn.title = 'Disabled in demo mode';
     }
 
