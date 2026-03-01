@@ -12,7 +12,7 @@ import { renderBCIFPayload } from './render/bcifRenderer.js';
 import { mountProcessingView, unmountProcessingView, updateStage } from './ui/processingView.js';
 import { renderSummaryView } from './ui/summaryView.js';
 import { mapEstimateOptionsToBCIF, TOKEN_META } from './bcifPayloadBuilder.js';
-import { generateBCIFPdf } from './render/bcifPdfGenerator.js';
+import { generateBCIFDocx } from './render/bcifDocxFiller.js';
 import { generateClaimSummaryDocx } from './render/claimSummaryDocx.js';
 
 // =========================================
@@ -884,20 +884,16 @@ async function handleDownload() {
             console.log('[TLS] DOCX server not available:', fetchErr.message);
         }
 
-        // ── 3b. Fallback: client-side PDF via pdf-lib ──
+        // ── 3b. Fallback: client-side DOCX template fill via JSZip ──
         if (!downloaded) {
             try {
-                if (typeof window.PDFLib === 'undefined') {
-                    throw new Error('pdf-lib not loaded.');
-                }
-                console.log('[TLS] Generating BCIF PDF client-side...');
-                const pdfBytes = await generateBCIFPdf(state.tokenMap);
-                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                console.log('[TLS] PDF generated, size:', blob.size);
-                triggerDownload(blob, buildFileName('.pdf'));
+                console.log('[TLS] Generating BCIF DOCX client-side...');
+                const blob = await generateBCIFDocx(state.tokenMap);
+                console.log('[TLS] DOCX generated, size:', blob.size);
+                triggerDownload(blob, buildFileName('.docx'));
                 downloaded = true;
-            } catch (pdfErr) {
-                console.error('[TLS] Client-side PDF failed:', pdfErr);
+            } catch (docxErr) {
+                console.error('[TLS] Client-side DOCX failed:', docxErr);
             }
         }
 
