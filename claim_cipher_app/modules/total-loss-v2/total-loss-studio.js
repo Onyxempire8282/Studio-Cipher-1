@@ -115,6 +115,50 @@ export function initTotalLossDemo(demoPayload, demoParsed) {
             container.style.opacity = '1';
             updateSummaryHeaderFooter(demoPayload);
             attachSummaryListeners();
+
+            // Intercept downloads in demo mode — show toast instead
+            interceptDemoDownloads();
+        });
+    }
+}
+
+function interceptDemoDownloads() {
+    const downloadBtn = document.getElementById('sv-download');
+    const summaryBtn  = document.getElementById('tls-download-summary');
+
+    function showDemoToast(msg) {
+        let toast = document.getElementById('demo-download-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'demo-download-toast';
+            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
+                + 'background:#1a1a1a;border:1px solid #e8952a;color:#d0d0d0;padding:12px 24px;'
+                + 'font-family:"DM Mono",monospace;font-size:13px;z-index:10001;border-radius:4px;'
+                + 'transition:opacity 300ms;';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(function() { toast.style.opacity = '0'; }, 3000);
+    }
+
+    if (downloadBtn) {
+        // Remove the real handler that attachSummaryListeners just added
+        const fresh = downloadBtn.cloneNode(true);
+        downloadBtn.parentNode.replaceChild(fresh, downloadBtn);
+        fresh.addEventListener('click', function(e) {
+            e.preventDefault();
+            showDemoToast('Demo Mode — Sign up to download BCIF forms');
+        });
+    }
+
+    if (summaryBtn) {
+        const fresh = summaryBtn.cloneNode(true);
+        summaryBtn.parentNode.replaceChild(fresh, summaryBtn);
+        fresh.addEventListener('click', function(e) {
+            e.preventDefault();
+            showDemoToast('Demo Mode — Sign up to download claim summaries');
         });
     }
 }

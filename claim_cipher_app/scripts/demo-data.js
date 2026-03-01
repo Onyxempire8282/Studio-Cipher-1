@@ -166,6 +166,12 @@
   ];
 
   // ── TLS Payload (2019 Honda Accord EX) ──
+  var DEMO_TLS_OPTIONS = [
+    'AC','PS','PB','PW','PL','PM','CC','CL','TL','KE',
+    'AB','SB','IW','TW','RD','AW','CD','DA','HL','AG',
+    'BL','FM','LP','SW','DC'
+  ];
+
   var DEMO_TLS_PAYLOAD = {
     claim: {
       carrier: 'State Farm Insurance',
@@ -186,26 +192,24 @@
       bodyStyle: 'Sedan 4D'
     },
     condition: {
-      overall: 2,
-      paint: 2,
-      sheetMetal: 2,
-      glass: 2,
-      trim: 2,
-      seats: 2,
-      carpet: 2,
-      dashboard: 2,
-      headliner: 2,
-      engine: 2,
-      transmission: 2,
-      tireDepth: '6/32'
+      paint:        { rating: 2, comment: 'Normal wear for age. Minor chips or scratches. No major deterioration.' },
+      sheetMetal:   { rating: 2, comment: 'Minor dings or typical wear. Panels align properly.' },
+      glass:        { rating: 3, comment: 'Glass clear. No cracks or defects observed.' },
+      trim:         { rating: 2, comment: 'Normal wear. Minor blemishes only.' },
+      seats:        { rating: 2, comment: 'Light wear. No major damage.' },
+      carpet:       { rating: 2, comment: 'Light wear consistent with age.' },
+      dashboard:    { rating: 3, comment: 'Clean with no damage noted.' },
+      headliner:    { rating: 3, comment: 'Clean and properly secured.' },
+      frontTires:   { rating: 1, treadDepth: '4/32', comment: 'Moderate wear, approaching replacement threshold.' },
+      rearTires:    { rating: 2, treadDepth: '6/32', comment: 'Even wear within acceptable range.' },
+      engine:       { rating: 2, comment: 'Operational with no major issues observed at inspection.' },
+      transmission: { rating: 2, comment: 'No operational concerns observed during inspection.' }
     },
-    options: ['AC', 'PW', 'PL', 'PM', 'CC', 'TL', 'KE', 'AB', 'SB', 'AW'],
+    options: DEMO_TLS_OPTIONS,
     summary: {
-      lossType: 'Total Loss',
-      estimateTotal: '$14,287.52',
-      fairMarketValue: '$19,450.00',
-      claimSummary: 'Vehicle sustained significant front-end collision damage. Repair costs exceed fair market value threshold. Vehicle is declared a total loss based on estimate threshold.',
-      additionalNotes: ''
+      damageSummary: 'Front-end collision. Bumper cover, hood, left fender, headlamp assembly, and radiator support require replacement. Supplemental restraint system deployed. Condenser and A/C lines compromised. Frame rail shows measurable deformation at left front. Repair cost exceeds total loss threshold per carrier guidelines.',
+      conclusion: 'Total Loss',
+      additionalNotes: 'Vehicle was inspected at owner residence. All mechanical ratings reflect condition prior to loss. Tire tread measured with calibrated depth gauge. Interior and exterior condition ratings represent pre-loss state and are not influenced by collision damage.'
     }
   };
 
@@ -226,6 +230,7 @@
     cylinders: 'CYL_4',
     engineSize: '1.5L',
     transmission: 'TRANS_AUTO',
+    options: DEMO_TLS_OPTIONS,
     damage: {
       estimateTotal: 14287.52,
       laborTotal: 4320.00,
