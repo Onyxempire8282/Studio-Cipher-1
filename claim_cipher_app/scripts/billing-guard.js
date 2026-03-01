@@ -3,6 +3,7 @@
 
   function hasAccess(profile) {
     if (!profile) return false;
+    if (sessionStorage.getItem('demo_mode') === 'true') return true;
     if (profile.role === "admin") return true;
     if (profile.subscription_tier === "basic") return true;
     if (profile.subscription_tier === "pro") return true;

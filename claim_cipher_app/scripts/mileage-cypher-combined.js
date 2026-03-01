@@ -746,7 +746,7 @@ te,
 
     firmsList.innerHTML = "";
 
-    const firms = window.FirmStore ? window.FirmStore.getAll() : [];
+    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
     firms.forEach((firm) => {
       const firmElement = document.createElement("div");
       firmElement.className = "firm-item";
@@ -925,7 +925,7 @@ te,
   deleteFirm(firmId) {
 
 
-    const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
+    const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
     if (allFirms.length <= 1) {
       console.warn("Cannot delete last firm");
       return;
@@ -949,7 +949,7 @@ te,
 
         // Update selected firm if the deleted firm was selected
         if (window.FirmStore.getLastSelected() === firmId) {
-          const remaining = window.FirmStore.getAll();
+          const remaining = window.FirmStore.getAllSync();
           window.FirmStore.setLastSelected(remaining[0]?.id || "");
         }
       }
@@ -1223,7 +1223,7 @@ ing the deleted firm
     // Select a demo firm
     const firmSelect = document.getElementById('firmSelect');
     if (firmSelect && firmSelect.options.length > 1) {
-      const allFirms = window.FirmStore ? window.FirmStore.getAll() : [];
+      const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
       firmSelect.value = allFirms[0]?.id || '';
       firmSelect.disabled = true;
       this.onFirmChange(firmSelect.value);
