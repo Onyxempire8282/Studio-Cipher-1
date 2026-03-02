@@ -49,6 +49,11 @@ class MileageCypherCalculator {
       copyBtn.addEventListener("click", () => this.handleCopy());
     }
 
+    const copyMathBtn = document.getElementById("copyMathBtn");
+    if (copyMathBtn) {
+      copyMathBtn.addEventListener("click", () => this.copyBillingMath());
+    }
+
     const newCalcBtn = document.getElementById("newCalculation");
     if (newCalcBtn) {
       newCalcBtn.addEventListener("click", () => this.startNewCalculation());
@@ -782,6 +787,47 @@ class MileageCypherCalculator {
     const { baseMiles, freeMiles, billableMiles, ratePerMile, totalFee } =
       result;
     return `${baseMiles} miles - ${freeMiles} free miles = ${billableMiles} billable miles × $${ratePerMile} = $${totalFee}`;
+  }
+
+  async copyBillingMath() {
+    const formula = document.getElementById('billingFormula');
+    const amount = document.getElementById('billingAmount');
+    const btn = document.getElementById('copyMathBtn');
+
+    let text = '';
+    if (formula && formula.textContent !== '\u2014') {
+      text = formula.textContent;
+    }
+    if (amount && amount.textContent !== '$0.00') {
+      text = text ? text + ' = ' + amount.textContent : amount.textContent;
+    }
+    if (!text) {
+      text = this.latestCopyText || '';
+    }
+    if (!text) return;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      if (btn) {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy Math'; }, 1600);
+      }
+    } catch (e) {
+      console.error('Copy math failed:', e);
+      if (btn) btn.textContent = 'Failed';
+    }
   }
 
   async copyCalculationToClipboard() {
