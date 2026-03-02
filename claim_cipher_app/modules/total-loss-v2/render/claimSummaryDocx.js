@@ -116,10 +116,10 @@ function buildTokenMap(state, userProfile) {
     const isTotalLoss = poiCode === 15
         || (acv > 0 && estimateTotal > 0 && (estimateTotal / acv) >= 0.75);
 
-    // User profile
-    const fullName      = (userProfile.fullName      || '').trim();
+    // User profile (fallbacks match _gatherUserProfile defaults)
+    const fullName      = (userProfile.fullName      || 'Appraiser').trim();
     const licenseNumber = (userProfile.licenseNumber || '').trim();
-    const businessName  = (userProfile.businessName  || '').trim();
+    const businessName  = (userProfile.businessName  || 'Claim Cipher\u2122').trim();
 
     // ─── Claim / Insured fields ──────────────────────────────────────────────
     const claimNumber = payload.claim?.claimNumber || parsed.claimNumber || '';
@@ -184,11 +184,11 @@ function buildTokenMap(state, userProfile) {
     if (isTotalLoss) {
         para1 += ' Based on documented damage severity and repair cost analysis, the vehicle has been designated a total loss.';
     } else {
-        const shopName = parsed.shopName || '';
+        const preparedBy = fullName.toUpperCase();
         const workfileId = parsed.workfileId || '';
-        if (shopName || workfileId) {
+        if (preparedBy || workfileId) {
             para1 += ` The preliminary estimate`;
-            if (shopName) para1 += ` prepared by ${shopName}`;
+            if (preparedBy) para1 += ` prepared by ${preparedBy}`;
             if (workfileId) para1 += ` (Workfile ID: ${workfileId})`;
             para1 += ` documents repair procedures addressing ${damageDesc}`;
             para1 += poiLabel ? ` to the ${poiLabel.toLowerCase()} of the vehicle.` : '.';
@@ -363,8 +363,8 @@ function buildTokenMap(state, userProfile) {
         'of repair costs and is subject to revision upon supplemental inspection or teardown findings.';
 
     // ─── Signature ───────────────────────────────────────────────────────────
-    const sigName = fullName || payload.claim?.writer || '';
-    const sigText = sigName ? `/s/ ${sigName}` : '';
+    const sigName = fullName || payload.claim?.writer || 'Appraiser';
+    const sigText = sigName;
     const today = new Date().toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric',
     });

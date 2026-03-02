@@ -801,25 +801,35 @@ async function _gatherUserProfile() {
         profile.businessName = 'Demo Appraisal Co.';
         return profile;
     }
-    // Authenticated: Supabase first, settingsManager overlay
+    // Authenticated: read from profiles table (where Settings page saves)
     try {
-        const { metadata } = await window.SupabaseAuth.getCurrentUser();
-        if (metadata) {
-            profile.fullName = metadata.full_name || '';
-            profile.businessName = metadata.company || '';
-            profile.licenseNumber = metadata.license_number || '';
+        const sb = window.SupabaseAuth.init();
+        const { data: { user } } = await sb.auth.getUser();
+        if (user) {
+            let { data } = await sb
+                .from('profiles')
+                .select('first_name, last_name, company, license_number')
+                .eq('id', user.id)
+                .maybeSingle();
+            // Fall back to user_id if id didn't match
+            if (!data) {
+                ({ data } = await sb
+                    .from('profiles')
+                    .select('first_name, last_name, company, license_number')
+                    .eq('user_id', user.id)
+                    .maybeSingle());
+            }
+            if (data) {
+                profile.fullName = [data.first_name, data.last_name]
+                    .filter(Boolean).join(' ').trim();
+                profile.businessName = (data.company || '').trim();
+                profile.licenseNumber = (data.license_number || '').trim();
+            }
         }
     } catch (e) { console.warn('[TLS] Profile fetch failed:', e); }
-    // localStorage overrides
-    if (window.settingsManager) {
-        const sm = window.settingsManager;
-        const n = sm.getSetting('displayName');
-        if (n && n !== 'Demo User') profile.fullName = n;
-        const l = sm.getSetting('licenseNumber');
-        if (l && l !== 'DEMO-2024') profile.licenseNumber = l;
-    }
-    // Sanitize: Supabase URL-encodes spaces as "+" in some metadata fields
-    profile.fullName = profile.fullName.replace(/\+/g, ' ').trim();
+    // Fallbacks
+    if (!profile.businessName) profile.businessName = 'Claim Cipher\u2122';
+    if (!profile.fullName) profile.fullName = 'Appraiser';
     return profile;
 }
 
