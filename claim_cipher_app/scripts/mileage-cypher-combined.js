@@ -21,6 +21,7 @@ class MileageCypherCalculator {
   initializeRuntimeBindings() {
     this.loadFirmsToDropdown();
     this.setupEventListeners();
+    this.loadUserHomeLocation();
   }
 
   setupEventListeners() {
