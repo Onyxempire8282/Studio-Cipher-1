@@ -32,30 +32,33 @@ let currentFirmForModal = null;
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', async () => {
+  // Always bind UI handlers first so buttons work regardless of data load
+  bindProfileForm();
+  bindAddressForm();
+  bindFirmsList();
+  bindPasswordForm();
+  bindSidebarNav();
+
+  // Load data — profile and firms independently so one failure doesn't block the other
   try {
-    await loadAllSettings();
-    bindProfileForm();
-    bindAddressForm();
-    bindFirmsList();
-    bindPasswordForm();
-    bindSidebarNav();
+    const profile = await SettingsService.loadProfile();
+    populateProfileForm(profile);
+    populateAddressForm(profile);
   } catch (err) {
-    console.error('Settings init error:', err);
-    showToast('Failed to load settings', 'error');
+    console.error('Profile load error:', err);
+    showToast('Failed to load profile', 'error');
+  }
+
+  try {
+    userFirms = await SettingsService.loadUserFirms();
+    pendingFirms = [...userFirms];
+    renderFirmsList();
+    updateSelectedCount();
+  } catch (err) {
+    console.error('Firms load error:', err);
+    showToast('Failed to load firms', 'error');
   }
 });
-
-// ── LOAD ALL SETTINGS ──
-async function loadAllSettings() {
-  const profile = await SettingsService.loadProfile();
-  populateProfileForm(profile);
-  populateAddressForm(profile);
-
-  userFirms = await SettingsService.loadUserFirms();
-  pendingFirms = [...userFirms];
-  renderFirmsList();
-  updateSelectedCount();
-}
 
 // ── PROFILE FORM ──
 function populateProfileForm(profile) {
