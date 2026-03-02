@@ -402,11 +402,27 @@
     window.copyBillingMath = function() {
       var formula = document.getElementById('billingFormula');
       var btn = document.getElementById('copyMathBtn');
-      if (!formula || formula.textContent === '\u2014') return;
-      var text = formula.textContent;
+
+      // Build the text from the billing preview fields
+      var amount = document.getElementById('billingAmount');
+      var note = document.getElementById('freeMilesNote');
+      var text = '';
+      if (formula && formula.textContent !== '\u2014') {
+        text = formula.textContent;
+      }
+      if (amount && amount.textContent !== '$0.00') {
+        text = text ? text + ' = ' + amount.textContent : amount.textContent;
+      }
+      if (!text) {
+        // Nothing to copy — try the latestCopyText from the calculator
+        text = (window.mileageCipher && window.mileageCipher.latestCopyText) || '';
+      }
+      if (!text) return;
+
+      // Copy to clipboard
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(function() {
-          if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600); }
+          _showCopied(btn);
         }).catch(function() {
           _fallbackCopy(text, btn);
         });
@@ -414,6 +430,11 @@
         _fallbackCopy(text, btn);
       }
     };
+    function _showCopied(btn) {
+      if (!btn) return;
+      btn.textContent = 'Copied!';
+      setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600);
+    }
     function _fallbackCopy(text, btn) {
       var ta = document.createElement('textarea');
       ta.value = text;
@@ -424,9 +445,9 @@
       ta.select();
       try {
         document.execCommand('copy');
-        if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600); }
+        _showCopied(btn);
       } catch(e) {
-        if (btn) { btn.textContent = 'Copy Math'; }
+        if (btn) btn.textContent = 'Failed';
       }
       document.body.removeChild(ta);
     }
