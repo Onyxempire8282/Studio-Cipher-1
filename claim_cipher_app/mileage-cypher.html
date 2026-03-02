@@ -403,11 +403,32 @@
       var formula = document.getElementById('billingFormula');
       var btn = document.getElementById('copyMathBtn');
       if (!formula || formula.textContent === '\u2014') return;
-      navigator.clipboard.writeText(formula.textContent).then(function() {
+      var text = formula.textContent;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function() {
+          if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600); }
+        }).catch(function() {
+          fallbackCopy(text, btn);
+        });
+      } else {
+        fallbackCopy(text, btn);
+      }
+    }
+    function fallbackCopy(text, btn) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
         if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600); }
-      }).catch(function() {
+      } catch(e) {
         if (btn) { btn.textContent = 'Copy Math'; }
-      });
+      }
+      document.body.removeChild(ta);
     }
 
     // ── Session log panel updater ──
