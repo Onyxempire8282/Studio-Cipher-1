@@ -81,6 +81,7 @@ body::before {
 .nav-right { display: flex; align-items: center; gap: 16px; }
 .nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
 .nav-user strong { color: var(--white); display: block; font-size: 12px; }
+#userBusinessName { display: block; }
 .nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
 .nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
 
