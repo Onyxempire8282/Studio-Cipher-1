@@ -514,11 +514,13 @@
             }
 
             var baseUrl = window.SUPABASE_CONFIG?.url || "";
+            var anonKey = window.SUPABASE_CONFIG?.anonKey || "";
             var response = await fetch(baseUrl + "/functions/v1/create-checkout-session", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + accessToken,
+                "apikey": anonKey,
               },
               body: JSON.stringify({ plan: "basic" }),
             });

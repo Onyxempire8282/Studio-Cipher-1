@@ -42,11 +42,13 @@
       throw new Error('No active session');
     }
 
+    const anonKey = window.SUPABASE_CONFIG?.anonKey || '';
     const response = await fetch(`${baseUrl}/functions/v1/${name}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+        apikey: anonKey,
       },
       body: body ? JSON.stringify(body) : '{}',
     });
@@ -87,10 +89,12 @@
       return { tier: 'none', status: 'inactive' };
     }
 
+    const anonKey = window.SUPABASE_CONFIG?.anonKey || '';
     const response = await fetch(`${baseUrl}/functions/v1/billing-status`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${session.access_token}`,
+        apikey: anonKey,
         'Content-Type': 'application/json',
       },
     });

@@ -482,11 +482,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!session) throw new Error("No active session");
 
         var baseUrl = window.SUPABASE_CONFIG?.url || "";
+        var anonKey = window.SUPABASE_CONFIG?.anonKey || "";
         var response = await fetch(baseUrl + "/functions/v1/billing-status", {
             method: "GET",
             headers: {
                 Authorization: "Bearer " + session.access_token,
                 "Content-Type": "application/json",
+                "apikey": anonKey,
             },
         });
 
