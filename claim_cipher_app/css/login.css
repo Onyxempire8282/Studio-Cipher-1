@@ -78,10 +78,10 @@ body::after {
 }
 
 .logo-circle {
-    width: 96px; height: 96px;
+    width: 148px; height: 148px;
     border-radius: 50%;
     border: 2px solid var(--rivet);
-    background: var(--steel-mid);
+    background: #1a1a1a;
     box-shadow:
         0 0 0 4px rgba(232,149,42,0.08),
         0 0 32px rgba(232,149,42,0.15),
@@ -91,10 +91,10 @@ body::after {
     flex-shrink: 0;
 }
 .logo-img {
-    width: 76px; height: 76px;
+    width: 128px; height: 128px;
     object-fit: contain;
     display: block;
-    background: #1c2026;
+    background: #1a1a1a;
     border-radius: 50%;
 }
 

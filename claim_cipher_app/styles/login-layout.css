@@ -105,6 +105,45 @@ html, body {
     margin: 0 auto 14px auto;
 }
 
+/* Brand lockup: mark icon + styled text (replaces full.png which is invisible on dark bg) */
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 0 auto 14px auto;
+}
+.brand-mark {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: #1a1a1a;
+    border: 1px solid rgba(184,115,51,0.25);
+    flex-shrink: 0;
+}
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+.brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.12em;
+    color: #b8bdc2;
+    line-height: 1;
+}
+.brand-accent {
+    color: #c47a2a;
+}
+.brand-tm {
+    font-family: 'Barlow', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    vertical-align: super;
+    letter-spacing: 0;
+    color: #4a5058;
+}
+
 .auth-brand-name {
     font-size: 1.6rem;
     font-weight: 700;
