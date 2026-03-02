@@ -54,6 +54,9 @@ class RouteCipher {
     // Track active day for modal editing
     this.activeModalDay = 0;
 
+    // Pre-fill starting location from settings home address (if not already set)
+    this.prefillHomeAddress();
+
     // Check for edit payload first (from My Routes), then demo, then saved routes
     if (this.checkForEditRoute()) {
       // Edit payload detected — form pre-populated, skip other checks
@@ -62,6 +65,16 @@ class RouteCipher {
     } else {
       // Check for saved routes on page load (after short delay for DOM)
       setTimeout(() => this.checkForSavedRoutes(), 500);
+    }
+  }
+
+  prefillHomeAddress() {
+    const startInput = document.getElementById('startLocation');
+    if (!startInput || startInput.value.trim()) return; // don't overwrite existing value
+    const homeAddr = localStorage.getItem('cipher_home_address') || '';
+    if (homeAddr) {
+      startInput.value = homeAddr;
+      this.startLocation = homeAddr;
     }
   }
 

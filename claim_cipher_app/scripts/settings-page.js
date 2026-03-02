@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindPasswordForm();
   bindSidebarNav();
 
+  // Get auth email first (for email-change comparison)
+  await loadAuthEmail();
+
   // Load data — profile and firms independently so one failure doesn't block the other
   try {
     const profile = await SettingsService.loadProfile();
@@ -47,10 +50,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       populateProfileForm(profile);
       populateAddressForm(profile);
     } else {
+      // Profile row exists but new columns may be empty — still show auth email
+      if (_authEmail) setValue('emailAddress', _authEmail);
       console.warn('loadProfile returned null — profile row may not exist or columns missing');
     }
   } catch (err) {
     console.error('Profile load error:', err);
+    if (_authEmail) setValue('emailAddress', _authEmail);
     showToast('Failed to load profile: ' + (err.message || err), 'error');
   }
 
@@ -66,7 +72,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── PROFILE FORM ──
-let _originalEmail = '';
+let _authEmail = '';
+
+async function loadAuthEmail() {
+  try {
+    const sb = window.SupabaseAuth.init();
+    const { data: { user } } = await sb.auth.getUser();
+    _authEmail = user?.email || '';
+  } catch (e) { /* ignore */ }
+}
 
 function populateProfileForm(profile) {
   if (!profile) return;
@@ -75,8 +89,9 @@ function populateProfileForm(profile) {
   setValue('companyName',   profile.company);
   setValue('licenseNumber', profile.license_number);
   setValue('phoneNumber',   profile.phone);
-  setValue('emailAddress',  profile.email);
-  _originalEmail = profile.email || '';
+  // Email comes from auth, not profiles table
+  if (_authEmail) setValue('emailAddress', _authEmail);
+  else if (profile.email) setValue('emailAddress', profile.email);
 }
 
 function bindProfileForm() {
@@ -93,9 +108,9 @@ function bindProfileForm() {
           phone:          getVal('phoneNumber')
         });
 
-        // Handle email change separately (goes through Supabase Auth, sends confirmation)
+        // Handle email change only if user actually typed a different address
         const newEmail = getVal('emailAddress');
-        if (newEmail && newEmail !== _originalEmail) {
+        if (newEmail && _authEmail && newEmail !== _authEmail) {
           await SettingsService.changeEmail(newEmail);
           showToast('Profile saved — check your new email for a confirmation link', 'success');
         } else {
@@ -136,17 +151,25 @@ function bindAddressForm() {
       const btn = document.getElementById('saveAddressBtn');
       setLoading(btn, true);
       try {
-        await SettingsService.saveAddress({
-          street_address: getVal('streetAddress'),
-          city:           getVal('cityField'),
-          state:          getVal('stateField'),
-          zip:            getVal('zipField')
-        });
-        showToast('Address saved', 'success');
+        const street = getVal('streetAddress');
+        const city   = getVal('cityField');
+        const state  = getVal('stateField');
+        const zip    = getVal('zipField');
 
-        // Re-load to confirm persistence
-        const fresh = await SettingsService.loadProfile();
-        console.log('Address after save:', fresh);
+        await SettingsService.saveAddress({
+          street_address: street,
+          city:           city,
+          state:          state,
+          zip:            zip
+        });
+
+        // Sync to localStorage so Mileage Cipher + Route Cipher use it as home base
+        const fullAddress = [street, city, [state, zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+        if (fullAddress) {
+          syncHomeAddress(fullAddress);
+        }
+
+        showToast('Address saved', 'success');
       } catch (err) {
         showToast(err.message || 'Failed to save address', 'error');
         console.error('saveAddress error:', err);
@@ -496,6 +519,25 @@ function bindSidebarNav() {
       link.classList.add('active');
     });
   });
+}
+
+// ── HOME ADDRESS SYNC ──
+// Writes the formatted address to localStorage so Mileage Cipher and Route Cipher
+// can read it as the default starting location / home base.
+function syncHomeAddress(fullAddress) {
+  try {
+    // Mileage Cipher reads homeLocation from mileage_cypher_settings_v2
+    const mcKey = 'mileage_cypher_settings_v2';
+    const mcSettings = JSON.parse(localStorage.getItem(mcKey) || '{}');
+    mcSettings.homeLocation = fullAddress;
+    localStorage.setItem(mcKey, JSON.stringify(mcSettings));
+
+    // Also store in a shared key for Route Cipher
+    localStorage.setItem('cipher_home_address', fullAddress);
+    console.log('Home address synced to localStorage:', fullAddress);
+  } catch (e) {
+    console.error('Failed to sync home address:', e);
+  }
 }
 
 // ── HELPERS ──

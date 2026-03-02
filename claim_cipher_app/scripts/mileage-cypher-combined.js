@@ -175,24 +175,35 @@ class MileageCypherCalculator {
   loadUserHomeLocation() {
     const pointAInput = document.getElementById("pointA");
     if (pointAInput) {
-      if (this.settings.homeLocation) {
-        pointAInput.value = this.settings.homeLocation;
+      // Check settings first, then fall back to shared cipher_home_address from Settings page
+      const homeAddr = this.settings.homeLocation
+        || localStorage.getItem('cipher_home_address')
+        || '';
+
+      if (homeAddr) {
+        pointAInput.value = homeAddr;
         pointAInput.placeholder = "Your home base location";
+        // Sync back so both sources stay in sync
+        if (!this.settings.homeLocation) {
+          this.settings.homeLocation = homeAddr;
+          this.saveSettings();
+        }
       } else {
-        // Set a default home location if none exists
         pointAInput.placeholder =
           "Enter your home/office address (this will be saved)";
-
-        // Save home location when user enters it
-        pointAInput.addEventListener("blur", () => {
-          const homeAddress = pointAInput.value.trim();
-          if (homeAddress && homeAddress !== this.settings.homeLocation) {
-            this.settings.homeLocation = homeAddress;
-            this.saveSettings();
-            console.log("Home location saved:", homeAddress);
-          }
-        });
       }
+
+      // Save home location when user enters or changes it
+      pointAInput.addEventListener("blur", () => {
+        const homeAddress = pointAInput.value.trim();
+        if (homeAddress && homeAddress !== this.settings.homeLocation) {
+          this.settings.homeLocation = homeAddress;
+          this.saveSettings();
+          // Also update the shared key for Route Cipher
+          localStorage.setItem('cipher_home_address', homeAddress);
+          console.log("Home location saved:", homeAddress);
+        }
+      });
     }
   }
 
