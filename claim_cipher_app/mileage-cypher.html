@@ -399,7 +399,7 @@
     })();
 
     // ── Copy billing math ──
-    function copyBillingMath() {
+    window.copyBillingMath = function() {
       var formula = document.getElementById('billingFormula');
       var btn = document.getElementById('copyMathBtn');
       if (!formula || formula.textContent === '\u2014') return;
@@ -408,13 +408,13 @@
         navigator.clipboard.writeText(text).then(function() {
           if (btn) { btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy Math'; }, 1600); }
         }).catch(function() {
-          fallbackCopy(text, btn);
+          _fallbackCopy(text, btn);
         });
       } else {
-        fallbackCopy(text, btn);
+        _fallbackCopy(text, btn);
       }
-    }
-    function fallbackCopy(text, btn) {
+    };
+    function _fallbackCopy(text, btn) {
       var ta = document.createElement('textarea');
       ta.value = text;
       ta.setAttribute('readonly', '');
@@ -467,7 +467,7 @@
     }
 
     // ── Export CSV ──
-    function exportSessionCSV() {
+    window.exportSessionCSV = function() {
       if (!window.mileageCipher) return;
       var history = window.mileageCipher.calculationHistory || [];
       if (!history.length) { alert('No calculations to export.'); return; }
@@ -485,10 +485,10 @@
       a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = 'mileage-session.csv';
       a.click();
-    }
+    };
 
     // ── Export PDF (print fallback) ──
-    function exportSessionPDF() {
+    window.exportSessionPDF = function() {
       if (!window.mileageCipher) return;
       var history = window.mileageCipher.calculationHistory || [];
       if (!history.length) { alert('No calculations to export.'); return; }
@@ -501,7 +501,7 @@
       w.document.write(html);
       w.document.close();
       w.print();
-    }
+    };
     </script>
 
     <!-- ACTION FOOTER -->
