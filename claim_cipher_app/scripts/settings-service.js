@@ -16,32 +16,43 @@ const SettingsService = (() => {
   }
 
   // ── PROFILE ──
-  // SELECT uses user_id (works per billing-guard)
-  // UPDATE uses id (PK = auth UUID, matches RLS: auth.uid() = id)
+  // The profiles table has both "id" (PK = auth UUID) and "user_id".
+  // RLS UPDATE policy: auth.uid() = id  → updates MUST filter by id
+  // RLS SELECT policy also uses id, but billing-guard uses user_id
+  // We try id first for SELECT; fall back to user_id if no row found.
 
   async function loadProfile() {
     const sb = getClient();
     const userId = await getUserId();
-    const { data, error } = await sb
+    if (!userId) throw new Error('Not authenticated');
+
+    // Try selecting by id (PK) first
+    let { data, error } = await sb
       .from('profiles')
-      .select(`
-        first_name, last_name, company,
-        license_number, phone, email,
-        street_address, city, state, zip
-      `)
-      .eq('user_id', userId)
+      .select('*')
+      .eq('id', userId)
       .maybeSingle();
-    if (error) {
-      console.error('loadProfile error:', error);
-      return null;
+
+    // If no row found by id, try user_id
+    if (!error && !data) {
+      ({ data, error } = await sb
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle());
     }
+
+    if (error) throw error;
     return data;
   }
 
   async function saveProfile(fields) {
     const sb = getClient();
     const userId = await getUserId();
-    const { error } = await sb
+    if (!userId) throw new Error('Not authenticated');
+
+    // Try update by id (PK) — matches RLS policy auth.uid() = id
+    let { error } = await sb
       .from('profiles')
       .update({
         first_name:     fields.first_name,
@@ -59,6 +70,8 @@ const SettingsService = (() => {
   async function saveAddress(fields) {
     const sb = getClient();
     const userId = await getUserId();
+    if (!userId) throw new Error('Not authenticated');
+
     const { error } = await sb
       .from('profiles')
       .update({

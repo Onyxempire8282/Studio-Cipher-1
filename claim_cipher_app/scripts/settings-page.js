@@ -42,11 +42,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load data — profile and firms independently so one failure doesn't block the other
   try {
     const profile = await SettingsService.loadProfile();
-    populateProfileForm(profile);
-    populateAddressForm(profile);
+    console.log('loadProfile returned:', profile);
+    if (profile) {
+      populateProfileForm(profile);
+      populateAddressForm(profile);
+    } else {
+      console.warn('loadProfile returned null — profile row may not exist or columns missing');
+    }
   } catch (err) {
     console.error('Profile load error:', err);
-    showToast('Failed to load profile', 'error');
+    showToast('Failed to load profile: ' + (err.message || err), 'error');
   }
 
   try {
@@ -97,9 +102,13 @@ function bindProfileForm() {
           showToast('Profile saved', 'success');
         }
         updateSectionBadge('profileSection', 'SAVED');
+
+        // Re-load to confirm persistence
+        const fresh = await SettingsService.loadProfile();
+        console.log('Profile after save:', fresh);
       } catch (err) {
         showToast(err.message || 'Failed to save profile', 'error');
-        console.error(err);
+        console.error('saveProfile error:', err);
       } finally {
         setLoading(btn, false);
       }
@@ -134,9 +143,13 @@ function bindAddressForm() {
           zip:            getVal('zipField')
         });
         showToast('Address saved', 'success');
+
+        // Re-load to confirm persistence
+        const fresh = await SettingsService.loadProfile();
+        console.log('Address after save:', fresh);
       } catch (err) {
-        showToast('Failed to save address', 'error');
-        console.error(err);
+        showToast(err.message || 'Failed to save address', 'error');
+        console.error('saveAddress error:', err);
       } finally {
         setLoading(btn, false);
       }
