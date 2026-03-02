@@ -130,16 +130,6 @@ const SettingsService = (() => {
     if (error) throw error;
   }
 
-  // ── EMAIL ──
-
-  async function changeEmail(newEmail) {
-    const sb = getClient();
-    const { error } = await sb.auth.updateUser({
-      email: newEmail
-    });
-    if (error) throw error;
-  }
-
   // ── PASSWORD ──
 
   async function changePassword(newPassword) {
@@ -165,7 +155,6 @@ const SettingsService = (() => {
     loadUserFirms,
     saveFirm,
     deleteFirm,
-    changeEmail,
     changePassword,
     syncToFirmStore
   };

@@ -39,9 +39,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindPasswordForm();
   bindSidebarNav();
 
-  // Get auth email first (for email-change comparison)
-  await loadAuthEmail();
-
   // Load data — profile and firms independently so one failure doesn't block the other
   try {
     const profile = await SettingsService.loadProfile();
@@ -49,14 +46,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (profile) {
       populateProfileForm(profile);
       populateAddressForm(profile);
-    } else {
-      // Profile row exists but new columns may be empty — still show auth email
-      if (_authEmail) setValue('emailAddress', _authEmail);
-      console.warn('loadProfile returned null — profile row may not exist or columns missing');
     }
   } catch (err) {
     console.error('Profile load error:', err);
-    if (_authEmail) setValue('emailAddress', _authEmail);
     showToast('Failed to load profile: ' + (err.message || err), 'error');
   }
 
@@ -72,16 +64,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── PROFILE FORM ──
-let _authEmail = '';
-
-async function loadAuthEmail() {
-  try {
-    const sb = window.SupabaseAuth.init();
-    const { data: { user } } = await sb.auth.getUser();
-    _authEmail = user?.email || '';
-  } catch (e) { /* ignore */ }
-}
-
 function populateProfileForm(profile) {
   if (!profile) return;
   setValue('firstName',     profile.first_name);
@@ -89,9 +71,7 @@ function populateProfileForm(profile) {
   setValue('companyName',   profile.company);
   setValue('licenseNumber', profile.license_number);
   setValue('phoneNumber',   profile.phone);
-  // Email comes from auth, not profiles table
-  if (_authEmail) setValue('emailAddress', _authEmail);
-  else if (profile.email) setValue('emailAddress', profile.email);
+  setValue('emailAddress',  profile.email);
 }
 
 function bindProfileForm() {
@@ -107,20 +87,8 @@ function bindProfileForm() {
           license_number: getVal('licenseNumber'),
           phone:          getVal('phoneNumber')
         });
-
-        // Handle email change only if user actually typed a different address
-        const newEmail = getVal('emailAddress');
-        if (newEmail && _authEmail && newEmail !== _authEmail) {
-          await SettingsService.changeEmail(newEmail);
-          showToast('Profile saved — check your new email for a confirmation link', 'success');
-        } else {
-          showToast('Profile saved', 'success');
-        }
+        showToast('Profile saved', 'success');
         updateSectionBadge('profileSection', 'SAVED');
-
-        // Re-load to confirm persistence
-        const fresh = await SettingsService.loadProfile();
-        console.log('Profile after save:', fresh);
       } catch (err) {
         showToast(err.message || 'Failed to save profile', 'error');
         console.error('saveProfile error:', err);
