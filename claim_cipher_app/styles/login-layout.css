@@ -115,10 +115,7 @@ html, body {
 }
 .brand-mark {
     width: 48px; height: 48px;
-    border-radius: 50%;
     object-fit: contain;
-    background: #1a1a1a;
-    border: 1px solid rgba(184,115,51,0.25);
     flex-shrink: 0;
 }
 .brand-text {
