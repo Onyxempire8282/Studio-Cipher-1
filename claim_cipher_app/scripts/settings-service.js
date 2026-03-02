@@ -16,6 +16,8 @@ const SettingsService = (() => {
   }
 
   // ── PROFILE ──
+  // SELECT uses user_id (works per billing-guard)
+  // UPDATE uses id (PK = auth UUID, matches RLS: auth.uid() = id)
 
   async function loadProfile() {
     const sb = getClient();
@@ -39,7 +41,7 @@ const SettingsService = (() => {
   async function saveProfile(fields) {
     const sb = getClient();
     const userId = await getUserId();
-    const { data, error } = await sb
+    const { error } = await sb
       .from('profiles')
       .update({
         first_name:     fields.first_name,
@@ -48,12 +50,8 @@ const SettingsService = (() => {
         license_number: fields.license_number,
         phone:          fields.phone
       })
-      .eq('user_id', userId)
-      .select()
-      .maybeSingle();
+      .eq('id', userId);
     if (error) throw error;
-    if (!data) throw new Error('Profile update matched 0 rows — check user_id column');
-    return data;
   }
 
   // ── ADDRESS ──
@@ -61,7 +59,7 @@ const SettingsService = (() => {
   async function saveAddress(fields) {
     const sb = getClient();
     const userId = await getUserId();
-    const { data, error } = await sb
+    const { error } = await sb
       .from('profiles')
       .update({
         street_address: fields.street_address,
@@ -69,12 +67,8 @@ const SettingsService = (() => {
         state:          fields.state,
         zip:            fields.zip
       })
-      .eq('user_id', userId)
-      .select()
-      .maybeSingle();
+      .eq('id', userId);
     if (error) throw error;
-    if (!data) throw new Error('Address update matched 0 rows — check user_id column');
-    return data;
   }
 
   // ── FIRMS ──
