@@ -61,6 +61,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── PROFILE FORM ──
+let _originalEmail = '';
+
 function populateProfileForm(profile) {
   if (!profile) return;
   setValue('firstName',     profile.first_name);
@@ -69,6 +71,7 @@ function populateProfileForm(profile) {
   setValue('licenseNumber', profile.license_number);
   setValue('phoneNumber',   profile.phone);
   setValue('emailAddress',  profile.email);
+  _originalEmail = profile.email || '';
 }
 
 function bindProfileForm() {
@@ -84,10 +87,18 @@ function bindProfileForm() {
           license_number: getVal('licenseNumber'),
           phone:          getVal('phoneNumber')
         });
-        showToast('Profile saved', 'success');
+
+        // Handle email change separately (goes through Supabase Auth, sends confirmation)
+        const newEmail = getVal('emailAddress');
+        if (newEmail && newEmail !== _originalEmail) {
+          await SettingsService.changeEmail(newEmail);
+          showToast('Profile saved — check your new email for a confirmation link', 'success');
+        } else {
+          showToast('Profile saved', 'success');
+        }
         updateSectionBadge('profileSection', 'SAVED');
       } catch (err) {
-        showToast('Failed to save profile', 'error');
+        showToast(err.message || 'Failed to save profile', 'error');
         console.error(err);
       } finally {
         setLoading(btn, false);

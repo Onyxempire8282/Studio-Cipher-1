@@ -16,7 +16,6 @@ const SettingsService = (() => {
   }
 
   // ── PROFILE ──
-  // profiles PK is "id" (not "user_id")
 
   async function loadProfile() {
     const sb = getClient();
@@ -28,16 +27,19 @@ const SettingsService = (() => {
         license_number, phone, email,
         street_address, city, state, zip
       `)
-      .eq('id', userId)
-      .single();
-    if (error) throw error;
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error) {
+      console.error('loadProfile error:', error);
+      return null;
+    }
     return data;
   }
 
   async function saveProfile(fields) {
     const sb = getClient();
     const userId = await getUserId();
-    const { error } = await sb
+    const { data, error } = await sb
       .from('profiles')
       .update({
         first_name:     fields.first_name,
@@ -46,8 +48,12 @@ const SettingsService = (() => {
         license_number: fields.license_number,
         phone:          fields.phone
       })
-      .eq('id', userId);
+      .eq('user_id', userId)
+      .select()
+      .maybeSingle();
     if (error) throw error;
+    if (!data) throw new Error('Profile update matched 0 rows — check user_id column');
+    return data;
   }
 
   // ── ADDRESS ──
@@ -55,7 +61,7 @@ const SettingsService = (() => {
   async function saveAddress(fields) {
     const sb = getClient();
     const userId = await getUserId();
-    const { error } = await sb
+    const { data, error } = await sb
       .from('profiles')
       .update({
         street_address: fields.street_address,
@@ -63,8 +69,12 @@ const SettingsService = (() => {
         state:          fields.state,
         zip:            fields.zip
       })
-      .eq('id', userId);
+      .eq('user_id', userId)
+      .select()
+      .maybeSingle();
     if (error) throw error;
+    if (!data) throw new Error('Address update matched 0 rows — check user_id column');
+    return data;
   }
 
   // ── FIRMS ──
@@ -113,6 +123,16 @@ const SettingsService = (() => {
     if (error) throw error;
   }
 
+  // ── EMAIL ──
+
+  async function changeEmail(newEmail) {
+    const sb = getClient();
+    const { error } = await sb.auth.updateUser({
+      email: newEmail
+    });
+    if (error) throw error;
+  }
+
   // ── PASSWORD ──
 
   async function changePassword(newPassword) {
@@ -138,6 +158,7 @@ const SettingsService = (() => {
     loadUserFirms,
     saveFirm,
     deleteFirm,
+    changeEmail,
     changePassword,
     syncToFirmStore
   };
