@@ -95,8 +95,11 @@
           </div>
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" class="form-input form-input--readonly" id="emailAddress" readonly placeholder="user@example.com">
-            <span class="form-hint">Email is linked to your login and cannot be changed here</span>
+            <div class="email-row">
+              <input type="email" class="form-input" id="emailAddress" placeholder="user@example.com">
+              <button class="btn btn-ghost btn-sm" type="button" id="updateEmailBtn">Update Email</button>
+            </div>
+            <span class="form-hint" id="emailHint">A confirmation link will be sent to the new address</span>
           </div>
         </div>
       </div>

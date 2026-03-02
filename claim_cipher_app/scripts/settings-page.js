@@ -102,6 +102,29 @@ function bindProfileForm() {
       const profile = await SettingsService.loadProfile();
       populateProfileForm(profile);
     });
+
+  // Dedicated email update — separate from profile save
+  document.getElementById('updateEmailBtn')
+    ?.addEventListener('click', async () => {
+      const newEmail = getVal('emailAddress');
+      if (!newEmail) {
+        showToast('Enter an email address', 'error');
+        return;
+      }
+      const btn = document.getElementById('updateEmailBtn');
+      setLoading(btn, true);
+      try {
+        await SettingsService.changeEmail(newEmail);
+        showToast('Confirmation link sent to ' + newEmail, 'success');
+        document.getElementById('emailHint').textContent =
+          'Check ' + newEmail + ' for the confirmation link';
+      } catch (err) {
+        showToast(err.message || 'Failed to update email', 'error');
+        console.error('changeEmail error:', err);
+      } finally {
+        setLoading(btn, false);
+      }
+    });
 }
 
 // ── ADDRESS FORM ──

@@ -130,6 +130,19 @@ const SettingsService = (() => {
     if (error) throw error;
   }
 
+  // ── EMAIL ──
+
+  async function changeEmail(newEmail) {
+    const sb = getClient();
+    const { error } = await sb.auth.updateUser({
+      email: newEmail
+    });
+    if (error) throw error;
+    // Also update the profiles table email column
+    const userId = await getUserId();
+    await sb.from('profiles').update({ email: newEmail }).eq('id', userId);
+  }
+
   // ── PASSWORD ──
 
   async function changePassword(newPassword) {
@@ -152,6 +165,7 @@ const SettingsService = (() => {
     loadProfile,
     saveProfile,
     saveAddress,
+    changeEmail,
     loadUserFirms,
     saveFirm,
     deleteFirm,
