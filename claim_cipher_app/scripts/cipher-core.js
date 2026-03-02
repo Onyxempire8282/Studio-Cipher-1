@@ -258,69 +258,33 @@ window.handleLogout = handleLogout;
 
 
 
-// ─── NAV USER NAME + BUSINESS — auto-runs on every page ────────────────────
-// Reads the user's profile from Supabase profiles table and updates:
-//   #userName         → first_name + last_name (or email prefix fallback)
-//   #userBusinessName → company (hidden if empty)
-(async function updateNavUserDisplay() {
-    const nameEl = document.getElementById('userName');
-    const bizEl  = document.getElementById('userBusinessName');
-    if (!nameEl) return;
+// ─── NAV USER NAME — auto-runs on every page ───────────────────────────────
+// Reads the real user name from Supabase metadata and updates #userName.
+// Priority: full_name → name → company → business_name → email prefix
+(async function updateNavUserName() {
+    const el = document.getElementById('userName');
+    if (!el) return;
 
     // Demo mode
     if (sessionStorage.getItem('demo_mode') === 'true') {
-        nameEl.textContent = 'Demo User';
-        if (bizEl) { bizEl.textContent = 'Demo Appraisal Co.'; }
+        el.textContent = 'Demo User';
         return;
     }
 
-    if (!window.SupabaseAuth) return;
+    if (!window.SupabaseAuth || !window.SupabaseAuth.getCurrentUser) return;
 
     try {
-        const sb = window.SupabaseAuth.init();
-        if (!sb) return;
-        const { data: { user } } = await sb.auth.getUser();
-        if (!user) return;
+        const { email, metadata } = await window.SupabaseAuth.getCurrentUser();
+        if (!email) return;
 
-        // Read from profiles table (where Settings page saves)
-        let profile = null;
-        const { data } = await sb
-            .from('profiles')
-            .select('first_name, last_name, company')
-            .eq('id', user.id)
-            .maybeSingle();
-        profile = data;
+        const name = (metadata && (
+            metadata.full_name ||
+            metadata.name ||
+            metadata.company ||
+            metadata.business_name
+        )) || email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-        // Fall back to user_id if id didn't match
-        if (!profile) {
-            const { data: d2 } = await sb
-                .from('profiles')
-                .select('first_name, last_name, company')
-                .eq('user_id', user.id)
-                .maybeSingle();
-            profile = d2;
-        }
-
-        // User name: first + last, fall back to email prefix
-        const fullName = profile
-            ? [profile.first_name, profile.last_name].filter(Boolean).join(' ').trim()
-            : '';
-        const email = user.email || '';
-        nameEl.textContent = fullName
-            || email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-            || 'Professional User';
-
-        // Business name
-        const company = (profile?.company || '').trim();
-        if (bizEl) {
-            if (company) {
-                bizEl.textContent = company;
-                bizEl.style.display = '';
-            } else {
-                bizEl.textContent = '';
-                bizEl.style.display = 'none';
-            }
-        }
+        el.textContent = name;
     } catch (e) {
         // Silently fail — hardcoded fallback stays visible
     }
