@@ -20,6 +20,7 @@
         <a class="nav-tab active" href="mileage-cypher.html">Mileage</a>
         <a class="nav-tab" href="my-routes.html">My Routes</a>
         <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+        <a class="nav-tab" href="settings.html">Settings</a>
       </div>
       <div class="nav-right">
         <div class="nav-user">
@@ -74,8 +75,8 @@
                   <select id="firmSelect" class="mc-field-input" required>
                     <option value="">Choose insurance firm...</option>
                   </select>
+                  <div class="mc-firms-note">Manage firms in <a href="settings.html">Settings &rarr;</a></div>
                 </div>
-                <button id="manageFirmsBtn" class="mc-manage-btn">Manage Firms</button>
               </div>
             </div>
             <div class="mc-rate-strip">
@@ -259,82 +260,7 @@
         </div>
       </div>
 
-      <!-- Firms Management Modal -->
-      <div id="firmsModal" class="modal" style="display: none">
-        <div class="mc-modal-panel">
-
-          <!-- Header -->
-          <div class="mc-modal-header">
-            <div>
-              <div class="mc-modal-header-label">Mileage Cipher</div>
-              <div class="mc-modal-header-title">Manage Firms</div>
-            </div>
-            <button class="mc-modal-close" onclick="closeFirmsModal()">✕</button>
-          </div>
-
-          <!-- Current Firms -->
-          <div class="firms-list mc-firms-list">
-            <div class="mc-modal-section-header">
-              <span class="mc-modal-section-title">Current Firms</span>
-              <div class="mc-modal-section-line"></div>
-            </div>
-            <div id="firmsList"></div>
-          </div>
-
-          <!-- Add New Firm -->
-          <div class="add-firm-section">
-            <div class="mc-modal-section-header mc-modal-section-header--bordered">
-              <span class="mc-modal-section-title">Add New Firm</span>
-              <div class="mc-modal-section-line"></div>
-            </div>
-            <form id="addFirmForm">
-              <div class="mc-modal-form-grid">
-
-                <input type="text" id="firmName" class="mc-modal-input mc-modal-input--full" placeholder="Firm Name" required>
-
-                <input type="number" id="firmFreeMiles" class="mc-modal-input" placeholder="Free Miles" min="0" step="1" required>
-
-                <input type="number" id="firmRate" class="mc-modal-input" placeholder="Rate per Mile ($)" min="0" step="0.01" required>
-
-                <!-- Round Trip Toggle -->
-                <div class="mc-modal-toggle-row">
-                  <div>
-                    <div class="mc-modal-toggle-label">Round Trip Default</div>
-                    <div class="mc-modal-toggle-sub">Double miles by default</div>
-                  </div>
-                  <label class="mc-modal-toggle-wrap">
-                    <input type="checkbox" id="firmRoundTripDefault" style="opacity:0;width:0;height:0;position:absolute;">
-                    <div class="mc-toggle-track"></div>
-                    <div id="rtToggleThumb" class="mc-toggle-thumb"></div>
-                  </label>
-                </div>
-
-              </div>
-
-              <!-- Form Footer -->
-              <div class="mc-modal-footer">
-                <button type="button" class="mc-modal-btn-cancel" onclick="closeFirmsModal()">Cancel</button>
-                <button type="submit" class="mc-modal-btn-submit">Add Firm →</button>
-              </div>
-            </form>
-          </div>
-
-        </div>
-      </div>
-
       <script>
-      // ── Manage Firms modal toggle (firmRoundTripDefault) ──
-      (function(){
-        var cb = document.getElementById('firmRoundTripDefault');
-        var thumb = document.getElementById('rtToggleThumb');
-        if (cb && thumb) {
-          cb.addEventListener('change', function() {
-            thumb.style.left = cb.checked ? '21px' : '3px';
-            thumb.style.background = cb.checked ? '#e8952a' : '#4a5058';
-          });
-        }
-      })();
-
       // ── Logging Options toggles ──
       function wireToggle(inputId, thumbId, onChange) {
         var cb = document.getElementById(inputId);

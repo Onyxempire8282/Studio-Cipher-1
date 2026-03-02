@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+  <title>Claim Cipher — Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/settings.css">
+</head>
+<body style="visibility: hidden;">
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="command-center.html" class="nav-logo"><img src="/branding/logo/claimcipher-mark.png" alt="Claim Cipher"></a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="command-center.html">Dashboard</a>
+    <a class="nav-tab" href="route-cypher.html">Routes</a>
+    <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+    <a class="nav-tab" href="my-routes.html">My Routes</a>
+    <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+    <a class="nav-tab active" href="settings.html">Settings</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <strong id="userName">Professional User</strong>
+      Claims Specialist
+    </div>
+    <button class="nav-logout" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-label">Operations &gt; Settings</div>
+      <div class="page-title">Settings</div>
+      <div class="page-sub">Profile, firm assignments, and account configuration</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS LAYOUT -->
+<div class="settings-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="settings-sidebar">
+    <div class="sidebar-label">Settings</div>
+    <a href="#profileSection" class="sidebar-link active" data-section="profileSection">
+      <span class="sidebar-icon">&#128100;</span> Profile
+    </a>
+    <a href="#firmsSection" class="sidebar-link" data-section="firmsSection">
+      <span class="sidebar-icon">&#127970;</span> My Firms
+    </a>
+    <a href="#passwordSection" class="sidebar-link" data-section="passwordSection">
+      <span class="sidebar-icon">&#128274;</span> Password
+    </a>
+    <a href="#accountSection" class="sidebar-link" data-section="accountSection">
+      <span class="sidebar-icon">&#9881;</span> Account
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="settings-main">
+
+    <!-- PROFILE -->
+    <div class="section-card" id="profileSection">
+      <div class="section-header">
+        <div class="section-title">Profile Information</div>
+        <div class="section-badge section-badge--saved">Saved</div>
+      </div>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" id="firstName" placeholder="Enter first name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" id="lastName" placeholder="Enter last name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Business / Company Name</label>
+            <input type="text" class="form-input" id="companyName" placeholder="Enter company name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Appraiser License #</label>
+            <input type="text" class="form-input" id="licenseNumber" placeholder="e.g. TX-12345">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="phoneNumber" placeholder="(555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input form-input--readonly" id="emailAddress" readonly placeholder="user@example.com">
+            <span class="form-hint">Email cannot be changed — linked to your login</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-ghost" type="button" id="cancelProfileBtn">Cancel</button>
+        <button class="btn btn-primary" type="button" id="saveProfileBtn" data-label="Save Profile">Save Profile</button>
+      </div>
+    </div>
+
+    <!-- HOME ADDRESS -->
+    <div class="section-card" id="addressSection">
+      <div class="section-header">
+        <div class="section-title">Home Address</div>
+      </div>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label class="form-label">Street Address</label>
+            <input type="text" class="form-input" id="streetAddress" placeholder="123 Main St">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" class="form-input" id="cityField" placeholder="City">
+          </div>
+          <div class="form-group">
+            <div class="form-grid form-grid--tight">
+              <div class="form-group">
+                <label class="form-label">State</label>
+                <input type="text" class="form-input form-input--state" id="stateField" placeholder="TX" maxlength="2">
+              </div>
+              <div class="form-group">
+                <label class="form-label">ZIP Code</label>
+                <input type="text" class="form-input" id="zipField" placeholder="75001" maxlength="10">
+              </div>
+            </div>
+          </div>
+          <div class="address-note">
+            <span class="address-note-icon">&#8505;</span>
+            <span>This address is used as your default starting point for mileage calculations in Route Cipher and Mileage Cipher.</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-ghost" type="button" id="cancelAddressBtn">Cancel</button>
+        <button class="btn btn-primary" type="button" id="saveAddressBtn" data-label="Save Address">Save Address</button>
+      </div>
+    </div>
+
+    <!-- MY FIRMS -->
+    <div class="section-card" id="firmsSection">
+      <div class="section-header">
+        <div class="section-title">My Firms</div>
+      </div>
+      <div class="section-body">
+        <div class="firms-search">
+          <input type="text" class="form-input" id="firmSearch" placeholder="Search firms...">
+        </div>
+        <div class="firms-filters">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="daily_auto">Daily Auto</button>
+          <button class="filter-chip" data-filter="heavy">Heavy</button>
+          <button class="filter-chip" data-filter="catastrophic">Catastrophic</button>
+          <button class="filter-chip" data-filter="property">Property</button>
+          <button class="filter-chip" data-filter="nationwide">Nationwide</button>
+          <button class="filter-chip" data-filter="regional">Regional</button>
+        </div>
+        <div class="firms-list" id="firmsList">
+          <!-- populated by settings-page.js -->
+        </div>
+        <div class="firms-summary">
+          <span class="firms-count" id="selectedCount">0 firms selected</span>
+          <span class="clear-link" id="clearFirmsBtn">Clear all</span>
+        </div>
+        <div class="firms-summary">
+          <div></div>
+          <button class="btn btn-ghost" type="button" id="addCustomFirmBtn">Add firm not on list</button>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-primary" type="button" id="saveFirmsBtn" data-label="Save Firms">Save Firms</button>
+      </div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div class="section-card" id="passwordSection">
+      <div class="section-header">
+        <div class="section-title">Change Password</div>
+      </div>
+      <div class="section-body">
+        <div class="password-grid">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+            <div class="strength-bars">
+              <div class="strength-bar"></div>
+              <div class="strength-bar"></div>
+              <div class="strength-bar"></div>
+              <div class="strength-bar"></div>
+            </div>
+            <div class="strength-label">Password strength</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password">
+          </div>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-primary" type="button" id="updatePasswordBtn" data-label="Update Password">Update Password</button>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="section-card section-card--danger" id="accountSection">
+      <div class="section-header">
+        <div class="section-title">Danger Zone</div>
+      </div>
+      <div class="section-body">
+        <div class="danger-body">
+          <div class="danger-info">
+            <div class="danger-action-title">Delete Account</div>
+            <div class="danger-action-desc">Permanently delete your account and all associated data. This action cannot be undone.</div>
+          </div>
+          <button class="btn-danger" type="button" id="deleteAccountBtn">Delete Account</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RATE MODAL -->
+<div class="modal-overlay" id="rateModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-eyebrow">Firm Rates</div>
+      <div class="modal-title" id="rateModalFirmName">Firm Name</div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Set your mileage rates for this firm. You can update these at any time.</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Free Miles</label>
+          <input type="number" class="form-input" id="rateModalFreeMiles" placeholder="0" min="0">
+          <span class="form-hint">Miles before billing starts</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rate Per Mile ($)</label>
+          <input type="number" class="form-input" id="rateModalRatePerMile" placeholder="0.00" step="0.01" min="0">
+          <span class="form-hint">Dollar amount per billed mile</span>
+        </div>
+      </div>
+      <div class="form-group modal-toggle-group">
+        <label class="toggle-label">
+          <input type="checkbox" id="rateModalRoundTrip">
+          <span>Default to Round Trip</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="rateModalSkipBtn">Skip for now</button>
+      <button class="btn btn-ghost" id="rateModalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="rateModalSaveBtn">Add Firm</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM FIRM MODAL -->
+<div class="modal-overlay" id="customFirmModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-eyebrow">Custom Firm</div>
+      <div class="modal-title">Add Firm Not on List</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Firm Name</label>
+        <input type="text" class="form-input" id="customFirmName" placeholder="Enter firm name">
+      </div>
+      <div class="form-group modal-toggle-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="customFirmCategory">
+          <option value="daily_auto">Daily Auto</option>
+          <option value="heavy">Heavy</option>
+          <option value="catastrophic">Catastrophic</option>
+          <option value="property">Property</option>
+          <option value="regional">Regional</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="customFirmCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="customFirmSaveBtn">Next: Set Rates</button>
+    </div>
+  </div>
+</div>
+
+<!-- Supabase JS v2 CDN -->
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Supabase Configuration and Auth -->
+<script defer src="config/github-pages-env.js"></script>
+<script defer src="scripts/supabase-config.js"></script>
+<script defer src="scripts/supabase-auth.js"></script>
+<script defer src="scripts/billing-guard.js"></script>
+
+<!-- Core Scripts -->
+<script defer src="scripts/cipher-core.js"></script>
+<script defer src="scripts/firm-store.js"></script>
+<script defer src="scripts/settings-service.js"></script>
+<script defer src="scripts/settings-page.js"></script>
+
+<!-- Auth + Billing Guard -->
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const allowed = await window.SupabaseAuth.protectPage();
+  if (!allowed) return;
+
+  const access = await window.BillingGuard.checkAccess();
+  if (!window.BillingGuard.hasAccess(access.profile)) {
+    window.location.href = 'billing-required.html';
+    return;
+  }
+
+  document.body.style.visibility = 'visible';
+});
+</script>
+
+</body>
+</html>

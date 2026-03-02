@@ -48,21 +48,9 @@ class MileageCypherCalculator {
       copyBtn.addEventListener("click", () => this.handleCopy());
     }
 
-    const manageFirmsBtn = document.getElementById("manageFirmsBtn");
-    if (manageFirmsBtn) {
-      manageFirmsBtn.addEventListener("click", (e) =>
-        this.handleManageFirms(e)
-      );
-    }
-
     const newCalcBtn = document.getElementById("newCalculation");
     if (newCalcBtn) {
       newCalcBtn.addEventListener("click", () => this.startNewCalculation());
-    }
-
-    const addFirmForm = document.getElementById("addFirmForm");
-    if (addFirmForm) {
-      addFirmForm.addEventListener("submit", (e) => this.handleAddFirm(e));
     }
 
     const pointBInput = document.getElementById("pointB");
@@ -149,11 +137,6 @@ class MileageCypherCalculator {
 
   handleCopy() {
     this.copyCalculationToClipboard();
-  }
-
-  handleManageFirms(e) {
-    if (e) e.preventDefault();
-    this.openFirmsManagementModal();
   }
 
   loadFirmsToDropdown() {
@@ -838,248 +821,6 @@ class MileageCypherCalculator {
     console.log("New calculation started");
   }
 
-  // Firm Management Functions
-  openFirmsManagementModal() {
-    this.loadFirmsListInModal();
-    const modal = document.getElementById("firmsModal");
-    if (modal) {
-      modal.style.display = "flex";
-    }
-  }
-
-  loadFirmsListInModal() {
-    const firmsList = document.getElementById("firmsList");
-    if (!firmsList) return;
-
-    firmsList.innerHTML = "";
-
-    const firms = window.FirmStore ? window.FirmStore.getAllSync() : [];
-    firms.forEach((firm) => {
-      const firmElement = document.createElement("div");
-      firmElement.className = "firm-item";
-      firmElement.innerHTML = `
-                <div class="firm-info">
-                    <strong>${firm.name}</strong>
-                    <div class="firm-details">
-                        Free Miles: ${firm.freeMiles} | Rate: $${
-        firm.ratePerMile
-      }/mile | 
-                        Round Trip Default: ${
-                          firm.roundTripDefault ? "Yes" : "No"
-                        }
-                    </div>
-                </div>
-                <div class="firm-actions">
-                    <button class="edit-btn" data-firm-id="${
-                      firm.id
-                    }">Edit</button>
-                    <button class="delete-btn" data-firm-id="${
-                      firm.id
-                    }">Delete</button>
-                </div>
-            `;
-
-      // Add event listeners to the buttons
-      const editBtn = firmElement.querySelector(".edit-btn");
-      const deleteBtn = firmElement.querySelector(".delete-btn");
-
-      editBtn.addEventListener("click", () => this.editFirm(firm.id));
-      deleteBtn.addEventListener("click", () => this.deleteFirm(firm.id));
-
-      firmsList.appendChild(firmElement);
-    });
-  }
-
-  handleAddFirm(event) {
-    event.preventDefault();
-
-    // Check if we're in edit mode
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const editingId = submitBtn?.dataset.editingId;
-
-    // Get form field values directly
-    const firmData = {
-      name: document.getElementById("firmName")?.value?.trim() || "",
-      freeMiles: parseInt(document.getElementById("firmFreeMiles")?.value) || 0,
-      ratePerMile: parseFloat(document.getElementById("firmRate")?.value) || 0,
-      roundTripDefault:
-        document.getElementById("firmRoundTripDefault")?.checked || false,
-    };
-
-    console.log("Form data collected:", firmData);
-
-    if (!this.validateFirmData(firmData)) return;
-
-    if (editingId) {
-      // Edit existing firm
-      if (window.FirmStore) {
-        window.FirmStore.save({ id: editingId, ...firmData });
-      }
-      this.loadFirmsListInModal();
-      this.loadFirmsToDropdown();
-      this.resetAddFirmForm();
-      console.log("Firm updated:", firmData.name);
-    } else {
-      // Add new firm
-      const firmId = this.generateFirmId(firmData.name);
-
-      // Check for duplicates
-      if (window.FirmStore && window.FirmStore.getById(firmId)) {
-        console.warn("Duplicate firm name:", firmData.name);
-        return;
-      }
-
-      const newFirm = { id: firmId, ...firmData };
-      if (window.FirmStore) {
-        window.FirmStore.save(newFirm);
-      }
-
-      // Update UI
-      this.loadFirmsListInModal();
-      this.loadFirmsToDropdown();
-      event.target.reset();
-
-      console.log("Firm added:", firmData.name);
-    }
-  }
-
-  editFirm(firmId) {
-    console.log("Edit firm requested for ID:", firmId);
-
-    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
-    if (!firm) {
-      console.error("Firm not found:", firmId);
-      return;
-    }
-
-    // Populate form with existing firm data
-    const firmNameInput = document.getElementById("firmName");
-    const firmFreeMilesInput = document.getElementById("firmFreeMiles");
-    const firmRateInput = document.getElementById("firmRate");
-    const firmRoundTripInput = document.getElementById("firmRoundTripDefault");
-
-    if (firmNameInput) firmNameInput.value = firm.name;
-    if (firmFreeMilesInput) firmFreeMilesInput.value = firm.freeMiles;
-    if (firmRateInput) firmRateInput.value = firm.ratePerMile;
-    if (firmRoundTripInput) firmRoundTripInput.checked = firm.roundTripDefault;
-
-    // Change form to edit mode
-    const form = document.getElementById("addFirmForm");
-    const submitBtn = form?.querySelector('button[type="submit"]');
-    if (submitBtn) {
-      submitBtn.textContent = "Update Firm \u2192";
-      submitBtn.dataset.editingId = firmId;
-    }
-
-    // Add cancel button if not exists
-    let cancelBtn = form?.querySelector(".cancel-edit-btn");
-    if (!cancelBtn) {
-      cancelBtn = document.createElement("button");
-      cancelBtn.type = "button";
-      cancelBtn.className = "cancel-edit-btn cipher-btn cipher-btn--secondary";
-      cancelBtn.textContent = "Cancel";
-      cancelBtn.addEventListener("click", () => this.resetAddFirmForm());
-      submitBtn?.parentNode?.insertBefore(cancelBtn, submitBtn.nextSibling);
-    }
-    cancelBtn.style.display = "inline-block";
-
-    // Scroll to form
-    const addFirmSection = document.querySelector(".add-firm-section");
-    if (addFirmSection) {
-      addFirmSection.scrollIntoView({ behavior: "smooth" });
-    }
-
-    console.log("Edit mode activated for firm:", firmId, firm.name);
-  }
-
-  resetAddFirmForm() {
-    const form = document.getElementById("addFirmForm");
-    if (form) {
-      form.reset();
-      const submitBtn = form.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.textContent = "Add Firm \u2192";
-        delete submitBtn.dataset.editingId;
-      }
-
-      // Hide cancel button
-      const cancelBtn = form.querySelector(".cancel-edit-btn");
-      if (cancelBtn) {
-        cancelBtn.style.display = "none";
-      }
-    }
-    console.log("Form reset to add mode");
-  }
-
-  validateFirmData(data) {
-    if (!data.name || data.name.length < 2) {
-      console.warn("Validation failed: Firm name too short");
-      return false;
-    }
-    if (data.freeMiles < 0 || isNaN(data.freeMiles)) {
-      console.warn("Validation failed: Invalid free miles");
-      return false;
-    }
-    if (data.ratePerMile <= 0 || isNaN(data.ratePerMile)) {
-      console.warn("Validation failed: Invalid rate per mile");
-      return false;
-    }
-    if (data.ratePerMile > 10) {
-      console.warn(
-        "Warning: Rate per mile is unusually high:",
-        data.ratePerMile
-      );
-    }
-    return true;
-  }
-
-  deleteFirm(firmId) {
-    console.log("Delete firm requested for ID:", firmId);
-
-    const allFirms = window.FirmStore ? window.FirmStore.getAllSync() : [];
-    if (allFirms.length <= 1) {
-      console.warn("Cannot delete last firm");
-      return;
-    }
-
-    const firm = window.FirmStore ? window.FirmStore.getById(firmId) : null;
-    if (!firm) {
-      console.error("Firm not found for deletion:", firmId);
-      return;
-    }
-
-    // Show confirmation dialog
-    const confirmDelete = confirm(
-      `Are you sure you want to delete "${firm.name}"?\n\nThis action cannot be undone.`
-    );
-
-    if (confirmDelete) {
-      // Remove firm from FirmStore
-      if (window.FirmStore) {
-        window.FirmStore.delete(firmId);
-
-        // Update selected firm if the deleted firm was selected
-        if (window.FirmStore.getLastSelected() === firmId) {
-          const remaining = window.FirmStore.getAllSync();
-          window.FirmStore.setLastSelected(remaining[0]?.id || "");
-        }
-      }
-
-      // Update UI
-      this.loadFirmsListInModal();
-      this.loadFirmsToDropdown();
-
-      // Reset form if we were editing the deleted firm
-      const form = document.getElementById("addFirmForm");
-      const submitBtn = form?.querySelector('button[type="submit"]');
-      if (submitBtn?.dataset.editingId === firmId) {
-        this.resetAddFirmForm();
-      }
-
-      console.log("Firm deleted:", firm.name);
-    }
-  }
-
   // Route Import Support
   checkForRouteImport() {
     const routeData = localStorage.getItem("cc_route_export");
@@ -1165,10 +906,6 @@ class MileageCypherCalculator {
   roundTo(value, decimals) {
     const multiplier = Math.pow(10, decimals);
     return Math.round(value * multiplier) / multiplier;
-  }
-
-  generateFirmId(name) {
-    return name.toLowerCase().replace(/[^a-z0-9]/g, "_");
   }
 
   generateCalculationId() {
@@ -1371,13 +1108,6 @@ class MileageCypherCalculator {
       noteField.disabled = true;
     }
 
-    // Lock management buttons
-    const manageFirmsBtn = document.getElementById('manageFirms');
-    if (manageFirmsBtn) {
-      manageFirmsBtn.disabled = true;
-      manageFirmsBtn.title = 'Disabled in demo mode';
-    }
-
     // Disable new calculation button's clearing functionality
     const newCalcBtn = document.getElementById('newCalculation');
     if (newCalcBtn) {
@@ -1427,11 +1157,6 @@ class MileageCypherCalculator {
 }
 
 // Global Functions for HTML onclick handlers
-function closeFirmsModal() {
-  const modal = document.getElementById("firmsModal");
-  if (modal) modal.style.display = "none";
-}
-
 function closeRouteImportModal() {
   if (window.mileageCipher) {
     window.mileageCipher.closeRouteImportModal();
