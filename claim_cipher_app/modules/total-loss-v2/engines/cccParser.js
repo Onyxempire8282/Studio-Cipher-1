@@ -163,11 +163,12 @@ export function parseCCCText(rawText) {
         mechLaborRate:            costBreakdown.mechLaborRate,
         paintSupplies:            costBreakdown.paintSupplies,
         salesTax:                 costBreakdown.salesTax,
-        salesTaxPct:              costBreakdown.salesTaxPct,
+        salesTaxRate:             costBreakdown.salesTaxRate,
         deductible:               costBreakdown.deductible,
         frameLaborHrs:            costBreakdown.frameLaborHrs,
         frameLaborRate:           costBreakdown.frameLaborRate,
         repairLineItems,
+        structuralFlagged:        repairLineItems.structuralFlagged || [],
         shopName:                 extractShopName(text),
         workfileId:               extractWorkfileId(text),
         _vehicleDescLine:         vehicleDescLine,
@@ -223,7 +224,9 @@ function extractCarrier(text) {
         /SUBJECT\s+TO\s+AUDIT/i.test(line) ||
         /THIS\s+ESTIMATE.*IS\s+SUBJECT/i.test(line) ||
         /SUPPLEMENT\s+IS\s+SUBJECT/i.test(line) ||
-        /REVISION\s+BY\s+THE\s+INSURANCE/i.test(line);
+        /REVISION\s+BY\s+THE\s+INSURANCE/i.test(line) ||
+        /ISSUES\s+OF\s+COVERAGE/i.test(line) ||
+        /TO\s+BE\s+DETERMINED/i.test(line);
 
     const headerArea = text.split(/Preliminary\s+Estimate/i)[0] || text;
     const headerLines = headerArea.split("\n").map(l => l.trim()).filter(Boolean);
@@ -281,9 +284,23 @@ function extractOwnerPhone(text) {
 function extractLossType(text) {
     // Bounded: between "Type of Loss:" and "Date of Loss:"
     const match = text.match(/Type\s+of\s+Loss\s*:\s*([\s\S]*?)(?=Date\s+of\s+Loss)/i);
-    if (!match) return "";
-    // Take first line only, trim
-    return match[1].split("\n")[0].trim();
+    if (match) {
+        const val = match[1].split("\n")[0].trim();
+        if (val) return val;
+    }
+
+    // Fallback: capture word(s) after "Type of Loss:" until whitespace gap or newline
+    const alt1 = text.match(/Type\s+of\s+Loss\s*:?\s*(\w[\w\s&/-]*?\w)(?=\s{2,}|\n)/i);
+    if (alt1) {
+        const val = alt1[1].trim();
+        if (val) return val;
+    }
+
+    // Fallback: "Loss Type: Collision"
+    const alt2 = text.match(/Loss\s+Type\s*:\s*(\S+)/i);
+    if (alt2) return alt2[1].trim();
+
+    return "";
 }
 
 function extractDateOfLoss(text) {
@@ -350,7 +367,14 @@ function extractInspectionLocation(text) {
 
     for (const line of lines) {
         if (/^(Repair|Owner|VEHICLE|Phone|Insured)\b/i.test(line)) continue;
-        if (line.length > 3) return line;
+        // Skip vehicle description lines (start with 4-digit year)
+        if (/^\d{4}\s+[A-Z]/i.test(line)) continue;
+        // Skip lines with VIN-like patterns, engine specs, or vehicle keywords
+        if (/[A-HJ-NPR-Z0-9]{17}/.test(line)) continue;
+        if (/\d+-[\d.]+L\b/.test(line)) continue;
+        if (/\b(SED|CPE|UTV|SUV|HBK|WGN|PKP|VAN|FWD|RWD|AWD|4WD|MPI|DOHC|SOHC|Flex\s*Fuel)\b/i.test(line)) continue;
+        // Only accept lines that look address-like (contain digits + letters, not vehicle specs)
+        if (line.length > 3 && /\d/.test(line) && /[A-Za-z]/.test(line)) return line;
     }
 
     return "";
@@ -458,7 +482,7 @@ function parseTransFromDesc(desc) {
     // Overdrive
     if (/\bOVERDRIVE\b/.test(d) || /\bO\/D\b/.test(d)) return "TRANS_OD";
 
-    return "";
+    return "TRANS_UNLISTED";
 }
 
 function extractVehicleDescLine(text) {
@@ -479,7 +503,25 @@ function extractVIN(text) {
 
 function extractMileage(text) {
     const match = text.match(/Odometer\s*:\s*([\d,]+)/i);
-    return match ? match[1].replace(/,/g, "") : "";
+    let value = match ? match[1].replace(/,/g, "") : "";
+
+    // Sanity check: if extracted value < 100, it's likely a column artifact
+    if (value && parseInt(value, 10) < 100) {
+        // Try "Odometer <digit> : <mileage>" (column index before colon)
+        const alt1 = text.match(/Odometer\s*\d\s*:\s*([\d,]+)/i);
+        if (alt1 && parseInt(alt1[1].replace(/,/g, ""), 10) >= 100) {
+            return alt1[1].replace(/,/g, "");
+        }
+        // Try standalone mileage near vehicle description
+        const alt2 = text.match(/(\d{3,6})\s*(?:miles?|mi)\b/i);
+        if (alt2 && parseInt(alt2[1], 10) >= 100) {
+            return alt2[1];
+        }
+        // Value is too low to be real mileage
+        return "";
+    }
+
+    return value;
 }
 
 function extractCondition(text) {
@@ -627,9 +669,12 @@ function extractRepairDays(text) {
 }
 
 function extractPriorDamage(text) {
+    const NONE_SENTENCE = "No unrelated prior damage observed";
+
     // Look for "NO UPD VISIBLE" first — most common
-    if (/NO\s+UPD\s+VISIBLE/i.test(text)) return "NO UPD VISIBLE";
-    if (/PRIOR\s+DAMAGE\s*:\s*NONE/i.test(text)) return "NONE";
+    if (/NO\s+UP\s*D\s+VISIBLE/i.test(text)) return NONE_SENTENCE;
+    if (/NO\s+UNRELATED\s+PRIOR\s+DAMAGE/i.test(text)) return NONE_SENTENCE;
+    if (/PRIOR\s+DAMAGE\s*:\s*NONE/i.test(text)) return NONE_SENTENCE;
 
     // "Unrelated Prior Damage: <description>" — must capture meaningful text
     const updMatch = text.match(/(?:Unrelated\s+Prior\s+Damage|UPD)\s*:\s*([^\n]+)/i);
@@ -650,7 +695,7 @@ function extractPriorDamage(text) {
         }
     }
 
-    return "";
+    return NONE_SENTENCE;
 }
 
 function extractCostBreakdown(text) {
@@ -659,7 +704,7 @@ function extractCostBreakdown(text) {
                      frameLaborHrs: 0,
                      bodyLaborRate: 0, paintLaborRate: 0, mechLaborRate: 0,
                      frameLaborRate: 0,
-                     paintSupplies: 0, salesTax: 0, salesTaxPct: 0,
+                     paintSupplies: 0, salesTax: 0, salesTaxRate: 0,
                      deductible: 0, subtotal: 0, netCost: 0 };
 
     // ── Strategy: CCC ESTIMATE TOTALS is a columnar layout ──────────
@@ -764,7 +809,7 @@ function extractCostBreakdown(text) {
 
     // Extract sales tax percentage (e.g., "$ 11,232.19 @ 7.0000 %")
     const taxPctMatch = section.match(/\$\s*[\d,]+\.?\d*\s*@\s*([\d.]+)\s*%/);
-    if (taxPctMatch) result.salesTaxPct = parseFloat(taxPctMatch[1]);
+    if (taxPctMatch) result.salesTaxRate = parseFloat(taxPctMatch[1]);
 
     return result;
 }
@@ -773,6 +818,8 @@ function extractRepairLineItems(text) {
     // Parse CCC estimate line items to build damage categories.
     // CCC format: component description followed by operation type
     // e.g. "FRONT BUMPER COVER R&R", "LEFT FENDER Repair", "HEADLINER R&I"
+
+    // Legacy categories (backward compat)
     const categories = {
         structural: [],
         bodyPanels: [],
@@ -780,30 +827,124 @@ function extractRepairLineItems(text) {
         interior: [],
     };
 
-    // Structural keywords
+    // New zone-based grouping per CCC spec
+    const damageZones = {
+        frontEnd: [],
+        rightSide: [],
+        leftSide: [],
+        rear: [],
+        structural: [],
+        restraints: [],
+        wheels: [],
+        mechanical: [],
+    };
+
+    // Structural-flagged parts (CCC marks with "s" after part price)
+    const structuralFlagged = [];
+
+    // ── Keyword regexes for legacy categorization ────────────────────────
     const STRUCTURAL_RE = /\b(frame|rail|apron|pillar|rocker|unibody|subframe|cross\s*member|firewall|floor\s*pan|strut\s*tower|radiator\s*support|aperture)\b/i;
-    // Body panel keywords
     const BODY_RE = /\b(bumper|fender|hood|door|quarter\s*panel|decklid|trunk|tailgate|roof|grille|header\s*panel|fascia|valance|bed\s*panel|lamp|headl|taill|mirror|molding|handle|hinge|latch)\b/i;
-    // Restraint keywords
     const RESTRAINT_RE = /\b(air\s*bag|airbag|srs|restraint|seat\s*belt|impact\s*sensor|clockspring|diagnostic)\b/i;
-    // Interior keywords
     const INTERIOR_RE = /\b(seat\s*cover|headliner|trim\s*panel|carpet|console|dash|instrument|door\s*panel|garnish|pillar\s*trim|visor|glove|armrest)\b/i;
 
-    // Look for lines that contain repair operations
-    const opPattern = /\b(R&R|R&I|Repair|Replace|Refinish|Blend|Overhaul|Section|Remove|Install)\b/i;
-    const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 5 && opPattern.test(l));
+    // ── CCC section header → zone mapping ────────────────────────────────
+    const SECTION_ZONE_MAP = [
+        { re: /\bFRONT\s+BUMPER\b/i,    zone: 'frontEnd' },
+        { re: /\bGRILLE\b/i,            zone: 'frontEnd' },
+        { re: /\bFRONT\s+LAMPS?\b/i,    zone: 'frontEnd' },
+        { re: /\bHEADLAMP\b/i,          zone: 'frontEnd' },
+        { re: /\bRADIATOR\s+SUPPORT\b/i,zone: 'frontEnd' },
+        { re: /\bFRONT\s+PANELS?\b/i,   zone: 'frontEnd' },
+        { re: /\bHOOD\b/i,              zone: 'frontEnd' },
+        { re: /\bCOOLING\b/i,           zone: 'frontEnd' },
+        { re: /\bREAR\s+BUMPER\b/i,     zone: 'rear' },
+        { re: /\bTRUNK\s+LID\b/i,       zone: 'rear' },
+        { re: /\bLIFT\s*GATE\b/i,       zone: 'rear' },
+        { re: /\bDECKLID\b/i,           zone: 'rear' },
+        { re: /\bREAR\s+BODY\b/i,       zone: 'rear' },
+        { re: /\bREAR\s+LAMPS?\b/i,     zone: 'rear' },
+        { re: /\bTAIL\s*LAMP\b/i,       zone: 'rear' },
+        { re: /\bTAILGATE\b/i,          zone: 'rear' },
+        { re: /\bFRAME\b/i,             zone: 'structural' },
+        { re: /\bRAIL\b/i,              zone: 'structural' },
+        { re: /\bUNIBODY\b/i,           zone: 'structural' },
+        { re: /\bSTRUCTURAL\b/i,        zone: 'structural' },
+        { re: /\bAIR\s*BAG\b/i,         zone: 'restraints' },
+        { re: /\bSRS\b/i,               zone: 'restraints' },
+        { re: /\bRESTRAINT\b/i,         zone: 'restraints' },
+        { re: /\bWHEEL/i,               zone: 'wheels' },
+        { re: /\bTIRE/i,                zone: 'wheels' },
+        { re: /\bHUB\b/i,               zone: 'wheels' },
+        { re: /\bSUSPENSION\b/i,        zone: 'wheels' },
+        { re: /\bMECHANICAL\b/i,        zone: 'mechanical' },
+        { re: /\bENGINE\b/i,            zone: 'mechanical' },
+        { re: /\bTRANSMISSION\b/i,      zone: 'mechanical' },
+        { re: /\bA\/C\b/i,              zone: 'mechanical' },
+        { re: /\bAIR\s+CONDITIONER\b/i, zone: 'mechanical' },
+        { re: /\bHEATER\b/i,            zone: 'mechanical' },
+        { re: /\bFUEL\s+SYSTEM\b/i,     zone: 'mechanical' },
+        { re: /\bELECTRICAL\b/i,        zone: 'mechanical' },
+    ];
 
-    for (const line of lines) {
-        // Skip header/boilerplate lines
+    // Sections to exclude from damage narratives
+    const EXCLUDE_RE = /\b(VEHICLE\s+DIAGNOSTICS|MISCELLANEOUS\s+OPERATIONS)\b/i;
+
+    // ── Parse lines ──────────────────────────────────────────────────────
+    const opPattern = /\b(R&R|R&I|Repair|Replace|Refinish|Blend|Overhaul|Section|Remove|Install|Repl|Rpr|Sect|O\/H|Blnd)\b/i;
+    const allLines = text.split("\n").map(l => l.trim());
+
+    // Track current section zone from CCC section headers
+    let currentZone = null;
+
+    for (const line of allLines) {
+        // Skip boilerplate
         if (/^\d{1,2}\/\d{1,2}\/\d{2,4}/i.test(line)) continue;
         if (/^Page\s+\d/i.test(line)) continue;
         if (/Subtotal|Total|Labor\s+Type/i.test(line)) continue;
+        if (line.length < 3) continue;
+
+        // Detect CCC section headers (all-caps, no dollar amounts, no operation codes)
+        const isHeader = /^[A-Z][A-Z\s,/&-]+$/.test(line) && !/\$/.test(line) && !opPattern.test(line) && line.length < 60;
+        if (isHeader) {
+            // Check for exclusions
+            if (EXCLUDE_RE.test(line)) {
+                currentZone = null;
+                continue;
+            }
+            // Try to map header to a zone
+            for (const { re, zone } of SECTION_ZONE_MAP) {
+                if (re.test(line)) {
+                    currentZone = zone;
+                    break;
+                }
+            }
+            // Side-specific headers: FENDER, DOOR, QUARTER PANEL, PILLAR, ROCKER
+            if (/\bFENDER\b/i.test(line)) {
+                // Fender special handling: default to frontEnd (will be refined by RT/LT on items)
+                currentZone = 'frontEnd';
+            }
+            if (/\bDOOR\b/i.test(line) || /\bQUARTER\s*PANEL\b/i.test(line) || /\bPILLAR\b/i.test(line) || /\bROCKER\b/i.test(line)) {
+                // Side determined by RT/LT prefix on individual items below
+                if (!currentZone || currentZone === 'frontEnd') currentZone = null; // let items decide
+            }
+            continue;
+        }
+
+        // Only process lines with repair operations
+        if (!opPattern.test(line)) continue;
+
+        // Detect structural flag: "$XXX.XX s" pattern
+        if (/\$[\d,.]+\s*s\b/.test(line)) {
+            const flagDesc = line.replace(/^\d+\s+/, '').replace(/\$[\d,.]+\s*s?\b/g, '').replace(/[\d.]+\s*hrs?/ig, '').trim();
+            if (flagDesc.length >= 5) structuralFlagged.push(flagDesc);
+        }
 
         // Clean the line: remove leading line numbers, pricing columns
-        let desc = line.replace(/^\d+\s+/, '').replace(/\$[\d,.]+/g, '').replace(/[\d.]+\s*hrs?/ig, '').trim();
+        let desc = line.replace(/^\d+\s+/, '').replace(/\$[\d,.]+\s*s?\b/g, '').replace(/[\d.]+\s*hrs?/ig, '').trim();
         if (desc.length < 5) continue;
 
-        // Categorize
+        // ── Legacy categorization ────────────────────────────────────────
         if (STRUCTURAL_RE.test(desc)) {
             categories.structural.push(desc);
         } else if (RESTRAINT_RE.test(desc)) {
@@ -813,9 +954,52 @@ function extractRepairLineItems(text) {
         } else if (BODY_RE.test(desc)) {
             categories.bodyPanels.push(desc);
         }
+
+        // ── Zone-based categorization ────────────────────────────────────
+        // Determine zone: use RT/LT prefix detection first, then current section, then keyword fallback
+        let zone = currentZone;
+
+        // RT/LT prefix override for side determination
+        if (/\bRT\b/i.test(desc) || /\bRIGHT\b/i.test(desc)) {
+            zone = 'rightSide';
+        } else if (/\bLT\b/i.test(desc) || /\bLEFT\b/i.test(desc)) {
+            zone = 'leftSide';
+        }
+
+        // If still no zone, fall back to keyword matching
+        if (!zone) {
+            for (const { re, zone: z } of SECTION_ZONE_MAP) {
+                if (re.test(desc)) {
+                    zone = z;
+                    break;
+                }
+            }
+        }
+
+        // If still no zone, try legacy keyword categories to pick a zone
+        if (!zone) {
+            if (STRUCTURAL_RE.test(desc)) zone = 'structural';
+            else if (RESTRAINT_RE.test(desc)) zone = 'restraints';
+            else if (INTERIOR_RE.test(desc)) zone = 'mechanical'; // interior → mechanical slot
+            else if (BODY_RE.test(desc)) zone = 'frontEnd'; // generic body → frontEnd default
+        }
+
+        if (zone && damageZones[zone]) {
+            damageZones[zone].push(desc);
+        }
     }
 
-    return categories;
+    return {
+        // Legacy (unchanged for backward compat)
+        structural: categories.structural,
+        bodyPanels: categories.bodyPanels,
+        restraints: categories.restraints,
+        interior:   categories.interior,
+        // New zone-based grouping
+        damageZones,
+        // Structural-flagged parts
+        structuralFlagged,
+    };
 }
 
 function extractShopName(text) {

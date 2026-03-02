@@ -94,6 +94,8 @@ body::after {
     width: 76px; height: 76px;
     object-fit: contain;
     display: block;
+    background: #1c2026;
+    border-radius: 50%;
 }
 
 .logo-wordmark {
