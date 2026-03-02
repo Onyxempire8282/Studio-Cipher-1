@@ -8,53 +8,61 @@
 // =========================================
 
 const MAKE_ABBREV = {
-    "HOND": "HONDA",
-    "CHEV": "CHEVROLET",
-    "TOYT": "TOYOTA",
-    "NISS": "NISSAN",
-    "HYUN": "HYUNDAI",
-    "MITS": "MITSUBISHI",
-    "MERZ": "MERCEDES-BENZ",
-    "BENZ": "MERCEDES-BENZ",
-    "MERC": "MERCURY",
-    "LINC": "LINCOLN",
-    "CADI": "CADILLAC",
-    "BUIC": "BUICK",
-    "PONT": "PONTIAC",
-    "OLDS": "OLDSMOBILE",
-    "CHRY": "CHRYSLER",
-    "DODG": "DODGE",
-    "JEEP": "JEEP",
-    "SUBA": "SUBARU",
-    "MAZD": "MAZDA",
-    "VOLV": "VOLVO",
-    "SATU": "SATURN",
-    "ACUR": "ACURA",
-    "LEXU": "LEXUS",
-    "INFI": "INFINITI",
-    "SCION": "SCION",
-    "MASE": "MASERATI",
-    "JAGU": "JAGUAR",
-    "LNDR": "LAND ROVER",
-    "ROVE": "LAND ROVER",
-    "PORS": "PORSCHE",
-    "AUDI": "AUDI",
-    "SAAB": "SAAB",
-    "SUZU": "SUZUKI",
-    "ISUZ": "ISUZU",
-    "VOLK": "VOLKSWAGEN",
-    "FORD": "FORD",
+    "HOND": "Honda",
+    "CHEV": "Chevrolet",
+    "TOYT": "Toyota",
+    "NISS": "Nissan",
+    "HYUN": "Hyundai",
+    "MITS": "Mitsubishi",
+    "MERZ": "Mercedes-Benz",
+    "BENZ": "Mercedes-Benz",
+    "MERC": "Mercury",
+    "LINC": "Lincoln",
+    "CADI": "Cadillac",
+    "BUIC": "Buick",
+    "PONT": "Pontiac",
+    "OLDS": "Oldsmobile",
+    "CHRY": "Chrysler",
+    "DODG": "Dodge",
+    "JEEP": "Jeep",
+    "SUBA": "Subaru",
+    "MAZD": "Mazda",
+    "VOLV": "Volvo",
+    "SATU": "Saturn",
+    "ACUR": "Acura",
+    "LEXU": "Lexus",
+    "LEXS": "Lexus",
+    "INFI": "Infiniti",
+    "SCION": "Scion",
+    "MASE": "Maserati",
+    "JAGU": "Jaguar",
+    "LNDR": "Land Rover",
+    "ROVE": "Land Rover",
+    "PORS": "Porsche",
+    "AUDI": "Audi",
+    "SAAB": "Saab",
+    "SUZU": "Suzuki",
+    "SUZK": "Suzuki",
+    "ISUZ": "Isuzu",
+    "VOLK": "Volkswagen",
+    "FORD": "Ford",
     "GMC":  "GMC",
     "BMW":  "BMW",
-    "KIA":  "KIA",
+    "KIA":  "Kia",
     "MINI": "MINI",
-    "FIAT": "FIAT",
-    "RAM":  "RAM",
-    "TSLA": "TESLA",
-    "TELA": "TESLA",
-    "RIVE": "RIVIAN",
-    "GENI": "GENESIS",
-    "ALFA": "ALFA ROMEO",
+    "FIAT": "Fiat",
+    "RAM":  "Ram",
+    "TESL": "Tesla",
+    "TSLA": "Tesla",
+    "TELA": "Tesla",
+    "RIVE": "Rivian",
+    "RIVN": "Rivian",
+    "GENI": "Genesis",
+    "GNES": "Genesis",
+    "ALFA": "Alfa Romeo",
+    "LUCD": "Lucid",
+    "PLST": "Polestar",
+    "SMRT": "Smart",
 };
 
 // =========================================
@@ -109,7 +117,9 @@ export function parseCCCText(rawText) {
 
     // ── 4. Full parse ─────────────────────────────────────────────────
     const veh = parseVehicleLine(text);
+    const vehicleDescLine = extractVehicleDescLine(text) || '';
     const costBreakdown = extractCostBreakdown(text);
+    const repairLineItems = extractRepairLineItems(text);
 
     return {
         success:                  true,
@@ -145,6 +155,22 @@ export function parseCCCText(rawText) {
         laborTotal:               costBreakdown.labor,
         partsTotal:               costBreakdown.parts,
         paintTotal:               costBreakdown.paint,
+        bodyLaborHrs:             costBreakdown.bodyLaborHrs,
+        paintLaborHrs:            costBreakdown.paintLaborHrs,
+        mechLaborHrs:             costBreakdown.mechLaborHrs,
+        bodyLaborRate:            costBreakdown.bodyLaborRate,
+        paintLaborRate:           costBreakdown.paintLaborRate,
+        mechLaborRate:            costBreakdown.mechLaborRate,
+        paintSupplies:            costBreakdown.paintSupplies,
+        salesTax:                 costBreakdown.salesTax,
+        salesTaxPct:              costBreakdown.salesTaxPct,
+        deductible:               costBreakdown.deductible,
+        frameLaborHrs:            costBreakdown.frameLaborHrs,
+        frameLaborRate:           costBreakdown.frameLaborRate,
+        repairLineItems,
+        shopName:                 extractShopName(text),
+        workfileId:               extractWorkfileId(text),
+        _vehicleDescLine:         vehicleDescLine,
     };
 }
 
@@ -192,9 +218,17 @@ function extractInsured(text) {
 }
 
 function extractCarrier(text) {
+    // CCC boilerplate disclaimer — always skip these lines
+    const isDisclaimer = (line) =>
+        /SUBJECT\s+TO\s+AUDIT/i.test(line) ||
+        /THIS\s+ESTIMATE.*IS\s+SUBJECT/i.test(line) ||
+        /SUPPLEMENT\s+IS\s+SUBJECT/i.test(line) ||
+        /REVISION\s+BY\s+THE\s+INSURANCE/i.test(line);
+
     const headerArea = text.split(/Preliminary\s+Estimate/i)[0] || text;
     const headerLines = headerArea.split("\n").map(l => l.trim()).filter(Boolean);
     for (const line of headerLines) {
+        if (isDisclaimer(line)) continue;
         if (/INSURANCE|MUTUAL|INDEMNITY|CASUALTY|ASSURANCE/i.test(line)) {
             return line;
         }
@@ -204,12 +238,15 @@ function extractCarrier(text) {
     if (forBlock) {
         const lines = forBlock[1].split("\n").map(l => l.trim()).filter(Boolean);
         for (const line of lines) {
+            if (isDisclaimer(line)) continue;
             if (/INSURANCE|MUTUAL|INDEMNITY|CASUALTY|ASSURANCE/i.test(line)) {
                 return line;
             }
         }
-        if (lines.length > 1) return lines[lines.length - 1];
-        if (lines.length === 1) return lines[0];
+        // Return last non-disclaimer line
+        const clean = lines.filter(l => !isDisclaimer(l));
+        if (clean.length > 1) return clean[clean.length - 1];
+        if (clean.length === 1) return clean[0];
     }
 
     return "";
@@ -250,9 +287,23 @@ function extractLossType(text) {
 }
 
 function extractDateOfLoss(text) {
-    // Bounded: after "Date of Loss:" capture the date value
+    // Primary: "Date of Loss: MM/DD/YYYY [HH:MM AM]"
     const match = text.match(/Date\s+of\s+Loss\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4}(?:\s+\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))?)/i);
-    return match ? match[1].trim() : "";
+    if (match) return match[1].trim();
+
+    // Alternate: "Loss Date: MM/DD/YYYY" or "Loss Date MM/DD/YYYY"
+    const alt1 = text.match(/Loss\s+Date\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
+    if (alt1) return alt1[1].trim();
+
+    // Alternate: "DOL: MM/DD/YYYY" or "DOL MM/DD/YYYY"
+    const alt2 = text.match(/DOL\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
+    if (alt2) return alt2[1].trim();
+
+    // Alternate: date on the line AFTER "Date of Loss" (separated by newline)
+    const alt3 = text.match(/Date\s+of\s+Loss\s*:?\s*\n\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
+    if (alt3) return alt3[1].trim();
+
+    return "";
 }
 
 function extractLossZip(text) {
@@ -334,9 +385,17 @@ function parseVehicleLine(text) {
         result.make = MAKE_ABBREV[rawMake] || rawMake;
     }
 
-    // Model: next word(s) after make, before trim/body/engine markers
-    const modelMatch = desc.match(/^\d{4}\s+\S+\s+(\S+)/);
-    if (modelMatch) result.model = modelMatch[1];
+    // Model: word(s) after make, before body style (2D/4D), engine (V6/4-1.5L), or trim markers
+    // CCC format: "2022 HOND CR-V EX-L 4D UTV 4-1.5L ..."
+    // We capture up to (but not including) the body code (2D/4D), cylinder-engine (4-1.5L), or drivetrain
+    const modelMatch = desc.match(/^\d{4}\s+\S+\s+(.+?)(?=\s+(?:\d+D\b|\d+-[\d.]+L|\bSED\b|\bCPE\b|\bHBK\b|\bCNV\b|\bUTV\b|\bSUV\b|\bWGN\b|\bPKP\b|\bVAN\b|\bCONV\b|\b[VvIi]\d|\bAWD\b|\bFWD\b|\bRWD\b|\b4WD\b))/i);
+    if (modelMatch) {
+        result.model = modelMatch[1].trim();
+    } else {
+        // Fallback: just grab next token
+        const simpleFallback = desc.match(/^\d{4}\s+\S+\s+(\S+)/);
+        if (simpleFallback) result.model = simpleFallback[1];
+    }
 
     // Body style: look for "2D"/"4D" patterns or keyword
     const bodyToken = parseBodyFromDesc(desc);
@@ -436,9 +495,10 @@ function extractPointOfImpact(text) {
     const match = text.match(/Point\s+of\s+Impact\s*:\s*(.+)/i);
     if (!match) return "";
 
-    let poi = match[1].trim();
-    poi = poi.replace(/^\d+\s*/, "");
-    return poi;
+    // Preserve the full POI string including numeric code prefix
+    // (e.g. "09 Rear" or "15 Total Loss") — downstream consumers
+    // parse the code with parseInt() and strip it for the label.
+    return match[1].trim();
 }
 
 // =========================================
@@ -567,28 +627,216 @@ function extractRepairDays(text) {
 }
 
 function extractPriorDamage(text) {
-    const updMatch = text.match(/(?:Unrelated\s*Prior\s*Damage|UPD)\s*:?\s*([^\n]+)/i);
-    if (updMatch) return updMatch[1].trim();
-
+    // Look for "NO UPD VISIBLE" first — most common
     if (/NO\s+UPD\s+VISIBLE/i.test(text)) return "NO UPD VISIBLE";
     if (/PRIOR\s+DAMAGE\s*:\s*NONE/i.test(text)) return "NONE";
+
+    // "Unrelated Prior Damage: <description>" — must capture meaningful text
+    const updMatch = text.match(/(?:Unrelated\s+Prior\s+Damage|UPD)\s*:\s*([^\n]+)/i);
+    if (updMatch) {
+        const value = updMatch[1].trim();
+        // Guard against partial-word captures (must be at least 4 chars and start with a letter)
+        if (value.length >= 4 && /^[A-Za-z]/.test(value)) {
+            return value;
+        }
+    }
+
+    // "Prior Damage:" section
+    const pdMatch = text.match(/Prior\s+Damage\s*:\s*([^\n]+)/i);
+    if (pdMatch) {
+        const value = pdMatch[1].trim();
+        if (value.length >= 4 && /^[A-Za-z]/.test(value)) {
+            return value;
+        }
+    }
 
     return "";
 }
 
 function extractCostBreakdown(text) {
-    const result = { labor: 0, parts: 0, paint: 0 };
+    const result = { labor: 0, parts: 0, paint: 0,
+                     bodyLaborHrs: 0, paintLaborHrs: 0, mechLaborHrs: 0,
+                     frameLaborHrs: 0,
+                     bodyLaborRate: 0, paintLaborRate: 0, mechLaborRate: 0,
+                     frameLaborRate: 0,
+                     paintSupplies: 0, salesTax: 0, salesTaxPct: 0,
+                     deductible: 0, subtotal: 0, netCost: 0 };
 
-    const laborMatch = text.match(/(?:Total\s+)?Labor\s*(?:Cost|Amount)?\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
-    if (laborMatch) result.labor = parseFloat(laborMatch[1].replace(/,/g, ""));
+    // ── Strategy: CCC ESTIMATE TOTALS is a columnar layout ──────────
+    // Categories are listed vertically, then dollar amounts appear in order
+    // after a "Cost $" header. We parse by:
+    //   1. Locating the ESTIMATE TOTALS section
+    //   2. Identifying category order (Parts, Body Labor, Paint Labor, etc.)
+    //   3. Extracting the dollar amounts in the same order from "Cost $" column
+    //   4. Extracting hours + rates from "X.X hrs @ $ XX.XX /hr" patterns
 
-    const partsMatch = text.match(/(?:Total\s+)?Parts?\s*(?:Cost|Amount)?\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
-    if (partsMatch) result.parts = parseFloat(partsMatch[1].replace(/,/g, ""));
+    const totalsIdx = text.search(/ESTIMATE\s+TOTALS/i);
+    if (totalsIdx === -1) return result;
 
-    const paintMatch = text.match(/(?:Total\s+)?(?:Paint|Refinish)\s*(?:Cost|Amount|Material)?\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
-    if (paintMatch) result.paint = parseFloat(paintMatch[1].replace(/,/g, ""));
+    const section = text.substring(totalsIdx, totalsIdx + 2000);
+
+    // Build ordered list of category labels as they appear
+    const CATEGORIES = [
+        { key: 'parts',         re: /^Parts$/i },
+        { key: 'bodyLabor',     re: /^Body\s+Labor$/i },
+        { key: 'paintLabor',    re: /^Paint\s+Labor$/i },
+        { key: 'mechLabor',     re: /^Mech(?:anical)?\s+Labor$/i },
+        { key: 'frameLabor',    re: /^Frame\s+Labor$/i },
+        { key: 'paintSupplies', re: /^Paint\s+Supplies$/i },
+        { key: 'subtotal',      re: /^Subtotal$/i },
+        { key: 'salesTax',      re: /^Sales\s+Tax$/i },
+        { key: 'totalCost',     re: /^Total\s+Cost\s+of\s+Repairs$/i },
+        { key: 'deductible',    re: /^Deductible$/i },
+        { key: 'totalAdj',      re: /^Total\s+Adjustments$/i },
+        { key: 'netCost',       re: /^Net\s+Cost\s+of\s+Repairs$/i },
+    ];
+
+    const lines = section.split("\n").map(l => l.trim()).filter(Boolean);
+    const orderedKeys = [];
+
+    for (const line of lines) {
+        for (const cat of CATEGORIES) {
+            if (cat.re.test(line) && !orderedKeys.includes(cat.key)) {
+                orderedKeys.push(cat.key);
+                break;
+            }
+        }
+    }
+
+    // Extract dollar amounts from "Cost $" column — these are the numbers
+    // appearing AFTER the "Cost $" header, in order matching the categories
+    const costIdx = section.search(/Cost\s*\$/i);
+    if (costIdx === -1) return result;
+
+    const afterCost = section.substring(costIdx);
+    // Match all dollar amounts (with optional comma separators)
+    const amounts = [];
+    const amountRe = /(?:^|\n)\s*([\d,]+\.\d{2})\s*(?:\n|$)/g;
+    let m;
+    while ((m = amountRe.exec(afterCost)) !== null) {
+        amounts.push(parseFloat(m[1].replace(/,/g, "")));
+    }
+
+    // Map amounts to categories
+    const costMap = {};
+    for (let i = 0; i < orderedKeys.length && i < amounts.length; i++) {
+        costMap[orderedKeys[i]] = amounts[i];
+    }
+
+    result.parts = costMap.parts || 0;
+    result.paintSupplies = costMap.paintSupplies || 0;
+    result.paint = result.paintSupplies;
+    result.salesTax = costMap.salesTax || 0;
+    result.subtotal = costMap.subtotal || 0;
+    result.deductible = costMap.deductible || 0;
+    result.netCost = costMap.netCost || 0;
+
+    // Labor totals (sum the dollar amounts for body+paint+mech+frame)
+    const bodyAmt = costMap.bodyLabor || 0;
+    const paintAmt = costMap.paintLabor || 0;
+    const mechAmt = costMap.mechLabor || 0;
+    const frameAmt = costMap.frameLabor || 0;
+    result.labor = bodyAmt + paintAmt + mechAmt + frameAmt;
+
+    // Extract hours and rates from "X.X hrs @ $ XX.XX /hr" patterns
+    const hrsRateRe = /([\d.]+)\s*hrs?\s*@\s*\$\s*([\d,.]+)\s*\/hr/g;
+    const hrsRatePairs = [];
+    let hrm;
+    while ((hrm = hrsRateRe.exec(section)) !== null) {
+        hrsRatePairs.push({
+            hrs: parseFloat(hrm[1]),
+            rate: parseFloat(hrm[2].replace(/,/g, "")),
+        });
+    }
+
+    // Map hours/rate pairs to labor categories in order:
+    // body, paint, mechanical, (frame if present), paint supplies
+    const laborKeys = orderedKeys.filter(k =>
+        ['bodyLabor', 'paintLabor', 'mechLabor', 'frameLabor', 'paintSupplies'].includes(k));
+    for (let i = 0; i < laborKeys.length && i < hrsRatePairs.length; i++) {
+        const k = laborKeys[i];
+        const p = hrsRatePairs[i];
+        if (k === 'bodyLabor')     { result.bodyLaborHrs = p.hrs; result.bodyLaborRate = p.rate; }
+        if (k === 'paintLabor')    { result.paintLaborHrs = p.hrs; result.paintLaborRate = p.rate; }
+        if (k === 'mechLabor')     { result.mechLaborHrs = p.hrs; result.mechLaborRate = p.rate; }
+        if (k === 'frameLabor')    { result.frameLaborHrs = p.hrs; result.frameLaborRate = p.rate; }
+    }
+
+    // Extract sales tax percentage (e.g., "$ 11,232.19 @ 7.0000 %")
+    const taxPctMatch = section.match(/\$\s*[\d,]+\.?\d*\s*@\s*([\d.]+)\s*%/);
+    if (taxPctMatch) result.salesTaxPct = parseFloat(taxPctMatch[1]);
 
     return result;
+}
+
+function extractRepairLineItems(text) {
+    // Parse CCC estimate line items to build damage categories.
+    // CCC format: component description followed by operation type
+    // e.g. "FRONT BUMPER COVER R&R", "LEFT FENDER Repair", "HEADLINER R&I"
+    const categories = {
+        structural: [],
+        bodyPanels: [],
+        restraints: [],
+        interior: [],
+    };
+
+    // Structural keywords
+    const STRUCTURAL_RE = /\b(frame|rail|apron|pillar|rocker|unibody|subframe|cross\s*member|firewall|floor\s*pan|strut\s*tower|radiator\s*support|aperture)\b/i;
+    // Body panel keywords
+    const BODY_RE = /\b(bumper|fender|hood|door|quarter\s*panel|decklid|trunk|tailgate|roof|grille|header\s*panel|fascia|valance|bed\s*panel|lamp|headl|taill|mirror|molding|handle|hinge|latch)\b/i;
+    // Restraint keywords
+    const RESTRAINT_RE = /\b(air\s*bag|airbag|srs|restraint|seat\s*belt|impact\s*sensor|clockspring|diagnostic)\b/i;
+    // Interior keywords
+    const INTERIOR_RE = /\b(seat\s*cover|headliner|trim\s*panel|carpet|console|dash|instrument|door\s*panel|garnish|pillar\s*trim|visor|glove|armrest)\b/i;
+
+    // Look for lines that contain repair operations
+    const opPattern = /\b(R&R|R&I|Repair|Replace|Refinish|Blend|Overhaul|Section|Remove|Install)\b/i;
+    const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 5 && opPattern.test(l));
+
+    for (const line of lines) {
+        // Skip header/boilerplate lines
+        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}/i.test(line)) continue;
+        if (/^Page\s+\d/i.test(line)) continue;
+        if (/Subtotal|Total|Labor\s+Type/i.test(line)) continue;
+
+        // Clean the line: remove leading line numbers, pricing columns
+        let desc = line.replace(/^\d+\s+/, '').replace(/\$[\d,.]+/g, '').replace(/[\d.]+\s*hrs?/ig, '').trim();
+        if (desc.length < 5) continue;
+
+        // Categorize
+        if (STRUCTURAL_RE.test(desc)) {
+            categories.structural.push(desc);
+        } else if (RESTRAINT_RE.test(desc)) {
+            categories.restraints.push(desc);
+        } else if (INTERIOR_RE.test(desc)) {
+            categories.interior.push(desc);
+        } else if (BODY_RE.test(desc)) {
+            categories.bodyPanels.push(desc);
+        }
+    }
+
+    return categories;
+}
+
+function extractShopName(text) {
+    // CCC estimates show "Written By: Shop Name" or "Repair Facility: Shop Name"
+    const writtenBy = text.match(/Written\s+By\s*:\s*([^\n]+)/i);
+    if (writtenBy) return writtenBy[1].trim();
+
+    const repairFac = text.match(/Repair\s+Facility\s*:\s*\n?\s*([^\n]+)/i);
+    if (repairFac) {
+        const val = repairFac[1].trim();
+        // Skip if it looks like an address
+        if (!/^\d/.test(val)) return val;
+    }
+
+    return "";
+}
+
+function extractWorkfileId(text) {
+    // CCC workfile ID / job number
+    const match = text.match(/(?:Job\s*Number|Workfile\s*(?:ID|#)|File\s*#)\s*:?\s*([A-Z0-9-]+)/i);
+    return match ? match[1].trim() : "";
 }
 
 // =========================================

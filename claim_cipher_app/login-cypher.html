@@ -134,6 +134,15 @@
                     </div>
 
                     <div class="field" style="margin-top:16px;">
+                        <label class="field-label" for="signup-license">
+                            Appraiser License # <span style="opacity:0.5;font-size:0.8em">(optional)</span>
+                        </label>
+                        <input class="field-input" type="text" id="signup-license"
+                            placeholder="State license number"
+                            maxlength="30" autocomplete="off">
+                    </div>
+
+                    <div class="field" style="margin-top:16px;">
                         <label class="field-label" for="signup-email">Email</label>
                         <input class="field-input" type="email" id="signup-email"
                             placeholder="adjuster@firm.com"
@@ -477,9 +486,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Show loading state
             window.SupabaseAuth.setButtonLoading(signupBtn, true, 'Creating account...');
 
+            const licenseNumber = document.getElementById('signup-license')?.value?.trim();
             const result = await window.SupabaseAuth.signUp(email, password, {
                 full_name: name,
-                company: company || ''
+                company: company || '',
+                license_number: licenseNumber || ''
             });
 
             if (result.success) {

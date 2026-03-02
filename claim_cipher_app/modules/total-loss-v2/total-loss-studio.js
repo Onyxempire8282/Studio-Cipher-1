@@ -789,6 +789,41 @@ function handleCopySummary() {
 }
 
 // =========================================
+//  USER PROFILE (for DOCX signature block)
+// =========================================
+
+async function _gatherUserProfile() {
+    const profile = { businessName: '', fullName: '', licenseNumber: '' };
+    const isDemo = sessionStorage.getItem('demo_mode') === 'true';
+    if (isDemo) {
+        profile.fullName = window.settingsManager?.getSetting('displayName') || 'Demo User';
+        profile.licenseNumber = window.settingsManager?.getSetting('licenseNumber') || '';
+        profile.businessName = 'Demo Appraisal Co.';
+        return profile;
+    }
+    // Authenticated: Supabase first, settingsManager overlay
+    try {
+        const { metadata } = await window.SupabaseAuth.getCurrentUser();
+        if (metadata) {
+            profile.fullName = metadata.full_name || '';
+            profile.businessName = metadata.company || '';
+            profile.licenseNumber = metadata.license_number || '';
+        }
+    } catch (e) { console.warn('[TLS] Profile fetch failed:', e); }
+    // localStorage overrides
+    if (window.settingsManager) {
+        const sm = window.settingsManager;
+        const n = sm.getSetting('displayName');
+        if (n && n !== 'Demo User') profile.fullName = n;
+        const l = sm.getSetting('licenseNumber');
+        if (l && l !== 'DEMO-2024') profile.licenseNumber = l;
+    }
+    // Sanitize: Supabase URL-encodes spaces as "+" in some metadata fields
+    profile.fullName = profile.fullName.replace(/\+/g, ' ').trim();
+    return profile;
+}
+
+// =========================================
 //  DOWNLOAD SUMMARY (.docx)
 // =========================================
 
@@ -805,7 +840,8 @@ async function handleDownloadSummary() {
     if (status) status.textContent = 'Generating report\u2026';
 
     try {
-        const blob = await generateClaimSummaryDocx(state);
+        const userProfile = await _gatherUserProfile();
+        const blob = await generateClaimSummaryDocx(state, userProfile);
         const claimNumber = state.bcifPayload?.claim?.claimNumber || 'EXPORT';
         triggerDownload(blob, `SUMMARY_${claimNumber}.docx`);
         if (status) {

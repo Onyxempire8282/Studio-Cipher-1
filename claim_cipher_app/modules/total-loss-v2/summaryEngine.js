@@ -154,35 +154,45 @@ function buildEstimateSummary(data) {
 // =========================================
 
 function buildStandardCollisionSummary(data) {
+    const vehicle = [data.year, data.make, data.model].filter(Boolean).join(' ');
+    const vehicleRef = vehicle ? `The ${vehicle}` : 'The vehicle';
+
     const repairNote = data.repairDays > 0
-        ? ` Estimated repair time: ${data.repairDays} day${data.repairDays !== 1 ? 's' : ''}.`
+        ? ` Estimated repair duration is ${data.repairDays} day${data.repairDays !== 1 ? 's' : ''}.`
         : '';
 
-    return `The vehicle sustained collision-related damage primarily to the ${data.damageAreas} as reflected by the CCC point of impact classification.
+    return `${vehicleRef} sustained collision-related damage primarily to the ${data.damageAreas} as reflected by the CCC point of impact classification.
 
-Visible damage includes: ${data.damageAreas}.
-
-Based on the current inspection and estimate documentation, the vehicle appears repairable within economic guidelines.${repairNote} A supplement may be required following teardown. Final repair costs may be subject to supplemental findings.`.trim();
+Based on current inspection and estimate documentation, the vehicle appears repairable within economic guidelines.${repairNote} A supplement may be required following teardown. Final repair costs may be subject to supplemental findings.`.trim();
 }
 
 function buildTotalLossSummary(data) {
+    const vehicle = [data.year, data.make, data.model].filter(Boolean).join(' ');
+    const vehicleRef = vehicle ? `The ${vehicle}` : 'The vehicle';
+
     const acvNote = data.acv
         ? ` Estimate total of ${data.estimateTotal} exceeds the economic repair threshold relative to the vehicle's actual cash value of ${data.acv}.`
         : '';
 
-    return `The point of impact classification within the CCC estimating platform is designated as ${data.poiLabel}.
+    return `${vehicleRef} has been designated as a total loss. The point of impact classification within the CCC estimating platform is ${data.poiLabel}.
 
 Based on the severity threshold reached within CCC, the amount of visible structural and mechanical damage meets total loss criteria and is not considered economically repairable.${acvNote}`.trim();
 }
 
 function buildSpecialEventSummary(data) {
-    return `The vehicle sustained damage consistent with a special event loss classification as reflected by the CCC point of impact designation.
+    const vehicle = [data.year, data.make, data.model].filter(Boolean).join(' ');
+    const vehicleRef = vehicle ? `The ${vehicle}` : 'The vehicle';
+
+    return `${vehicleRef} sustained damage consistent with a special event loss classification as reflected by the CCC point of impact designation.
 
 Damages documented to the ${data.damageAreas} are consistent with the reported loss type. Based on current documentation, the vehicle is subject to further review pending final valuation.`.trim();
 }
 
 function buildComplexCollisionSummary(data) {
-    return `The vehicle sustained complex collision damage as reflected by the CCC point of impact classification.
+    const vehicle = [data.year, data.make, data.model].filter(Boolean).join(' ');
+    const vehicleRef = vehicle ? `The ${vehicle}` : 'The vehicle';
+
+    return `${vehicleRef} sustained complex collision damage as reflected by the CCC point of impact classification.
 
 Damage observed includes ${data.damageAreas}. Given the nature and distribution of the damage, a supplemental assessment may be required following initial teardown.`.trim();
 }

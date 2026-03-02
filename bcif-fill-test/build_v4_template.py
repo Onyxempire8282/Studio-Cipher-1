@@ -56,12 +56,19 @@ NS_DECL = (
     'mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh w16sdtfl w16du wp14"'
 )
 
-# Font: Calibri with explicit black text. Sizes are half-points.
-FONT = "Calibri"
-SZ_BODY = "26"      # 13pt default body text
-SZ_TITLE = "30"     # 15pt section headers
-SZ_CHECKBOX = "28"  # 14pt checkbox symbols
-SZ_SM = "26"        # 13pt small labels to match body size
+# Font: Arial with explicit black text. Sizes are half-points.
+FONT = "Arial"
+SZ_BODY = "18"       # 9pt body text / KV values / checkbox labels
+SZ_TITLE = "28"      # 14pt section headers
+SZ_CHECKBOX = "22"   # 11pt checkbox symbols (clear but not oversized)
+SZ_SM = "18"         # 9pt small labels
+SZ_CAT_HEAD = "20"   # 10pt category headers (Power/Convenience, Safety, etc.)
+SZ_KV_LABEL = "18"   # 9pt key-value labels (bold)
+
+# Colors
+NAVY = "1B2A4A"
+BORDER_COLOR = "555555"
+HEADER_BORDER_COLOR = "333333"
 
 
 def _esc(text):
@@ -82,8 +89,8 @@ def run(text, bold=False, sz=SZ_BODY, font=FONT, color="000000"):
 
 
 def run_checkbox(text):
-    """Run for checkbox symbols only: heavier weight and larger size."""
-    return run(text, bold=True, sz=SZ_CHECKBOX, color="000000")
+    """Run for checkbox symbols only: slightly larger size, normal weight."""
+    return run(text, bold=False, sz=SZ_CHECKBOX, color="000000")
 
 def para(content, jc=None, spacing_after="0", spacing_before="0"):
     """Wrap run(s) in a paragraph."""
@@ -96,7 +103,8 @@ def para(content, jc=None, spacing_after="0", spacing_before="0"):
     )
 
 
-def cell(content_xml, width=None, shading=None, borders=None, vmerge=None):
+def cell(content_xml, width=None, shading=None, borders=None, vmerge=None,
+         margins=None):
     """Wrap paragraph XML in a table cell."""
     tc_pr = '<w:tcPr>'
     if width:
@@ -107,13 +115,26 @@ def cell(content_xml, width=None, shading=None, borders=None, vmerge=None):
         tc_pr += borders
     if vmerge is not None:
         tc_pr += f'<w:vMerge w:val="{vmerge}"/>' if vmerge else '<w:vMerge/>'
+    # Cell margins (default: 30 top/bottom, 60 left/right)
+    m = margins or (30, 60, 30, 60)  # top, left, bottom, right
+    tc_pr += (
+        f'<w:tcMar>'
+        f'<w:top w:w="{m[0]}" w:type="dxa"/>'
+        f'<w:left w:w="{m[1]}" w:type="dxa"/>'
+        f'<w:bottom w:w="{m[2]}" w:type="dxa"/>'
+        f'<w:right w:w="{m[3]}" w:type="dxa"/>'
+        f'</w:tcMar>'
+    )
     tc_pr += '</w:tcPr>'
     return f'<w:tc>{tc_pr}{content_xml}</w:tc>'
 
 
-def row(*cells_xml):
-    """Build a table row from cells."""
-    return f'<w:tr>{"".join(cells_xml)}</w:tr>'
+def row(*cells_xml, min_height=None):
+    """Build a table row from cells with optional minimum height."""
+    tr_pr = ''
+    if min_height:
+        tr_pr = f'<w:trPr><w:trHeight w:val="{min_height}" w:hRule="atLeast"/></w:trPr>'
+    return f'<w:tr>{tr_pr}{"".join(cells_xml)}</w:tr>'
 
 
 def table(rows_xml, col_widths, borders=True):
@@ -124,12 +145,12 @@ def table(rows_xml, col_widths, borders=True):
     if borders:
         bdr = (
             '<w:tblBorders>'
-            '<w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
-            '<w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
-            '<w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
-            '<w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
-            '<w:insideH w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
-            '<w:insideV w:val="single" w:sz="6" w:space="0" w:color="000000"/>'
+            f'<w:top w:val="single" w:sz="8" w:space="0" w:color="{BORDER_COLOR}"/>'
+            f'<w:left w:val="single" w:sz="8" w:space="0" w:color="{BORDER_COLOR}"/>'
+            f'<w:bottom w:val="single" w:sz="8" w:space="0" w:color="{BORDER_COLOR}"/>'
+            f'<w:right w:val="single" w:sz="8" w:space="0" w:color="{BORDER_COLOR}"/>'
+            f'<w:insideH w:val="single" w:sz="8" w:space="0" w:color="{BORDER_COLOR}"/>'
+            f'<w:insideV w:val="single" w:sz="8" w:space="0" w:color="{BORDER_COLOR}"/>'
             '</w:tblBorders>'
         )
     else:
@@ -150,8 +171,6 @@ def table(rows_xml, col_widths, borders=True):
         f'<w:tblW w:w="{total}" w:type="dxa"/>'
         f'<w:tblLayout w:type="fixed"/>'
         f'{bdr}'
-        f'<w:tblCellMar><w:top w:w="20" w:type="dxa"/><w:left w:w="40" w:type="dxa"/>'
-        f'<w:bottom w:w="20" w:type="dxa"/><w:right w:w="40" w:type="dxa"/></w:tblCellMar>'
         f'</w:tblPr>'
         f'<w:tblGrid>{grid}</w:tblGrid>'
         f'{"".join(rows_xml)}'
@@ -162,15 +181,24 @@ def table(rows_xml, col_widths, borders=True):
 # G��G��G�� Section builders G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 
 def section_title(text):
-    """Dark background section header spanning full width."""
-    return para(run(text, bold=True, sz=SZ_TITLE), jc="center", spacing_before="120", spacing_after="60")
+    """Navy background section header spanning full width."""
+    total_w = 10800
+    title_cell = cell(
+        para(run(text, bold=True, sz=SZ_TITLE, color="FFFFFF"), jc="center",
+             spacing_before="40", spacing_after="40"),
+        width=total_w,
+        shading=NAVY,
+        margins=(40, 120, 40, 120),
+    )
+    return table([f'<w:tr>{title_cell}</w:tr>'], [total_w], borders=False)
 
 
 def label_value_row(label, token, label_w=2700, value_w=8100):
     """Two-column row: bold label | {{TOKEN}} placeholder."""
     return row(
-        cell(para(run(label, bold=True)), width=label_w),
-        cell(para(run("{{" + token + "}}")), width=value_w),
+        cell(para(run(label, bold=True, sz=SZ_KV_LABEL)), width=label_w),
+        cell(para(run("{{" + token + "}}", sz=SZ_BODY)), width=value_w),
+        min_height=260,
     )
 
 
@@ -187,35 +215,39 @@ def checkbox_grid(title, items, cols=4):
     Each cell shows: {{TOKEN}} Label
     The fill script replaces {{TOKEN}} with "X" or "".
     """
-    # Calculate column width
+    # Full content width for US Letter with 720 DXA margins each side
     total_w = 10800
     col_w = total_w // cols
 
     rows_xml = []
 
-    # Title row spanning all columns
+    # Title row spanning all columns — category header style
     title_cell = cell(
-        para(run(title, bold=True, sz=SZ_BODY)),
+        para(run(title, bold=True, sz=SZ_CAT_HEAD)),
         width=total_w,
+        shading="E8EAED",
+        margins=(30, 80, 30, 80),
     )
-    # We need to merge across columns G�� use gridSpan
+    # Merge across columns using gridSpan
     title_cell = title_cell.replace(
         '</w:tcPr>',
         f'<w:gridSpan w:val="{cols}"/></w:tcPr>'
     )
-    rows_xml.append(f'<w:tr>{title_cell}</w:tr>')
+    rows_xml.append(f'<w:tr><w:trPr><w:trHeight w:val="280" w:hRule="atLeast"/></w:trPr>{title_cell}</w:tr>')
 
-    # Data rows
+    # Data rows — checkbox symbol is a SEPARATE run from the label
     for i in range(0, len(items), cols):
         chunk = items[i:i+cols]
         cells = []
         for token, label in chunk:
             content = run_checkbox("{{" + token + "}}") + run(" " + label, sz=SZ_BODY)
-            cells.append(cell(para(content), width=col_w))
+            cells.append(cell(para(content), width=col_w,
+                              margins=(20, 50, 20, 50)))
         # Pad if last row is short
         while len(cells) < cols:
-            cells.append(cell(para(run("", sz=SZ_BODY)), width=col_w))
-        rows_xml.append(row(*cells))
+            cells.append(cell(para(run("", sz=SZ_BODY)), width=col_w,
+                              margins=(20, 50, 20, 50)))
+        rows_xml.append(row(*cells, min_height=240))
 
     return table(rows_xml, [col_w] * cols)
 
@@ -227,21 +259,22 @@ def condition_table(groups):
     Columns: Label | 0 | 1 | 2 | 3 | Comments
     """
     label_w = 1800
-    rating_w = 600
+    rating_w = 700
     comment_w = 10800 - label_w - (rating_w * 4)
     widths = [label_w, rating_w, rating_w, rating_w, rating_w, comment_w]
 
     rows_xml = []
 
-    # Header row
+    # Header row — bold 9pt
     headers = ["Condition", "0\nPoor", "1\nFair", "2\nGood", "3\nExcl", "Comments"]
     hcells = []
     for i, h in enumerate(headers):
         hcells.append(cell(
             para(run(h, bold=True, sz=SZ_BODY), jc="center"),
             width=widths[i],
+            shading="E8EAED",
         ))
-    rows_xml.append(row(*hcells))
+    rows_xml.append(row(*hcells, min_height=280))
 
     for label, prefix in groups:
         rcells = [
@@ -257,7 +290,7 @@ def condition_table(groups):
             para(run("{{" + prefix + "_COMMENT}}", sz=SZ_BODY)),
             width=comment_w,
         ))
-        rows_xml.append(row(*rcells))
+        rows_xml.append(row(*rcells, min_height=260))
 
     return table(rows_xml, widths)
 
@@ -276,12 +309,12 @@ def adjustment_table(prefix_pairs):
     rows_xml = []
     # Header
     hcells = [
-        cell(para(run("", bold=True, sz=SZ_BODY)), width=label_w),
-        cell(para(run("Description", bold=True, sz=SZ_BODY), jc="center"), width=desc_w),
-        cell(para(run("Add (+)", bold=True, sz=SZ_BODY), jc="center"), width=add_w),
-        cell(para(run("Deduct (-)", bold=True, sz=SZ_BODY), jc="center"), width=ded_w),
+        cell(para(run("", bold=True, sz=SZ_BODY)), width=label_w, shading="E8EAED"),
+        cell(para(run("Description", bold=True, sz=SZ_BODY), jc="center"), width=desc_w, shading="E8EAED"),
+        cell(para(run("Add (+)", bold=True, sz=SZ_BODY), jc="center"), width=add_w, shading="E8EAED"),
+        cell(para(run("Deduct (-)", bold=True, sz=SZ_BODY), jc="center"), width=ded_w, shading="E8EAED"),
     ]
-    rows_xml.append(row(*hcells))
+    rows_xml.append(row(*hcells, min_height=280))
 
     for label, desc_tok, add_tok, ded_tok in prefix_pairs:
         rcells = [
@@ -290,14 +323,14 @@ def adjustment_table(prefix_pairs):
             cell(para(run("{{" + add_tok + "}}", sz=SZ_BODY)), width=add_w),
             cell(para(run("{{" + ded_tok + "}}", sz=SZ_BODY)), width=ded_w),
         ]
-        rows_xml.append(row(*rcells))
+        rows_xml.append(row(*rcells, min_height=260))
 
     return table(rows_xml, widths)
 
 
 def spacer():
     """Empty paragraph for spacing between sections."""
-    return '<w:p><w:pPr><w:spacing w:before="60" w:after="60"/></w:pPr></w:p>'
+    return '<w:p><w:pPr><w:spacing w:before="20" w:after="20"/></w:pPr></w:p>'
 
 
 # G��G��G�� Build the full document G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
@@ -761,49 +794,66 @@ def build_document_xml():
 
 
 def update_styles_xml(xml_bytes):
-    """Update Normal style and doc defaults to Calibri 13pt black."""
-    from xml.etree import ElementTree as ET
+    """Update Normal style and doc defaults to Arial 9pt black.
 
-    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
-    root = ET.fromstring(xml_bytes)
+    Uses regex-based replacement to preserve the original XML structure
+    and namespace prefixes. ElementTree rewrites 'w:' to 'ns0:' which
+    breaks Word's strict OOXML parser.
+    """
+    import re
+    xml = xml_bytes.decode("utf-8")
 
-    def ensure_rpr(parent):
-        rpr = parent.find("w:rPr", ns)
-        if rpr is None:
-            rpr = ET.SubElement(parent, f"{{{ns['w']}}}rPr")
-        return rpr
+    def patch_rfonts(block):
+        """Set w:ascii and w:hAnsi to FONT in any w:rFonts within block."""
+        block = re.sub(r'(w:rFonts\s[^>]*?)w:ascii="[^"]*"', rf'\1w:ascii="{FONT}"', block)
+        block = re.sub(r'(w:rFonts\s[^>]*?)w:hAnsi="[^"]*"', rf'\1w:hAnsi="{FONT}"', block)
+        return block
 
-    def set_rpr(rpr):
-        rfonts = rpr.find("w:rFonts", ns)
-        if rfonts is None:
-            rfonts = ET.SubElement(rpr, f"{{{ns['w']}}}rFonts")
-        rfonts.set(f"{{{ns['w']}}}ascii", FONT)
-        rfonts.set(f"{{{ns['w']}}}hAnsi", FONT)
+    def ensure_in_rpr(block, tag, attr_val):
+        """If <w:{tag} .../> exists in any <w:rPr>, patch its w:val.
+        If it doesn't exist, insert it before </w:rPr>."""
+        pattern = rf'(<w:{tag}\s[^>]*?)w:val="[^"]*"'
+        if re.search(pattern, block):
+            block = re.sub(pattern, rf'\1w:val="{attr_val}"', block)
+        else:
+            # Insert before </w:rPr>
+            block = block.replace(
+                '</w:rPr>',
+                f'<w:{tag} w:val="{attr_val}"/></w:rPr>',
+                1,
+            )
+        return block
 
-        color = rpr.find("w:color", ns)
-        if color is None:
-            color = ET.SubElement(rpr, f"{{{ns['w']}}}color")
-        color.set(f"{{{ns['w']}}}val", "000000")
+    def patch_rpr(block):
+        block = patch_rfonts(block)
+        block = ensure_in_rpr(block, "color", "000000")
+        block = ensure_in_rpr(block, "sz", SZ_BODY)
+        block = ensure_in_rpr(block, "szCs", SZ_BODY)
+        return block
 
-        for tag in ("sz", "szCs"):
-            el = rpr.find(f"w:{tag}", ns)
-            if el is None:
-                el = ET.SubElement(rpr, f"{{{ns['w']}}}{tag}")
-            el.set(f"{{{ns['w']}}}val", SZ_BODY)
+    # Patch docDefaults > rPrDefault > rPr
+    def patch_doc_defaults(m):
+        return patch_rpr(m.group(0))
 
-    doc_defaults = root.find("w:docDefaults", ns)
-    if doc_defaults is not None:
-        rpr_default = doc_defaults.find("w:rPrDefault", ns)
-        if rpr_default is None:
-            rpr_default = ET.SubElement(doc_defaults, f"{{{ns['w']}}}rPrDefault")
-        set_rpr(ensure_rpr(rpr_default))
+    xml = re.sub(
+        r'<w:docDefaults>.*?</w:docDefaults>',
+        patch_doc_defaults,
+        xml,
+        flags=re.DOTALL,
+    )
 
-    for style in root.findall("w:style", ns):
-        if style.get(f"{{{ns['w']}}}styleId") == "Normal":
-            set_rpr(ensure_rpr(style))
-            break
+    # Patch the Normal style's rPr
+    def patch_normal_style(m):
+        return patch_rpr(m.group(0))
 
-    return ET.tostring(root, encoding="utf-8", xml_declaration=True)
+    xml = re.sub(
+        r'<w:style\s[^>]*w:styleId="Normal"[^>]*>.*?</w:style>',
+        patch_normal_style,
+        xml,
+        flags=re.DOTALL,
+    )
+
+    return xml.encode("utf-8")
 
 
 # G��G��G�� Main G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
