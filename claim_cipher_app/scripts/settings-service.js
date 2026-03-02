@@ -16,6 +16,7 @@ const SettingsService = (() => {
   }
 
   // ── PROFILE ──
+  // profiles PK is "id" (not "user_id")
 
   async function loadProfile() {
     const sb = getClient();
@@ -27,7 +28,7 @@ const SettingsService = (() => {
         license_number, phone, email,
         street_address, city, state, zip
       `)
-      .eq('user_id', userId)
+      .eq('id', userId)
       .single();
     if (error) throw error;
     return data;
@@ -43,10 +44,9 @@ const SettingsService = (() => {
         last_name:      fields.last_name,
         company:        fields.company,
         license_number: fields.license_number,
-        phone:          fields.phone,
-        updated_at:     new Date().toISOString()
+        phone:          fields.phone
       })
-      .eq('user_id', userId);
+      .eq('id', userId);
     if (error) throw error;
   }
 
@@ -61,10 +61,9 @@ const SettingsService = (() => {
         street_address: fields.street_address,
         city:           fields.city,
         state:          fields.state,
-        zip:            fields.zip,
-        updated_at:     new Date().toISOString()
+        zip:            fields.zip
       })
-      .eq('user_id', userId);
+      .eq('id', userId);
     if (error) throw error;
   }
 
