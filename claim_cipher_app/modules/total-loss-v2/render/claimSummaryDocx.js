@@ -270,6 +270,13 @@ function buildTokenMap(state, userProfile) {
         return entries.length > 0 ? entries.join('. ') + '.' : null;
     }
 
+    // ─── Damage Assessment (from structured editor fields) ──────────────────
+    const da = payload.damageAssessment || {};
+    if (!da.structural)  da.structural  = 'No damage documented';
+    if (!da.bodyPanels)  da.bodyPanels  = 'No damage documented';
+    if (!da.restraints)  da.restraints  = 'No damage documented';
+    if (!da.interior)    da.interior    = 'No damage documented';
+
     // ─── Repair Cost Summary ─────────────────────────────────────────────────
     const partsTotal   = _toNumber(parsed.partsTotal);
     const laborTotal   = _toNumber(parsed.laborTotal);
@@ -404,20 +411,11 @@ function buildTokenMap(state, userProfile) {
         LOSS_PARA_1: para1,
         LOSS_PARA_2: para2,
 
-        // Damage Assessment — user override → zone narratives → legacy
-        DAMAGE_STRUCTURAL:  hasZoneData
-            ? (buildZoneNarrative(['structural'])
-                || (structFlags.length > 0 ? 'Structural components flagged: ' + structFlags.slice(0, 4).join(', ') + '.' : formatCatItems(categories.structural)))
-            : formatCatItems(categories.structural),
-        DAMAGE_BODY_PANELS: hasZoneData
-            ? (buildZoneNarrative(['frontEnd', 'rightSide', 'leftSide', 'rear']) || formatCatItems(categories.bodyPanels))
-            : formatCatItems(categories.bodyPanels),
-        DAMAGE_RESTRAINTS:  hasZoneData
-            ? (buildZoneNarrative(['restraints']) || formatCatItems(categories.restraints))
-            : formatCatItems(categories.restraints),
-        DAMAGE_INTERIOR:    hasZoneData
-            ? (buildZoneNarrative(['wheels', 'mechanical']) || formatCatItems(categories.interior))
-            : formatCatItems(categories.interior),
+        // Damage Assessment — from structured editor fields (user-editable)
+        DAMAGE_STRUCTURAL:  da.structural,
+        DAMAGE_BODY_PANELS: da.bodyPanels,
+        DAMAGE_RESTRAINTS:  da.restraints,
+        DAMAGE_INTERIOR:    da.interior,
 
         // Repair Cost Summary
         PARTS_AMOUNT:          partsTotal > 0 ? _formatCurrency(partsTotal) : '',
@@ -486,15 +484,6 @@ function buildTokenMap(state, userProfile) {
         // Page header
         HEADER_BUSINESS: businessName.toUpperCase(),
     };
-
-    // User-typed damage assessment overrides CCC-generated damage tokens
-    const userDamage = (payload.summary?.userDamageAssessment || '').trim();
-    if (userDamage) {
-        tokens.DAMAGE_STRUCTURAL  = userDamage;
-        tokens.DAMAGE_BODY_PANELS = '';
-        tokens.DAMAGE_RESTRAINTS  = '';
-        tokens.DAMAGE_INTERIOR    = '';
-    }
 
     return tokens;
 }

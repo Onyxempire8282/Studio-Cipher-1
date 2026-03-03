@@ -49,6 +49,13 @@ export function createEmptyBCIFPayload() {
 
         options: [],
 
+        damageAssessment: {
+            structural: "",
+            bodyPanels: "",
+            restraints: "",
+            interior: ""
+        },
+
         summary: {
             damageSummary: "",
             conclusion: "",

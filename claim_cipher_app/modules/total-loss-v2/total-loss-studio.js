@@ -489,6 +489,9 @@ function buildPayloadFromParsed(parsed) {
         ? 'Vehicle is declared a total loss based on estimate threshold.'
         : 'Vehicle appears repairable based on current estimate data.';
 
+    // Damage assessment — smart parse from CCC data
+    payload.damageAssessment = parseDamageFromEstimate(parsed);
+
     return payload;
 }
 
@@ -524,6 +527,240 @@ function buildEngineString(parsed) {
 }
 
 // =========================================
+//  DAMAGE ASSESSMENT — Smart parse from CCC data
+// =========================================
+
+const BOILERPLATE_PATTERNS = [
+    /THIS IS NOT AN AUTHORIZATION TO REPAIR/i,
+    /ALL REPAIR COSTS ARE THE RESPONSIBILITY/i,
+    /PARTS USED IN THE REPAIR OF YOUR VEHICLE/i,
+    /OTHER THAN THE ORIGINAL.*?MANUFACTURER/i,
+    /YOU HAVE THE RIGHT TO SELECT THE BODY SHOP/i,
+    /The symbol \(<>\) indicates/i,
+    /Blnd=Blend/i,
+    /indicates the refinish/i,
+    /ORIGINAL MANUFACTURER\./i,
+    /subject to carrier review/i,
+    /not constitute a guarantee/i,
+    /NOTE:\s*YOU HAVE THE RIGHT/i,
+    /AUTHORIZATION.*?REPAIR/i,
+    /INSURANCE COMPANY/i,
+];
+
+function isBoilerplate(line) {
+    return BOILERPLATE_PATTERNS.some(p => p.test(line));
+}
+
+function cleanDamageItems(items) {
+    if (!items || items.length === 0) return '';
+    return items
+        .map(s => s.replace(/\s+/g, ' ').trim())
+        .filter(s => s.length >= 3 && !isBoilerplate(s))
+        .slice(0, 8)
+        .join('. ')
+        || '';
+}
+
+/**
+ * Build damage assessment fields from parsed CCC estimate data.
+ * Uses zone-based narratives when available, falls back to legacy categories.
+ */
+function parseDamageFromEstimate(parsed) {
+    const lineItems    = parsed?.repairLineItems || {};
+    const zones        = lineItems.damageZones   || {};
+    const structFlags  = parsed?.structuralFlagged || [];
+    const hasZoneData  = Object.values(zones).some(arr => arr?.length > 0);
+
+    const ZONE_LABELS = {
+        frontEnd: 'Front End', rightSide: 'Right Side', leftSide: 'Left Side',
+        rear: 'Rear', structural: 'Structural', restraints: 'Restraints',
+        wheels: 'Wheels/Suspension', mechanical: 'Mechanical',
+    };
+
+    function buildZoneText(zoneKeys) {
+        const entries = [];
+        for (const zk of zoneKeys) {
+            const items = zones[zk];
+            if (items && items.length > 0) {
+                const cleaned = items.map(s => s.replace(/\s+/g, ' ').trim())
+                    .filter(s => s.length >= 3 && !isBoilerplate(s));
+                if (cleaned.length > 0) {
+                    entries.push(`${ZONE_LABELS[zk]}: ${cleaned.slice(0, 5).join(', ')}`);
+                }
+            }
+        }
+        return entries.length > 0 ? entries.join('. ') + '.' : '';
+    }
+
+    let structural = '';
+    if (hasZoneData) {
+        structural = buildZoneText(['structural']);
+    }
+    if (!structural && structFlags.length > 0) {
+        structural = 'Structural components flagged: ' + structFlags.slice(0, 4).join(', ') + '.';
+    }
+    if (!structural) {
+        structural = cleanDamageItems(lineItems.structural);
+    }
+
+    let bodyPanels = '';
+    if (hasZoneData) {
+        bodyPanels = buildZoneText(['frontEnd', 'rightSide', 'leftSide', 'rear']);
+    }
+    if (!bodyPanels) {
+        bodyPanels = cleanDamageItems(lineItems.bodyPanels);
+    }
+
+    let restraints = '';
+    if (hasZoneData) {
+        restraints = buildZoneText(['restraints']);
+    }
+    if (!restraints) {
+        restraints = cleanDamageItems(lineItems.restraints);
+    }
+
+    let interior = '';
+    if (hasZoneData) {
+        interior = buildZoneText(['wheels', 'mechanical']);
+    }
+    if (!interior) {
+        interior = cleanDamageItems(lineItems.interior);
+    }
+
+    return {
+        structural: structural || 'No damage documented',
+        bodyPanels:  bodyPanels || '',
+        restraints:  restraints || 'No damage documented',
+        interior:    interior   || 'No damage documented',
+    };
+}
+
+/**
+ * Read current damage field values from the DOM.
+ * Returns the exact text the appraiser typed — what prints in the report.
+ */
+function getDamageAssessmentFromFields() {
+    return {
+        structural: document.getElementById('damageStructural')?.value?.trim() || 'No damage documented',
+        bodyPanels: document.getElementById('damageBodyPanels')?.value?.trim() || 'No damage documented',
+        restraints: document.getElementById('damageRestraints')?.value?.trim() || 'No damage documented',
+        interior:   document.getElementById('damageInterior')?.value?.trim()   || 'No damage documented',
+    };
+}
+
+function populateDamageFields(parsed) {
+    const da = parseDamageFromEstimate(parsed);
+    const mapping = {
+        damageStructural: da.structural,
+        damageBodyPanels: da.bodyPanels,
+        damageRestraints: da.restraints,
+        damageInterior:   da.interior,
+    };
+
+    Object.entries(mapping).forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = value;
+            autoResizeDamageTextarea(el);
+        }
+    });
+
+    // Sync to state
+    if (state.bcifPayload) {
+        state.bcifPayload.damageAssessment = da;
+    }
+
+    updateDamageEditorStatus();
+}
+
+function autoResizeDamageTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight + 4) + 'px';
+}
+
+function updateDamageEditorStatus() {
+    const ids = ['damageStructural', 'damageBodyPanels', 'damageRestraints', 'damageInterior'];
+    const empty = ids.filter(id => {
+        const el = document.getElementById(id);
+        return !el?.value?.trim();
+    }).length;
+
+    const statusEl = document.getElementById('damageEditorStatus');
+    if (!statusEl) return;
+
+    if (empty === 0) {
+        statusEl.textContent = 'All fields complete';
+        statusEl.className = 'damage-editor-status status--complete';
+    } else {
+        statusEl.textContent = `${empty} field${empty > 1 ? 's' : ''} empty`;
+        statusEl.className = 'damage-editor-status status--incomplete';
+    }
+}
+
+function setupDamageAssessmentEditor() {
+    const fieldIds = ['damageStructural', 'damageBodyPanels', 'damageRestraints', 'damageInterior'];
+    const fieldKeys = ['structural', 'bodyPanels', 'restraints', 'interior'];
+
+    // Auto-resize + state sync on input
+    fieldIds.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        autoResizeDamageTextarea(el);
+        el.addEventListener('input', () => {
+            autoResizeDamageTextarea(el);
+            if (state.bcifPayload) {
+                if (!state.bcifPayload.damageAssessment) state.bcifPayload.damageAssessment = {};
+                state.bcifPayload.damageAssessment[fieldKeys[i]] = el.value;
+            }
+            updateDamageEditorStatus();
+        });
+    });
+
+    // Individual clear buttons
+    document.querySelectorAll('.damage-clear-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const fieldKey = btn.dataset.field;
+            const idMap = { structural: 'damageStructural', bodyPanels: 'damageBodyPanels',
+                            restraints: 'damageRestraints', interior: 'damageInterior' };
+            const el = document.getElementById(idMap[fieldKey]);
+            if (el) {
+                el.value = '';
+                el.focus();
+                autoResizeDamageTextarea(el);
+                if (state.bcifPayload?.damageAssessment) {
+                    state.bcifPayload.damageAssessment[fieldKey] = '';
+                }
+                updateDamageEditorStatus();
+            }
+        });
+    });
+
+    // Clear all
+    document.getElementById('damageClearAllBtn')?.addEventListener('click', () => {
+        fieldIds.forEach((id, i) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = '';
+                autoResizeDamageTextarea(el);
+            }
+            if (state.bcifPayload?.damageAssessment) {
+                state.bcifPayload.damageAssessment[fieldKeys[i]] = '';
+            }
+        });
+        updateDamageEditorStatus();
+    });
+
+    // Re-parse from estimate
+    document.getElementById('damageReParseBtn')?.addEventListener('click', () => {
+        if (state.parsedEstimate) {
+            populateDamageFields(state.parsedEstimate);
+        }
+    });
+
+    updateDamageEditorStatus();
+}
+
+// =========================================
 //  SUMMARY LISTENERS — all post-render wiring
 // =========================================
 
@@ -538,11 +775,11 @@ function attachSummaryListeners() {
     bindInput('sv-model',       v => { state.bcifPayload.vehicle.model = v; });
     bindInput('sv-vin',         v => { state.bcifPayload.vehicle.vin = v; });
     bindInput('sv-additionalNotes', v => { state.bcifPayload.summary.additionalNotes = v; });
-    bindInput('sv-damageSummary',   v => { state.bcifPayload.summary.userDamageAssessment = v; });
 
     renderOptionsCheckboxes();
 
     setupGranularConditionRows();
+    setupDamageAssessmentEditor();
     setupSummaryAccordion();
 
     // --- Download BCIF Form ---
@@ -698,29 +935,18 @@ function handleGenerateSummary() {
     console.log('[TLS] Generate Summary clicked.');
 
     // Rebuild summary text from current parsed estimate + edited payload
-    const previousSummary = state.bcifPayload.summary.damageSummary || '';
     state.bcifPayload.summary.damageSummary = buildClaimSummary(
         state.parsedEstimate,
         state.bcifPayload
     );
-    const nextSummary = state.bcifPayload.summary.damageSummary || '';
+
+    // Sync damage assessment fields to state
+    state.bcifPayload.damageAssessment = getDamageAssessmentFromFields();
 
     // Refresh token map
     state.tokenMap = renderBCIFPayload(state.bcifPayload);
 
-    // Update the textarea
-    const textarea = document.getElementById('sv-damageSummary');
-    if (textarea) {
-        if (textarea.value !== nextSummary) {
-            textarea.value = nextSummary;
-        }
-    }
-
-    if (previousSummary === nextSummary) {
-        showSummaryStatus('Summary regenerated.');
-    } else {
-        showSummaryStatus('Summary updated.');
-    }
+    showSummaryStatus('Summary regenerated.');
 }
 
 function showSummaryStatus(message) {
@@ -752,23 +978,27 @@ function showSummaryStatus(message) {
 // =========================================
 
 function handleCopySummary() {
-    const textarea = document.getElementById('sv-damageSummary');
     const status = document.getElementById('tls-copy-status');
+    const da = getDamageAssessmentFromFields();
+    const text = ['STRUCTURAL: ' + da.structural, 'BODY PANELS: ' + da.bodyPanels,
+                  'RESTRAINTS: ' + da.restraints, 'INTERIOR: ' + da.interior].join('\n');
 
-    if (!textarea || !textarea.value.trim()) {
+    if (!text.trim()) {
         if (status) status.textContent = "Nothing to copy.";
         return;
     }
-
-    const text = textarea.value;
 
     async function copyModern() {
         await navigator.clipboard.writeText(text);
     }
 
     function copyFallback() {
-        textarea.select();
+        const tmp = document.createElement('textarea');
+        tmp.value = text;
+        document.body.appendChild(tmp);
+        tmp.select();
         document.execCommand('copy');
+        document.body.removeChild(tmp);
     }
 
     (async () => {
@@ -847,6 +1077,9 @@ async function handleDownloadSummary() {
     if (status) status.textContent = 'Generating report\u2026';
 
     try {
+        // Sync damage assessment fields to state before generating
+        state.bcifPayload.damageAssessment = getDamageAssessmentFromFields();
+
         const userProfile = await _gatherUserProfile();
         const blob = await generateClaimSummaryDocx(state, userProfile);
         const claimNumber = state.bcifPayload?.claim?.claimNumber || 'EXPORT';
@@ -890,12 +1123,8 @@ async function handleDownload() {
         );
         console.log('[TLS] Summary generation complete:', state.bcifPayload.summary.damageSummary.length, 'chars');
 
-        // Only update textarea if user hasn't typed their own damage assessment
-        const userDamage = (state.bcifPayload.summary.userDamageAssessment || '').trim();
-        if (!userDamage) {
-            const textarea = document.getElementById('sv-damageSummary');
-            if (textarea) textarea.value = state.bcifPayload.summary.damageSummary;
-        }
+        // Sync damage assessment fields to state before generating
+        state.bcifPayload.damageAssessment = getDamageAssessmentFromFields();
 
         // ── 2. Build final token map (no server dependency) ──
         state.tokenMap = renderBCIFPayload(state.bcifPayload);

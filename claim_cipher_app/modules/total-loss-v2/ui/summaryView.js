@@ -113,18 +113,8 @@ export function renderSummaryView(payload) {
                         ${renderGranularCondition(payload.condition)}
                     </div>
 
-                    <!-- DAMAGE ASSESSMENT -->
-                    <div class="sv-card">
-                        <div class="sv-card-header">
-                            <div class="sv-card-title">Damage Assessment</div>
-                            <div class="sv-card-line"></div>
-                        </div>
-                        <div class="sv-card-body">
-                            <textarea class="sv-damage-textarea" id="sv-damageSummary"
-                                      placeholder="Describe the damage observed during inspection...">${payload.summary.userDamageAssessment || payload.summary.damageSummary}</textarea>
-                            <div class="sv-field-hint">Enter your own damage assessment. If left blank, CCC estimate data will be used.</div>
-                        </div>
-                    </div>
+                    <!-- DAMAGE ASSESSMENT — Structured Editor -->
+                    ${renderDamageAssessmentEditor(payload.damageAssessment)}
 
                     <!-- ADDITIONAL NOTES -->
                     <div class="sv-card">
@@ -246,4 +236,48 @@ function renderGranularCondition(condition) {
         </div>`).join('');
 
     return sectionsMarkup;
+}
+
+// =========================================
+//  DAMAGE ASSESSMENT EDITOR — 4 structured fields
+// =========================================
+
+const DAMAGE_FIELDS = [
+    { id: 'damageStructural', key: 'structural', label: 'STRUCTURAL',  rows: 2,
+      placeholder: "Describe structural damage, or type 'No damage documented'" },
+    { id: 'damageBodyPanels', key: 'bodyPanels', label: 'BODY PANELS', rows: 3,
+      placeholder: 'Describe body panel damage by location (Front, Left Side, Right Side, Rear)' },
+    { id: 'damageRestraints', key: 'restraints', label: 'RESTRAINTS',  rows: 2,
+      placeholder: "Describe restraint system damage, or type 'No damage documented'" },
+    { id: 'damageInterior',   key: 'interior',   label: 'INTERIOR',    rows: 2,
+      placeholder: "Describe interior damage, or type 'No damage documented'" },
+];
+
+function renderDamageAssessmentEditor(damageAssessment) {
+    const da = damageAssessment || {};
+
+    const fieldsMarkup = DAMAGE_FIELDS.map(f => `
+        <div class="damage-field-row">
+            <div class="damage-field-label">
+                <span class="damage-field-key">${f.label}</span>
+                <button class="damage-clear-btn" data-field="${f.key}" title="Clear field" type="button">&times;</button>
+            </div>
+            <textarea class="damage-field-input" id="${f.id}" rows="${f.rows}"
+                      placeholder="${f.placeholder}">${da[f.key] || ''}</textarea>
+        </div>`).join('');
+
+    return `
+        <div class="sv-card sv-card--accent damage-assessment-editor" id="damageEditor">
+            <div class="damage-editor-header">
+                <div class="damage-editor-eyebrow">Damage Assessment</div>
+                <div class="damage-editor-title">Review &amp; Edit Before Generating</div>
+                <div class="damage-editor-hint">Fields are pre-filled from the estimate. Edit anything before generating the report. What you see here is exactly what prints.</div>
+            </div>
+            ${fieldsMarkup}
+            <div class="damage-editor-footer">
+                <button class="sv-btn sv-btn--reset" id="damageReParseBtn" type="button">&#8634; Re-parse from estimate</button>
+                <button class="sv-btn sv-btn--reset" id="damageClearAllBtn" type="button">Clear All Fields</button>
+                <div class="damage-editor-status" id="damageEditorStatus"></div>
+            </div>
+        </div>`;
 }
