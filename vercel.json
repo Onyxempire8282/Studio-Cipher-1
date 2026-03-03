@@ -1,0 +1,92 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/marketing/index-v2",
+      "permanent": false
+    },
+    {
+      "source": "/login",
+      "destination": "/claim_cipher_app/login-cypher",
+      "permanent": true
+    },
+    {
+      "source": "/signup",
+      "destination": "/claim_cipher_app/login-cypher",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/claim_cipher_app/command-center",
+      "permanent": false
+    },
+    {
+      "source": "/settings",
+      "destination": "/claim_cipher_app/settings",
+      "permanent": false
+    },
+    {
+      "source": "/demo",
+      "destination": "/claim_cipher_app/login-cypher",
+      "permanent": false
+    }
+  ],
+
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self)"
+        }
+      ]
+    },
+    {
+      "source": "/branding/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/claim_cipher_app/css/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/claim_cipher_app/scripts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}

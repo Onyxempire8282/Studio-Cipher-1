@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found | Claim Cipher</title>
+  <link rel="icon" type="image/png"
+    href="/branding/logo/claimcipher-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --plate:     #0e0f11;
+      --steel:     #161a1d;
+      --steel-mid: #1e2328;
+      --rivet:     #2e353d;
+      --amber:     #e8952a;
+      --white:     #edeae4;
+      --muted:     #4a5058;
+      --text:      #b8bdc2;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--plate);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      /* Grid texture */
+      background-image:
+        linear-gradient(
+          rgba(232,149,42,0.03) 1px,
+          transparent 1px),
+        linear-gradient(
+          90deg,
+          rgba(232,149,42,0.03) 1px,
+          transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .error-container {
+      text-align: center;
+      max-width: 480px;
+    }
+
+    .error-mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      object-fit: cover;
+      border: 2px solid rgba(232,149,42,0.3);
+      display: block;
+    }
+
+    .error-code {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 120px;
+      line-height: 1;
+      letter-spacing: 0.05em;
+      color: var(--amber);
+      opacity: 0.25;
+      margin-bottom: -10px;
+    }
+
+    .error-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .error-message {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    .error-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--amber);
+      margin: 0 auto 32px;
+      opacity: 0.4;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      background: var(--amber);
+      color: #000;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #f0a030;
+      box-shadow: 0 0 24px rgba(232,149,42,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--rivet);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .error-footer {
+      margin-top: 48px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+
+    <img
+      src="/branding/logo/claimcipher-mark.png"
+      alt="Claim Cipher"
+      class="error-mark">
+
+    <div class="error-code">404</div>
+
+    <div class="error-title">Page Not Found</div>
+
+    <div class="error-message">
+      The page you're looking for doesn't exist
+      or has been moved.<br>
+      Check the URL or head back to the app.
+    </div>
+
+    <div class="error-divider"></div>
+
+    <div class="error-actions">
+      <a href="/claim_cipher_app/command-center"
+        class="btn-primary">
+        Go to Dashboard →
+      </a>
+      <a href="/marketing/index-v2"
+        class="btn-ghost">
+        Home
+      </a>
+    </div>
+
+    <div class="error-footer">
+      Claim Cipher · claimcipherhq.com
+    </div>
+
+  </div>
+</body>
+</html>
