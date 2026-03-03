@@ -290,33 +290,118 @@ class CommandCenterManager {
     }
     
     // Activity Management
-    loadRecentActivity() {
-        const MAX_RENDERED = 5;
-        const activities = this.getStoredActivities();
+    async loadRecentActivity() {
         const feed = document.getElementById('activityFeed');
+        if (!feed) return;
 
-        if (activities.length === 0) {
-            // Add some sample activities if none exist
-            this.addSampleActivities();
+        // Demo mode — fall back to localStorage (seeded by demo-data.js)
+        if (sessionStorage.getItem('demo_mode') === 'true') {
+            const stored = this.getStoredActivities();
+            if (stored.length > 0) {
+                feed.innerHTML = stored.slice(0, 5).map((a, i, arr) => this.createActivityHTML(a, i, arr.length)).join('');
+            } else {
+                this.renderActivityEmpty(feed);
+            }
             return;
         }
 
-        const toRender = activities.slice(0, MAX_RENDERED);
-        feed.innerHTML = toRender.map((activity, index) => this.createActivityHTML(activity, index, toRender.length)).join('');
+        // Authenticated — pull real data from Supabase
+        try {
+            const sb = window.SupabaseAuth?.init();
+            if (!sb) { this.renderActivityEmpty(feed); return; }
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) { this.renderActivityEmpty(feed); return; }
+
+            const events = [];
+
+            // ── Routes ──
+            const { data: routes } = await sb
+                .from('routes')
+                .select('id, status, total_miles, start_address, end_address, created_at, updated_at')
+                .eq('user_id', user.id)
+                .order('updated_at', { ascending: false })
+                .limit(10);
+
+            if (routes) {
+                routes.forEach(r => {
+                    const addr = [r.start_address, r.end_address].filter(Boolean).join(' → ');
+                    const mi = r.total_miles ? ` (${r.total_miles} mi)` : '';
+                    if (r.status === 'closed') {
+                        events.push({ description: `Route closed: ${addr}${mi}`, type: 'route', timestamp: r.updated_at });
+                    } else if (r.status === 'active') {
+                        events.push({ description: `Route optimized: ${addr}${mi}`, type: 'route', timestamp: r.updated_at });
+                    } else {
+                        events.push({ description: 'Route created', type: 'route', timestamp: r.created_at });
+                    }
+                });
+            }
+
+            // ── Mileage Logs ──
+            const { data: logs } = await sb
+                .from('mileage_logs')
+                .select('id, total_miles, created_at')
+                .eq('user_id', user.id)
+                .is('voided_at', null)
+                .order('created_at', { ascending: false })
+                .limit(5);
+
+            if (logs) {
+                logs.forEach(log => {
+                    events.push({ description: `Mileage logged: ${log.total_miles} mi`, type: 'mileage', timestamp: log.created_at });
+                });
+            }
+
+            // ── Firms Added ──
+            const { data: firms } = await sb
+                .from('user_firms')
+                .select('name, rate_per_mile, free_miles, created_at')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+                .limit(5);
+
+            if (firms) {
+                firms.forEach(f => {
+                    events.push({ description: `Firm added: ${f.name} ($${f.rate_per_mile}/mi, ${f.free_miles} free)`, type: 'firm', timestamp: f.created_at });
+                });
+            }
+
+            // ── Sort by most recent, take top 5 ──
+            events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const top5 = events.slice(0, 5);
+
+            if (top5.length === 0) {
+                this.renderActivityEmpty(feed);
+            } else {
+                feed.innerHTML = top5.map((a, i) => this.createActivityHTML(a, i, top5.length)).join('');
+            }
+        } catch (err) {
+            console.error('Activity load error:', err);
+            this.renderActivityEmpty(feed);
+        }
     }
-    
+
+    renderActivityEmpty(feed) {
+        feed.innerHTML = `
+            <div class="feed-item">
+                <div class="feed-dot-wrap"><div class="feed-dot dim"></div></div>
+                <div class="feed-content">
+                    <div class="feed-action" style="color:var(--muted)">No activity yet. Start by creating a route or uploading an estimate.</div>
+                </div>
+            </div>`;
+    }
+
     getStoredActivities() {
         const stored = localStorage.getItem('cc_recent_activities');
         if (stored) {
             try {
                 return JSON.parse(stored);
             } catch (e) {
-                console.warn('📝 Lyricist: Error parsing stored activities');
+                console.warn('Error parsing stored activities');
             }
         }
         return [];
     }
-    
+
     logActivity(description, type = 'general') {
         const MAX_STORED = 25;
         const activities = this.getStoredActivities();
@@ -329,13 +414,11 @@ class CommandCenterManager {
             timeAgo: 'Just now'
         };
 
-        activities.unshift(newActivity); // Newest first
-        // Cap to last 25
+        activities.unshift(newActivity);
         const capped = activities.slice(0, MAX_STORED);
         localStorage.setItem('cc_recent_activities', JSON.stringify(capped));
-        this.loadRecentActivity();
     }
-    
+
     createActivityHTML(activity, index, total) {
         const isLatest = index === 0;
         const hasThread = index < total - 1;
@@ -354,27 +437,17 @@ class CommandCenterManager {
             </div>
         `;
     }
-    
+
     formatTimeAgo(timestamp) {
         const now = new Date();
         const time = new Date(timestamp);
         const diffInSeconds = Math.floor((now - time) / 1000);
-        
+
         if (diffInSeconds < 60) return 'Just now';
         if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+        if (diffInSeconds < 172800) return 'yesterday';
         return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    }
-    
-    addSampleActivities() {
-        const sampleActivities = [
-            { description: 'Route optimized: Philadelphia to Baltimore (3 stops)', type: 'route', timestamp: new Date(Date.now() - 120000).toISOString() },
-            { description: 'Mileage calculated: $67.50 for Sedgwick claim', type: 'mileage', timestamp: new Date(Date.now() - 900000).toISOString() },
-            { description: 'Day split applied: Route exceeds 50 miles per leg', type: 'route', timestamp: new Date(Date.now() - 3600000).toISOString() }
-        ];
-        
-        localStorage.setItem('cc_recent_activities', JSON.stringify(sampleActivities));
-        this.loadRecentActivity();
     }
     
     // User Management
