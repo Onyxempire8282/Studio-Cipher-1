@@ -473,6 +473,9 @@ function buildTokenMap(state, userProfile) {
         SIGNATURE_DATE:  today,
         APPRAISER_NAME:  sigName,
         LICENSE_NUMBER:  licenseNumber || 'N/A',
+
+        // Page header
+        HEADER_BUSINESS: businessName.toUpperCase(),
     };
 
     return tokens;
@@ -506,6 +509,19 @@ export async function generateClaimSummaryDocx(state, userProfile = {}) {
 
     // Replace the document XML in the zip
     zip.file('word/document.xml', filledXml);
+
+    // Also fill tokens in header and footer XML files
+    for (const part of ['word/header1.xml', 'word/footer1.xml']) {
+        const entry = zip.file(part);
+        if (entry) {
+            const xml = await entry.async('string');
+            const { xml: filled, fillCount: fc } = fillTokensInXml(xml, tokenMap);
+            if (fc > 0) {
+                zip.file(part, filled);
+                console.log(`[ClaimSummary] Filled ${fc} tokens in ${part}`);
+            }
+        }
+    }
 
     // Generate the filled DOCX as a Blob
     const blob = await zip.generateAsync({

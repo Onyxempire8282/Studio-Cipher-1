@@ -804,20 +804,24 @@ async function _gatherUserProfile() {
     // Authenticated: read from profiles table (where Settings page saves)
     try {
         const sb = window.SupabaseAuth.init();
+        if (!sb) { console.warn('[TLS] SupabaseAuth.init() returned null'); }
         const { data: { user } } = await sb.auth.getUser();
+        console.log('[TLS] auth user:', user?.id, user?.email);
         if (user) {
-            let { data } = await sb
+            let { data, error } = await sb
                 .from('profiles')
                 .select('first_name, last_name, company, license_number')
                 .eq('id', user.id)
                 .maybeSingle();
+            console.log('[TLS] profiles by id:', data, error);
             // Fall back to user_id if id didn't match
-            if (!data) {
-                ({ data } = await sb
+            if (!data && !error) {
+                ({ data, error } = await sb
                     .from('profiles')
                     .select('first_name, last_name, company, license_number')
                     .eq('user_id', user.id)
                     .maybeSingle());
+                console.log('[TLS] profiles by user_id:', data, error);
             }
             if (data) {
                 profile.fullName = [data.first_name, data.last_name]
@@ -827,6 +831,7 @@ async function _gatherUserProfile() {
             }
         }
     } catch (e) { console.warn('[TLS] Profile fetch failed:', e); }
+    console.log('[TLS] Final profile:', JSON.stringify(profile));
     // Fallbacks
     if (!profile.businessName) profile.businessName = 'Claim Cipher\u2122';
     if (!profile.fullName) profile.fullName = 'Appraiser';
