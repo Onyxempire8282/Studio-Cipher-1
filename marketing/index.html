@@ -8,8 +8,8 @@
 <meta property="og:title" content="Claim Cipher — Field Operations Infrastructure for Independent Adjusters">
 <meta property="og:description" content="Routing, mileage logging, and total loss tools built for independent adjusters running real field volume. One system — no spreadsheets.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="/branding/logo/claimcipher-mark.png">
-<link rel="icon" type="image/png" href="/branding/logo/claimcipher-mark.png">
+<meta property="og:image" content="assets/logo.png">
+<link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -125,39 +125,37 @@ nav {
   position: relative;
 }
 
-/* logo mark in hero */
+/* logo mark in hero — matches login screen */
 .hero-brand {
-  display: flex; align-items: center; gap: 16px; margin-bottom: 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 4px;
 }
 .hero-logo-mark {
-  width: 52px; height: 52px; border-radius: 50%;
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  display: grid; place-items: center;
-  box-shadow: 0 0 0 4px rgba(232,149,42,0.06), 0 0 24px rgba(232,149,42,0.1);
+  width: 128px; height: 128px;
   flex-shrink: 0;
   overflow: hidden;
 }
 .hero-logo-mark img {
   width: 100%; height: 100%;
-  border-radius: 50%; object-fit: cover;
-}
-.hero-logo-mark-fallback {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 18px; color: var(--amber); letter-spacing: 0.04em;
+  object-fit: contain; display: block;
 }
 .hero-brand-text {
-  display: flex; flex-direction: column; gap: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
 }
 .hero-brand-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 16px; font-weight: 700; letter-spacing: 0.12em;
-  color: var(--white);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 0.12em;
+  color: var(--white); line-height: 1;
 }
 .hero-brand-name span { color: var(--amber); }
+.hero-brand-tm {
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px; font-weight: 400;
+  vertical-align: super; letter-spacing: 0;
+  color: var(--muted);
+}
 .hero-brand-tag {
   font-family: 'DM Mono', monospace;
-  font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -685,7 +683,7 @@ footer {
     <li><a href="#system">The System</a></li>
     <li><a href="#field">From the Field</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="/claim_cipher_app/login-cypher.html" id="nav-demo-link">Try Demo</a></li>
+    <li><a href="https://claimcipherhq.com/demo.html" id="nav-demo-link">Try Demo</a></li>
   </ul>
   <a href="#pricing" class="nav-cta">Start Running Volume →</a>
 </nav>
@@ -698,15 +696,10 @@ footer {
     <!-- LOGO MARK IN HERO -->
     <div class="hero-brand">
       <div class="hero-logo-mark">
-        <img
-          src="/branding/logo/claimcipher-mark.png"
-          alt="Claim Cipher"
-          width="52"
-          height="52"
-          style="border-radius:50%;object-fit:cover;border:2px solid rgba(232,149,42,0.35);">
+        <img src="assets/logo.png" alt="Claim Cipher">
       </div>
       <div class="hero-brand-text">
-        <div class="hero-brand-name"><span>CLAIM</span>CIPHER</div>
+        <div class="hero-brand-name"><span>CLAIM</span>CIPHER<sup class="hero-brand-tm">&trade;</sup></div>
         <div class="hero-brand-tag">Field Operations Platform</div>
       </div>
     </div>
@@ -918,7 +911,7 @@ footer {
 
       <div class="price-divider"></div>
 
-      <a href="/claim_cipher_app/login-cypher.html?tab=signup" class="btn-primary" style="text-align:center;display:block">
+      <a href="https://app.claimcipherhq.com/login.html?tab=signup" class="btn-primary" style="text-align:center;display:block">
         Start Running Volume →
       </a>
 
@@ -938,7 +931,7 @@ footer {
     <li><a href="#system">The System</a></li>
     <li><a href="#field">From the Field</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="/claim_cipher_app/login-cypher.html">Sign In</a></li>
+    <li><a href="https://app.claimcipherhq.com/login.html">Sign In</a></li>
   </ul>
   <div class="foot-copy">© 2026 Claim Cipher. Built for high-volume operators.</div>
 </footer>
