@@ -113,15 +113,16 @@ export function renderSummaryView(payload) {
                         ${renderGranularCondition(payload.condition)}
                     </div>
 
-                    <!-- DAMAGE SUMMARY -->
+                    <!-- DAMAGE ASSESSMENT -->
                     <div class="sv-card">
                         <div class="sv-card-header">
-                            <div class="sv-card-title">Damage Summary</div>
+                            <div class="sv-card-title">Damage Assessment</div>
                             <div class="sv-card-line"></div>
                         </div>
                         <div class="sv-card-body">
                             <textarea class="sv-damage-textarea" id="sv-damageSummary"
-                                      readonly>${payload.summary.damageSummary}</textarea>
+                                      placeholder="Describe the damage observed during inspection...">${payload.summary.userDamageAssessment || payload.summary.damageSummary}</textarea>
+                            <div class="sv-field-hint">Enter your own damage assessment. If left blank, CCC estimate data will be used.</div>
                         </div>
                     </div>
 
@@ -218,8 +219,10 @@ function renderGranularCondition(condition) {
         const treadBlock = isTire ? `
                     <div class="sv-tread-row">
                         <span class="sv-tread-label">Tread:</span>
-                        <input type="text" class="condition-tread-depth"
-                               placeholder="e.g. 7/32" value="${comp.treadDepth || ''}" />
+                        <input type="number" class="condition-tread-depth"
+                               min="0" max="12" step="1"
+                               placeholder="0–12" value="${comp.treadDepth || ''}" />
+                        <span class="sv-tread-unit">/32"</span>
                     </div>` : '';
 
         return `

@@ -538,6 +538,7 @@ function attachSummaryListeners() {
     bindInput('sv-model',       v => { state.bcifPayload.vehicle.model = v; });
     bindInput('sv-vin',         v => { state.bcifPayload.vehicle.vin = v; });
     bindInput('sv-additionalNotes', v => { state.bcifPayload.summary.additionalNotes = v; });
+    bindInput('sv-damageSummary',   v => { state.bcifPayload.summary.userDamageAssessment = v; });
 
     renderOptionsCheckboxes();
 
@@ -889,8 +890,12 @@ async function handleDownload() {
         );
         console.log('[TLS] Summary generation complete:', state.bcifPayload.summary.damageSummary.length, 'chars');
 
-        const textarea = document.getElementById('sv-damageSummary');
-        if (textarea) textarea.value = state.bcifPayload.summary.damageSummary;
+        // Only update textarea if user hasn't typed their own damage assessment
+        const userDamage = (state.bcifPayload.summary.userDamageAssessment || '').trim();
+        if (!userDamage) {
+            const textarea = document.getElementById('sv-damageSummary');
+            if (textarea) textarea.value = state.bcifPayload.summary.damageSummary;
+        }
 
         // ── 2. Build final token map (no server dependency) ──
         state.tokenMap = renderBCIFPayload(state.bcifPayload);
@@ -1085,6 +1090,18 @@ const CONDITION_AUTO_FILL = {
         2: "No operational concerns observed during inspection.",
         3: "Functioning normally at time of inspection."
     },
+    frontTires: {
+        0: "Tread depth below safe threshold. Replacement recommended.",
+        1: "Moderate wear. Tread approaching minimum safe depth.",
+        2: "Adequate tread remaining. Normal wear for vehicle age.",
+        3: "Minimal wear. Tread depth indicates recent replacement or low mileage."
+    },
+    rearTires: {
+        0: "Tread depth below safe threshold. Replacement recommended.",
+        1: "Moderate wear. Tread approaching minimum safe depth.",
+        2: "Adequate tread remaining. Normal wear for vehicle age.",
+        3: "Minimal wear. Tread depth indicates recent replacement or low mileage."
+    },
 };
 
 function getSelectedOptionCodes() {
@@ -1131,10 +1148,15 @@ function setupGranularConditionRows() {
             treadEl.value = condComp.treadDepth;
         }
 
-        // Auto-populate comment (non-tires only, if still empty)
-        if (!isTire && !textarea.value.trim() && CONDITION_AUTO_FILL[component]) {
+        // Auto-populate comment (if still empty)
+        if (!textarea.value.trim() && CONDITION_AUTO_FILL[component]) {
             const rating = condComp.rating ?? 1;
-            textarea.value = CONDITION_AUTO_FILL[component][rating] || '';
+            const autoText = CONDITION_AUTO_FILL[component][rating] || '';
+            if (isTire && condComp.treadDepth) {
+                textarea.value = `Tread depth: ${condComp.treadDepth}/32". ${autoText}`;
+            } else {
+                textarea.value = autoText;
+            }
             condComp.comment = textarea.value;
         }
 
@@ -1144,10 +1166,21 @@ function setupGranularConditionRows() {
             condComp.comment = textarea.value;
         });
 
-        // Tread depth → state
+        // Tread depth → state + update auto-fill comment with tread prefix
         if (treadEl) {
             treadEl.addEventListener('input', () => {
                 condComp.treadDepth = treadEl.value;
+                // Re-compose auto-fill comment with tread depth if not user-edited
+                if (textarea.dataset.userEdited !== 'true' && CONDITION_AUTO_FILL[component]) {
+                    const rating = condComp.rating ?? 1;
+                    const autoText = CONDITION_AUTO_FILL[component][rating] || '';
+                    if (condComp.treadDepth) {
+                        textarea.value = `Tread depth: ${condComp.treadDepth}/32". ${autoText}`;
+                    } else {
+                        textarea.value = autoText;
+                    }
+                    condComp.comment = textarea.value;
+                }
             });
         }
 
@@ -1157,9 +1190,15 @@ function setupGranularConditionRows() {
             const rating = raw === '' ? null : parseInt(raw, 10);
             condComp.rating = rating;
 
-            if (!isTire && rating !== null && textarea.dataset.userEdited !== 'true'
+            if (rating !== null && textarea.dataset.userEdited !== 'true'
                     && CONDITION_AUTO_FILL[component]) {
-                textarea.value = CONDITION_AUTO_FILL[component][rating] || '';
+                const autoText = CONDITION_AUTO_FILL[component][rating] || '';
+                // Prepend tread depth if available for tire components
+                if (isTire && condComp.treadDepth) {
+                    textarea.value = `Tread depth: ${condComp.treadDepth}/32". ${autoText}`;
+                } else {
+                    textarea.value = autoText;
+                }
                 condComp.comment = textarea.value;
             }
 

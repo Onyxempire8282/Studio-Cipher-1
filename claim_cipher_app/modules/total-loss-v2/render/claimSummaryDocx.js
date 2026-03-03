@@ -325,6 +325,11 @@ function buildTokenMap(state, userProfile) {
         if (!comp || comp.rating === null || comp.rating === undefined) return '';
         return comp.comment || ratingNotes[comp.rating] || '';
     }
+    function tireNotes(comp) {
+        if (!comp || comp.rating === null || comp.rating === undefined) return '';
+        const depth = comp.treadDepth ? `Tread: ${comp.treadDepth}/32". ` : '';
+        return depth + (comp.comment || ratingNotes[comp.rating] || '');
+    }
 
     // ─── Prior Damage ────────────────────────────────────────────────────────
     const pd = (parsed.priorDamage || '').trim();
@@ -399,7 +404,7 @@ function buildTokenMap(state, userProfile) {
         LOSS_PARA_1: para1,
         LOSS_PARA_2: para2,
 
-        // Damage Assessment — prefer zone narratives, fall back to legacy
+        // Damage Assessment — user override → zone narratives → legacy
         DAMAGE_STRUCTURAL:  hasZoneData
             ? (buildZoneNarrative(['structural'])
                 || (structFlags.length > 0 ? 'Structural components flagged: ' + structFlags.slice(0, 4).join(', ') + '.' : formatCatItems(categories.structural)))
@@ -448,6 +453,10 @@ function buildTokenMap(state, userProfile) {
         COND_ENGINE_NOTES:       condNotes(cond.engine),
         COND_TRANS_RATING:       condRating(cond.transmission),
         COND_TRANS_NOTES:        condNotes(cond.transmission),
+        COND_FRONT_TIRES_RATING: condRating(cond.frontTires),
+        COND_FRONT_TIRES_NOTES:  tireNotes(cond.frontTires),
+        COND_REAR_TIRES_RATING:  condRating(cond.rearTires),
+        COND_REAR_TIRES_NOTES:   tireNotes(cond.rearTires),
 
         // Prior Damage
         PRIOR_DAMAGE_TEXT: priorDamageText,
@@ -477,6 +486,15 @@ function buildTokenMap(state, userProfile) {
         // Page header
         HEADER_BUSINESS: businessName.toUpperCase(),
     };
+
+    // User-typed damage assessment overrides CCC-generated damage tokens
+    const userDamage = (payload.summary?.userDamageAssessment || '').trim();
+    if (userDamage) {
+        tokens.DAMAGE_STRUCTURAL  = userDamage;
+        tokens.DAMAGE_BODY_PANELS = '';
+        tokens.DAMAGE_RESTRAINTS  = '';
+        tokens.DAMAGE_INTERIOR    = '';
+    }
 
     return tokens;
 }
