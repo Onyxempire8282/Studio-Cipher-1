@@ -302,12 +302,26 @@ function buildTokenMap(state, userProfile) {
     const hasLaborBreakdown = bodyHrs > 0 || paintHrs > 0 || mechHrs > 0;
     const computedSubtotal = partsTotal + laborTotal + (paintSupp || paintTotal);
 
-    // Tax
-    const taxAmount = salesTax > 0 ? salesTax : (total > computedSubtotal ? total - computedSubtotal : 0);
+    // Validate deductible — can't exceed total (parser may grab wrong value)
+    const validDeductible = (deductible > 0 && deductible < total) ? deductible : 0;
+
+    // Tax — validate parsed value; if it exceeds 20% of subtotal the parser
+    // likely grabbed the taxable base instead of the actual tax amount.
+    let taxAmount;
+    const taxRate = _toNumber(parsed.salesTaxRate);
+    if (salesTax > 0 && computedSubtotal > 0 && salesTax < computedSubtotal * 0.20) {
+        taxAmount = salesTax;
+    } else if (taxRate > 0 && computedSubtotal > 0) {
+        taxAmount = Math.round(computedSubtotal * taxRate / 100 * 100) / 100;
+    } else if (total > computedSubtotal && (total - computedSubtotal) < computedSubtotal * 0.20) {
+        taxAmount = total - computedSubtotal;
+    } else {
+        taxAmount = 0;
+    }
 
     // Sales tax label
     let salesTaxLabel = 'Sales Tax';
-    if (parsed.salesTaxRate) {
+    if (taxRate > 0) {
         salesTaxLabel = `Sales Tax (${parsed.salesTaxRate}%)`;
     } else if (taxAmount > 0 && computedSubtotal > 0) {
         const rate = ((taxAmount / computedSubtotal) * 100).toFixed(1);
@@ -431,8 +445,8 @@ function buildTokenMap(state, userProfile) {
         SALES_TAX_LABEL:       salesTaxLabel,
         SALES_TAX_AMOUNT:      taxAmount > 0 ? _formatCurrency(taxAmount) : '',
         TOTAL_AMOUNT:          total > 0 ? _formatCurrency(total) : '',
-        DEDUCTIBLE_AMOUNT:     deductible > 0 ? _formatCurrency(deductible) : '',
-        NET_COST_AMOUNT:       deductible > 0 ? _formatCurrency(total - deductible) : '',
+        DEDUCTIBLE_AMOUNT:     validDeductible > 0 ? _formatCurrency(validDeductible) : '',
+        NET_COST_AMOUNT:       validDeductible > 0 ? _formatCurrency(total - validDeductible) : '',
 
         // Vehicle Condition
         COND_PAINT_RATING:       condRating(cond.paint),

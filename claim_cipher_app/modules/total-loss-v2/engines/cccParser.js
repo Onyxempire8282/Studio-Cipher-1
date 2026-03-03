@@ -753,7 +753,11 @@ function extractCostBreakdown(text) {
     const costIdx = section.search(/Cost\s*\$/i);
     if (costIdx === -1) return result;
 
-    const afterCost = section.substring(costIdx);
+    const rawAfterCost = section.substring(costIdx);
+    // Strip taxable base amounts from tax calculation lines.
+    // CCC format: "5,552.49 @ 6.7500 %" or split across lines as "5,552.49\n@ 6.7500 %"
+    // These are NOT cost items — only the resulting tax amount is.
+    const afterCost = rawAfterCost.replace(/[\d,]+\.\d{2}\s*\n?\s*@\s*[\d.]+\s*%/g, '');
     // Match all dollar amounts (with optional comma separators)
     const amounts = [];
     const amountRe = /(?:^|\n)\s*([\d,]+\.\d{2})\s*(?:\n|$)/g;
