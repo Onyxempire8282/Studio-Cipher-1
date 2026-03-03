@@ -808,21 +808,12 @@ async function _gatherUserProfile() {
         const { data: { user } } = await sb.auth.getUser();
         console.log('[TLS] auth user:', user?.id, user?.email);
         if (user) {
-            let { data, error } = await sb
+            const { data, error } = await sb
                 .from('profiles')
                 .select('first_name, last_name, company, license_number')
-                .eq('id', user.id)
+                .eq('user_id', user.id)
                 .maybeSingle();
-            console.log('[TLS] profiles by id:', data, error);
-            // Fall back to user_id if id didn't match
-            if (!data && !error) {
-                ({ data, error } = await sb
-                    .from('profiles')
-                    .select('first_name, last_name, company, license_number')
-                    .eq('user_id', user.id)
-                    .maybeSingle());
-                console.log('[TLS] profiles by user_id:', data, error);
-            }
+            console.log('[TLS] profile by user_id:', data, error);
             if (data) {
                 profile.fullName = [data.first_name, data.last_name]
                     .filter(Boolean).join(' ').trim();

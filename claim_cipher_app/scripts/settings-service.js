@@ -16,31 +16,20 @@ const SettingsService = (() => {
   }
 
   // ── PROFILE ──
-  // The profiles table has both "id" (PK = auth UUID) and "user_id".
-  // RLS UPDATE policy: auth.uid() = id  → updates MUST filter by id
-  // RLS SELECT policy also uses id, but billing-guard uses user_id
-  // We try id first for SELECT; fall back to user_id if no row found.
+  // The profiles table has both "id" and "user_id" columns.
+  // Some rows have user_id = auth.uid() but id ≠ auth.uid().
+  // All queries use user_id for reliable matching.
 
   async function loadProfile() {
     const sb = getClient();
     const userId = await getUserId();
     if (!userId) throw new Error('Not authenticated');
 
-    // Try selecting by id (PK) first
-    let { data, error } = await sb
+    const { data, error } = await sb
       .from('profiles')
       .select('*')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .maybeSingle();
-
-    // If no row found by id, try user_id
-    if (!error && !data) {
-      ({ data, error } = await sb
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle());
-    }
 
     if (error) throw error;
     return data;
@@ -51,17 +40,18 @@ const SettingsService = (() => {
     const userId = await getUserId();
     if (!userId) throw new Error('Not authenticated');
 
-    // Try update by id (PK) — matches RLS policy auth.uid() = id
-    let { error } = await sb
+    const payload = {
+      first_name:     fields.first_name,
+      last_name:      fields.last_name,
+      company:        fields.company,
+      license_number: fields.license_number,
+      phone:          fields.phone
+    };
+
+    const { error } = await sb
       .from('profiles')
-      .update({
-        first_name:     fields.first_name,
-        last_name:      fields.last_name,
-        company:        fields.company,
-        license_number: fields.license_number,
-        phone:          fields.phone
-      })
-      .eq('id', userId);
+      .update(payload)
+      .eq('user_id', userId);
     if (error) throw error;
   }
 
@@ -80,7 +70,7 @@ const SettingsService = (() => {
         state:          fields.state,
         zip:            fields.zip
       })
-      .eq('id', userId);
+      .eq('user_id', userId);
     if (error) throw error;
   }
 
@@ -140,7 +130,7 @@ const SettingsService = (() => {
     if (error) throw error;
     // Also update the profiles table email column
     const userId = await getUserId();
-    await sb.from('profiles').update({ email: newEmail }).eq('id', userId);
+    await sb.from('profiles').update({ email: newEmail }).eq('user_id', userId);
   }
 
   // ── PASSWORD ──
