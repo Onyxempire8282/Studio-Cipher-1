@@ -422,6 +422,44 @@ nav {
   font-size: 14px; color: var(--text-hi); max-width: 600px; margin: 0 auto;
 }
 
+/* ── MEDIA SHOWCASE ── */
+.media-showcase {
+  position: relative; z-index: 2;
+  border-bottom: 1px solid var(--border);
+  background: var(--black);
+}
+.media-showcase-header {
+  padding: 64px 56px 0;
+}
+.media-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.media-cell {
+  padding: 32px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.media-cell:nth-child(3n) { border-right: none; }
+.media-cell-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+}
+.media-cell-label .amber { color: var(--amber); }
+.placeholder-fallback {
+  width: 100%; aspect-ratio: 16/9;
+  background: #1a1a1a; border: 1px dashed #444;
+  border-radius: 8px; display: flex;
+  align-items: center; justify-content: center;
+  color: #555; font-size: 13px; font-family: monospace;
+}
+@media (max-width: 900px) {
+  .media-grid { grid-template-columns: 1fr; }
+  .media-cell { border-right: none; padding: 24px; }
+  .media-showcase-header { padding: 48px 24px 0; }
+}
+
 /* ── SYSTEM / FEATURES ── */
 .sec-header {
   padding: 64px 56px 0;
@@ -793,6 +831,104 @@ footer {
     Every feature exists because it was needed in the field first.
   </p>
 </div>
+
+<!-- MEDIA SHOWCASE -->
+<section class="media-showcase">
+  <div class="media-showcase-header">
+    <div class="sec-label">See It In Action</div>
+    <div class="sec-title">Built for the field. Here's what it looks like.</div>
+  </div>
+  <div class="media-grid">
+
+    <!-- Screenshot 1: Dashboard / Route View -->
+    <div class="media-cell">
+      <div class="media-cell-label"><span class="amber">01</span> Dashboard / Route View</div>
+      <div class="media-placeholder screenshot-placeholder">
+        <img src="/marketing/assets/screenshot-1.jpg"
+             alt="Claim Cipher dashboard showing optimized route view with multi-stop map"
+             style="width:100%;border-radius:8px;display:block;"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="placeholder-fallback">
+          [ SCREENSHOT COMING SOON ]
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshot 2: Mileage Log / Report -->
+    <div class="media-cell">
+      <div class="media-cell-label"><span class="amber">02</span> Mileage Log / Report</div>
+      <div class="media-placeholder screenshot-placeholder">
+        <img src="/marketing/assets/screenshot-2.jpg"
+             alt="Mileage Cipher session log with firm billing breakdown and export options"
+             style="width:100%;border-radius:8px;display:block;"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="placeholder-fallback">
+          [ SCREENSHOT COMING SOON ]
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshot 3: BCIF / Claim Package Output -->
+    <div class="media-cell">
+      <div class="media-cell-label"><span class="amber">03</span> BCIF / Claim Package</div>
+      <div class="media-placeholder screenshot-placeholder">
+        <img src="/marketing/assets/screenshot-3.jpg"
+             alt="Total Loss Studio BCIF output with vehicle condition ratings and claim summary"
+             style="width:100%;border-radius:8px;display:block;"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="placeholder-fallback">
+          [ SCREENSHOT COMING SOON ]
+        </div>
+      </div>
+    </div>
+
+    <!-- Video 1: Route being built and optimized -->
+    <div class="media-cell">
+      <div class="media-cell-label"><span class="amber">04</span> Route Optimization</div>
+      <div class="media-placeholder video-placeholder">
+        <video src="/marketing/assets/video-1.mp4"
+               autoplay muted loop playsinline
+               style="width:100%;border-radius:8px;display:block;"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        </video>
+        <div class="placeholder-fallback">
+          [ VIDEO COMING SOON ]
+        </div>
+      </div>
+    </div>
+
+    <!-- Video 2: Mileage log populating -->
+    <div class="media-cell">
+      <div class="media-cell-label"><span class="amber">05</span> Mileage Logging</div>
+      <div class="media-placeholder video-placeholder">
+        <video src="/marketing/assets/video-2.mp4"
+               autoplay muted loop playsinline
+               style="width:100%;border-radius:8px;display:block;"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        </video>
+        <div class="placeholder-fallback">
+          [ VIDEO COMING SOON ]
+        </div>
+      </div>
+    </div>
+
+    <!-- Video 3: BCIF export / claim package generation -->
+    <div class="media-cell">
+      <div class="media-cell-label"><span class="amber">06</span> BCIF Generation</div>
+      <div class="media-placeholder video-placeholder">
+        <video src="/marketing/assets/video-3.mp4"
+               autoplay muted loop playsinline
+               style="width:100%;border-radius:8px;display:block;"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        </video>
+        <div class="placeholder-fallback">
+          [ VIDEO COMING SOON ]
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <!-- SYSTEM / FEATURES -->
 <section id="system">

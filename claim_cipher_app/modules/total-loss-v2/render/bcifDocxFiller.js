@@ -8,7 +8,7 @@ const TEMPLATE_PATH = 'forms/bcif/BCIF_AUTOMATION_TEMPLATE_v4.docx';
 //  XML ESCAPE
 // =========================================
 
-function xmlEscape(text) {
+export function xmlEscape(text) {
     return String(text)
         .replace(/&/g,  '&amp;')
         .replace(/</g,  '&lt;')
@@ -29,7 +29,7 @@ function xmlEscape(text) {
 //   3. Replace all {{TOKEN}} with values from tokenMap
 //   4. Put ALL replaced text into the FIRST <w:t>, clear the rest
 
-function fillTokensInXml(xml, tokenMap) {
+export function fillTokensInXml(xml, tokenMap) {
     let fillCount = 0;
 
     // Match each paragraph: <w:p ...>...</w:p>

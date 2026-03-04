@@ -22,6 +22,7 @@ class MileageCypherCalculator {
     this.loadFirmsToDropdown();
     this.setupEventListeners();
     this.loadUserHomeLocation();
+    this.loadHistory();
   }
 
   setupEventListeners() {
@@ -497,20 +498,19 @@ class MileageCypherCalculator {
 
     try {
       const result = this.calculateMileageBilling(calculationData);
-      this.displayCalculationResults(result);
-      if (!auto) {
-        this.openBillingModal();
-      }
       this.currentCalculation = result;
 
-      // Add to history (keep last 10)
+      // Add to history BEFORE rendering so the session log panel includes this entry
       this.calculationHistory.unshift(result);
       if (this.calculationHistory.length > 10) {
         this.calculationHistory = this.calculationHistory.slice(0, 10);
       }
+      this.persistHistory();
 
-      // Only show success notification for manual calculations (when user clicks button)
-      // Auto-calculations don't need success notifications
+      this.displayCalculationResults(result);
+      if (!auto) {
+        this.openBillingModal();
+      }
 
       console.log("Calculation completed:", result);
       this.showCalculateLoading(false); // Hide loading state
@@ -1002,6 +1002,31 @@ class MileageCypherCalculator {
       console.log("Settings saved to localStorage");
     } catch (error) {
       console.error("Failed to save settings:", error);
+    }
+  }
+
+  // ── Session history persistence ──
+  // Entries survive page refresh via localStorage (demo mode seeds its own)
+
+  persistHistory() {
+    if (sessionStorage.getItem('demo_mode') === 'true') return;
+    try {
+      localStorage.setItem(
+        'mileage_cypher_history',
+        JSON.stringify(this.calculationHistory)
+      );
+    } catch (e) { /* quota exceeded — non-critical */ }
+  }
+
+  loadHistory() {
+    if (sessionStorage.getItem('demo_mode') === 'true') return;
+    try {
+      const raw = localStorage.getItem('mileage_cypher_history');
+      if (raw) {
+        this.calculationHistory = JSON.parse(raw);
+      }
+    } catch (e) {
+      console.warn('Failed to load session history:', e);
     }
   }
 

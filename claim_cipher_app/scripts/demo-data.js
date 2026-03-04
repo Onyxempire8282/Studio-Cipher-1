@@ -9,12 +9,18 @@
   var now = Date.now();
   var DAY = 86400000;
 
-  // ── Firms ──
+  // ── Firms (10 active) ──
   var DEMO_FIRMS = [
     { id: 'sedgwick',       name: 'Sedgwick',        freeMiles: 50, ratePerMile: 0.60, roundTripDefault: false },
     { id: 'doan',           name: 'Doan',             freeMiles: 50, ratePerMile: 0.60, roundTripDefault: false },
     { id: 'claim-solution', name: 'Claim Solution',   freeMiles: 50, ratePerMile: 0.60, roundTripDefault: false },
-    { id: 'nexterra',       name: 'Nexterra',         freeMiles: 50, ratePerMile: 0.60, roundTripDefault: true  }
+    { id: 'nexterra',       name: 'Nexterra',         freeMiles: 50, ratePerMile: 0.60, roundTripDefault: true  },
+    { id: 'dekra',          name: 'DEKRA',            freeMiles: 40, ratePerMile: 0.65, roundTripDefault: false },
+    { id: 'alacrity',       name: 'Alacrity',         freeMiles: 50, ratePerMile: 0.55, roundTripDefault: false },
+    { id: 'ias',            name: 'IAS',              freeMiles: 60, ratePerMile: 0.58, roundTripDefault: true  },
+    { id: 'engle-martin',   name: 'Engle Martin',     freeMiles: 50, ratePerMile: 0.62, roundTripDefault: false },
+    { id: 'primeco',        name: 'Primeco',          freeMiles: 45, ratePerMile: 0.60, roundTripDefault: false },
+    { id: 'sca',            name: 'SCA',              freeMiles: 50, ratePerMile: 0.60, roundTripDefault: true  }
   ];
 
   // ── Mileage Entries (10 Texas trips, calculationHistory shape) ──
@@ -151,6 +157,9 @@
   }
 
   // ── Dashboard Stats ──
+  // Add base mileage from prior months to reflect realistic usage
+  routeMilesTotal += 2400;
+
   var DEMO_STATS = {
     routes: 25,
     miles: parseFloat(routeMilesTotal.toFixed(1))
@@ -176,7 +185,7 @@
     claim: {
       carrier: 'State Farm Insurance',
       claimNumber: 'CLM-2026-00142',
-      adjuster: 'Demo Adjuster',
+      adjuster: 'Karen Mitchell',
       dateOfLoss: '2026-01-15',
       policyNumber: 'POL-SF-8834201'
     },
@@ -185,7 +194,7 @@
       make: 'Honda',
       model: 'Accord EX',
       vin: '1HGCV1F34KA019284',
-      mileage: '47382',
+      mileage: '49812',
       color: 'Lunar Silver Metallic',
       engine: '4 cylinder 1.5L Turbo Auto',
       driveType: 'FWD',
@@ -217,14 +226,14 @@
     claim: {
       carrier: 'State Farm Insurance',
       claimNumber: 'CLM-2026-00142',
-      adjuster: 'Demo Adjuster'
+      adjuster: 'Karen Mitchell'
     },
     vehicle: {
       year: '2019',
       make: 'Honda',
       model: 'Accord EX',
       vin: '1HGCV1F34KA019284',
-      mileage: '47382',
+      mileage: '49812',
       color: 'Lunar Silver Metallic'
     },
     cylinders: 'CYL_4',
@@ -240,9 +249,74 @@
   };
 
 
+  // ── Demo Profile (generic — not real user data) ──
+  var DEMO_PROFILE = {
+    first_name:     'Marcus',
+    last_name:      'Jay',
+    company:        'Demo Claims Services',
+    license_number: 'DEMO-00000',
+    phone:          '(555) 000-0000',
+    email:          'demo@claimcipher.io',
+    street_address: '4200 Lake Boone Trail',
+    city:           'Raleigh',
+    state:          'NC',
+    zip:            '27607'
+  };
+
+  var DEMO_HOME_ADDRESS = DEMO_PROFILE.street_address + ', '
+    + DEMO_PROFILE.city + ', ' + DEMO_PROFILE.state + ' ' + DEMO_PROFILE.zip;
+
+
   // ═══════════════════════════════════════════
   //  2. GLOBAL OVERRIDES
   // ═══════════════════════════════════════════
+
+  function overrideSettingsService() {
+    function patch() {
+      if (!window.SettingsService) { setTimeout(patch, 100); return; }
+
+      window.SettingsService.loadProfile = function() {
+        return Promise.resolve(DEMO_PROFILE);
+      };
+
+      window.SettingsService.saveProfile = function() {
+        return Promise.resolve();
+      };
+
+      window.SettingsService.saveAddress = function() {
+        return Promise.resolve();
+      };
+
+      window.SettingsService.loadUserFirms = function() {
+        return Promise.resolve(DEMO_FIRMS.map(function(f) {
+          return {
+            firm_id:            f.id,
+            name:               f.name,
+            free_miles:         f.freeMiles,
+            rate_per_mile:      f.ratePerMile,
+            round_trip_default: f.roundTripDefault
+          };
+        }));
+      };
+
+      window.SettingsService.saveFirm = function() {
+        return Promise.resolve();
+      };
+
+      window.SettingsService.deleteFirm = function() {
+        return Promise.resolve();
+      };
+
+      window.SettingsService.changeEmail = function() {
+        return Promise.resolve();
+      };
+
+      window.SettingsService.changePassword = function() {
+        return Promise.resolve();
+      };
+    }
+    patch();
+  }
 
   function overrideRouteService() {
     // Poll until RouteService exists
@@ -335,6 +409,19 @@
     localStorage.setItem('cc_recent_activities', JSON.stringify(DEMO_ACTIVITIES));
   }
 
+  function seedHomeAddress() {
+    // Single source of truth: settings address → shared key → mileage settings
+    localStorage.setItem('cipher_home_address', DEMO_HOME_ADDRESS);
+
+    // Mileage Cipher reads homeLocation from mileage_cypher_settings_v2
+    try {
+      var mcKey = 'mileage_cypher_settings_v2';
+      var mcSettings = JSON.parse(localStorage.getItem(mcKey) || '{}');
+      mcSettings.homeLocation = DEMO_HOME_ADDRESS;
+      localStorage.setItem(mcKey, JSON.stringify(mcSettings));
+    } catch (e) { /* ignore */ }
+  }
+
 
   // ═══════════════════════════════════════════
   //  3. PER-PAGE INJECTORS
@@ -344,7 +431,7 @@
     // Patch TLS files counter and footer counters after DOM settles
     setTimeout(function() {
       var tlsEl = document.getElementById('tlsFiles');
-      if (tlsEl) tlsEl.textContent = '3';
+      if (tlsEl) tlsEl.textContent = '94';
 
       var footerRoutes = document.getElementById('footerRoutes');
       if (footerRoutes) footerRoutes.textContent = '25';
@@ -356,11 +443,11 @@
       if (footerOpen) footerOpen.textContent = '10';
 
       var footerTls = document.getElementById('footerTlsFiles');
-      if (footerTls) footerTls.textContent = '3';
+      if (footerTls) footerTls.textContent = '94';
 
       // Welcome title
       var welcome = document.getElementById('welcomeTitle');
-      if (welcome) welcome.textContent = 'Welcome, Demo User.';
+      if (welcome) welcome.textContent = 'WELCOME BACK, ' + DEMO_PROFILE.first_name.toUpperCase() + '.';
     }, 600);
   }
 
@@ -461,7 +548,9 @@
   // Seed caches immediately (before DOM)
   seedFirmStoreCache();
   seedActivityFeed();
+  seedHomeAddress();
   overrideRouteService();
+  overrideSettingsService();
 
   // Detect page and inject
   var page = window.location.pathname.split('/').pop().replace('.html', '');
@@ -474,6 +563,9 @@
     injectRouteCypher();
   } else if (page === 'total-loss-studio') {
     injectTotalLossStudio();
+  } else if (page === 'settings') {
+    // SettingsService override already patched globally — profile form
+    // will populate from DEMO_PROFILE via loadProfile()
   }
 
   // Banner on all pages

@@ -7,6 +7,15 @@ project_id = "aviwltfqlunxxvkajpyt"
 [functions.stripe-webhook]
 verify_jwt = false
 
+[functions.billing-status]
+verify_jwt = false
+
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.create-portal-session]
+verify_jwt = false
+
 [api]
 enabled = true
 # Port to use for the API URL.

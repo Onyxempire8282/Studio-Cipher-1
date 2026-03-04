@@ -384,7 +384,7 @@ class JobsStudioManager {
         photos: ["exterior_damage.jpg", "interior_view.jpg", "vin_number.jpg"],
         notes:
           "Vehicle accident inspection - rear-end collision, check alignment",
-        inspector: "Demo User",
+        inspector: "Marcus Jay",
         policyNumber: "POL-2024-7892",
         deductible: "$500",
         coverage: "Collision Coverage",
@@ -413,7 +413,7 @@ class JobsStudioManager {
         ],
         notes:
           "Roof inspection completed - minor hail damage, recommend partial replacement",
-        inspector: "Demo User",
+        inspector: "Marcus Jay",
         policyNumber: "POL-2024-7893",
         deductible: "$2,500",
         coverage: "Homeowners Coverage",

@@ -5,7 +5,7 @@
 function initializeCipherUserContext() {
     const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
     const userEmail = localStorage.getItem('cipher_user_email') || 'demo@claimcipher.com';
-    const userName = isDemoMode ? 'Demo User' : userEmail.split('@')[0];
+    const userName = isDemoMode ? 'Marcus J.' : userEmail.split('@')[0];
     
     // Set user type attribute on body
     document.body.setAttribute('data-cipher-user-type', userType);
@@ -267,7 +267,7 @@ window.handleLogout = handleLogout;
 
     // Demo mode
     if (sessionStorage.getItem('demo_mode') === 'true') {
-        el.textContent = 'Demo User';
+        el.textContent = 'Marcus J.';
         return;
     }
 

@@ -88,9 +88,12 @@ class RouteCipher {
   initializeDemoMode() {
 
 
-    // Demo addresses - 3 Texas, 3 Florida
+    // Demo starting address from settings (single source of truth)
+    const demoHome = localStorage.getItem('cipher_home_address') || '4200 Lake Boone Trail, Raleigh, NC 27607';
+
+    // Demo destination addresses
     const demoAddresses = [
-      '100 Congress Ave, Austin, TX 78701',
+      demoHome,
       '400 Main St, Houston, TX 77002',
       '210 W Rusk St, Fort Worth, TX 76104',
       '200 S Orange Ave, Orlando, FL 32801',
@@ -101,7 +104,7 @@ class RouteCipher {
     // Set demo starting location
     const startInput = document.getElementById('startLocation');
     if (startInput) {
-      startInput.value = '100 Congress Ave, Austin, TX 78701';
+      startInput.value = demoHome;
       startInput.disabled = true;
     }
 
@@ -143,7 +146,7 @@ class RouteCipher {
     this.showDemoModeBanner();
 
     // Store demo data to instance state for persistence compatibility
-    this.startLocation = '100 Congress Ave, Austin, TX 78701';
+    this.startLocation = demoHome;
     this.destinations = demoAddresses.slice(1).map((addr, i) => ({
       address: addr,
       priority: i < 2 ? 'normal' : (i === 2 ? 'high' : 'urgent')

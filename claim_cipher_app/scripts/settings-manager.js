@@ -8,9 +8,9 @@ class SettingsManager {
         this.settingsKey = 'claim_cipher_settings';
         this.defaultSettings = {
             // Profile
-            displayName: 'Demo User',
-            userEmail: 'demo@claimcipher.com',
-            licenseNumber: 'DEMO-2024',
+            displayName: 'Marcus Jay',
+            userEmail: 'demo@claimcipher.io',
+            licenseNumber: 'DEMO-00000',
             homeBaseLocation: '',
 
             // Calendar & Scheduling

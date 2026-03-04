@@ -203,17 +203,6 @@
             </div>
           </div>
 
-          <!-- Export -->
-          <div class="mc-card">
-            <div class="mc-card-header">
-              <div class="mc-card-title">Export</div>
-              <div class="mc-card-line"></div>
-            </div>
-            <div class="mc-export-btns">
-              <button class="mc-btn mc-btn-ghost" onclick="exportSessionCSV()">Export CSV</button>
-              <button class="mc-btn mc-btn-ghost" onclick="exportSessionPDF()">Export PDF</button>
-            </div>
-          </div>
 
         </div><!-- /right-col -->
 
@@ -367,7 +356,8 @@
         if (amountEl) {
           amountEl.textContent = '$' + result.totalFee;
         }
-        // Update session log panel
+        // Update session log panel + debug log
+        console.log('Session history:', window.mileageCipher.calculationHistory);
         updateSessionLogPanel();
       };
 
@@ -398,77 +388,55 @@
       }
     })();
 
-    // ── Session log panel updater ──
+    // ── Session log panel updater (last 7 calculations) ──
     function updateSessionLogPanel() {
-      if (!window.mileageCipher) return;
-      var history = window.mileageCipher.calculationHistory || [];
-      var logList = document.getElementById('sessionLogList');
+      var logContainer = document.getElementById('sessionLogList');
       var logCount = document.getElementById('logCount');
       var sessionTotal = document.getElementById('sessionTotal');
-      var sessionMilesHeader = document.getElementById('sessionMilesHeader');
-      var sessionEntriesHeader = document.getElementById('sessionEntriesHeader');
-      var sessionBilledHeader = document.getElementById('sessionBilledHeader');
 
-      var totalMiles = 0, totalBilled = 0;
-      history.forEach(function(r) { totalMiles += r.baseMiles || 0; totalBilled += r.totalFee || 0; });
+      if (!window.mileageCipher) return;
 
-      if (logCount) logCount.textContent = history.length + ' entr' + (history.length === 1 ? 'y' : 'ies');
-      if (sessionTotal) sessionTotal.textContent = totalMiles.toFixed(1) + ' mi';
-      if (sessionMilesHeader) sessionMilesHeader.textContent = totalMiles.toFixed(1);
-      if (sessionEntriesHeader) sessionEntriesHeader.textContent = history.length;
-      if (sessionBilledHeader) sessionBilledHeader.textContent = '$' + totalBilled.toFixed(2);
+      var history = window.mileageCipher.calculationHistory || [];
+      var last7 = history.slice(0, 7);
 
-      if (logList) {
-        if (history.length === 0) {
-          logList.innerHTML = '<div class="mc-log-empty">No entries yet</div>';
-        } else {
-          logList.innerHTML = history.map(function(r, i) {
-            return '<div class="mc-log-item">'
-              + '<div><div class="mc-log-item-name">' + (r.route ? r.route.to : 'Route ' + (i+1)) + '</div>'
-              + '<div class="mc-log-item-miles">' + r.baseMiles + ' mi</div></div>'
-              + '<div class="mc-log-item-fee">$' + r.totalFee + '</div>'
-              + '</div>';
-          }).join('');
-        }
+      // Update count
+      if (logCount) logCount.textContent = last7.length + ' entries';
+
+      // Update session total
+      var total = last7.reduce(function(sum, entry) {
+        var miles = entry.totalMiles || entry.distance || entry.miles || 0;
+        return sum + parseFloat(miles);
+      }, 0);
+      if (sessionTotal) sessionTotal.textContent = total.toFixed(1) + ' MI';
+
+      // Render entries
+      if (!logContainer) return;
+
+      if (last7.length === 0) {
+        logContainer.innerHTML = '<div style="text-align:center;color:#555;padding:20px;font-family:monospace;font-size:12px;">NO ENTRIES YET</div>';
+        return;
       }
+
+      logContainer.innerHTML = last7.map(function(entry, i) {
+        var miles = parseFloat(entry.totalMiles || entry.distance || entry.miles || 0).toFixed(1);
+        var billable = entry.billableAmount || entry.billable || entry.amount || 0;
+        var dest = entry.destination || entry.to || entry.destinationAddress || '—';
+        var shortDest = dest.length > 22 ? dest.substring(0, 22) + '...' : dest;
+
+        return '<div style="padding:10px 12px;border-bottom:1px solid #222;font-family:monospace;">'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;">'
+          + '<span style="color:#aaa;font-size:11px;">#' + (i + 1) + ' — ' + shortDest + '</span>'
+          + '<span style="color:#f0a500;font-size:12px;font-weight:bold;">' + miles + ' MI</span>'
+          + '</div>'
+          + '<div style="color:#666;font-size:11px;margin-top:3px;">'
+          + 'Billable: <span style="color:#ccc;">' + parseFloat(billable).toFixed(2) + '</span>'
+          + '</div>'
+          + '</div>';
+      }).join('');
     }
 
-    // ── Export CSV ──
-    window.exportSessionCSV = function() {
-      if (!window.mileageCipher) return;
-      var history = window.mileageCipher.calculationHistory || [];
-      if (!history.length) { alert('No calculations to export.'); return; }
-      var rows = [['From','To','Distance (mi)','Free Miles','Billable Miles','Rate','Total ($)','Note']];
-      history.forEach(function(r) {
-        rows.push([
-          r.route ? r.route.from : '',
-          r.route ? r.route.to : '',
-          r.baseMiles, r.freeMiles, r.billableMiles,
-          r.ratePerMile, r.totalFee, r.note || ''
-        ]);
-      });
-      var csv = rows.map(function(r){ return r.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
-      var a = document.createElement('a');
-      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-      a.download = 'mileage-session.csv';
-      a.click();
-    };
-
-    // ── Export PDF (print fallback) ──
-    window.exportSessionPDF = function() {
-      if (!window.mileageCipher) return;
-      var history = window.mileageCipher.calculationHistory || [];
-      if (!history.length) { alert('No calculations to export.'); return; }
-      var html = '<html><head><title>Mileage Session</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f5f5f5}</style></head><body>'
-        + '<h2>Mileage Session Report</h2>'
-        + '<table><thead><tr><th>From</th><th>To</th><th>Distance</th><th>Free Mi</th><th>Billable</th><th>Rate</th><th>Total</th><th>Note</th></tr></thead><tbody>'
-        + history.map(function(r){ return '<tr><td>' + [r.route&&r.route.from||'',r.route&&r.route.to||'',r.baseMiles+' mi',r.freeMiles+' mi',r.billableMiles+' mi','$'+r.ratePerMile,'$'+r.totalFee,r.note||''].join('</td><td>') + '</td></tr>'; }).join('')
-        + '</tbody></table></body></html>';
-      var w = window.open('', '_blank');
-      w.document.write(html);
-      w.document.close();
-      w.print();
-    };
+    // Render on load
+    updateSessionLogPanel();
     </script>
 
     <!-- ACTION FOOTER -->
