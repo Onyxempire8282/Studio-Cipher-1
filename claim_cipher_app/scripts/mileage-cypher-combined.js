@@ -482,6 +482,8 @@ class MileageCypherCalculator {
   }
 
   performCalculation(auto = false) {
+    if (this._calculating) return null;
+    this._calculating = true;
     console.log("performCalculation called, auto:", auto);
 
     this.setSessionIndicator(true);
@@ -491,6 +493,7 @@ class MileageCypherCalculator {
 
     if (!this.validateCalculationInputs(calculationData, auto)) {
       console.log("Validation failed, aborting calculation");
+      this._calculating = false;
       return null;
     }
 
@@ -520,6 +523,7 @@ class MileageCypherCalculator {
       this.showCalculateLoading(false); // Hide loading state
       return null;
     } finally {
+      this._calculating = false;
       this.setSessionIndicator(false);
     }
   }

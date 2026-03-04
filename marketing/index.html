@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  (function() {
+    // If user has an active Supabase session, send them
+    // straight to the dashboard — skip the marketing page
+    var stored = localStorage.getItem(
+      'sb-aviwltfqlunxxvkajpyt-auth-token'
+    );
+    if (stored) {
+      try {
+        var session = JSON.parse(stored);
+        if (session && session.access_token) {
+          window.location.replace('/dashboard');
+        }
+      } catch(e) {}
+    }
+  })();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claim Cipher — Field Operations Infrastructure for Independent Adjusters</title>

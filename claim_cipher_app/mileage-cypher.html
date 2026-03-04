@@ -192,7 +192,10 @@
             <div class="mc-card-header">
               <div class="mc-card-title">Session Log</div>
               <div class="mc-card-line"></div>
-              <div class="mc-card-meta" id="logCount">0 entries</div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="mc-card-meta" id="logCount">0 entries</div>
+                <button id="clearSessionBtn" onclick="(function(){if(!confirm('Clear all session entries? This cannot be undone.'))return;window.mileageCipher.calculationHistory=[];window.mileageCipher.persistHistory();updateSessionLogPanel();})()" style="background:none;border:1px solid #333;color:#666;font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;padding:3px 8px;cursor:pointer;text-transform:uppercase;transition:color 0.2s,border-color 0.2s;" onmouseover="this.style.color='#f0a500';this.style.borderColor='#f0a500'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">CLEAR SESSION</button>
+              </div>
             </div>
             <div class="mc-log-items" id="sessionLogList">
               <div class="mc-log-empty">No entries yet</div>
@@ -404,8 +407,7 @@
 
       // Update session total
       var total = last7.reduce(function(sum, entry) {
-        var miles = entry.totalMiles || entry.distance || entry.miles || 0;
-        return sum + parseFloat(miles);
+        return sum + parseFloat(entry.baseMiles || 0);
       }, 0);
       if (sessionTotal) sessionTotal.textContent = total.toFixed(1) + ' MI';
 
@@ -418,9 +420,9 @@
       }
 
       logContainer.innerHTML = last7.map(function(entry, i) {
-        var miles = parseFloat(entry.totalMiles || entry.distance || entry.miles || 0).toFixed(1);
-        var billable = entry.billableAmount || entry.billable || entry.amount || 0;
-        var dest = entry.destination || entry.to || entry.destinationAddress || '—';
+        var miles = parseFloat(entry.baseMiles || 0).toFixed(1);
+        var billable = parseFloat(entry.totalFee || 0).toFixed(2);
+        var dest = (entry.route && entry.route.to) ? entry.route.to : '—';
         var shortDest = dest.length > 22 ? dest.substring(0, 22) + '...' : dest;
 
         return '<div style="padding:10px 12px;border-bottom:1px solid #222;font-family:monospace;">'
@@ -429,7 +431,7 @@
           + '<span style="color:#f0a500;font-size:12px;font-weight:bold;">' + miles + ' MI</span>'
           + '</div>'
           + '<div style="color:#666;font-size:11px;margin-top:3px;">'
-          + 'Billable: <span style="color:#ccc;">' + parseFloat(billable).toFixed(2) + '</span>'
+          + 'Billable: <span style="color:#ccc;">$' + billable + '</span>'
           + '</div>'
           + '</div>';
       }).join('');
