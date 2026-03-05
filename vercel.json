@@ -1,17 +1,33 @@
 {
   "rewrites": [
-    { "source": "/",                "destination": "/marketing/index.html" },
-    { "source": "/login",           "destination": "/claim_cipher_app/login-cypher.html" },
-    { "source": "/signup",          "destination": "/claim_cipher_app/index.html" },
-    { "source": "/dashboard",       "destination": "/claim_cipher_app/command-center.html" },
-    { "source": "/billing",         "destination": "/claim_cipher_app/billing-required.html" },
-    { "source": "/billing-success", "destination": "/claim_cipher_app/billing-success.html" },
-    { "source": "/billing-cancel",  "destination": "/claim_cipher_app/billing-cancel.html" },
-    { "source": "/mileage",         "destination": "/claim_cipher_app/mileage-cypher.html" },
-    { "source": "/route-cypher",    "destination": "/claim_cipher_app/route-cypher.html" },
-    { "source": "/my-routes",       "destination": "/claim_cipher_app/my-routes.html" },
-    { "source": "/total-loss",      "destination": "/claim_cipher_app/total-loss-studio.html" },
-    { "source": "/settings",        "destination": "/claim_cipher_app/settings.html" },
-    { "source": "/reset-password",  "destination": "/claim_cipher_app/reset-password.html" }
+    { "source": "/",                      "destination": "/marketing/index.html" },
+
+    { "source": "/login",                 "destination": "/claim_cipher_app/login-cypher.html" },
+    { "source": "/signup",                "destination": "/claim_cipher_app/index.html" },
+    { "source": "/dashboard",             "destination": "/claim_cipher_app/command-center.html" },
+    { "source": "/billing",               "destination": "/claim_cipher_app/billing-required.html" },
+    { "source": "/billing-success",       "destination": "/claim_cipher_app/billing-success.html" },
+    { "source": "/billing-cancel",        "destination": "/claim_cipher_app/billing-cancel.html" },
+    { "source": "/mileage",               "destination": "/claim_cipher_app/mileage-cypher.html" },
+    { "source": "/route-cypher",          "destination": "/claim_cipher_app/route-cypher.html" },
+    { "source": "/my-routes",             "destination": "/claim_cipher_app/my-routes.html" },
+    { "source": "/total-loss",            "destination": "/claim_cipher_app/total-loss-studio.html" },
+    { "source": "/settings",              "destination": "/claim_cipher_app/settings.html" },
+    { "source": "/reset-password",        "destination": "/claim_cipher_app/reset-password.html" },
+    { "source": "/demo",                  "destination": "/claim_cipher_app/login-cypher.html" },
+
+    { "source": "/login-cypher.html",     "destination": "/claim_cipher_app/login-cypher.html" },
+    { "source": "/command-center.html",   "destination": "/claim_cipher_app/command-center.html" },
+    { "source": "/billing-required.html", "destination": "/claim_cipher_app/billing-required.html" },
+    { "source": "/billing-success.html",  "destination": "/claim_cipher_app/billing-success.html" },
+    { "source": "/billing-cancel.html",   "destination": "/claim_cipher_app/billing-cancel.html" },
+    { "source": "/mileage-cypher.html",   "destination": "/claim_cipher_app/mileage-cypher.html" },
+    { "source": "/route-cypher.html",     "destination": "/claim_cipher_app/route-cypher.html" },
+    { "source": "/my-routes.html",        "destination": "/claim_cipher_app/my-routes.html" },
+    { "source": "/total-loss-studio.html","destination": "/claim_cipher_app/total-loss-studio.html" },
+    { "source": "/settings.html",         "destination": "/claim_cipher_app/settings.html" },
+    { "source": "/reset-password.html",   "destination": "/claim_cipher_app/reset-password.html" },
+    { "source": "/login.html",            "destination": "/claim_cipher_app/login-cypher.html" },
+    { "source": "/index.html",            "destination": "/claim_cipher_app/index.html" }
   ]
 }

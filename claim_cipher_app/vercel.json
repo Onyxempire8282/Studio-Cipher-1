@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/index.html", "destination": "/index.html" },
+
+    { "source": "/login", "destination": "/login-cypher.html" },
+    { "source": "/signup", "destination": "/login-cypher.html?tab=signup" },
+    { "source": "/dashboard", "destination": "/command-center.html" },
+    { "source": "/billing", "destination": "/billing-required.html" },
+    { "source": "/billing-success", "destination": "/billing-success.html" },
+    { "source": "/billing-cancel", "destination": "/billing-cancel.html" },
+    { "source": "/mileage", "destination": "/mileage-cypher.html" },
+    { "source": "/route-cypher", "destination": "/route-cypher.html" },
+    { "source": "/my-routes", "destination": "/my-routes.html" },
+    { "source": "/total-loss", "destination": "/total-loss-studio.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/reset-password", "destination": "/reset-password.html" },
+
+    { "source": "/login.html", "destination": "/login-cypher.html" },
+    { "source": "/signup.html", "destination": "/login-cypher.html?tab=signup" },
+    { "source": "/dashboard.html", "destination": "/command-center.html" },
+    { "source": "/billing.html", "destination": "/billing-required.html" },
+    { "source": "/billing-success.html", "destination": "/billing-success.html" },
+    { "source": "/billing-cancel.html", "destination": "/billing-cancel.html" },
+    { "source": "/mileage.html", "destination": "/mileage-cypher.html" },
+    { "source": "/route-cypher.html", "destination": "/route-cypher.html" },
+    { "source": "/my-routes.html", "destination": "/my-routes.html" },
+    { "source": "/total-loss.html", "destination": "/total-loss-studio.html" },
+    { "source": "/settings.html", "destination": "/settings.html" },
+    { "source": "/reset-password.html", "destination": "/reset-password.html" }
+  ]
+}
