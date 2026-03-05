@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   const access = await window.BillingGuard.checkAccess();
   if (!window.BillingGuard.hasAccess(access.profile)) {
-    window.location.href = 'billing-required.html';
+    window.location.href = '/billing';
     return;
   }
 
@@ -335,5 +335,6 @@ setInterval(tickClock, 1000);
 
 </body>
 </html>
+
 
 

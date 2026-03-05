@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
       const access = await window.BillingGuard.checkAccess();
       if (!window.BillingGuard.hasAccess(access.profile)) {
-        window.location.href = "billing-required.html";
+        window.location.href = "/billing";
         return;
       }
 
@@ -547,5 +547,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <script defer src="scripts/claim-cipher-system-qa.js"></script>
   </body>
 </html>
+
 
 

@@ -85,8 +85,8 @@ Deno.serve(async (req) => {
       mode: "subscription",
       customer: stripeCustomerId,
       line_items: lineItems,
-      success_url: "https://app.claimcipherhq.com/dashboard.html",
-      cancel_url: "https://claimcipherhq.com/pricing.html",
+      success_url: "https://app.claimcipherhq.com/billing-success",
+      cancel_url: "https://app.claimcipherhq.com/billing-cancel",
       subscription_data: {
         metadata: {
           user_id: user.id,

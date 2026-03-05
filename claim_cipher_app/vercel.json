@@ -27,6 +27,7 @@
     { "source": "/my-routes.html", "destination": "/my-routes.html" },
     { "source": "/total-loss.html", "destination": "/total-loss-studio.html" },
     { "source": "/settings.html", "destination": "/settings.html" },
-    { "source": "/reset-password.html", "destination": "/reset-password.html" }
+    { "source": "/reset-password.html", "destination": "/reset-password.html" },
+    { "source": "/(.*)", "destination": "/login" }
   ]
 }
