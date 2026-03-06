@@ -195,6 +195,22 @@
   word-wrap: break-word;
 }
 
+/* ── Back button ───────────────────────────────────────────────── */
+.echo-back {
+  background: none;
+  border: none;
+  color: #c8922a;
+  font-size: 10px;
+  font-family: inherit;
+  letter-spacing: 2px;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+.echo-back:hover {
+  opacity: 0.8;
+}
+
 /* ── Workflow card ──────────────────────────────────────────────── */
 .echo-card {
   background: #1a1b1e;

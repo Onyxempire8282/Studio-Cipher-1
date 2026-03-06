@@ -79,23 +79,36 @@
     var sugBox  = document.getElementById('echo-suggestions');
     if (!toggle || !panel) return;
 
-    var hasMessages = false;
-
     function scrollBottom() {
       if (chat) chat.scrollTop = chat.scrollHeight;
     }
 
-    function hideWelcome() {
-      if (!hasMessages && welcome) {
-        welcome.style.display = 'none';
-        hasMessages = true;
+    function clearChat() {
+      while (chat.firstChild && chat.firstChild !== welcome) {
+        chat.removeChild(chat.firstChild);
       }
+      while (welcome && welcome.nextSibling) {
+        chat.removeChild(welcome.nextSibling);
+      }
+    }
+
+    function resetToWelcome() {
+      clearChat();
+      if (welcome) welcome.style.display = '';
+      if (input) input.focus();
+    }
+
+    function renderBackButton() {
+      var btn = el('button', 'echo-back', '\u2190 BACK TO MENU');
+      btn.addEventListener('click', resetToWelcome);
+      return btn;
     }
 
     function ask(question) {
       var q = question.trim();
       if (!q) return;
-      hideWelcome();
+      if (welcome) welcome.style.display = 'none';
+      clearChat();
       chat.appendChild(renderUserBubble(q));
       var dots = renderTyping();
       chat.appendChild(dots);
@@ -105,6 +118,7 @@
       setTimeout(function () {
         dots.remove();
         var wf = findWorkflow(q);
+        chat.appendChild(renderBackButton());
         chat.appendChild(wf ? renderWorkflowCard(wf) : renderFallback(FALLBACK));
         scrollBottom();
       }, 700);
