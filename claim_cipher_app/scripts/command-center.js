@@ -24,7 +24,7 @@ class CommandCenterManager {
     
     setupEventListeners() {
         // Module navigation listeners
-        document.querySelectorAll('.module-card').forEach(card => {
+        document.querySelectorAll('.op-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (!e.target.closest('.action-btn')) {
                     const link = card.querySelector('a.primary-btn');
@@ -51,13 +51,12 @@ class CommandCenterManager {
                 switch(e.key) {
                     case '1': this.navigateToModule('route-cypher.html'); break;
                     case '2': this.navigateToModule('mileage-cypher.html'); break;
-                    case '3': this.navigateToModule('jobs-studio.html'); break;
-                    case '4': this.navigateToModule('firms-directory.html'); break;
-                    case 's': this.navigateToModule('settings-booth.html'); break;
-                    case 't': this.navigateToModule('functionality-test.html'); break;
-                    case 'h': 
+                    case '3': this.navigateToModule('my-routes.html'); break;
+                    case '4': this.navigateToModule('total-loss-studio.html'); break;
+                    case 's': this.navigateToModule('settings.html'); break;
+                    case 'h':
                         e.preventDefault();
-                        this.showHelpModal(); 
+                        this.showHelpModal();
                         break;
                 }
             }

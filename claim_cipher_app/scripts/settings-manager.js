@@ -351,8 +351,8 @@ class SettingsManager {
     }
 }
 
-// Global instance
-window.settingsManager = new SettingsManager();
+// Orphaned — targets IDs not present in current settings.html. Re-enable when settings UI is rebuilt.
+// window.settingsManager = new SettingsManager();
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {

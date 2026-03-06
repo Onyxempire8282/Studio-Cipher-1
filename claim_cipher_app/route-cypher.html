@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/route-cipher.css">
+  <link rel="stylesheet" href="shared/cipher-help.css">
 </head>
 <body style="visibility: hidden;">
 
@@ -276,26 +277,26 @@
         </div>
       </div>
 
-      <!-- Saved Starting Points (cosmetic) -->
+      <!-- Saved Starting Points -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">Saved Starts</div>
           <div class="card-line"></div>
         </div>
         <div style="display:flex;flex-direction:column;">
-          <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+          <div id="savedStartHome" style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
             <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px rgba(232,149,42,0.5);flex-shrink:0;"></div>
             <div style="flex:1;">
               <div style="font-size:12px;color:var(--text-hi);">Home Office</div>
-              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;">Last used starting point</div>
+              <div id="savedStartHomeAddr" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;">Settings home address</div>
             </div>
             <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Use →</div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+          <div id="savedStartField" style="display:flex;align-items:center;gap:10px;padding:12px 20px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
             <div style="width:6px;height:6px;border-radius:50%;background:var(--rivet-hi);flex-shrink:0;"></div>
             <div style="flex:1;">
               <div style="font-size:12px;color:var(--text-hi);">Field Office</div>
-              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;">Saved starting point</div>
+              <div id="savedStartFieldAddr" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;">Last used starting point</div>
             </div>
             <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Use →</div>
           </div>
@@ -368,8 +369,8 @@
         <div class="map-panel">
           <div class="map-area">
             <div class="map-controls">
-              <button class="map-ctrl-btn active">Map</button>
-              <button class="map-ctrl-btn">Satellite</button>
+              <button class="map-ctrl-btn active" id="mapTypeMap" onclick="setModalMapType('roadmap')">Map</button>
+              <button class="map-ctrl-btn" id="mapTypeSat" onclick="setModalMapType('satellite')">Satellite</button>
             </div>
             <!-- Google Maps renders here -->
             <div id="modalMap" class="modal-map"></div>
@@ -405,8 +406,7 @@
           <button id="editDayBtn" class="btn btn-ghost" onclick="editActiveDay()">
             <span id="editDayBtnText">Edit Day 1</span>
           </button>
-          <button class="btn btn-steel" onclick="window.routeCipher.showSaveDayModal()">Save Route</button>
-          <button class="btn btn-primary" onclick="exportRouteFromModal()">Export Schedule →</button>
+          <button class="btn btn-primary" onclick="window.routeCipher.showSaveDayModal()">Save Route</button>
         </div>
       </div>
 
@@ -592,6 +592,16 @@ if (
       if (window.routeCipher) window.routeCipher.showSaveDayModal();
     }
 
+    function setModalMapType(typeId) {
+      if (window.routeCipher && window.routeCipher.modalMap) {
+        window.routeCipher.modalMap.setMapTypeId(typeId);
+      }
+      var mapBtn = document.getElementById('mapTypeMap');
+      var satBtn = document.getElementById('mapTypeSat');
+      if (mapBtn) mapBtn.classList.toggle('active', typeId === 'roadmap');
+      if (satBtn) satBtn.classList.toggle('active', typeId === 'satellite');
+    }
+
     function openSaveRouteModal() {
       if (!window.routeCipher || !window.routeCipher.currentRoute) {
         showAlertModal('No route to save. Please optimize a route first.');
@@ -727,6 +737,108 @@ if (
     })();
   </script>
 
+  <!-- Saved Starts click handlers -->
+  <script>
+  (function() {
+    function truncate(str, max) {
+      return str.length > max ? str.substring(0, max) + '...' : str;
+    }
+
+    function getHomeAddress() {
+      return localStorage.getItem('cipher_home_address') || '';
+    }
+
+    function getFieldAddress() {
+      try {
+        const draft = JSON.parse(localStorage.getItem('cipher_optimizer_draft_state') || '{}');
+        return draft.startLocation || '';
+      } catch (_) { return ''; }
+    }
+
+    function applyAddress(addr) {
+      const input = document.getElementById('startLocation');
+      if (!input) return;
+      input.value = addr;
+      input.dispatchEvent(new Event('change'));
+      if (window.routeCipher) window.routeCipher.startLocation = addr;
+    }
+
+    function refreshLabels() {
+      var homeAddr  = getHomeAddress();
+      var fieldAddr = getFieldAddress();
+
+      var homeLabel  = document.getElementById('savedStartHomeAddr');
+      var fieldLabel = document.getElementById('savedStartFieldAddr');
+
+      if (homeLabel) {
+        homeLabel.textContent = homeAddr ? truncate(homeAddr, 40) : 'No address saved \u2014 set one in Settings';
+      }
+      if (fieldLabel) {
+        fieldLabel.textContent = fieldAddr ? truncate(fieldAddr, 40) : 'No recent starting point';
+      }
+    }
+
+    document.getElementById('savedStartHome')?.addEventListener('click', function() {
+      var addr = getHomeAddress();
+      if (!addr) {
+        var label = document.getElementById('savedStartHomeAddr');
+        if (label) label.textContent = 'No address saved \u2014 set one in Settings';
+        return;
+      }
+      applyAddress(addr);
+    });
+
+    document.getElementById('savedStartField')?.addEventListener('click', function() {
+      var addr = getFieldAddress();
+      if (!addr) {
+        var label = document.getElementById('savedStartFieldAddr');
+        if (label) label.textContent = 'No recent starting point';
+        return;
+      }
+      applyAddress(addr);
+    });
+
+    refreshLabels();
+  })();
+  </script>
+
+<!-- ECHO: Claim Cipher Help Assistant -->
+<div id="echo-widget">
+  <div id="echo-panel" class="echo-hidden">
+    <div class="echo-header">
+      <div class="echo-header-left">
+        <div class="echo-header-icon">&#9672;</div>
+        <div class="echo-header-text">
+          <span class="echo-name">ECHO</span>
+          <span class="echo-tagline">CLAIM CIPHER ASSISTANT</span>
+        </div>
+      </div>
+      <div class="echo-header-right">
+        <div class="echo-status-dot"></div>
+        <button class="echo-close" id="echo-close">&#10005;</button>
+      </div>
+    </div>
+    <div class="echo-body" id="echo-chat">
+      <div id="echo-welcome">
+        <div class="echo-welcome-text">Ask me anything about running routes, logging mileage, processing estimates, or configuring your account.</div>
+        <div class="echo-suggestions-label">QUICK QUESTIONS</div>
+        <div id="echo-suggestions"></div>
+      </div>
+    </div>
+    <div class="echo-input-bar">
+      <input id="echo-input" type="text" placeholder="Ask Echo..." autocomplete="off" />
+      <button id="echo-submit">&rarr;</button>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end">
+    <button id="echo-toggle" aria-label="Open Echo Help Assistant">
+      <span class="echo-icon">&#9672;</span>
+      <span class="echo-label">ECHO</span>
+    </button>
+  </div>
+</div>
+<script defer src="shared/cipher-workflows.js"></script>
+<script defer src="shared/cipher-help.js"></script>
 
 </body>
 </html>

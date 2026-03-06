@@ -151,6 +151,35 @@ const SettingsService = (() => {
     await window.FirmStore.getAll();
   }
 
+  // ── DELETE ACCOUNT ──
+
+  async function deleteAccount() {
+    const sb = getClient();
+    const userId = await getUserId();
+    if (!userId) throw new Error('Not authenticated');
+
+    // Delete user firms
+    const { error: firmsErr } = await sb
+      .from('user_firms')
+      .delete()
+      .eq('user_id', userId);
+    if (firmsErr) console.error('Failed to delete firms:', firmsErr);
+
+    // Delete user profile
+    const { error: profileErr } = await sb
+      .from('profiles')
+      .delete()
+      .eq('user_id', userId);
+    if (profileErr) console.error('Failed to delete profile:', profileErr);
+
+    // Sign out (clears Supabase session)
+    await sb.auth.signOut();
+
+    // Clear all local data
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
   return {
     loadProfile,
     saveProfile,
@@ -160,7 +189,8 @@ const SettingsService = (() => {
     saveFirm,
     deleteFirm,
     changePassword,
-    syncToFirmStore
+    syncToFirmStore,
+    deleteAccount
   };
 })();
 

@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="shared/cipher-help.css">
 </head>
 <body style="visibility: hidden;">
 
@@ -332,6 +333,44 @@ function tickClock() {
 tickClock();
 setInterval(tickClock, 1000);
 </script>
+
+<!-- ECHO: Claim Cipher Help Assistant -->
+<div id="echo-widget">
+  <div id="echo-panel" class="echo-hidden">
+    <div class="echo-header">
+      <div class="echo-header-left">
+        <div class="echo-header-icon">&#9672;</div>
+        <div class="echo-header-text">
+          <span class="echo-name">ECHO</span>
+          <span class="echo-tagline">CLAIM CIPHER ASSISTANT</span>
+        </div>
+      </div>
+      <div class="echo-header-right">
+        <div class="echo-status-dot"></div>
+        <button class="echo-close" id="echo-close">&#10005;</button>
+      </div>
+    </div>
+    <div class="echo-body" id="echo-chat">
+      <div id="echo-welcome">
+        <div class="echo-welcome-text">Ask me anything about running routes, logging mileage, processing estimates, or configuring your account.</div>
+        <div class="echo-suggestions-label">QUICK QUESTIONS</div>
+        <div id="echo-suggestions"></div>
+      </div>
+    </div>
+    <div class="echo-input-bar">
+      <input id="echo-input" type="text" placeholder="Ask Echo..." autocomplete="off" />
+      <button id="echo-submit">&rarr;</button>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end">
+    <button id="echo-toggle" aria-label="Open Echo Help Assistant">
+      <span class="echo-icon">&#9672;</span>
+      <span class="echo-label">ECHO</span>
+    </button>
+  </div>
+</div>
+<script defer src="shared/cipher-workflows.js"></script>
+<script defer src="shared/cipher-help.js"></script>
 
 </body>
 </html>

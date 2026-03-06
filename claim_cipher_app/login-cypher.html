@@ -420,6 +420,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             const email = document.getElementById('login-email')?.value?.trim();
             const password = document.getElementById('login-password')?.value;
+            const rememberMe = document.getElementById('remember-cipher')?.checked;
             const loginBtn = document.getElementById('login-btn');
 
             if (!email || !password) {
@@ -430,6 +431,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Show loading state
             window.SupabaseAuth.setButtonLoading(loginBtn, true, 'Signing in...');
 
+            // TODO: Supabase JS v2 does not support per-call session persistence.
+            // To honor rememberMe, the Supabase client would need to be re-created
+            // with auth.storage set to sessionStorage (when unchecked) vs localStorage
+            // (when checked). For now the checkbox value is read but not acted upon.
             const result = await window.SupabaseAuth.signIn(email, password);
 
             if (result.success) {

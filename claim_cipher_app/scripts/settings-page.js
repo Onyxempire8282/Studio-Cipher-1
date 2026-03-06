@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindFirmsList();
   bindPasswordForm();
   bindSidebarNav();
+  bindDeleteAccount();
 
   // Load data — profile and firms independently so one failure doesn't block the other
   try {
@@ -529,6 +530,25 @@ function bindPasswordForm() {
   document.getElementById('newPassword')
     ?.addEventListener('input', (e) => {
       updateStrengthBars(e.target.value);
+    });
+}
+
+// ── DELETE ACCOUNT ──
+function bindDeleteAccount() {
+  document.getElementById('deleteAccountBtn')
+    ?.addEventListener('click', () => {
+      showConfirmModal(
+        'Permanently delete your account? This cannot be undone.',
+        async () => {
+          try {
+            await SettingsService.deleteAccount();
+            window.location.replace('login-cypher.html');
+          } catch (err) {
+            showToast(err.message || 'Failed to delete account', 'error');
+            console.error('deleteAccount error:', err);
+          }
+        }
+      );
     });
 }
 

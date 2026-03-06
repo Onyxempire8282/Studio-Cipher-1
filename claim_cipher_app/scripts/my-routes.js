@@ -410,6 +410,7 @@
     if (route.status === 'active') {
       const canClose = route.total_miles !== null && route.total_miles > 0;
       return `
+        <button class="route-action-btn" data-action="edit" data-route-id="${id}">Edit</button>
         <button class="route-action-btn" data-action="close" data-route-id="${id}"
                 ${canClose ? '' : 'disabled'}>🔒 Close Route</button>
         ${!canClose ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;">Set miles first</span>' : ''}
@@ -418,6 +419,7 @@
 
     if (route.status === 'draft') {
       return `
+        <button class="route-action-btn" data-action="edit" data-route-id="${id}">Edit</button>
         <button class="route-action-btn" data-action="activate" data-route-id="${id}">Activate</button>
         <button class="route-action-btn danger" data-action="delete" data-route-id="${id}">Delete</button>`;
     }

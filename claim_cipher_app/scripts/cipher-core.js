@@ -1,53 +1,40 @@
 // 🎤 Cipher Core JavaScript Functions
 // Shared utilities for the hip-hop professional cipher experience
 
-// Initialize cipher user context across all pages
-function initializeCipherUserContext() {
-    const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
-    const userEmail = localStorage.getItem('cipher_user_email') || 'demo@claimcipher.com';
-    const userName = isDemoMode ? 'Marcus J.' : userEmail.split('@')[0];
-    
-    // Set user type attribute on body
-    document.body.setAttribute('data-cipher-user-type', userType);
-    
-    // Update user display elements
-    const userNameEl = document.getElementById('user-name');
-    const userRoleEl = document.getElementById('user-role');
-    const userAvatarEl = document.getElementById('user-avatar');
-    
-    if (userNameEl) userNameEl.textContent = userName;
-    if (userRoleEl) userRoleEl.textContent = isDemoMode ? 'Demo Mode' : 'Free User';
-    if (userAvatarEl) userAvatarEl.textContent = userName.substring(0, 2).toUpperCase();
-    
-    // Show demo notice if needed
-    if (isDemoMode) {
-        const demoNotice = document.getElementById('demo-notice');
-        if (demoNotice) {
-            demoNotice.style.display = 'flex';
-        }
-    }
-    
+// Orphaned — targets #user-name, #user-role, #user-avatar which do not exist
+// in the current nav HTML. Re-enable when nav is updated to include these IDs.
+// function initializeCipherUserContext() {
+//     const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
+//     const userEmail = localStorage.getItem('cipher_user_email') || 'demo@claimcipher.com';
+//     const userName = isDemoMode ? 'Marcus J.' : userEmail.split('@')[0];
+//
+//     document.body.setAttribute('data-cipher-user-type', userType);
+//
+//     const userNameEl = document.getElementById('user-name');
+//     const userRoleEl = document.getElementById('user-role');
+//     const userAvatarEl = document.getElementById('user-avatar');
+//
+//     if (userNameEl) userNameEl.textContent = userName;
+//     if (userRoleEl) userRoleEl.textContent = isDemoMode ? 'Demo Mode' : 'Free User';
+//     if (userAvatarEl) userAvatarEl.textContent = userName.substring(0, 2).toUpperCase();
+//
+//     if (isDemoMode) {
+//         const demoNotice = document.getElementById('demo-notice');
+//         if (demoNotice) { demoNotice.style.display = 'flex'; }
+//     }
+// }
 
-}
-
-function applyBillingRole(detail) {
-    const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
-    const userRoleEl = document.getElementById('user-role');
-    if (!userRoleEl) return;
-    if (isDemoMode) {
-        userRoleEl.textContent = 'Demo Mode';
-        return;
-    }
-    if (detail?.tier === 'pro') {
-        userRoleEl.textContent = 'Pro User';
-        return;
-    }
-    if (detail?.tier === 'basic') {
-        userRoleEl.textContent = 'Basic User';
-        return;
-    }
-    userRoleEl.textContent = 'Free User';
-}
+// Orphaned — targets #user-role which does not exist in current nav HTML.
+// Re-enable when nav includes a role display element.
+// function applyBillingRole(detail) {
+//     const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
+//     const userRoleEl = document.getElementById('user-role');
+//     if (!userRoleEl) return;
+//     if (isDemoMode) { userRoleEl.textContent = 'Demo Mode'; return; }
+//     if (detail?.tier === 'pro') { userRoleEl.textContent = 'Pro User'; return; }
+//     if (detail?.tier === 'basic') { userRoleEl.textContent = 'Basic User'; return; }
+//     userRoleEl.textContent = 'Free User';
+// }
 
 // Setup logout handler
 function setupCipherLogoutHandler() {
@@ -247,8 +234,8 @@ async function handleLogout() {
 }
 
 // Export functions globally
-window.initializeCipherUserContext = initializeCipherUserContext;
-window.applyBillingRole = applyBillingRole;
+// window.initializeCipherUserContext — commented out (orphaned, see above)
+// window.applyBillingRole — commented out (orphaned, see above)
 window.setupCipherLogoutHandler = setupCipherLogoutHandler;
 window.animateCipherNumber = animateCipherNumber;
 window.showCipherNotification = showCipherNotification;
