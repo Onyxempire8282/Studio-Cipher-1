@@ -19,6 +19,8 @@
   --text:       #8f9399;
   --text-hi:    #b8bdc2;
   --muted:      #4a5058;
+  --text-sub:  #8a9099;
+  --text-dim:  #6b7480;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,7 +81,7 @@ body::before {
 .nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
 .nav-tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
 .nav-right { display: flex; align-items: center; gap: 16px; }
-.nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.nav-user { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-sub); text-align: right; }
 .nav-user strong { color: var(--white); display: block; font-size: 12px; }
 .nav-logout { padding: 7px 16px; border: 1px solid var(--rivet); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; background: transparent; }
 .nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
@@ -99,7 +101,7 @@ body::before {
 }
 .page-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
 .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.06em; color: var(--white); }
-.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.page-sub { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
 /* ── HEADER BADGE ── */
 .header-badge { display: flex; gap: 3px; }
@@ -158,12 +160,12 @@ body::before {
 }
 .card-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
 .card-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--amber-line), transparent); }
-.card-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.card-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
 .card-body { padding: 24px; }
 
 /* ── FORM FIELDS ── */
 .field { display: flex; flex-direction: column; gap: 5px; }
-.field-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.field-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-hi); }
 .field-input {
   background: var(--input-bg);
   border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
@@ -176,8 +178,8 @@ body::before {
   border-color: var(--amber);
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
 }
-.field-input::placeholder { color: var(--muted); }
-.field-hint { font-size: 11px; color: var(--muted); font-style: italic; }
+.field-input::placeholder { color: var(--text-dim); }
+.field-hint { font-size: 11px; color: var(--text-dim); font-style: italic; }
 
 /* ── TOGGLE ── */
 .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
@@ -189,7 +191,7 @@ body::before {
 .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--rivet); }
 .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
 .toggle-label { font-size: 13px; color: var(--text-hi); }
-.toggle-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.toggle-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
 
 /* ── LEGACY BILLING-PAGE CLASSES ── */
 /* Used by billing-required, billing-cancel, billing-success */
@@ -345,7 +347,7 @@ body::before {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.1em;
-  color: var(--muted);
+  color: var(--text-dim);
   margin-top: 4px;
 }
 

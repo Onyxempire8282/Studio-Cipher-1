@@ -260,7 +260,7 @@
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #4a5058;
+    color: var(--text-dim, #6b7480);
 }
 
 .status-dot {
@@ -377,7 +377,7 @@
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #4a5058;
+    color: var(--text-hi, #b8bdc2);
     margin-bottom: 4px;
 }
 
@@ -453,7 +453,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
-    color: #4a5058;
+    color: var(--text-dim, #6b7480);
     white-space: nowrap;
 }
 
@@ -573,7 +573,7 @@
 .drop-or-text {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
-    color: #4a5058;
+    color: var(--text-dim, #6b7480);
     letter-spacing: 0.15em;
     text-transform: uppercase;
 }
@@ -605,7 +605,7 @@
 
 .file-size {
     font-size: 11px;
-    color: #4a5058;
+    color: var(--text-dim, #6b7480);
     text-align: center;
 }
 
@@ -692,7 +692,7 @@
 .history-meta {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
-    color: #4a5058;
+    color: var(--text-dim, #6b7480);
     letter-spacing: 0.06em;
 }
 
@@ -834,13 +834,13 @@
     font-size: 28px; letter-spacing: 0.06em; color: var(--white, #edeae4);
 }
 .tls-summary-layout .sv-page-sub {
-    font-size: 12px; color: var(--muted, #4a5058); margin-top: 2px;
+    font-size: 12px; color: var(--text-sub, #8a9099); margin-top: 2px;
 }
 .tls-summary-layout .sv-claim-badge { text-align: right; }
 .tls-summary-layout .sv-claim-badge-label {
     font-family: 'DM Mono', monospace; font-size: 9px;
     letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--muted, #4a5058); margin-bottom: 4px;
+    color: var(--text-sub, #8a9099); margin-bottom: 4px;
 }
 .tls-summary-layout .sv-claim-badge-num {
     font-family: 'Bebas Neue', sans-serif;
@@ -853,7 +853,7 @@
 }
 .tls-summary-layout .sv-claim-badge-vin {
     font-family: 'DM Mono', monospace;
-    font-size: 10px; color: var(--muted, #4a5058); margin-top: 2px;
+    font-size: 10px; color: var(--text-sub, #8a9099); margin-top: 2px;
 }
 
 /* VERIFY BANNER */
@@ -883,7 +883,7 @@
     font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--amber, #e8952a);
 }
-.tls-summary-layout .sv-verify-sub { font-size: 11px; color: var(--muted, #4a5058); }
+.tls-summary-layout .sv-verify-sub { font-size: 11px; color: var(--text-sub, #8a9099); }
 
 /* MAIN SCROLL AREA */
 .tls-summary-layout .sv-main-scroll {
@@ -932,7 +932,7 @@
 }
 .tls-summary-layout .sv-card-count {
     font-family: 'DM Mono', monospace;
-    font-size: 10px; color: var(--muted, #4a5058); letter-spacing: 0.1em;
+    font-size: 10px; color: var(--text-sub, #8a9099); letter-spacing: 0.1em;
 }
 .tls-summary-layout .sv-card-body { padding: 24px; }
 
@@ -960,7 +960,7 @@
 .tls-summary-layout .sv-field-label {
     font-family: 'DM Mono', monospace;
     font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted, #4a5058);
+    color: var(--text-hi, #b8bdc2);
 }
 .tls-summary-layout .sv-field-value {
     background: var(--input-bg, #0a0c0e);
@@ -975,7 +975,7 @@
     border-color: var(--amber, #e8952a);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
 }
-.tls-summary-layout .sv-field-value::placeholder { color: var(--muted, #4a5058); }
+.tls-summary-layout .sv-field-value::placeholder { color: var(--text-dim, #6b7480); }
 
 /* OPTIONS SCROLL */
 .tls-summary-layout .sv-options-scroll {
@@ -1010,7 +1010,7 @@
 .tls-summary-layout .sv-condition-name {
     font-family: 'DM Mono', monospace;
     font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--muted, #4a5058);
+    color: var(--text-hi, #b8bdc2);
 }
 .tls-summary-layout .sv-rating-row {
     display: flex; align-items: center; gap: 10px;
@@ -1047,7 +1047,7 @@
 .tls-summary-layout .sv-tread-label {
     font-family: 'DM Mono', monospace; font-size: 9px;
     letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted, #4a5058); white-space: nowrap;
+    color: var(--text-hi, #b8bdc2); white-space: nowrap;
 }
 .tls-summary-layout .condition-tread-depth {
     background: var(--input-bg, #0a0c0e);
@@ -1059,7 +1059,7 @@
 .tls-summary-layout .condition-tread-depth:focus { border-color: var(--amber, #e8952a); }
 .tls-summary-layout .sv-tread-unit {
     font-family: 'DM Mono', monospace; font-size: 10px;
-    color: var(--muted, #4a5058); white-space: nowrap;
+    color: var(--text-dim, #6b7480); white-space: nowrap;
 }
 
 /* DAMAGE ASSESSMENT EDITOR */
@@ -1084,7 +1084,7 @@
 .tls-summary-layout .damage-editor-hint {
     font-family: 'DM Mono', monospace;
     font-size: 10px; letter-spacing: 0.06em;
-    color: var(--muted, #4a5058); margin-top: 4px; line-height: 1.5;
+    color: var(--text-dim, #6b7480); margin-top: 4px; line-height: 1.5;
 }
 .tls-summary-layout .damage-field-row {
     padding: 14px 20px;
@@ -1133,7 +1133,7 @@
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.15);
 }
 .tls-summary-layout .damage-field-input::placeholder {
-    color: var(--muted, #4a5058); font-style: italic;
+    color: var(--text-dim, #6b7480); font-style: italic;
 }
 .tls-summary-layout .damage-editor-footer {
     display: flex; align-items: center; gap: 10px;
@@ -1147,7 +1147,7 @@
     margin-left: auto;
 }
 .tls-summary-layout .status--complete { color: #4a9e6b; }
-.tls-summary-layout .status--incomplete { color: var(--muted, #4a5058); }
+.tls-summary-layout .status--incomplete { color: var(--text-dim, #6b7480); }
 .tls-summary-layout .status--warn { color: var(--amber, #e8952a); }
 
 /* ADDITIONAL NOTES */
@@ -1165,7 +1165,7 @@
     border-color: var(--amber, #e8952a);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.15);
 }
-.tls-summary-layout .sv-notes-area::placeholder { color: var(--muted, #4a5058); }
+.tls-summary-layout .sv-notes-area::placeholder { color: var(--text-dim, #6b7480); }
 
 /* ACTION FOOTER */
 .tls-summary-layout .sv-action-footer {
@@ -1186,7 +1186,7 @@
     letter-spacing: 0.1em; text-transform: uppercase;
 }
 .tls-summary-layout .sv-footer-vehicle {
-    font-size: 11px; color: var(--muted, #4a5058); margin-top: 2px;
+    font-size: 11px; color: var(--text-sub, #8a9099); margin-top: 2px;
 }
 .tls-summary-layout .sv-action-btns { display: flex; gap: 10px; align-items: center; }
 
@@ -1478,7 +1478,7 @@
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--muted, #4a5058);
+    color: var(--text-dim, #6b7480);
     transition: color 0.4s;
 }
 
@@ -1717,7 +1717,7 @@
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--muted, #4a5058);
+    color: var(--text-sub, #8a9099);
     margin-bottom: 2px;
 }
 
@@ -1741,7 +1741,7 @@
 .tls-sv-badge-vin {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
-    color: var(--muted, #4a5058);
+    color: var(--text-sub, #8a9099);
     letter-spacing: 0.08em;
     margin-top: 2px;
 }
@@ -1782,7 +1782,7 @@
     font-weight: 400 !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    color: #4a5058 !important;
+    color: var(--text-hi) !important;
     display: block;
     margin-bottom: 5px;
 }
@@ -1909,7 +1909,7 @@
 /* Header meta — right-side info block on TLS page header */
 .header-meta {
   font-family: 'DM Mono', monospace;
-  font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+  font-size: 10px; color: var(--text-sub); letter-spacing: 0.1em;
   text-align: right; line-height: 1.8;
 }
 .header-meta span { color: var(--text-hi); }

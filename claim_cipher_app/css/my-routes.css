@@ -54,7 +54,7 @@ body {
   display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
 }
 .filter-field { display: flex; flex-direction: column; gap: 5px; }
-.filter-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.filter-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-hi); }
 .filter-input {
   background: var(--input-bg); border: 1px solid var(--rivet); border-top: 1px solid var(--rivet-hi);
   padding: 9px 12px; color: var(--white); font-size: 13px;
@@ -101,7 +101,7 @@ body {
 }
 .routes-count {
   font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--muted);
+  text-transform: uppercase; color: var(--text-sub);
 }
 .routes-count span { color: var(--amber); }
 
@@ -156,8 +156,8 @@ body {
   display: flex; flex-direction: column; gap: 4px;
 }
 .route-dest-main { color: var(--text-hi); }
-.route-dest-end  { font-size: 12px; color: var(--muted); }
-.route-dest-stops { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+.route-dest-end  { font-size: 12px; color: var(--text-sub); }
+.route-dest-stops { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-sub); letter-spacing: 0.08em; }
 
 .route-miles-block { text-align: right; min-width: 110px; }
 .route-miles {
@@ -165,7 +165,7 @@ body {
   font-size: 28px; color: var(--white); letter-spacing: 0.02em; line-height: 1;
 }
 .route-miles span { color: var(--amber); font-size: 16px; }
-.route-miles-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+.route-miles-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-sub); margin-top: 2px; }
 
 .route-actions {
   display: flex; align-items: center; gap: 6px; min-width: 240px; justify-content: flex-end;
@@ -210,8 +210,8 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
 .state-icon { font-size: 28px; opacity: 0.4; }
-.state-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
-.state-sub { font-size: 12px; color: var(--muted); }
+.state-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
+.state-sub { font-size: 12px; color: var(--text-dim); }
 .spinner { width: 20px; height: 20px; border: 2px solid var(--rivet); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -224,7 +224,7 @@ body {
 }
 .total-cell { padding: 16px 20px; border-right: 1px solid var(--rivet); }
 .total-cell:last-child { border-right: none; }
-.total-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.total-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-sub); margin-bottom: 6px; }
 .total-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--white); letter-spacing: 0.02em; line-height: 1; }
 .total-val span { color: var(--amber); }
 .total-val.green { color: var(--green); }
@@ -253,12 +253,12 @@ body {
 .cc-dialog strong { color: var(--white); font-weight: 600; }
 
 .cc-form-row { display: flex; flex-direction: column; gap: 5px; margin-top: 14px; }
-.cc-form-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.cc-form-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-hi); }
 .cc-form-row .filter-input { min-width: unset; width: 100%; }
 
 .summary-grid { display: flex; flex-direction: column; gap: 6px; }
 .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 12px; background: var(--steel-mid); border: 1px solid var(--rivet); }
-.summary-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.summary-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-sub); }
 .summary-value { font-size: 13px; color: var(--text-hi); }
 .summary-row--highlight .summary-label { color: var(--text-hi); }
 .summary-row--highlight .summary-value { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--amber); letter-spacing: 0.04em; }
@@ -279,13 +279,13 @@ body {
 .export-preview { display: flex; align-items: center; gap: 16px; padding: 16px 0 0; }
 .preview-stat   { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .stat-value     { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--white); }
-.stat-label     { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.stat-label     { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-sub); }
 .preview-divider { font-size: 20px; color: var(--muted); }
 .export-empty-range,
-.export-empty   { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.export-empty p, .export-empty-range p { font-size: 12px; color: var(--muted); }
-.export-hint    { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
-.export-loading { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+.export-empty   { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.export-empty p, .export-empty-range p { font-size: 12px; color: var(--text-dim); }
+.export-hint    { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; }
+.export-loading { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; }
 .export-error   { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--red); letter-spacing: 0.1em; }
 
 /* ── TOAST ── */

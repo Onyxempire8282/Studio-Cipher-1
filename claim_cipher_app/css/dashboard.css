@@ -21,11 +21,11 @@ body { overflow-x: hidden; }
 .cmd-greeting { display: flex; flex-direction: column; gap: 6px; }
 .cmd-greeting-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); }
 .cmd-greeting-name { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.04em; color: var(--white); line-height: 1; }
-.cmd-greeting-sub { font-size: 13px; color: var(--muted); }
+.cmd-greeting-sub { font-size: 13px; color: var(--text-sub); }
 
 .cmd-clock { text-align: right; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
 .clock-time { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--white); letter-spacing: 0.06em; line-height: 1; }
-.clock-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+.clock-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-sub); letter-spacing: 0.14em; text-transform: uppercase; }
 
 /* ── MAIN ── */
 .main {
@@ -55,10 +55,10 @@ body { overflow-x: hidden; }
 }
 .stat-cell:last-child { border-right: none; }
 .stat-cell:hover { background: rgba(255,255,255,0.015); }
-.stat-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.stat-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-sub); }
 .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; line-height: 1; letter-spacing: 0.01em; color: var(--white); }
 .stat-num span { color: var(--amber); }
-.stat-delta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; display: flex; align-items: center; gap: 5px; }
+.stat-delta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-sub); letter-spacing: 0.08em; display: flex; align-items: center; gap: 5px; }
 .stat-delta .up { color: var(--amber); }
 
 /* ── SECTION LABEL ── */
@@ -118,7 +118,7 @@ body { overflow-x: hidden; }
 .op-card:hover .op-icon { background: var(--amber-dim); border-color: var(--amber-line); }
 .op-icon svg { width: 18px; height: 18px; }
 .op-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; color: var(--white); margin-bottom: 8px; }
-.op-desc { font-size: 12px; color: var(--text); line-height: 1.7; }
+.op-desc { font-size: 12px; color: var(--text-sub); line-height: 1.7; }
 .op-card-footer {
   padding: 12px 24px;
   border-top: 1px solid var(--rivet);
@@ -127,7 +127,7 @@ body { overflow-x: hidden; }
   transition: background 0.2s;
 }
 .op-card:hover .op-card-footer { background: rgba(232,149,42,0.05); }
-.op-stat { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+.op-stat { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-sub); letter-spacing: 0.1em; }
 .op-stat span { color: var(--amber); }
 .op-arrow {
   font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
@@ -185,7 +185,7 @@ body { overflow-x: hidden; }
 .feed-content { flex: 1; }
 .feed-action { font-size: 12px; color: var(--text-hi); line-height: 1.5; }
 .feed-action strong { color: var(--amber); font-weight: 500; }
-.feed-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; margin-top: 3px; }
+.feed-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; margin-top: 3px; }
 
 /* ── QUICK ACTIONS ── */
 .quick-card {
@@ -217,7 +217,7 @@ body { overflow-x: hidden; }
 .quick-btn-icon svg { width: 14px; height: 14px; }
 .quick-btn-info { flex: 1; }
 .quick-btn-name { font-size: 13px; color: var(--white); font-weight: 500; }
-.quick-btn-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.quick-btn-desc { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
 .quick-btn-arrow { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); transition: color 0.2s, transform 0.2s; }
 .quick-btn:hover .quick-btn-arrow { color: var(--amber); transform: translateX(3px); }
 .quick-btn.primary { background: var(--amber); border-color: var(--amber); }
