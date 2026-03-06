@@ -13,6 +13,7 @@ export function renderSummaryView(payload) {
                         <div class="sv-page-sub">Review extracted data — correct any errors before download</div>
                     </div>
                     <div class="sv-claim-badge">
+                        <div class="outcome-badge" id="outcomeBadge"></div>
                         <div class="sv-claim-badge-label">Claim</div>
                         <div class="sv-claim-badge-num tls-data" id="claimNumberDisplay"></div>
                         <div class="sv-claim-badge-vehicle tls-data" id="vehicleSummaryDisplay"></div>
@@ -112,6 +113,12 @@ export function renderSummaryView(payload) {
                         </div>
                         ${renderGranularCondition(payload.condition)}
                     </div>
+
+                    <!-- PRIOR DAMAGE -->
+                    ${renderPriorDamageSection(payload)}
+
+                    <!-- ACV / SETTLEMENT (total loss only) -->
+                    ${renderACVSection(payload)}
 
                     <!-- DAMAGE ASSESSMENT — Structured Editor -->
                     ${renderDamageAssessmentEditor(payload.damageAssessment)}
@@ -280,6 +287,84 @@ function renderDamageAssessmentEditor(damageAssessment) {
                 <button class="sv-btn sv-btn--reset" id="damageReParseBtn" type="button" style="display:none;">&#8634; Re-parse from estimate</button>
                 <button class="sv-btn sv-btn--reset" id="damageClearAllBtn" type="button">Clear All Fields</button>
                 <div class="damage-editor-status" id="damageEditorStatus"></div>
+            </div>
+        </div>`;
+}
+
+// =========================================
+//  PRIOR DAMAGE SECTION
+// =========================================
+
+function renderPriorDamageSection(payload) {
+    const pd = payload.priorDamage || {};
+    const checked = pd.exists ? 'checked' : '';
+    const textVal = pd.text || '';
+    const textDisplay = pd.exists ? '' : 'display:none;';
+
+    return `
+        <div class="sv-card" id="priorDamageCard">
+            <div class="sv-card-header">
+                <div class="sv-card-title">Prior Damage</div>
+                <div class="sv-card-line"></div>
+            </div>
+            <div class="sv-card-body prior-damage-body">
+                <label class="prior-damage-toggle">
+                    <input type="checkbox" id="priorDamageCheck" ${checked} />
+                    <span class="prior-damage-toggle-label">Prior unrelated damage observed</span>
+                </label>
+                <div class="prior-damage-none" id="priorDamageNone" style="${pd.exists ? 'display:none;' : ''}">
+                    No unrelated prior damage observed
+                </div>
+                <textarea class="prior-damage-textarea" id="priorDamageText"
+                          placeholder="Describe prior damage location and severity..."
+                          style="${textDisplay}">${textVal}</textarea>
+            </div>
+        </div>`;
+}
+
+// =========================================
+//  ACV / SETTLEMENT SECTION (total loss only)
+// =========================================
+
+function renderACVSection(payload) {
+    const s = payload.summary || {};
+    const acv = s.acv || 0;
+    const ded = s.deductible || 0;
+    const net = acv > 0 ? Math.max(0, acv - ded) : 0;
+
+    const fmtAcv = acv > 0 ? acv.toFixed(2) : '';
+    const fmtDed = ded > 0 ? ded.toFixed(2) : '';
+    const fmtNet = net > 0 ? '$' + net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '--';
+
+    return `
+        <div class="sv-card tls-section--total-loss-only" id="acvSection" style="display:none;">
+            <div class="sv-card-header">
+                <div class="sv-card-title">ACV / Settlement</div>
+                <div class="sv-card-line"></div>
+            </div>
+            <div class="sv-card-body">
+                <div class="acv-grid">
+                    <div class="acv-input-wrap">
+                        <div class="sv-field-label">Actual Cash Value (ACV)</div>
+                        <div class="acv-dollar">
+                            <span class="acv-dollar-sign">$</span>
+                            <input type="number" class="acv-input" id="sv-acv"
+                                   step="0.01" min="0" placeholder="0.00" value="${fmtAcv}" />
+                        </div>
+                    </div>
+                    <div class="acv-input-wrap">
+                        <div class="sv-field-label">Deductible</div>
+                        <div class="acv-dollar">
+                            <span class="acv-dollar-sign">$</span>
+                            <input type="number" class="acv-input" id="sv-deductible"
+                                   step="0.01" min="0" placeholder="0.00" value="${fmtDed}" />
+                        </div>
+                    </div>
+                    <div class="acv-input-wrap">
+                        <div class="sv-field-label">Net Settlement</div>
+                        <div class="acv-net-display" id="acvNetDisplay">${fmtNet}</div>
+                    </div>
+                </div>
             </div>
         </div>`;
 }

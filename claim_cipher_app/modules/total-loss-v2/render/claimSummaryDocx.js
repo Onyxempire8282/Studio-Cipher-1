@@ -353,17 +353,26 @@ function buildTokenMap(state, userProfile) {
     }
 
     // ─── Prior Damage ────────────────────────────────────────────────────────
-    const pd = (parsed.priorDamage || '').trim();
-    const pdNormalized = pd.toUpperCase();
-    const pdIsNone = !pd
-        || pdNormalized === 'NO UPD VISIBLE'
-        || pdNormalized === 'NONE'
-        || pdNormalized === 'N/A'
-        || pd.length < 4;
+    // Prefer user-edited value from verification page, fall back to CCC-parsed
+    const userPD = payload.priorDamage || {};
+    let priorDamageText;
+    if (userPD.exists && userPD.text) {
+        priorDamageText = 'Prior damage noted: ' + userPD.text + '.';
+    } else if (userPD.exists) {
+        priorDamageText = 'Prior unrelated damage was observed during inspection.';
+    } else {
+        const pd = (parsed.priorDamage || '').trim();
+        const pdNormalized = pd.toUpperCase();
+        const pdIsNone = !pd
+            || pdNormalized === 'NO UPD VISIBLE'
+            || pdNormalized === 'NONE'
+            || pdNormalized === 'N/A'
+            || pd.length < 4;
 
-    const priorDamageText = pdIsNone
-        ? 'No unrelated prior damage was observed during inspection.'
-        : 'Prior damage noted: ' + pd + '.';
+        priorDamageText = pdIsNone
+            ? 'No unrelated prior damage was observed during inspection.'
+            : 'Prior damage noted: ' + pd + '.';
+    }
 
     // ─── Important Notice ────────────────────────────────────────────────────
     const noticeText = isTotalLoss
@@ -498,6 +507,15 @@ function buildTokenMap(state, userProfile) {
         // Page header
         HEADER_BUSINESS: businessName.toUpperCase(),
     };
+
+    // ─── ACV override for total loss (user-entered on verification page) ──
+    const summaryAcv = _toNumber(payload.summary?.acv);
+    const summaryDed = _toNumber(payload.summary?.deductible);
+    if (isTotalLoss && summaryAcv > 0) {
+        const netSettlement = Math.max(0, summaryAcv - summaryDed);
+        tokens.DEDUCTIBLE_AMOUNT = summaryDed > 0 ? _formatCurrency(summaryDed) : '';
+        tokens.NET_COST_AMOUNT   = _formatCurrency(netSettlement);
+    }
 
     return tokens;
 }

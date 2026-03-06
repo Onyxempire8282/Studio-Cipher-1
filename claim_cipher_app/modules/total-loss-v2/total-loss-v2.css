@@ -1921,3 +1921,195 @@
   width: 100%;
   position: relative; z-index: 1;
 }
+
+/* =================================
+   OUTCOME BADGE — Repairable / Total Loss
+   ================================= */
+
+.outcome-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-family: var(--cipher-font-mono, 'DM Mono', monospace);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.outcome-badge:empty {
+    display: none;
+}
+
+.outcome-badge--repairable {
+    background: rgba(39, 174, 96, 0.15);
+    color: #27ae60;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.outcome-badge--total-loss {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* =================================
+   PRIOR DAMAGE SECTION
+   ================================= */
+
+.prior-damage-body {
+    padding: 16px 20px;
+}
+
+.prior-damage-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 12px;
+}
+
+.prior-damage-toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.prior-damage-toggle input[type="checkbox"]:checked {
+    background: var(--cipher-accent);
+    border-color: var(--cipher-accent);
+}
+
+.prior-damage-toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 6px;
+    height: 9px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+}
+
+.prior-damage-toggle-label {
+    font-size: 0.85rem;
+    color: var(--cipher-text-secondary);
+}
+
+.prior-damage-none {
+    font-size: 0.82rem;
+    color: var(--cipher-text-muted);
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.prior-damage-textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    font-family: var(--cipher-font-mono, 'DM Mono', monospace);
+    color: var(--cipher-text-primary);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    resize: vertical;
+    transition: border-color 0.15s ease;
+}
+
+.prior-damage-textarea:focus {
+    outline: none;
+    border-color: var(--cipher-accent);
+}
+
+/* =================================
+   ACV / SETTLEMENT SECTION
+   ================================= */
+
+.acv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    align-items: end;
+}
+
+.acv-input-wrap .sv-field-label {
+    margin-bottom: 6px;
+}
+
+.acv-dollar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+}
+
+.acv-dollar:focus-within {
+    border-color: var(--cipher-accent);
+}
+
+.acv-dollar-sign {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    color: var(--cipher-text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.acv-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    font-family: var(--cipher-font-mono, 'DM Mono', monospace);
+    color: var(--cipher-text-primary);
+    outline: none;
+    min-width: 0;
+}
+
+.acv-input::-webkit-inner-spin-button,
+.acv-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.acv-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.acv-net-display {
+    font-family: var(--cipher-font-mono, 'DM Mono', monospace);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cipher-text-muted);
+    padding: 8px 0;
+}
+
+.acv-net-display.acv-net--positive {
+    color: var(--cipher-success, #27ae60);
+}
+
+@media (max-width: 600px) {
+    .acv-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}

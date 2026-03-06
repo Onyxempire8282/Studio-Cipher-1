@@ -485,6 +485,10 @@ function buildPayloadFromParsed(parsed) {
         acv: parsed.acv
     });
 
+    payload.summary.isTotalLoss = lossResult.isTotalLoss;
+    payload.summary.acv = parseFloat(parsed.acv) || 0;
+    payload.summary.deductible = parseFloat(parsed.deductible) || 0;
+
     payload.summary.conclusion = lossResult.isTotalLoss
         ? 'Vehicle is declared a total loss based on estimate threshold.'
         : 'Vehicle appears repairable based on current estimate data.';
@@ -761,6 +765,113 @@ function setupDamageAssessmentEditor() {
 }
 
 // =========================================
+//  VERIFICATION FLOW — outcome badge, prior damage, ACV
+// =========================================
+
+/**
+ * Set outcome badge text/class + show/hide ACV section based on isTotalLoss.
+ */
+function configureVerificationFlow() {
+    const isTotalLoss = state.bcifPayload?.summary?.isTotalLoss || false;
+    const badge = document.getElementById('outcomeBadge');
+    if (badge) {
+        badge.textContent = isTotalLoss ? 'TOTAL LOSS' : 'REPAIRABLE';
+        badge.className = 'outcome-badge ' +
+            (isTotalLoss ? 'outcome-badge--total-loss' : 'outcome-badge--repairable');
+    }
+
+    const acvSection = document.getElementById('acvSection');
+    if (acvSection) {
+        acvSection.style.display = isTotalLoss ? '' : 'none';
+    }
+}
+
+/**
+ * Wire prior-damage checkbox toggle + textarea sync to state.
+ */
+function setupPriorDamageToggle() {
+    const check = document.getElementById('priorDamageCheck');
+    const text  = document.getElementById('priorDamageText');
+    const none  = document.getElementById('priorDamageNone');
+    if (!check) return;
+
+    check.addEventListener('change', () => {
+        const checked = check.checked;
+        if (text) text.style.display = checked ? '' : 'none';
+        if (none) none.style.display = checked ? 'none' : '';
+        if (state.bcifPayload) {
+            state.bcifPayload.priorDamage.exists = checked;
+        }
+    });
+
+    if (text) {
+        text.addEventListener('input', () => {
+            if (state.bcifPayload) {
+                state.bcifPayload.priorDamage.text = text.value;
+            }
+        });
+    }
+}
+
+/**
+ * Wire ACV + deductible inputs → auto-calc net settlement, sync to state.
+ */
+function setupACVSection() {
+    const acvInput = document.getElementById('sv-acv');
+    const dedInput = document.getElementById('sv-deductible');
+    const netDisp  = document.getElementById('acvNetDisplay');
+    if (!acvInput || !dedInput) return;
+
+    function recalcNet() {
+        const acv = parseFloat(acvInput.value) || 0;
+        const ded = parseFloat(dedInput.value) || 0;
+        const net = Math.max(0, acv - ded);
+
+        if (netDisp) {
+            if (acv > 0) {
+                netDisp.textContent = '$' + net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                netDisp.classList.toggle('acv-net--positive', net > 0);
+            } else {
+                netDisp.textContent = '--';
+                netDisp.classList.remove('acv-net--positive');
+            }
+        }
+
+        if (state.bcifPayload) {
+            state.bcifPayload.summary.acv = acv;
+            state.bcifPayload.summary.deductible = ded;
+        }
+    }
+
+    acvInput.addEventListener('input', recalcNet);
+    dedInput.addEventListener('input', recalcNet);
+}
+
+/**
+ * Read prior-damage state from DOM (for report generation sync).
+ */
+function syncPriorDamageToState() {
+    if (!state.bcifPayload) return;
+    const check = document.getElementById('priorDamageCheck');
+    const text  = document.getElementById('priorDamageText');
+    state.bcifPayload.priorDamage = {
+        exists: check?.checked || false,
+        text:   text?.value?.trim() || ''
+    };
+}
+
+/**
+ * Read ACV state from DOM (for report generation sync).
+ */
+function syncACVToState() {
+    if (!state.bcifPayload) return;
+    const acvInput = document.getElementById('sv-acv');
+    const dedInput = document.getElementById('sv-deductible');
+    state.bcifPayload.summary.acv = parseFloat(acvInput?.value) || 0;
+    state.bcifPayload.summary.deductible = parseFloat(dedInput?.value) || 0;
+}
+
+// =========================================
 //  SUMMARY LISTENERS — all post-render wiring
 // =========================================
 
@@ -781,6 +892,11 @@ function attachSummaryListeners() {
     setupGranularConditionRows();
     setupDamageAssessmentEditor();
     setupSummaryAccordion();
+
+    // Verification flow — outcome badge, prior damage, ACV
+    configureVerificationFlow();
+    setupPriorDamageToggle();
+    setupACVSection();
 
     // --- Download BCIF Form ---
 
@@ -1079,6 +1195,8 @@ async function handleDownloadSummary() {
     try {
         // Sync damage assessment fields to state before generating
         state.bcifPayload.damageAssessment = getDamageAssessmentFromFields();
+        syncPriorDamageToState();
+        syncACVToState();
 
         const userProfile = await _gatherUserProfile();
         const blob = await generateClaimSummaryDocx(state, userProfile);
@@ -1125,6 +1243,8 @@ async function handleDownload() {
 
         // Sync damage assessment fields to state before generating
         state.bcifPayload.damageAssessment = getDamageAssessmentFromFields();
+        syncPriorDamageToState();
+        syncACVToState();
 
         // ── 2. Build final token map (no server dependency) ──
         state.tokenMap = renderBCIFPayload(state.bcifPayload);

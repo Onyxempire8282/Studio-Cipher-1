@@ -47,6 +47,8 @@ export function createEmptyBCIFPayload() {
             transmission: { rating: 2, comment: "" },
         },
 
+        priorDamage: { exists: false, text: "" },
+
         options: [],
 
         damageAssessment: {
@@ -59,7 +61,10 @@ export function createEmptyBCIFPayload() {
         summary: {
             damageSummary: "",
             conclusion: "",
-            additionalNotes: ""
+            additionalNotes: "",
+            isTotalLoss: false,
+            acv: 0,
+            deductible: 0
         }
     };
 }
