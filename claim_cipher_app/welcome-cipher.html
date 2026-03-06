@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/claim_cipher_app/">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <title>Claim Cipher — Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/welcome-cipher.css">
+  <link rel="stylesheet" href="shared/cipher-help.css">
+</head>
+<body class="wc-page">
+
+<!-- Background effects -->
+<div class="wc-grid"></div>
+<div class="wc-glow"></div>
+
+<div class="wc-container">
+
+  <!-- Header -->
+  <div class="wc-header" id="wc-header">
+    <div class="wc-header-top">
+      <div class="wc-breadcrumb">CLAIM CIPHER — ONBOARDING</div>
+      <button class="wc-skip" id="wc-skip">SKIP &rarr;</button>
+    </div>
+    <h1 class="wc-title">WELCOME TO THE<br><span class="wc-title-accent">CIPHER.</span></h1>
+    <p class="wc-subtitle">You're 5 steps away from running production-grade field operations.</p>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="wc-progress" id="wc-progress">
+    <div class="wc-progress-header">
+      <span class="wc-progress-label">SETUP PROGRESS</span>
+      <span class="wc-progress-count wc-progress-count--active" id="wc-progress-count">0/5 COMPLETE</span>
+    </div>
+    <div class="wc-progress-track">
+      <div class="wc-progress-fill" id="wc-progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Steps (populated by JS) -->
+  <div class="wc-steps" id="wc-steps"></div>
+
+  <!-- All-done banner (hidden until complete) -->
+  <div class="wc-done-banner" id="wc-done-banner" style="display:none">
+    <div>
+      <div class="wc-done-title">&check; CIPHER ACTIVE</div>
+      <div class="wc-done-subtitle">You're fully configured. The system is yours.</div>
+    </div>
+    <button class="wc-enter-btn" id="wc-enter">ENTER &rarr;</button>
+  </div>
+
+  <!-- Footer hint -->
+  <div class="wc-footer" id="wc-footer">
+    CLICK ANY STEP TO MARK COMPLETE &middot; PANEL DISAPPEARS WHEN ALL STEPS ARE DONE
+  </div>
+
+</div>
+
+<!-- ECHO: Claim Cipher Help Assistant -->
+<div id="echo-widget">
+  <div id="echo-panel" class="echo-hidden">
+    <div class="echo-header">
+      <div class="echo-header-left">
+        <div class="echo-header-icon">&#9672;</div>
+        <div class="echo-header-text">
+          <span class="echo-name">ECHO</span>
+          <span class="echo-tagline">CLAIM CIPHER ASSISTANT</span>
+        </div>
+      </div>
+      <div class="echo-header-right">
+        <div class="echo-status-dot"></div>
+        <button class="echo-close" id="echo-close">&#10005;</button>
+      </div>
+    </div>
+    <div class="echo-body" id="echo-chat">
+      <div id="echo-welcome">
+        <div class="echo-welcome-text">Ask me anything about running routes, logging mileage, processing estimates, or configuring your account.</div>
+        <div class="echo-suggestions-label">QUICK QUESTIONS</div>
+        <div id="echo-suggestions"></div>
+      </div>
+    </div>
+    <div class="echo-input-bar">
+      <input id="echo-input" type="text" placeholder="Ask Echo..." autocomplete="off" />
+      <button id="echo-submit">&rarr;</button>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end">
+    <button id="echo-toggle" aria-label="Open Echo Help Assistant">
+      <span class="echo-icon">&#9672;</span>
+      <span class="echo-label">ECHO</span>
+    </button>
+  </div>
+</div>
+
+<script defer src="shared/cipher-workflows.js"></script>
+<script defer src="shared/cipher-help.js"></script>
+<script defer src="scripts/welcome-cipher.js"></script>
+
+</body>
+</html>

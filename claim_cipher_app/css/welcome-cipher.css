@@ -1,0 +1,392 @@
+/* ─── Welcome Cipher — Onboarding ────────────────────────────────── */
+
+.wc-page {
+  min-height: 100vh;
+  background: #0a0b0d;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Background effects ─────────────────────────────────────────── */
+.wc-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(200,146,42,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,146,42,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.wc-glow {
+  position: fixed;
+  top: -200px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,146,42,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Container ──────────────────────────────────────────────────── */
+.wc-container {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.wc-header {
+  margin-bottom: 32px;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: all 0.5s ease;
+}
+.wc-header.wc-mounted {
+  opacity: 1;
+  transform: translateY(0);
+}
+.wc-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.wc-breadcrumb {
+  color: #c8922a;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+.wc-skip {
+  background: none;
+  border: none;
+  color: #444;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-family: inherit;
+  padding: 0;
+  transition: color 0.15s;
+}
+.wc-skip:hover {
+  color: #888;
+}
+.wc-title {
+  font-size: 34px;
+  color: #fff;
+  margin: 8px 0 4px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.2;
+}
+.wc-title-accent {
+  color: #c8922a;
+}
+.wc-subtitle {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 12px 0 0;
+  letter-spacing: 0.5px;
+}
+
+/* ── Progress bar ───────────────────────────────────────────────── */
+.wc-progress {
+  margin-bottom: 28px;
+  opacity: 0;
+  transition: all 0.5s ease 0.1s;
+}
+.wc-progress.wc-mounted {
+  opacity: 1;
+}
+.wc-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.wc-progress-label {
+  color: #555;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+.wc-progress-count {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+.wc-progress-count--active {
+  color: #c8922a;
+}
+.wc-progress-count--done {
+  color: #4ade80;
+}
+.wc-progress-track {
+  height: 2px;
+  background: #1a1b1e;
+  position: relative;
+  overflow: hidden;
+}
+.wc-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(90deg, #c8922a, #e8a830);
+  box-shadow: 0 0 8px rgba(200,146,42,0.5);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wc-progress-fill--done {
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  box-shadow: 0 0 8px rgba(74,222,128,0.5);
+}
+
+/* ── Steps list ─────────────────────────────────────────────────── */
+.wc-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Step card ──────────────────────────────────────────────────── */
+.wc-step {
+  background: #111214;
+  border: 1px solid #1e1f22;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-16px);
+}
+.wc-step.wc-mounted {
+  opacity: 1;
+  transform: translateX(0);
+}
+.wc-step:hover {
+  background: rgba(200,146,42,0.05);
+  border-color: rgba(200,146,42,0.4);
+}
+.wc-step--done {
+  background: rgba(74,222,128,0.03);
+  border-color: rgba(74,222,128,0.2);
+}
+.wc-step--done:hover {
+  background: rgba(74,222,128,0.05);
+  border-color: rgba(74,222,128,0.3);
+}
+
+/* ── Accent line ────────────────────────────────────────────────── */
+.wc-accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.wc-step:hover .wc-accent {
+  opacity: 1;
+  background: #c8922a;
+}
+.wc-step--done .wc-accent {
+  opacity: 1;
+  background: #4ade80;
+}
+
+/* ── Step number box ────────────────────────────────────────────── */
+.wc-number {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid #2a2b2e;
+  background: #1a1b1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: #555;
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+.wc-number--echo {
+  border-color: #c8922a;
+  background: rgba(200,146,42,0.1);
+  color: #c8922a;
+  font-size: 18px;
+}
+.wc-number--done {
+  border-color: rgba(74,222,128,0.4);
+  background: rgba(74,222,128,0.1);
+  color: #4ade80;
+  font-size: 18px;
+}
+
+/* ── Step content ───────────────────────────────────────────────── */
+.wc-content {
+  flex: 1;
+  min-width: 0;
+}
+.wc-section {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  margin-bottom: 6px;
+  color: #c8922a;
+  text-transform: uppercase;
+}
+.wc-section--echo {
+  color: rgba(200,146,42,0.7);
+}
+.wc-section--done {
+  color: rgba(74,222,128,0.35);
+}
+.wc-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.wc-step-title {
+  color: #e0e0e0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+.wc-step-title--echo {
+  color: #c8922a;
+}
+.wc-step-title--done {
+  color: #4ade80;
+  text-decoration: line-through;
+  text-decoration-color: rgba(74,222,128,0.4);
+}
+.wc-cta {
+  color: #c8922a;
+  font-size: 11px;
+  letter-spacing: 1px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+.wc-step:hover .wc-cta {
+  opacity: 1;
+}
+.wc-description {
+  color: #888;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.75;
+  letter-spacing: 0.3px;
+  transition: color 0.3s;
+}
+.wc-description--done {
+  color: #3a5a3a;
+}
+
+/* ── Echo badge ─────────────────────────────────────────────────── */
+.wc-echo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 5px 12px;
+  background: rgba(200,146,42,0.1);
+  border: 1px solid rgba(200,146,42,0.3);
+  font-size: 10px;
+  color: #c8922a;
+  letter-spacing: 2px;
+}
+
+/* ── All-done banner ────────────────────────────────────────────── */
+.wc-done-banner {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: rgba(74,222,128,0.05);
+  border: 1px solid rgba(74,222,128,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: wcFadeIn 0.5s ease;
+}
+.wc-done-title {
+  color: #4ade80;
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.wc-done-subtitle {
+  color: #3a5a3a;
+  font-size: 13px;
+}
+.wc-enter-btn {
+  background: #4ade80;
+  border: none;
+  color: #000;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  transition: background 0.15s;
+}
+.wc-enter-btn:hover {
+  background: #6bee9a;
+}
+
+/* ── Footer hint ────────────────────────────────────────────────── */
+.wc-footer {
+  margin-top: 20px;
+  color: #2a2b2e;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes wcFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Mobile ─────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .wc-page {
+    padding: 24px 16px;
+  }
+  .wc-title {
+    font-size: 26px;
+  }
+  .wc-step {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  .wc-number {
+    width: 34px;
+    height: 34px;
+    font-size: 11px;
+  }
+  .wc-step-title {
+    font-size: 12px;
+  }
+  .wc-cta {
+    display: none;
+  }
+  .wc-done-banner {
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+  }
+}
