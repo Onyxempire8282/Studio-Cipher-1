@@ -144,16 +144,16 @@
 
 /* ── Welcome state ──────────────────────────────────────────────── */
 .echo-welcome-text {
-  color: #888;
-  font-size: 11px;
+  color: #c0c0c0;
+  font-size: 13px;
   line-height: 1.7;
   border-left: 2px solid rgba(200, 146, 42, 0.3);
   padding-left: 10px;
   margin-bottom: 14px;
 }
 .echo-suggestions-label {
-  color: #444;
-  font-size: 9px;
+  color: #777;
+  font-size: 10px;
   letter-spacing: 2px;
   margin-bottom: 8px;
 }
@@ -165,8 +165,8 @@
 .echo-suggestion {
   background: rgba(200, 146, 42, 0.06);
   border: 1px solid rgba(200, 146, 42, 0.2);
-  color: #aaa;
-  font-size: 10px;
+  color: #d0d0d0;
+  font-size: 12px;
   font-family: inherit;
   padding: 6px 10px;
   cursor: pointer;
@@ -200,27 +200,27 @@
   background: #1a1b1e;
   border: 1px solid rgba(200, 146, 42, 0.2);
   padding: 10px 12px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.8;
 }
 .echo-card-title {
   color: #c8922a;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   margin-bottom: 8px;
   text-transform: uppercase;
 }
 .echo-card-label {
-  color: #555;
-  font-size: 9px;
-  letter-spacing: 1.5px;
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 2px;
   margin-bottom: 4px;
 }
 .echo-card-step {
   display: flex;
   gap: 8px;
-  color: #ccc;
+  color: #e0e0e0;
   padding-left: 4px;
   margin-bottom: 2px;
 }
@@ -231,7 +231,8 @@
 .echo-card-output {
   display: flex;
   gap: 8px;
-  color: #888;
+  color: #aaa;
+  font-size: 11px;
   padding-left: 4px;
   margin-bottom: 2px;
 }
@@ -283,13 +284,13 @@
   border: none;
   color: #e0e0e0;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   padding: 11px 14px;
   outline: none;
   letter-spacing: 0.5px;
 }
 #echo-input::placeholder {
-  color: #555;
+  color: #666;
 }
 #echo-submit {
   background: #c8922a;
