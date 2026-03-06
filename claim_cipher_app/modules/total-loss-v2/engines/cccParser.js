@@ -755,7 +755,6 @@ function extractCostBreakdown(text) {
     result.parts = costMap.parts || 0;
     result.paintSupplies = costMap.paintSupplies || 0;
     result.paint = result.paintSupplies;
-    result.salesTax = costMap.salesTax || 0;
     result.subtotal = costMap.subtotal || 0;
     result.deductible = costMap.deductible || 0;
     result.netCost = costMap.netCost || 0;
@@ -791,9 +790,15 @@ function extractCostBreakdown(text) {
         if (k === 'frameLabor')    { result.frameLaborHrs = p.hrs; result.frameLaborRate = p.rate; }
     }
 
-    // Extract sales tax percentage (e.g., "Sales Tax $ 24,021.78 @ 4.5000 %")
-    const taxPctMatch = section.match(/Sales\s+Tax\s+\$?\s*[\d,]+\.?\d*\s*@\s*([\d.]+)\s*%/i);
-    if (taxPctMatch) result.salesTaxRate = parseFloat(taxPctMatch[1]);
+    // Extract sales tax from the full "Sales Tax $ [base] @ [rate] % [amount]" line.
+    // This targeted regex avoids matching miscellaneous T-flagged line items.
+    const taxLineMatch = section.match(
+        /Sales\s+Tax\s+\$?\s*([\d,]+\.?\d*)\s*@\s*([\d.]+)\s*%\s+([\d,]+\.?\d*)/i
+    );
+    if (taxLineMatch) {
+        result.salesTax     = parseFloat(taxLineMatch[3].replace(/,/g, ''));
+        result.salesTaxRate = parseFloat(taxLineMatch[2]);
+    }
 
     return result;
 }

@@ -302,27 +302,16 @@ function buildTokenMap(state, userProfile) {
     // Validate deductible — can't exceed total (parser may grab wrong value)
     const validDeductible = (deductible > 0 && deductible < total) ? deductible : 0;
 
-    // Tax — validate parsed value; if it exceeds 20% of subtotal the parser
-    // likely grabbed the taxable base instead of the actual tax amount.
-    let taxAmount;
+    // Tax — use the targeted parser value directly (extracted from full Sales Tax line)
     const taxRate = _toNumber(parsed.salesTaxRate);
-    if (salesTax > 0 && computedSubtotal > 0 && salesTax < computedSubtotal * 0.20) {
-        taxAmount = salesTax;
-    } else if (taxRate > 0 && computedSubtotal > 0) {
-        taxAmount = Math.round(computedSubtotal * taxRate / 100 * 100) / 100;
-    } else if (total > computedSubtotal && (total - computedSubtotal) < computedSubtotal * 0.20) {
-        taxAmount = total - computedSubtotal;
-    } else {
-        taxAmount = 0;
-    }
+    const taxAmount = salesTax;
 
-    // Sales tax label
+    // Sales tax label — include rate if available
     let salesTaxLabel = 'Sales Tax';
     if (taxRate > 0) {
-        salesTaxLabel = `Sales Tax (${parsed.salesTaxRate}%)`;
-    } else if (taxAmount > 0 && computedSubtotal > 0) {
-        const rate = ((taxAmount / computedSubtotal) * 100).toFixed(1);
-        salesTaxLabel = `Sales Tax (${rate}%)`;
+        // Display rate trimmed of trailing zeros (4.5000 → 4.5)
+        const rateDisplay = parseFloat(taxRate.toFixed(4));
+        salesTaxLabel = `Sales Tax (${rateDisplay}%)`;
     }
 
     // ─── Vehicle Condition ───────────────────────────────────────────────────
