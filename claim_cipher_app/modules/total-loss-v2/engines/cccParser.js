@@ -222,40 +222,16 @@ function extractInsured(text) {
 }
 
 function extractCarrier(text) {
-    // CCC boilerplate disclaimer — always skip these lines
-    const isDisclaimer = (line) =>
-        /SUBJECT\s+TO\s+AUDIT/i.test(line) ||
-        /THIS\s+ESTIMATE.*IS\s+SUBJECT/i.test(line) ||
-        /SUPPLEMENT\s+IS\s+SUBJECT/i.test(line) ||
-        /REVISION\s+BY\s+THE\s+INSURANCE/i.test(line) ||
-        /ISSUES\s+OF\s+COVERAGE/i.test(line) ||
-        /TO\s+BE\s+DETERMINED/i.test(line);
+    // Carrier name appears on the line immediately after "For:" at the top
+    const forMatch = text.match(/^For:\s*\n\s*(.+)$/m);
+    let carrier = forMatch?.[1]?.trim() || '';
 
-    const headerArea = text.split(/Preliminary\s+Estimate/i)[0] || text;
-    const headerLines = headerArea.split("\n").map(l => l.trim()).filter(Boolean);
-    for (const line of headerLines) {
-        if (isDisclaimer(line)) continue;
-        if (/INSURANCE|MUTUAL|INDEMNITY|CASUALTY|ASSURANCE/i.test(line)) {
-            return line;
-        }
+    // Guard: reject if matched disclaimer text — a carrier name will never exceed 8 words
+    if (carrier.split(/\s+/).filter(Boolean).length > 8) {
+        carrier = '';
     }
 
-    const forBlock = text.match(/For\s*:\s*\n([\s\S]*?)(?=Preliminary\s+Estimate)/i);
-    if (forBlock) {
-        const lines = forBlock[1].split("\n").map(l => l.trim()).filter(Boolean);
-        for (const line of lines) {
-            if (isDisclaimer(line)) continue;
-            if (/INSURANCE|MUTUAL|INDEMNITY|CASUALTY|ASSURANCE/i.test(line)) {
-                return line;
-            }
-        }
-        // Return last non-disclaimer line
-        const clean = lines.filter(l => !isDisclaimer(l));
-        if (clean.length > 1) return clean[clean.length - 1];
-        if (clean.length === 1) return clean[0];
-    }
-
-    return "";
+    return carrier;
 }
 
 function extractOwnerPhone(text) {
