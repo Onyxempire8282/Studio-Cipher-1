@@ -422,7 +422,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         // OTHER
         { token: "OTHER_BD", patterns: [/running\s*boards?/i, /side\s*steps?/i] },
         { token: "UP", patterns: [/power\s*retractable\s*running\s*boards?/i] },
-        { token: "XE", patterns: [/xenon\s*headlamps?/i] },
+        { token: "XE", patterns: [/xenon\s*headlamps?/i, /l\.?e\.?d\.?\s*headlamps?/i, /led\s*headlamps?/i] },
         { token: "AR", patterns: [/bed\s*rails?/i] },
         { token: "BL", patterns: [/bedliner/i] },
         { token: "BY", patterns: [/spray[-\s]*on\s*bedliner/i] },
@@ -443,6 +443,7 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "EM", patterns: [/california\s*emissions/i] },
         { token: "SG", patterns: [/stone\s*guard/i] },
         { token: "WI", patterns: [/winch/i] },
+        { token: "DE", patterns: [/deluxe\s*equipment/i] },
         // TRANSMISSION (from template tokens)
         { token: "TRANS_AUTO", patterns: [/automatic\s*transmission/i] },
         { token: "TRANS_OD", patterns: [/overdrive/i] },
@@ -452,6 +453,20 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         { token: "TRANS_S5", patterns: [/5\s*speed\s*transmission/i, /5\s*speed\s*auto/i] },
         { token: "TRANS_S6", patterns: [/6\s*speed\s*transmission/i, /6\s*speed\s*auto/i] },
         { token: "TRANS_4W", patterns: [/4\s*wheel\s*drive/i, /\b4wd\b/i] }
+    ];
+
+    // Legitimate vehicle options that have no BCIF checkbox — skip silently
+    const knownSkip = [
+        /heated\s*steering\s*wheel/i,
+        /hands[-\s]*free/i,
+        /bluetooth/i,
+        /push\s*button\s*start/i,
+        /smart\s*key/i,
+        /auto[-\s]*dimming/i,
+        /rain[-\s]*sensing/i,
+        /ambient\s*light/i,
+        /puddle\s*lamps?/i,
+        /wireless\s*charg/i,
     ];
 
     for (const option of rawOptions) {
@@ -467,7 +482,10 @@ export function mapEstimateOptionsToBCIF(rawOptions = []) {
         }
 
         if (!matched) {
-            console.warn("Unmapped option:", option);
+            const isKnown = knownSkip.some(rx => rx.test(text));
+            if (!isKnown) {
+                console.warn("Unmapped option:", option);
+            }
         }
     }
 

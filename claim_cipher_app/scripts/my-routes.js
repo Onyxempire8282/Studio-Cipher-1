@@ -412,7 +412,8 @@
       return `
         <button class="route-action-btn" data-action="close" data-route-id="${id}"
                 ${canClose ? '' : 'disabled'}>🔒 Close Route</button>
-        ${!canClose ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;">Set miles first</span>' : ''}`;
+        ${!canClose ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;">Set miles first</span>' : ''}
+        <button class="route-action-btn danger" data-action="delete" data-route-id="${id}">Delete</button>`;
     }
 
     if (route.status === 'draft') {
@@ -485,7 +486,7 @@
   }
 
   async function handleDelete(routeId) {
-    showConfirmModal("Delete this draft route? This cannot be undone.", async function() {
+    showConfirmModal("Delete this route? This cannot be undone.", async function() {
       const result = await window.RouteService.deleteRoute(routeId);
       if (result.success) {
         notify("Route deleted", "success");

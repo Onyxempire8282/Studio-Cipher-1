@@ -3605,9 +3605,24 @@ class RouteCipher {
     }
 
     try {
+      // Prefer in-memory destinations; fall back to reading from the DOM
+      // so that saves from non-optimization contexts (edit mode, clearEditState)
+      // still capture whatever the user has entered in the form.
+      let dests = this.destinations;
+      if (!dests || dests.length === 0) {
+        const destInputs = document.querySelectorAll('#destinationsList .destination-input');
+        dests = Array.from(destInputs)
+          .map(div => {
+            const input = div.querySelector('.destination-address-input');
+            const addr = input?.value?.trim();
+            return addr ? { address: addr, priority: 'normal' } : null;
+          })
+          .filter(Boolean);
+      }
+
       const routeState = {
-        startLocation: this.startLocation,
-        destinations: [...(this.destinations || [])],
+        startLocation: this.startLocation || document.getElementById('startLocation')?.value?.trim() || '',
+        destinations: [...dests],
         territoryType: this.settings?.territoryType,
         settings: { ...this.settings },
         days: {},
@@ -4008,9 +4023,10 @@ class RouteCipher {
         if (data.startLocation) {
           const startInput = document.getElementById('startLocation');
           if (startInput) startInput.value = data.startLocation;
+          this.startLocation = data.startLocation;
         }
 
-        if (data.destinations) {
+        if (data.destinations && data.destinations.length > 0) {
           const destList = document.getElementById('destinationsList');
           if (destList) {
             destList.innerHTML = '';
@@ -4023,6 +4039,7 @@ class RouteCipher {
                 if (input) input.value = dest.address || dest;
               }
             });
+            this.destinations = data.destinations;
           }
         }
 
@@ -4041,11 +4058,70 @@ class RouteCipher {
 
   /**
    * Continue the active session (re-enter without archiving)
+   * Restores the most recent route from the active session into the form.
    */
   restoreActiveSession() {
-    this.closeRestoreModal();
-    this.showToast('Continuing active session.');
+    try {
+      if (!window.SessionManager) {
+        this.closeRestoreModal();
+        this.showToast('Continuing active session.');
+        return;
+      }
 
+      const activeSession = window.SessionManager.getActiveSession();
+      if (!activeSession) {
+        this.closeRestoreModal();
+        this.showToast('No active session found.');
+        return;
+      }
+
+      // Retrieve routes for this session
+      const routes = window.SessionManager.getSessionRoutes
+        ? window.SessionManager.getSessionRoutes(activeSession.id || activeSession.sessionId)
+        : [];
+
+      this.closeRestoreModal();
+
+      if (routes.length > 0) {
+        // Restore the most recent route from the session
+        const latestRoute = routes.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0))[0];
+        const data = latestRoute.data || latestRoute || {};
+
+        if (data.startLocation) {
+          const startInput = document.getElementById('startLocation');
+          if (startInput) startInput.value = data.startLocation;
+          this.startLocation = data.startLocation;
+        }
+
+        if (data.destinations && data.destinations.length > 0) {
+          const destList = document.getElementById('destinationsList');
+          if (destList) {
+            destList.innerHTML = '';
+            data.destinations.forEach(dest => {
+              this.addDestination();
+              const inputs = destList.querySelectorAll('.destination-input');
+              const lastDest = inputs[inputs.length - 1];
+              if (lastDest) {
+                const input = lastDest.querySelector('.destination-address-input');
+                if (input) input.value = dest.address || dest;
+              }
+            });
+            this.destinations = data.destinations;
+          }
+        }
+
+        if (data.settings) {
+          this.applySettings(data.settings);
+        }
+      }
+
+      this.showToast(`Continuing session "${activeSession.name}" with ${routes.length} route(s).`);
+
+    } catch (error) {
+      console.error('📁 Error restoring active session:', error);
+      this.closeRestoreModal();
+      this.showToast('Continuing active session.');
+    }
   }
 
   /**
@@ -4062,15 +4138,17 @@ class RouteCipher {
 
       this.closeRestoreModal();
 
-      // Restore start location
+      // Restore start location (DOM + instance state)
       const startInput = document.getElementById('startLocation');
       if (startInput) startInput.value = lastRoute.startLocation;
+      this.startLocation = lastRoute.startLocation;
 
       // Clear and restore destinations
       const destList = document.getElementById('destinationsList');
       if (destList) destList.innerHTML = '';
 
-      if (lastRoute.destinations) {
+      const restoredDests = [];
+      if (lastRoute.destinations && lastRoute.destinations.length > 0) {
         lastRoute.destinations.forEach(dest => {
           this.addDestination();
           const inputs = destList.querySelectorAll('.destination-input');
@@ -4081,21 +4159,28 @@ class RouteCipher {
             if (input) input.value = dest.address;
             if (prioritySelect) prioritySelect.value = dest.priority || 'normal';
           }
+          restoredDests.push(dest);
         });
       }
+      this.destinations = restoredDests;
 
       // Restore settings
       if (lastRoute.settings) {
+        this.settings = { ...this.settings, ...lastRoute.settings };
         this.applySettings(lastRoute.settings);
       }
 
-      // Restore route data
+      // Restore route data — isolated so a modal render error
+      // does not undo the form population above
       if (lastRoute.route) {
         this.currentRoute = lastRoute.route;
         this.currentOriginalRoute = lastRoute.originalRoute;
 
-        // Show results and modal
-        this.showRouteModal(this.currentRoute, this.currentOriginalRoute);
+        try {
+          this.showRouteModal(this.currentRoute, this.currentOriginalRoute);
+        } catch (modalErr) {
+          console.warn('📁 Route modal could not render saved data:', modalErr);
+        }
       }
 
       // Restore edit state if draft was an edit-in-progress
@@ -4107,7 +4192,6 @@ class RouteCipher {
           total_miles: lastRoute.route?.overall?.miles || null,
           status: null
         });
-
       }
 
       this.showToast(lastRoute.editingRouteId ? 'Edit session restored!' : 'Last session restored!');
@@ -4460,6 +4544,9 @@ class RouteCipher {
       `;
     }).join('');
 
+    // Default to today's date so route saves to Supabase (and appears in My Routes)
+    const todayISO = new Date().toISOString().split('T')[0];
+
     const modalHTML = `
       <div id="saveDayModal" class="route-map-modal">
         <div class="sr-modal-inner">
@@ -4472,9 +4559,9 @@ class RouteCipher {
           </div>
           <div class="sr-body">
             <div class="sr-field">
-              <div class="sr-label">Route Date <span class="sr-optional">(optional)</span></div>
-              <input type="date" id="saveDayDatePicker" class="sr-date-input" value="">
-              <div class="sr-hint">Leave blank to save without a date (session only)</div>
+              <div class="sr-label">Route Date</div>
+              <input type="date" id="saveDayDatePicker" class="sr-date-input" value="${todayISO}">
+              <div class="sr-hint">Date is required to save to My Routes</div>
             </div>
             <div class="sr-field" style="margin-top:16px;">
               <div class="sr-label">Select Day to Save</div>

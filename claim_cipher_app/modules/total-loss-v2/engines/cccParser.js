@@ -637,6 +637,15 @@ function extractOptions(text) {
         if (headers.has(line.toUpperCase())) continue;
         if (line.length < 3) continue;
         if (/^\d/.test(line)) continue;
+        // Noise filters — suppress labor categories, dollar amounts,
+        // PDF artifacts, and overly long descriptive lines
+        if (line.length > 80) continue;
+        if (/^(body|paint|frame|mechanical|electrical|structural)\s+labor/i.test(line)) continue;
+        if (/labor\s*(hours?|rate|amount|total)/i.test(line)) continue;
+        if (/subtotal|^total\b|\bgrand\s*total/i.test(line)) continue;
+        if (/^\$[\d,.]+/.test(line)) continue;
+        if (/CCC\s*(ONE|Info)|estimate\s*generated|page\s*\d+\s*of/i.test(line)) continue;
+        if (/^\s*[-–—]{3,}\s*$/.test(line)) continue;
         options.push(line);
     }
 

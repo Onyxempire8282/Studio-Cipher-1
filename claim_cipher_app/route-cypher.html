@@ -634,6 +634,8 @@ if (
         if (routeDate && window.RouteService) {
           const result = await window.RouteService.saveRoute({ date: routeDate, start_address: startLocation, end_address: endAddress, total_miles: route.overall?.miles || 0, stop_count: Math.max(destinations.length, 1) });
           if (result.success) {
+            // Activate the route so it appears as "Open" in My Routes
+            await window.RouteService.activateRoute(result.data.id);
             closeSaveRouteModal();
             if (window.routeCipher.showToast) window.routeCipher.showToast('Route saved to My Routes!');
             showConfirmModal('Route saved! Open My Routes to manage it?', function() { window.location.href = 'my-routes.html'; });

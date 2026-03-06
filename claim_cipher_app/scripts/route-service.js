@@ -431,7 +431,7 @@
     }
 
     /**
-     * Delete a draft route
+     * Delete a draft or active route
      * @param {string} routeId - UUID
      * @returns {Promise<{success: boolean, error?: string}>}
      */
@@ -447,13 +447,13 @@
         }
 
         try {
-            // RLS policy only allows deleting drafts
+            // Allow deleting draft and active routes — closed routes are protected
             const { error } = await client
                 .from('routes')
                 .delete()
                 .eq('id', routeId)
                 .eq('user_id', userId)
-                .eq('status', 'draft');
+                .in('status', ['draft', 'active']);
 
             if (error) throw error;
             return { success: true };
