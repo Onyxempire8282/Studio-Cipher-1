@@ -489,8 +489,8 @@ function buildPayloadFromParsed(parsed) {
         ? 'Vehicle is declared a total loss based on estimate threshold.'
         : 'Vehicle appears repairable based on current estimate data.';
 
-    // Damage assessment — smart parse from CCC data
-    payload.damageAssessment = parseDamageFromEstimate(parsed);
+    // Damage assessment — appraiser fills manually (fields start blank)
+    payload.damageAssessment = { structural: '', bodyPanels: '', restraints: '', interior: '' };
 
     return payload;
 }

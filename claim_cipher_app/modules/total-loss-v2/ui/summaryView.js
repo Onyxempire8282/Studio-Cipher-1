@@ -273,11 +273,11 @@ function renderDamageAssessmentEditor(damageAssessment) {
             <div class="damage-editor-header">
                 <div class="damage-editor-eyebrow">Damage Assessment</div>
                 <div class="damage-editor-title">Review &amp; Edit Before Generating</div>
-                <div class="damage-editor-hint">Fields are pre-filled from the estimate. Edit anything before generating the report. What you see here is exactly what prints.</div>
+                <div class="damage-editor-hint">Fill in each field manually. What you type here is exactly what prints in the report.</div>
             </div>
             ${fieldsMarkup}
             <div class="damage-editor-footer">
-                <button class="sv-btn sv-btn--reset" id="damageReParseBtn" type="button">&#8634; Re-parse from estimate</button>
+                <button class="sv-btn sv-btn--reset" id="damageReParseBtn" type="button" style="display:none;">&#8634; Re-parse from estimate</button>
                 <button class="sv-btn sv-btn--reset" id="damageClearAllBtn" type="button">Clear All Fields</button>
                 <div class="damage-editor-status" id="damageEditorStatus"></div>
             </div>
