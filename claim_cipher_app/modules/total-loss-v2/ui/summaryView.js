@@ -175,8 +175,10 @@ function renderGranularCondition(condition) {
         {
             label: 'Interior',
             items: [
-                { key: 'seats',  label: 'Seats' },
-                { key: 'carpet', label: 'Carpet' },
+                { key: 'seats',     label: 'Seats' },
+                { key: 'carpet',    label: 'Carpet' },
+                { key: 'headliner', label: 'Headliner' },
+                { key: 'dashboard', label: 'Dashboard' },
             ]
         },
         {
