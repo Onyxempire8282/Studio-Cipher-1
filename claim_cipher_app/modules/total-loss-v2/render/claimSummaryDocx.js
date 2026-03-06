@@ -105,16 +105,13 @@ function buildTokenMap(state, userProfile) {
     const payload = state.bcifPayload    || {};
     const parsed  = state.parsedEstimate || {};
 
-    // POI — strip leading numeric code
-    const poiRaw   = parsed.pointOfImpact || '';
-    const poiCode  = parseInt(poiRaw, 10);
-    const poiLabel = poiRaw.replace(/^\d+\s*/, '').trim();
+    // POI — use integer code if available, fall back to parsing string
+    const poiCode  = parsed.pointOfImpactCode ?? parseInt(parsed.pointOfImpact || '', 10);
+    const poiLabel = parsed.pointOfImpactText || (parsed.pointOfImpact || '').replace(/^\d+\s*/, '').trim();
 
-    // Total loss detection — POI 15 OR cost-to-ACV ratio >= 75%
+    // Total loss detection — POI 15 only
     const estimateTotal = _toNumber(parsed.estimateTotal);
-    const acv = _toNumber(parsed.acv);
-    const isTotalLoss = poiCode === 15
-        || (acv > 0 && estimateTotal > 0 && (estimateTotal / acv) >= 0.75);
+    const isTotalLoss = poiCode === 15;
 
     // User profile (fallbacks match _gatherUserProfile defaults)
     const fullName      = (userProfile.fullName      || 'Appraiser').trim();
@@ -482,14 +479,12 @@ function buildTokenMap(state, userProfile) {
         // Prior Damage
         PRIOR_DAMAGE_TEXT: priorDamageText,
 
-        // Recalls
-        RECALL_HEADER: (state.recalls?.length > 0)
-            ? `NHTSA has issued ${state.recalls.length} safety-related recall(s) that may apply to this vehicle:`
-            : 'No open recall notices were identified for this vehicle at the time of inspection.',
-        RECALL_1_ID:   state.recalls?.[0]?.id   || '',
-        RECALL_1_DESC: state.recalls?.[0]?.desc  || '',
-        RECALL_2_ID:   state.recalls?.[1]?.id   || '',
-        RECALL_2_DESC: state.recalls?.[1]?.desc  || '',
+        // Recalls — removed from reports (tokens blanked to clear template placeholders)
+        RECALL_HEADER: '',
+        RECALL_1_ID:   '',
+        RECALL_1_DESC: '',
+        RECALL_2_ID:   '',
+        RECALL_2_DESC: '',
 
         // Certification
         CERT_PARA_1: certPara1,

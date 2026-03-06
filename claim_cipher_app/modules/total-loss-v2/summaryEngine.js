@@ -16,14 +16,12 @@ function buildSummaryParts(parsedEstimate, payload) {
     const est = parsedEstimate || {};
 
     const poiRaw   = est.pointOfImpact || "";
-    const poiCode  = parseInt(poiRaw);
-    const poiLabel = extractPOILabel(poiRaw);
+    const poiCode  = est.pointOfImpactCode ?? parseInt(poiRaw);
+    const poiLabel = est.pointOfImpactText || extractPOILabel(poiRaw);
 
     const estimateTotalNum = toNumber(est.estimateTotal);
-    const acvNum           = toNumber(est.acv);
     const deductibleNum    = toNumber(est.deductible);
-    const isTotalLoss      = poiCode === 15
-        || (acvNum > 0 && estimateTotalNum > 0 && (estimateTotalNum / acvNum) >= 0.75);
+    const isTotalLoss      = poiCode === 15;
 
     const data = {
         claimNumber:   est.claimNumber  || payload.claim.claimNumber || "",
@@ -42,7 +40,6 @@ function buildSummaryParts(parsedEstimate, payload) {
         poiLabel,
         damageAreas:   poiLabel         || "documented areas per estimate",
         estimateTotal: estimateTotalNum ? formatCurrency(estimateTotalNum) : "",
-        acv:           acvNum           ? formatCurrency(acvNum)           : "",
         deductible:    deductibleNum    ? formatCurrency(deductibleNum)    : "",
         repairDays:    est.repairDays   || 0,
         isTotalLoss,
@@ -170,13 +167,9 @@ function buildTotalLossSummary(data) {
     const vehicle = [data.year, data.make, data.model].filter(Boolean).join(' ');
     const vehicleRef = vehicle ? `The ${vehicle}` : 'The vehicle';
 
-    const acvNote = data.acv
-        ? ` Estimate total of ${data.estimateTotal} exceeds the economic repair threshold relative to the vehicle's actual cash value of ${data.acv}.`
-        : '';
-
     return `${vehicleRef} has been designated as a total loss. The point of impact classification within the CCC estimating platform is ${data.poiLabel}.
 
-Based on the severity threshold reached within CCC, the amount of visible structural and mechanical damage meets total loss criteria and is not considered economically repairable.${acvNote}`.trim();
+Based on the severity threshold reached within CCC, the amount of visible structural and mechanical damage meets total loss criteria and is not considered economically repairable.`.trim();
 }
 
 function buildSpecialEventSummary(data) {

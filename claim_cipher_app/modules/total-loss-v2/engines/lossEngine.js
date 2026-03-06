@@ -1,11 +1,5 @@
-// Determines total loss vs repairable logic based on extracted data
-export function evaluateLossType({ estimateTotal = 0, acv = 0, threshold = 0.75 }) {
-    if (!acv || !estimateTotal) return { isTotalLoss: false };
-
-    const ratio = estimateTotal / acv;
-
-    return {
-        isTotalLoss: ratio >= threshold,
-        ratio
-    };
+// Determines total loss vs repairable based on CCC Point of Impact code.
+// POI 15 = Total Loss designation in the CCC estimating platform.
+export function evaluateLossType({ pointOfImpactCode }) {
+    return pointOfImpactCode === 15 ? 'total_loss' : 'repairable';
 }

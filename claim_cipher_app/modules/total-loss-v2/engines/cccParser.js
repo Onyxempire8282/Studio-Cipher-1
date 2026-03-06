@@ -120,6 +120,7 @@ export function parseCCCText(rawText) {
     const vehicleDescLine = extractVehicleDescLine(text) || '';
     const costBreakdown = extractCostBreakdown(text);
     const repairLineItems = extractRepairLineItems(text);
+    const poi = extractPointOfImpact(text);
 
     return {
         success:                  true,
@@ -127,6 +128,7 @@ export function parseCCCText(rawText) {
         insuredName:              extractInsured(text),
         ownerPhone:               extractOwnerPhone(text),
         carrierName:              extractCarrier(text),
+        adjuster:                 extractAdjuster(text),
         claimNumber,
         policyNumber:             extractFieldSameLine(text, /policy\s*#\s*:?/i),
         dateOfLoss:               extractDateOfLoss(text),
@@ -143,9 +145,10 @@ export function parseCCCText(rawText) {
         vin,
         mileage:                  extractMileage(text),
         conditionRating:          extractCondition(text),
-        pointOfImpact:            extractPointOfImpact(text),
+        pointOfImpact:            poi.raw,
+        pointOfImpactCode:        poi.code,
+        pointOfImpactText:        poi.text,
         estimateTotal:            extractEstimateTotal(text),
-        acv:                      extractACV(text),
         estimateTimestamp:        extractTimestamp(text),
         oemOnly:                  detectOEMOnly(text),
         alternativePartsDetected: detectAlternativeParts(text),
@@ -535,12 +538,14 @@ function extractCondition(text) {
 
 function extractPointOfImpact(text) {
     const match = text.match(/Point\s+of\s+Impact\s*:\s*(.+)/i);
-    if (!match) return "";
+    if (!match) return { raw: "", code: null, text: null };
 
-    // Preserve the full POI string including numeric code prefix
-    // (e.g. "09 Rear" or "15 Total Loss") — downstream consumers
-    // parse the code with parseInt() and strip it for the label.
-    return match[1].trim();
+    const raw = match[1].trim();
+    const codeMatch = raw.match(/^(\d+)/);
+    const code = codeMatch ? parseInt(codeMatch[1], 10) : null;
+    const label = raw.replace(/^\d+\s*/, '').trim() || null;
+
+    return { raw, code, text: label };
 }
 
 // =========================================
@@ -556,16 +561,6 @@ function extractEstimateTotal(text) {
 
     const subtotal = text.match(/Subtotal\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
     if (subtotal) return parseFloat(subtotal[1].replace(/,/g, ""));
-
-    return 0;
-}
-
-function extractACV(text) {
-    const acvMatch = text.match(/(?:Actual\s+Cash\s+Value|ACV)\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
-    if (acvMatch) return parseFloat(acvMatch[1].replace(/,/g, ""));
-
-    const fmvMatch = text.match(/Fair\s+Market\s+Value\s*[\s:]*\$?\s*([\d,]+\.?\d*)/i);
-    if (fmvMatch) return parseFloat(fmvMatch[1].replace(/,/g, ""));
 
     return 0;
 }
@@ -820,8 +815,8 @@ function extractCostBreakdown(text) {
         if (k === 'frameLabor')    { result.frameLaborHrs = p.hrs; result.frameLaborRate = p.rate; }
     }
 
-    // Extract sales tax percentage (e.g., "$ 11,232.19 @ 7.0000 %")
-    const taxPctMatch = section.match(/\$\s*[\d,]+\.?\d*\s*@\s*([\d.]+)\s*%/);
+    // Extract sales tax percentage (e.g., "Sales Tax $ 24,021.78 @ 4.5000 %")
+    const taxPctMatch = section.match(/Sales\s+Tax\s+\$?\s*[\d,]+\.?\d*\s*@\s*([\d.]+)\s*%/i);
     if (taxPctMatch) result.salesTaxRate = parseFloat(taxPctMatch[1]);
 
     return result;
@@ -1015,9 +1010,22 @@ function extractRepairLineItems(text) {
     };
 }
 
+function extractAdjuster(text) {
+    // Line-anchored to avoid matching disclaimer text at bottom of estimate
+    const match = text.match(/^Adjuster:\s*(.+)$/m);
+    let adjuster = match?.[1]?.trim() || '';
+
+    // Reject if matched disclaimer text — a real name will never exceed 6 words
+    if (adjuster.split(/\s+/).filter(Boolean).length > 6) {
+        adjuster = '';
+    }
+
+    return adjuster;
+}
+
 function extractShopName(text) {
-    // CCC estimates show "Written By: Shop Name" or "Repair Facility: Shop Name"
-    const writtenBy = text.match(/Written\s+By\s*:\s*([^\n]+)/i);
+    // Line-anchored regex to avoid matching disclaimer text
+    const writtenBy = text.match(/^Written\s+By:\s*(.+)$/m);
     if (writtenBy) return writtenBy[1].trim();
 
     const repairFac = text.match(/Repair\s+Facility\s*:\s*\n?\s*([^\n]+)/i);

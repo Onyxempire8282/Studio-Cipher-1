@@ -40,13 +40,14 @@ export async function startTotalLossV2Flow(parsedEstimate) {
     // 4️⃣ Options Engine
     bcifPayload.options = normalizeOptions(parsedEstimate.options);
 
-    // 5️⃣ Loss Evaluation
-    const lossResult = evaluateLossType({
-        estimateTotal: parsedEstimate.estimateTotal,
-        acv: parsedEstimate.acv
+    // 5️⃣ Loss Evaluation (POI 15 = total loss)
+    const outcome = evaluateLossType({
+        pointOfImpactCode: parsedEstimate.pointOfImpactCode
     });
+    const isTotalLoss = outcome === 'total_loss';
 
-    bcifPayload.summary.conclusion = lossResult.isTotalLoss
+    bcifPayload.summary.isTotalLoss = isTotalLoss;
+    bcifPayload.summary.conclusion = isTotalLoss
         ? "Vehicle is declared a total loss based on estimate threshold."
         : "Vehicle appears repairable based on current estimate data.";
 

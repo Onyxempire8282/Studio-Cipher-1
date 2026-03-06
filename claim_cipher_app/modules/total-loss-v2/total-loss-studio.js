@@ -458,6 +458,7 @@ function buildPayloadFromParsed(parsed) {
     payload.claim.lossLocation = parsed.inspectionLocation  || '';
 
     // New parsed fields → claim
+    payload.claim.adjuster     = parsed.adjuster             || '';
     payload.claim.ownerName    = parsed.ownerName            || '';
     payload.claim.ownerPhone   = parsed.ownerPhone           || '';
     payload.claim.lossZip      = parsed.lossZip              || '';
@@ -479,17 +480,16 @@ function buildPayloadFromParsed(parsed) {
     payload.options = (parsed.options || []).filter(c => typeof c === 'string' && c.length <= 4);
     console.log('[TLS] Payload options:', payload.options);
 
-    // Loss evaluation → conclusion
-    const lossResult = evaluateLossType({
-        estimateTotal: parsed.estimateTotal,
-        acv: parsed.acv
+    // Loss evaluation → conclusion (POI 15 = total loss, everything else = repairable)
+    const outcome = evaluateLossType({
+        pointOfImpactCode: parsed.pointOfImpactCode
     });
+    const isTotalLoss = outcome === 'total_loss';
 
-    payload.summary.isTotalLoss = lossResult.isTotalLoss;
-    payload.summary.acv = parseFloat(parsed.acv) || 0;
+    payload.summary.isTotalLoss = isTotalLoss;
     payload.summary.deductible = parseFloat(parsed.deductible) || 0;
 
-    payload.summary.conclusion = lossResult.isTotalLoss
+    payload.summary.conclusion = isTotalLoss
         ? 'Vehicle is declared a total loss based on estimate threshold.'
         : 'Vehicle appears repairable based on current estimate data.';
 
