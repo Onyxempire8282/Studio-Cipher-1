@@ -485,14 +485,15 @@
   }
 
   async function handleDelete(routeId) {
-    if (!confirm("Delete this draft route? This cannot be undone.")) return;
-    const result = await window.RouteService.deleteRoute(routeId);
-    if (result.success) {
-      notify("Route deleted", "success");
-      await loadRoutes();
-    } else {
-      notify(result.error || "Failed to delete route", "error");
-    }
+    showConfirmModal("Delete this draft route? This cannot be undone.", async function() {
+      const result = await window.RouteService.deleteRoute(routeId);
+      if (result.success) {
+        notify("Route deleted", "success");
+        await loadRoutes();
+      } else {
+        notify(result.error || "Failed to delete route", "error");
+      }
+    });
   }
 
   // ========================================
@@ -872,7 +873,7 @@
       window.showCipherNotification(message, type);
     } else {
 
-      if (type === "error") alert(message);
+      if (type === "error") showAlertModal(message);
     }
   }
 

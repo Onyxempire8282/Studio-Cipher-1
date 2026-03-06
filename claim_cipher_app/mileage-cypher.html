@@ -195,7 +195,7 @@
               <div class="mc-card-line"></div>
               <div style="display:flex;align-items:center;gap:12px;">
                 <div class="mc-card-meta" id="logCount">0 entries</div>
-                <button id="clearSessionBtn" onclick="(function(){if(!confirm('Clear all session entries? This cannot be undone.'))return;window.mileageCipher.calculationHistory=[];window.mileageCipher.persistHistory();updateSessionLogPanel();})()" style="background:none;border:1px solid #333;color:#666;font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;padding:3px 8px;cursor:pointer;text-transform:uppercase;transition:color 0.2s,border-color 0.2s;" onmouseover="this.style.color='#f0a500';this.style.borderColor='#f0a500'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">CLEAR SESSION</button>
+                <button id="clearSessionBtn" onclick="showConfirmModal('Clear all session entries? This cannot be undone.',function(){window.mileageCipher.calculationHistory=[];window.mileageCipher.persistHistory();updateSessionLogPanel();})" style="background:none;border:1px solid #333;color:#666;font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;padding:3px 8px;cursor:pointer;text-transform:uppercase;transition:color 0.2s,border-color 0.2s;" onmouseover="this.style.color='#f0a500';this.style.borderColor='#f0a500'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">CLEAR SESSION</button>
               </div>
             </div>
             <div class="mc-log-items" id="sessionLogList">
@@ -528,6 +528,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 });
 </script>
+
+    <!-- Shared Utilities -->
+    <script defer src="shared/modal-utils.js"></script>
 
     <!-- Core Scripts -->
     <script defer src="scripts/cipher-core.js"></script>

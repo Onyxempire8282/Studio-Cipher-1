@@ -1155,6 +1155,11 @@ class MileageCypherCalculator {
       });
     }
     document.body.style.overflow = "hidden";
+
+    // Close on backdrop click (outside the modal panel)
+    modal.onclick = (e) => {
+      if (e.target === modal) this.closeBillingModal();
+    };
   }
 
   closeBillingModal() {

@@ -125,9 +125,7 @@ window.ClaimCipherAPI = {
     script.onerror = function () {
       console.error("🗺️ Failed to load Google Maps API - invalid key?");
       localStorage.removeItem("user_google_maps_api_key");
-      alert(
-        "Google Maps API key appears to be invalid. Please check your key."
-      );
+      if (typeof showAlertModal === 'function') showAlertModal("Google Maps API key appears to be invalid. Please check your key.");
     };
 
     document.head.appendChild(script);

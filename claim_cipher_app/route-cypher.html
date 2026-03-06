@@ -519,6 +519,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 
   <!-- Core Scripts (utilities only, no auth) -->
+  <script defer src="shared/modal-utils.js"></script>
   <script defer src="scripts/cipher-core.js"></script>
 
   <!-- Shared Firm Storage & Session Manager -->
@@ -593,7 +594,7 @@ if (
 
     function openSaveRouteModal() {
       if (!window.routeCipher || !window.routeCipher.currentRoute) {
-        alert('No route to save. Please optimize a route first.');
+        showAlertModal('No route to save. Please optimize a route first.');
         return;
       }
       const route = window.routeCipher.currentRoute;
@@ -635,16 +636,16 @@ if (
           if (result.success) {
             closeSaveRouteModal();
             if (window.routeCipher.showToast) window.routeCipher.showToast('Route saved to My Routes!');
-            if (confirm('Route saved! Open My Routes to manage it?')) window.location.href = 'my-routes.html';
+            showConfirmModal('Route saved! Open My Routes to manage it?', function() { window.location.href = 'my-routes.html'; });
           } else {
-            alert('Failed to save route: ' + (result.error || 'Unknown error'));
+            showAlertModal('Failed to save route: ' + (result.error || 'Unknown error'));
           }
         } else {
           closeSaveRouteModal();
           if (window.routeCipher?.showToast) window.routeCipher.showToast('Route saved to current session.');
         }
       } catch (err) {
-        alert('Error saving route: ' + err.message);
+        showAlertModal('Error saving route: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Save Route';
@@ -724,42 +725,6 @@ if (
     })();
   </script>
 
-<!-- Confirm Modal -->
-<div id="confirm-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center;">
-  <div style="background:#1a1a1a; border:1px solid #c8922a; padding:32px; max-width:420px; width:90%;">
-    <p id="confirm-modal-message" style="color:#fff; font-family:monospace; margin-bottom:24px; line-height:1.6;"></p>
-    <div style="display:flex; gap:12px; justify-content:flex-end;">
-      <button id="confirm-modal-cancel" style="background:transparent; color:#fff; border:1px solid #555; padding:10px 24px; cursor:pointer; font-family:monospace;">CANCEL</button>
-      <button id="confirm-modal-ok" style="background:#c8922a; color:#000; border:none; padding:10px 24px; cursor:pointer; font-family:monospace; font-weight:bold;">OK</button>
-    </div>
-  </div>
-</div>
-<script>
-function showConfirmModal(message, onConfirm, onCancel) {
-  const modal = document.getElementById('confirm-modal');
-  document.getElementById('confirm-modal-message').textContent = message;
-  modal.style.display = 'flex';
-
-  const okBtn = document.getElementById('confirm-modal-ok');
-  const cancelBtn = document.getElementById('confirm-modal-cancel');
-
-  function cleanup() {
-    modal.style.display = 'none';
-    okBtn.replaceWith(okBtn.cloneNode(true));
-    cancelBtn.replaceWith(cancelBtn.cloneNode(true));
-  }
-
-  document.getElementById('confirm-modal-ok').addEventListener('click', () => {
-    cleanup();
-    if (onConfirm) onConfirm();
-  });
-
-  document.getElementById('confirm-modal-cancel').addEventListener('click', () => {
-    cleanup();
-    if (onCancel) onCancel();
-  });
-}
-</script>
 
 </body>
 </html>

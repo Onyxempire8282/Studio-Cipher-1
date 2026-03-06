@@ -182,12 +182,12 @@ class SettingsManager {
     }
 
     resetToDefaults() {
-        if (confirm('Reset all settings to defaults? This cannot be undone.')) {
+        showConfirmModal('Reset all settings to defaults? This cannot be undone.', () => {
             this.settings = { ...this.defaultSettings };
             localStorage.setItem(this.settingsKey, JSON.stringify(this.settings));
             this.populateFormFields();
             this.showNotification('Settings reset to defaults', 'info');
-        }
+        });
     }
 
     exportData() {
@@ -261,7 +261,7 @@ class SettingsManager {
     }
 
     clearCache() {
-        if (confirm('Clear all cached data? This will not affect saved settings.')) {
+        showConfirmModal('Clear all cached data? This will not affect saved settings.', () => {
             // Clear non-essential cached data.
             // Firm keys are explicitly protected — firms are Supabase-backed and
             // the cache must survive a local clear so offline fallback still works.
@@ -274,27 +274,27 @@ class SettingsManager {
                 'demo_cipher_last_selected_firm',
             ];
             const allKeys = Object.keys(localStorage);
-            
+
             allKeys.forEach(key => {
                 if (!keysToKeep.includes(key)) {
                     localStorage.removeItem(key);
                 }
             });
-            
+
             this.showNotification('Cache cleared successfully', 'info');
-        }
+        });
     }
 
     resetAll() {
-        if (confirm('⚠️ DANGER: This will delete ALL data including settings, history, and firms. Are you absolutely sure?')) {
-            if (confirm('This action cannot be undone. Click OK to proceed with complete reset.')) {
+        showConfirmModal('DANGER: This will delete ALL data including settings, history, and firms. Are you absolutely sure?', () => {
+            showConfirmModal('This action cannot be undone. Click OK to proceed with complete reset.', () => {
                 localStorage.clear();
                 this.showNotification('All data has been reset', 'warning');
                 setTimeout(() => {
                     window.location.href = 'login-cypher.html';
                 }, 2000);
-            }
-        }
+            });
+        });
     }
 
     // Get a specific setting value

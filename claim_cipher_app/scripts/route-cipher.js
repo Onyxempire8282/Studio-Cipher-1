@@ -2390,14 +2390,12 @@ class RouteCipher {
     );
 
     if (!dateInput.value) {
-      alert("Please select an appointment date first");
-      dateInput.focus();
+      showAlertModal("Please select an appointment date first", function() { dateInput.focus(); });
       return;
     }
 
     if (!timeInput.value) {
-      alert("Please set an appointment time first");
-      timeInput.focus();
+      showAlertModal("Please set an appointment time first", function() { timeInput.focus(); });
       return;
     }
 
@@ -2528,7 +2526,7 @@ class RouteCipher {
       .join("\n");
 
     navigator.clipboard.writeText(mobileData).then(() => {
-      alert(
+      showAlertModal(
         `Route exported for Mobile Cipher!\n\n${appointments.length} appointments copied to clipboard and saved locally.`
       );
     });
@@ -2965,9 +2963,9 @@ class RouteCipher {
     this.showToast(`Exported ${totalDistance} miles to Mileage Cipher`);
 
     // Optionally redirect to mileage calculator
-    if (confirm("Open Mileage Cipher with this distance?")) {
+    showConfirmModal("Open Mileage Cipher with this distance?", function() {
       window.location.href = "mileage-cypher.html";
-    }
+    });
   }
 
   getStopPriority(stopAddress, routeData) {

@@ -1080,7 +1080,7 @@ class TotalLossFormsProcessor {
 
     showError(message) {
         // Simple error display - could be enhanced with better UI
-        alert(`Error: ${message}`);
+        if (typeof showAlertModal === 'function') showAlertModal('Error: ' + message);
         console.error('Error:', message);
     }
 

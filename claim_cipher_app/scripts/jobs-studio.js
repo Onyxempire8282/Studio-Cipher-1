@@ -1900,17 +1900,17 @@ class JobsStudioManager {
     }
 
     // Confirm deletion
-    if (
-      !confirm(
-        `⚠️ Are you sure you want to delete job ${job.claimNumber}?\n\nThis action cannot be undone.`
-      )
-    ) {
-
-      return;
+    if (typeof showConfirmModal === 'function') {
+      showConfirmModal(
+        `Are you sure you want to delete job ${job.claimNumber}?\n\nThis action cannot be undone.`,
+        () => this._executeDeleteJob(job, jobId)
+      );
     }
+    return;
+  }
 
-
-    this.showNotification(`🗑️ Deleting job ${job.claimNumber}...`, "info");
+  async _executeDeleteJob(job, jobId) {
+    this.showNotification(`Deleting job ${job.claimNumber}...`, "info");
 
     try {
       if (this.supabase) {

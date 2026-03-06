@@ -46,5 +46,5 @@ window.onGoogleMapsAPIReady = function () {
 // Security Agent: Error Handler
 window.gm_authFailure = function () {
   console.error("🔒 Security Agent: Google Maps authentication failed");
-  alert("Google Maps authentication failed. Please check API configuration.");
+  if (typeof showAlertModal === 'function') showAlertModal("Google Maps authentication failed. Please check API configuration.");
 };
