@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             setStatus('Password updated. Redirecting to login...', 'success');
             setTimeout(() => {
-                window.location.href = 'claim_cipher_app/login-cypher.html';
+                window.location.href = 'https://app.claimcipherhq.com/login-cypher.html';
             }, 1500);
         });
     }

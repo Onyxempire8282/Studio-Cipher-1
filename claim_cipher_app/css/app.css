@@ -237,3 +237,124 @@ body::before {
 .rivet.bl { bottom: 8px; left: 8px; }
 .rivet.br { bottom: 8px; right: 8px; }
 .cipher-btn .rivet { width: 6px; height: 6px; background: #1a1d21; box-shadow: none; }
+
+/* ── SESSION WARNING MODAL ── */
+.session-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(7, 8, 10, 0.88);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.session-modal-overlay.active {
+  display: flex;
+}
+
+.session-modal {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-top: 2px solid var(--amber);
+  width: 100%;
+  max-width: 420px;
+  margin: 20px;
+  box-shadow:
+    0 0 0 1px rgba(232, 149, 42, 0.06),
+    0 40px 80px rgba(0, 0, 0, 0.8);
+  animation: session-modal-in 0.2s ease forwards;
+  position: relative;
+}
+
+@keyframes session-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.session-modal-header {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}
+
+.session-modal-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 3px;
+}
+
+.session-modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.05em;
+  color: var(--white);
+  line-height: 1;
+}
+
+.session-modal-body {
+  padding: 28px 24px 24px;
+  text-align: center;
+}
+
+.session-modal-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.session-modal-message {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.session-countdown {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+}
+
+/* Countdown turns red under 60 seconds */
+.session-countdown.urgent {
+  color: #c0392b;
+  animation: countdown-pulse 1s ease infinite;
+}
+
+@keyframes countdown-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.session-modal-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.session-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}

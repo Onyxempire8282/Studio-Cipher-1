@@ -75,7 +75,18 @@
     try {
       const { user } = await window.SupabaseAuth.getSession();
       if (user) {
-        const name = user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
+        // Try profile table first (reflects Settings > Profile edits)
+        let profileName = '';
+        try {
+          const sb = window.SupabaseAuth.init();
+          const { data } = await sb.from('profiles')
+              .select('first_name')
+              .eq('user_id', user.id)
+              .maybeSingle();
+          if (data?.first_name) profileName = data.first_name.toUpperCase();
+        } catch (_) { /* best-effort */ }
+
+        const name = profileName || user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
         const el = document.getElementById("userName");
         if (el) el.textContent = name;
       }

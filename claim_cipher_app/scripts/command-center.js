@@ -484,11 +484,25 @@ class CommandCenterManager {
             const welcomeEl = document.getElementById('welcomeTitle');
             const userNameEl = document.getElementById('userName');
 
-            // Prefer metadata name, fall back to email prefix
-            let name = (metadata && (metadata.full_name || metadata.name)) ||
+            // Try profile table first (reflects Settings > Profile edits)
+            let profileName = '';
+            try {
+                const sb = window.SupabaseAuth.init();
+                const { data: { user } } = await sb.auth.getUser();
+                if (user?.id) {
+                    const { data } = await sb.from('profiles')
+                        .select('first_name')
+                        .eq('user_id', user.id)
+                        .maybeSingle();
+                    if (data?.first_name) profileName = data.first_name.toUpperCase();
+                }
+            } catch (_) { /* best-effort */ }
+
+            // Prefer profile name, then metadata, then email prefix
+            let name = profileName || (metadata && (metadata.full_name || metadata.name)) ||
                        email.split('@')[0];
             // Capitalize first letter of email prefix if used
-            if (!metadata || (!metadata.full_name && !metadata.name)) {
+            if (!profileName && (!metadata || (!metadata.full_name && !metadata.name))) {
                 name = name.charAt(0).toUpperCase() + name.slice(1);
             }
 

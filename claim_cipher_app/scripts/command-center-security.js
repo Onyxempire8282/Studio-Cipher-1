@@ -80,42 +80,85 @@ class CommandCenterSecurity {
     }
 
     showSessionWarning() {
-        const warningModal = this.createSecurityModal(
-            'Session Warning',
-            `
-            <div style="padding: 20px; text-align: center;">
-                <p style="margin-bottom: 20px; color: #f39c12;">
-                    Your session will expire in 5 minutes due to inactivity.
-                </p>
-                <p style="margin-bottom: 20px; color: #7f8c8d;">
-                    Click "Stay Logged In" to extend your session.
-                </p>
-                <div>
-                    <button onclick="commandCenterSecurity.extendSession()"
-                            style="background: #27ae60; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px;">
-                        Stay Logged In
-                    </button>
-                    <button onclick="commandCenterSecurity.secureLogout()"
-                            style="background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px;">
-                        Logout Now
-                    </button>
-                </div>
-            </div>
-            `,
-            false
-        );
+        // Inject modal HTML once if it doesn't exist yet
+        if (!document.getElementById('sessionWarningModal')) {
+            const tpl = document.createElement('div');
+            tpl.innerHTML = `
+<div class="session-modal-overlay" id="sessionWarningModal">
+  <div class="session-modal">
+    <div class="session-modal-header">
+      <div class="session-modal-eyebrow">System Alert</div>
+      <div class="session-modal-title">Session Expiring</div>
+    </div>
+    <div class="session-modal-body">
+      <div class="session-modal-icon">\u23F1</div>
+      <div class="session-modal-message">
+        Your session will expire in
+        <span class="session-countdown" id="sessionCountdown">5:00</span>
+        due to inactivity.
+      </div>
+      <div class="session-modal-sub">
+        Click \u201CStay Logged In\u201D to extend your session.
+      </div>
+    </div>
+    <div class="session-modal-footer">
+      <button class="btn btn-ghost" id="sessionLogoutBtn">Logout Now</button>
+      <button class="btn btn-primary" id="sessionStayBtn">Stay Logged In \u2192</button>
+    </div>
+  </div>
+</div>`;
+            document.body.appendChild(tpl.firstElementChild);
 
-        document.body.appendChild(warningModal);
+            document.getElementById('sessionStayBtn').addEventListener('click', () => {
+                this.extendSession();
+            });
+            document.getElementById('sessionLogoutBtn').addEventListener('click', () => {
+                this.secureLogout();
+            });
+        }
+
+        // Show modal
+        document.getElementById('sessionWarningModal')?.classList.add('active');
+
+        // Start live countdown (5 minutes = 300 seconds)
+        this._countdownSeconds = 300;
+        clearInterval(this._countdownInterval);
+        this.updateCountdownDisplay(this._countdownSeconds);
+        this._countdownInterval = setInterval(() => {
+            this._countdownSeconds--;
+            if (this._countdownSeconds <= 0) {
+                clearInterval(this._countdownInterval);
+                this.handleSessionExpiry();
+                return;
+            }
+            this.updateCountdownDisplay(this._countdownSeconds);
+        }, 1000);
+    }
+
+    updateCountdownDisplay(secondsRemaining) {
+        const mins = Math.floor(secondsRemaining / 60);
+        const secs = secondsRemaining % 60;
+        const display = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+        const el = document.getElementById('sessionCountdown');
+        if (!el) return;
+
+        el.textContent = display;
+
+        if (secondsRemaining <= 60) {
+            el.classList.add('urgent');
+        } else {
+            el.classList.remove('urgent');
+        }
     }
 
     extendSession() {
-
-
         // Close warning modal
-        const modal = document.querySelector('.security-modal-overlay');
-        if (modal) {
-            modal.remove();
-        }
+        document.getElementById('sessionWarningModal')?.classList.remove('active');
+        clearInterval(this._countdownInterval);
+
+        // Reset countdown urgency state for next show
+        document.getElementById('sessionCountdown')?.classList.remove('urgent');
 
         // Reset timers
         this.resetSessionTimers();

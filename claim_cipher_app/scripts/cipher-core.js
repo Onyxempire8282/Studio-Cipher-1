@@ -277,7 +277,21 @@ window.handleLogout = handleLogout;
         const { email, metadata } = await window.SupabaseAuth.getCurrentUser();
         if (!email) return;
 
-        const name = (metadata && (
+        // Try profile table first (reflects Settings > Profile edits)
+        let profileName = '';
+        try {
+            const sb = window.SupabaseAuth.init();
+            const { data: { user } } = await sb.auth.getUser();
+            if (user?.id) {
+                const { data } = await sb.from('profiles')
+                    .select('first_name')
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+                if (data?.first_name) profileName = data.first_name.toUpperCase();
+            }
+        } catch (_) { /* profile lookup is best-effort */ }
+
+        const name = profileName || (metadata && (
             metadata.full_name ||
             metadata.name ||
             metadata.company ||

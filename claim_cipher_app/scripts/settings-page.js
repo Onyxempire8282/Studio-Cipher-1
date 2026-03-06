@@ -121,6 +121,9 @@ function bindProfileForm() {
         });
         showToast('Profile saved', 'success');
         updateSectionBadge('profileSection', 'SAVED');
+        const fn = getVal('firstName');
+        const navName = document.getElementById('userName');
+        if (navName && fn) navName.textContent = fn.toUpperCase();
       } catch (err) {
         showToast(err.message || 'Failed to save profile', 'error');
         console.error('saveProfile error:', err);

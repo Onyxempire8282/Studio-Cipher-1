@@ -600,6 +600,15 @@ class RouteCipher {
         }, 5000);
       }
 
+      // Capture baseline distance in original input order (no extra API calls)
+      const baselineStops = [routeData.startLocation, ...routeData.destinations.map(d => d.address)];
+      let baselineMiles = 0;
+      for (let i = 0; i < baselineStops.length - 1; i++) {
+        const cached = window.DistanceCache?.get(baselineStops[i], baselineStops[i + 1]);
+        baselineMiles += cached ? cached.miles : this.estimateDistance(baselineStops[i], baselineStops[i + 1]);
+      }
+      window.routeBaseline = Math.round(baselineMiles);
+
       const optimizedRoute = await this.calculateOptimizedRoute(routeData);
 
 
@@ -615,6 +624,9 @@ class RouteCipher {
         splitRoute = this.mergeEditedDay(splitRoute, this.editingDayIndex);
         this.editingDayIndex = null; // Clear editing state
       }
+
+      // Capture optimized distance from Google Directions result
+      window.routeOptimized = splitRoute.overall.miles;
 
       this.displayResults(splitRoute, optimizedRoute);
       this.renderMapRoute(optimizedRoute, splitRoute);
@@ -2062,6 +2074,32 @@ class RouteCipher {
       : `${_remMins}<span>m</span>`;
     if (_daysEl)  _daysEl.textContent  = splitRoute.days.length;
     if (_stopsEl) _stopsEl.textContent = _totalStops;
+
+    // Route Efficiency display
+    const effFill = document.getElementById('efficiencyFill');
+    const effPct  = document.getElementById('efficiencyPct');
+    if (effFill && effPct) {
+      const baseline  = window.routeBaseline || 0;
+      const optimized = window.routeOptimized || 0;
+      const saved = Math.round(baseline - optimized);
+      const pct   = baseline > 0 ? Math.round((optimized / baseline) * 100) : 100;
+
+      if (saved <= 0 || baseline <= 0) {
+        effPct.textContent = '100%  ·  Optimal order';
+        effFill.style.width = '100%';
+        effFill.style.background = '#4caf50';
+        effPct.style.color = '#4caf50';
+      } else {
+        effPct.textContent = `${pct}%  ·  ${saved} mi saved`;
+        effFill.style.width = `${pct}%`;
+
+        // Color code by efficiency tier
+        const color = pct >= 90 ? '#4caf50' : pct >= 75 ? '#c8922a' : '#e53e3e';
+        effFill.style.background = color;
+        effFill.style.boxShadow  = `0 0 6px ${color}55`;
+        effPct.style.color = color;
+      }
+    }
 
     // Show first day's timeline
     this.showDayTimeline(0, splitRoute, originalRoute);
@@ -4250,29 +4288,27 @@ class RouteCipher {
    * Clear all saved routes from localStorage and SessionManager
    */
   clearSavedRoutes() {
-    if (!confirm('Are you sure you want to clear all saved routes? This cannot be undone.')) {
-      return;
-    }
+    showConfirmModal('Are you sure you want to clear all saved routes? This cannot be undone.', () => {
+      try {
+        // Clear draft state
+        localStorage.removeItem('cipher_optimizer_draft_state');
 
-    try {
-      // Clear draft state
-      localStorage.removeItem('cipher_optimizer_draft_state');
+        // Clear SessionManager active session
+        if (window.SessionManager) {
+          window.SessionManager.startFresh();
+        }
 
-      // Clear SessionManager active session
-      if (window.SessionManager) {
-        window.SessionManager.startFresh();
+        // Clear in-memory state and re-render UI
+        this.resetRouteState();
+        this.renderEmptyRouteState();
+
+        this.showToast('All saved routes cleared');
+
+      } catch (error) {
+        console.error('📁 Error clearing saved routes:', error);
+        this.showError('Failed to clear saved routes');
       }
-
-      // Clear in-memory state and re-render UI
-      this.resetRouteState();
-      this.renderEmptyRouteState();
-
-      this.showToast('All saved routes cleared');
-
-    } catch (error) {
-      console.error('📁 Error clearing saved routes:', error);
-      this.showError('Failed to clear saved routes');
-    }
+    });
   }
 
   /**
@@ -4520,15 +4556,14 @@ function removeDestination(button) {
 
   // If input has content, ask for confirmation
   if (address) {
-    if (!confirm(`Remove destination: "${address}"?`)) {
-      return;
-    }
+    showConfirmModal(`Remove destination: "${address}"?`, () => {
+      destDiv.remove();
+    });
+    return;
   }
 
   // Remove the destination
   destDiv.remove();
-
-
 }
 
 function hideError() {

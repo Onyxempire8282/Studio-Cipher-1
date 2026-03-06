@@ -360,9 +360,6 @@
         if (amountEl) {
           amountEl.textContent = '$' + result.totalFee;
         }
-        // Update session log panel + debug log
-        console.log('Session history:', window.mileageCipher.calculationHistory);
-        updateSessionLogPanel();
       };
 
       // Patch onFirmChange → populate Billing Summary firm/rate/free

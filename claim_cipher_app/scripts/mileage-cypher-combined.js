@@ -14,6 +14,10 @@ class MileageCypherCalculator {
     // Tracks: 'google_api' | 'cache_google' | 'user_manual' | null
     this.currentDistanceSource = null;
 
+    // Guards to prevent duplicate session log entries
+    this._autoDistanceInFlight = false;
+    this._settingDistanceProgrammatically = false;
+
     this.initializeRuntimeBindings();
     this.loadFirmsToDropdown();
   }
@@ -87,6 +91,8 @@ class MileageCypherCalculator {
     const distanceInput = document.getElementById("distanceMiles");
     if (distanceInput) {
       distanceInput.addEventListener("input", () => {
+        // Skip auto-calc when distance was set by calculateDistanceWithGoogleMaps
+        if (this._settingDistanceProgrammatically) return;
         if (this.settings.autoCalculateEnabled) {
           this.debounceAutoCalculate();
         }
@@ -360,6 +366,18 @@ class MileageCypherCalculator {
   }
 
   async triggerAutoDistance() {
+    // Prevent concurrent auto-distance calls (blur + Enter + input can all fire)
+    if (this._autoDistanceInFlight) return;
+    this._autoDistanceInFlight = true;
+
+    try {
+      await this._doAutoDistance();
+    } finally {
+      this._autoDistanceInFlight = false;
+    }
+  }
+
+  async _doAutoDistance() {
     // Check if Google Maps API is available
     const apiKey = window.MILEAGE_CYPHER_CONFIG?.GOOGLE_MAPS_API_KEY;
 
@@ -393,11 +411,19 @@ class MileageCypherCalculator {
       return;
     }
 
+    // Skip if we already resolved distance for this exact address pair
+    const pairKey = `${pointA}|||${pointB}`;
+    if (this._lastResolvedPair === pairKey) {
+      console.log("Auto-distance skipped: already resolved for this address pair");
+      return;
+    }
+
     console.log("Calculating distance from:", pointA, "to:", pointB);
     this.updateDistanceStatus("Calculating distance...");
 
     try {
       await this.calculateDistanceWithGoogleMaps(pointA, pointB);
+      this._lastResolvedPair = pairKey;
       this.updateDistanceStatus("Distance calculated");
     } catch (error) {
       console.error("Auto-distance calculation failed:", error);
@@ -459,15 +485,16 @@ class MileageCypherCalculator {
       // Track source metadata for billing validation
       this.currentDistanceSource = 'google_api';
 
+      // Flag prevents the distanceMiles 'input' listener from cascading
+      this._settingDistanceProgrammatically = true;
       distanceInput.value = result;
+      this._settingDistanceProgrammatically = false;
       console.log("Distance set to:", result, "miles (source: google_api)");
 
-      // Automatically perform the billing calculation
-      setTimeout(() => {
-        console.log("Starting automatic billing calculation...");
-        this.performCalculation(true); // true = auto, no modal
-        this.showCalculateLoading(false); // Hide loading state
-      }, 1000); // Small delay to let user see the distance notification
+      // Single authoritative billing calculation after distance is set
+      console.log("Starting automatic billing calculation...");
+      this.performCalculation(true); // true = auto, no modal
+      this.showCalculateLoading(false);
     } finally {
       distanceInput.placeholder = originalPlaceholder;
       distanceInput.disabled = false;
@@ -503,15 +530,15 @@ class MileageCypherCalculator {
       const result = this.calculateMileageBilling(calculationData);
       this.currentCalculation = result;
 
-      // Add to history BEFORE rendering so the session log panel includes this entry
-      this.calculationHistory.unshift(result);
-      if (this.calculationHistory.length > 10) {
-        this.calculationHistory = this.calculationHistory.slice(0, 10);
-      }
-      this.persistHistory();
-
       this.displayCalculationResults(result);
       if (!auto) {
+        // Add to history only on explicit button click — not on auto-distance
+        this.calculationHistory.unshift(result);
+        if (this.calculationHistory.length > 10) {
+          this.calculationHistory = this.calculationHistory.slice(0, 10);
+        }
+        this.persistHistory();
+        if (typeof updateSessionLogPanel === 'function') updateSessionLogPanel();
         this.openBillingModal();
       }
 
@@ -874,6 +901,7 @@ class MileageCypherCalculator {
     this.latestCopyText = "";
 
     this.currentCalculation = null;
+    this._lastResolvedPair = null;
 
     // Focus on destination input
     if (pointBInput) {

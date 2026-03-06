@@ -724,6 +724,43 @@ if (
     })();
   </script>
 
+<!-- Confirm Modal -->
+<div id="confirm-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#1a1a1a; border:1px solid #c8922a; padding:32px; max-width:420px; width:90%;">
+    <p id="confirm-modal-message" style="color:#fff; font-family:monospace; margin-bottom:24px; line-height:1.6;"></p>
+    <div style="display:flex; gap:12px; justify-content:flex-end;">
+      <button id="confirm-modal-cancel" style="background:transparent; color:#fff; border:1px solid #555; padding:10px 24px; cursor:pointer; font-family:monospace;">CANCEL</button>
+      <button id="confirm-modal-ok" style="background:#c8922a; color:#000; border:none; padding:10px 24px; cursor:pointer; font-family:monospace; font-weight:bold;">OK</button>
+    </div>
+  </div>
+</div>
+<script>
+function showConfirmModal(message, onConfirm, onCancel) {
+  const modal = document.getElementById('confirm-modal');
+  document.getElementById('confirm-modal-message').textContent = message;
+  modal.style.display = 'flex';
+
+  const okBtn = document.getElementById('confirm-modal-ok');
+  const cancelBtn = document.getElementById('confirm-modal-cancel');
+
+  function cleanup() {
+    modal.style.display = 'none';
+    okBtn.replaceWith(okBtn.cloneNode(true));
+    cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+  }
+
+  document.getElementById('confirm-modal-ok').addEventListener('click', () => {
+    cleanup();
+    if (onConfirm) onConfirm();
+  });
+
+  document.getElementById('confirm-modal-cancel').addEventListener('click', () => {
+    cleanup();
+    if (onCancel) onCancel();
+  });
+}
+</script>
+
 </body>
 </html>
 

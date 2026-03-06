@@ -598,8 +598,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return;
             }
 
-            const basePath = window.GITHUB_PAGES_ENV?.getBasePath?.() || '/';
-            const redirectTo = `${window.location.origin}${basePath}reset-password.html`;
+            const redirectTo = 'https://app.claimcipherhq.com/reset-password.html';
             const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
 
             if (error) {
