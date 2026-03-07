@@ -464,13 +464,6 @@ function buildTokenMap(state, userProfile) {
         // Prior Damage
         PRIOR_DAMAGE_TEXT: priorDamageText,
 
-        // Recalls — removed from reports (tokens blanked to clear template placeholders)
-        RECALL_HEADER: '',
-        RECALL_1_ID:   '',
-        RECALL_1_DESC: '',
-        RECALL_2_ID:   '',
-        RECALL_2_DESC: '',
-
         // Certification
         CERT_PARA_1: certPara1,
         CERT_PARA_2: certPara2,
@@ -501,6 +494,38 @@ function buildTokenMap(state, userProfile) {
 }
 
 // =========================================
+//  RECALL SECTION REMOVAL
+// =========================================
+
+/**
+ * Strip all paragraphs belonging to the OPEN RECALL NOTICES section
+ * from the filled document XML. Removes the header, content rows,
+ * and any surrounding whitespace so no empty gap remains.
+ */
+function stripRecallSection(xml) {
+    // Remove any <w:p> that contains recall-related text:
+    // "OPEN RECALL", "RECALL_", "recall(s)", "recall notices"
+    return xml.replace(
+        /<w:p\b[^>]*>[\s\S]*?<\/w:p>/g,
+        (para) => {
+            // Extract all <w:t> text content from the paragraph
+            const texts = [];
+            para.replace(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g, (_, t) => { texts.push(t); });
+            const fullText = texts.join('');
+
+            if (/OPEN\s*RECALL/i.test(fullText)) return '';
+            if (/\{\{RECALL_/i.test(fullText)) return '';
+            if (/RECALL_\d/i.test(fullText)) return '';
+            if (/recall\s*\(s\)/i.test(fullText)) return '';
+            if (/No open recall notices/i.test(fullText)) return '';
+            if (/NHTSA has issued/i.test(fullText)) return '';
+
+            return para;
+        }
+    );
+}
+
+// =========================================
 //  MAIN EXPORT
 // =========================================
 
@@ -524,10 +549,13 @@ export async function generateClaimSummaryDocx(state, userProfile = {}) {
     const docXml = await docXmlEntry.async('string');
     const { xml: filledXml, fillCount } = fillTokensInXml(docXml, tokenMap);
 
+    // Strip the OPEN RECALL NOTICES section entirely (header + rows)
+    const cleanedXml = stripRecallSection(filledXml);
+
     console.log(`[ClaimSummary] Filled ${fillCount} tokens in word/document.xml`);
 
     // Replace the document XML in the zip
-    zip.file('word/document.xml', filledXml);
+    zip.file('word/document.xml', cleanedXml);
 
     // Also fill tokens in header and footer XML files
     for (const part of ['word/header1.xml', 'word/footer1.xml']) {
