@@ -270,62 +270,6 @@ nav {
   background: var(--surface);
 }
 
-.fake-ui { display: flex; flex-direction: column; gap: 10px; height: 100%; }
-.fake-row { display: flex; align-items: center; gap: 10px; }
-.fake-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--muted); flex-shrink: 0;
-}
-.fake-dot.active {
-  background: var(--amber);
-  box-shadow: 0 0 8px rgba(232,149,42,0.6);
-  animation: dot-pulse 2s ease-in-out infinite;
-}
-@keyframes dot-pulse {
-  0%,100%{ box-shadow: 0 0 6px rgba(232,149,42,0.5); }
-  50%{ box-shadow: 0 0 14px rgba(232,149,42,0.9); }
-}
-.fake-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px; letter-spacing: 0.08em;
-  color: var(--text-hi); background: var(--surface3);
-  border: 1px solid var(--border2); padding: 4px 10px;
-  white-space: nowrap;
-}
-.fake-line { flex: 1; height: 1px; background: var(--border); }
-.fake-map {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  position: relative; overflow: hidden; min-height: 180px;
-}
-.fake-map::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-.fake-route {
-  position: absolute;
-  top: 30%; left: 10%; right: 10%; height: 2px;
-  background: linear-gradient(90deg, var(--amber), rgba(232,149,42,0.3));
-  box-shadow: 0 0 8px rgba(232,149,42,0.4);
-}
-.fake-pin {
-  position: absolute; width: 10px; height: 10px; border-radius: 50%;
-  background: var(--amber); border: 2px solid var(--black);
-  box-shadow: 0 0 6px rgba(232,149,42,0.6);
-  transform: translate(-50%, -50%);
-}
-.fake-block {
-  height: 28px; flex: 1;
-  background: var(--surface3); border: 1px solid var(--border);
-}
-.fake-block.amber {
-  background: var(--amber-dim); border-color: var(--amber-line);
-}
-
 .tab-hook {
   padding: 16px 24px;
   border-top: 1px solid var(--border);
@@ -996,97 +940,50 @@ const hooks = [
   '"Close files tonight. Paste the estimate — get the BCIF."'
 ];
 
-const uis = [
-  `<div class="fake-ui">
-    <div class="fake-row">
-      <div class="fake-dot active"></div>
-      <div class="fake-badge">6 stops loaded</div>
-      <div class="fake-line"></div>
-      <div class="fake-badge" style="color:var(--amber);border-color:rgba(232,149,42,0.4)">Optimizing...</div>
-    </div>
-    <div class="fake-map" style="flex:1;min-height:180px">
-      <div class="fake-route"></div>
-      <div class="fake-pin" style="top:22%;left:16%"></div>
-      <div class="fake-pin" style="top:48%;left:42%"></div>
-      <div class="fake-pin" style="top:32%;left:68%"></div>
-      <div class="fake-pin" style="top:68%;left:58%"></div>
-      <div class="fake-pin" style="top:62%;left:22%"></div>
-      <div class="fake-pin" style="top:78%;left:78%"></div>
-    </div>
-    <div class="fake-row">
-      <div class="fake-block amber" style="height:32px;flex:1;display:grid;place-items:center">
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.1em">Route optimized — 42 mi saved</span>
-      </div>
-    </div>
-  </div>`,
-
-  `<div class="fake-ui">
-    <div class="fake-row">
-      <div class="fake-dot active"></div>
-      <div class="fake-badge">Today's Entries</div>
-      <div class="fake-line"></div>
-      <div class="fake-badge" style="color:var(--amber);border-color:rgba(232,149,42,0.4)">147.3 mi</div>
-    </div>
-    ${[...Array(4)].map((_,i)=>`
-    <div class="fake-row" style="gap:10px">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:52px;letter-spacing:0.06em">Stop 0${i+1}</div>
-      <div class="fake-block" style="height:22px;opacity:${0.3+i*0.15};flex:1"></div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-hi);white-space:nowrap">${(18+i*7).toFixed(1)} mi</div>
-    </div>`).join('')}
-    <div class="fake-row">
-      <div class="fake-line"></div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.08em">Export CSV →</div>
-    </div>
-  </div>`,
-
-  `<div class="fake-ui">
-    <div class="fake-row">
-      <div class="fake-dot active"></div>
-      <div class="fake-badge">Estimate Loaded</div>
-      <div class="fake-line"></div>
-      <div class="fake-badge" style="color:var(--amber);border-color:rgba(232,149,42,0.4)">Parsing...</div>
-    </div>
-    ${['ACV Calculation','Market Comparables','Condition Adjustments','BCIF Output'].map((l,i)=>`
-    <div class="fake-row" style="gap:10px">
-      <div class="fake-dot" style="background:${i<3?'var(--amber)':'var(--muted)'};${i<3?'box-shadow:0 0 6px rgba(232,149,42,0.5)':''}"></div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:${i<3?'var(--text-hi)':'var(--muted)'};flex:1;letter-spacing:0.06em">${l}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:${i<3?'var(--amber)':'var(--muted)'}">
-        ${i<3?'✓':'—'}
-      </div>
-    </div>`).join('')}
-    <div class="fake-row" style="margin-top:8px">
-      <div class="fake-block amber" style="height:36px;flex:1;display:grid;place-items:center">
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.12em">GENERATE BCIF →</span>
-      </div>
-    </div>
-  </div>`
-];
-
 const videos = [
-  '/marketing/assets/video-1.mp4',
-  '/marketing/assets/video-2.mp4',
-  '/marketing/assets/video-3.mp4'
+  '/marketing/assets/route-cipher-preview.mp4',
+  '/marketing/assets/mileage-cipher-preview.mp4',
+  '/marketing/assets/total -loss-preview_compressed.mp4'
 ];
+
+// Pre-create all three video elements so tab switches are instant
+const videoEls = videos.map(function(src, idx) {
+  var v = document.createElement('video');
+  v.src = src;
+  v.muted = true;
+  v.loop = true;
+  v.playsInline = true;
+  v.setAttribute('playsinline', '');
+  v.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:8px;';
+  v.onerror = function() { v.style.display = 'none'; };
+  // Preload first frame
+  v.preload = 'auto';
+  return v;
+});
+
+var activeTab = -1;
 
 function switchTab(i) {
-  // Pause any playing video in current tab
-  var oldVid = document.querySelector('.tab-screen video');
-  if (oldVid) { oldVid.pause(); }
+  if (i === activeTab) return;
 
-  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', i===j));
+  // Pause + reset outgoing video
+  if (activeTab >= 0 && videoEls[activeTab]) {
+    videoEls[activeTab].pause();
+    videoEls[activeTab].currentTime = 0;
+  }
 
-  document.getElementById('screen').innerHTML = uis[i]
-    + '<video src="' + videos[i] + '"'
-    + ' autoplay muted loop playsinline'
-    + ' style="width:100%;height:100%;object-fit:cover;border-radius:8px;margin-top:12px;"'
-    + ' onerror="this.style.display=\'none\'">'
-    + '</video>';
+  activeTab = i;
+  document.querySelectorAll('.tab').forEach(function(t, j) { t.classList.toggle('active', i === j); });
+
+  var screen = document.getElementById('screen');
+  screen.innerHTML = '';
+  screen.appendChild(videoEls[i]);
 
   document.getElementById('hook').textContent = hooks[i];
 
-  // Play the new video
-  var newVid = document.querySelector('.tab-screen video');
-  if (newVid) { newVid.play().catch(function(){}); }
+  // Autoplay incoming video
+  videoEls[i].currentTime = 0;
+  videoEls[i].play().catch(function() {});
 }
 
 // init
