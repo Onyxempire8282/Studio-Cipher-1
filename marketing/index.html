@@ -571,7 +571,7 @@ nav {
   text-align: center;
 }
 .price-wrap {
-  max-width: 560px; margin: 0 auto;
+  max-width: 680px; margin: 0 auto;
   padding: 0 56px 72px;
 }
 .price-card-single {
@@ -1190,7 +1190,8 @@ switchTab(0);
   });
 
   overlay.addEventListener('click', function(e) {
-    if (e.target === overlay) close();
+    // Close when clicking overlay background or the transparent container gap
+    if (e.target === overlay || e.target.classList.contains('lb-container')) close();
   });
 
   document.addEventListener('keydown', function(e) {
