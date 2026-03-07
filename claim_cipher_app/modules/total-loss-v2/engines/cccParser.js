@@ -145,6 +145,8 @@ export function parseCCCText(rawText) {
         vin,
         mileage:                  extractMileage(text),
         conditionRating:          extractCondition(text),
+        exteriorColor:            extractExteriorColor(text),
+        interiorColor:            extractInteriorColor(text),
         pointOfImpact:            poi.raw,
         pointOfImpactCode:        poi.code,
         pointOfImpactText:        poi.text,
@@ -506,6 +508,30 @@ function extractMileage(text) {
 function extractCondition(text) {
     const match = text.match(/Condition\s*:\s*(Excellent|Good|Fair|Poor)/i);
     return match ? capitalize(match[1]) : "";
+}
+
+function extractExteriorColor(text) {
+    // Primary: "Exterior Color: PEARL WHITE"
+    const match = text.match(/Exterior\s+Color:\s*([^\n]+)/i);
+    let color = match?.[1]?.trim() || '';
+
+    // Convert ALL CAPS to Title Case (e.g. "PEARL WHITE" → "Pearl White")
+    if (color) {
+        color = color.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    return color;
+}
+
+function extractInteriorColor(text) {
+    const match = text.match(/Interior\s+Color:\s*([^\n]+)/i);
+    let color = match?.[1]?.trim() || '';
+
+    if (color) {
+        color = color.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    return color;
 }
 
 // =========================================

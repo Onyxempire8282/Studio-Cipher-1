@@ -152,11 +152,7 @@ function buildTokenMap(state, userProfile) {
     };
     const transmission = TRANS_LABELS[transRaw] || transRaw || 'N/A';
 
-    const descLine = parsed._vehicleDescLine || '';
-    const colorMatch = descLine.match(/\b(BLACK|WHITE|SILVER|GRAY|GREY|RED|BLUE|GREEN|BROWN|GOLD|BEIGE|TAN|ORANGE|YELLOW|PURPLE|MAROON|BURGUNDY|CHARCOAL|PEARL|BRONZE|COPPER|CREAM|IVORY)\b/i);
-    const extColor = colorMatch
-        ? colorMatch[1].charAt(0).toUpperCase() + colorMatch[1].slice(1).toLowerCase()
-        : 'N/A';
+    const extColor = parsed.exteriorColor || 'N/A';
 
     const overallCondition = isTotalLoss ? 'Total Loss' : 'Repairable';
 
