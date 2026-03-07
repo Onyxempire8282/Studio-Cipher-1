@@ -825,10 +825,20 @@ footer {
       <div class="feat-name">Route Cipher</div>
       <div class="feat-hook">"Stop re-routing mid-day."</div>
       <div class="feat-desc">Upload your stops, get an optimized drive sequence in seconds. Built for multi-firm, multi-county days.</div>
-      <div class="feat-replaces"><strong>Replaces:</strong> Google Maps tab-switching, manual ordering, mid-route rerouting.</div>
-      <img src="/marketing/assets/route-cipher-preview.png"
-           alt="Route Cipher UI"
-           style="width:100%;border-radius:6px;display:block;margin-top:10px;">
+      <div class="feat-replaces">
+        <span class="feat-replaces-label">Replaces:</span>
+        <span class="feat-replaces-items">Google Maps tab-switching, manual ordering, mid-route rerouting.</span>
+      </div>
+      <div class="feat-img-wrap">
+        <img src="/marketing/assets/route-cipher-preview.png"
+             alt="Route Cipher UI"
+             class="feat-img"
+             data-lightbox="features"
+             data-index="0"
+             data-title="Route Cipher"
+             data-caption="Multi-stop optimization with intelligent day splitting"
+             style="width:100%;border-radius:6px;display:block;margin-top:10px;">
+      </div>
     </div>
 
     <div class="feat">
@@ -836,10 +846,20 @@ footer {
       <div class="feat-name">Mileage Cipher</div>
       <div class="feat-hook">"Never dig through Notes again."</div>
       <div class="feat-desc">Auto-captures route miles. Exportable. Audit-ready. Defensible logging without a spreadsheet or manual entry in sight.</div>
-      <div class="feat-replaces"><strong>Replaces:</strong> Notes app logs, end-of-day reconstruction, mileage disputes with firms.</div>
-      <img src="/marketing/assets/mileage-cipher-preview.png"
-           alt="Mileage Cipher UI"
-           style="width:100%;border-radius:6px;display:block;margin-top:10px;">
+      <div class="feat-replaces">
+        <span class="feat-replaces-label">Replaces:</span>
+        <span class="feat-replaces-items">Notes app logs, end-of-day reconstruction, mileage disputes with firms.</span>
+      </div>
+      <div class="feat-img-wrap">
+        <img src="/marketing/assets/mileage-cipher-preview.png"
+             alt="Mileage Cipher UI"
+             class="feat-img"
+             data-lightbox="features"
+             data-index="1"
+             data-title="Mileage Cipher"
+             data-caption="Automatic distance calculation with firm-ready billing export"
+             style="width:100%;border-radius:6px;display:block;margin-top:10px;">
+      </div>
     </div>
 
     <div class="feat">
@@ -847,10 +867,20 @@ footer {
       <div class="feat-name">Total Loss Studio</div>
       <div class="feat-hook">"Close files tonight, not tomorrow."</div>
       <div class="feat-desc">Paste the estimate. Generate the BCIF. Stop letting admin work eat your close rate and your nights.</div>
-      <div class="feat-replaces"><strong>Replaces:</strong> Manual BCIF builds, estimate parsing by hand, late-night admin sessions.</div>
-      <img src="/marketing/assets/total-loss-preview.png"
-           alt="Total Loss Studio UI"
-           style="width:100%;border-radius:6px;display:block;margin-top:10px;">
+      <div class="feat-replaces">
+        <span class="feat-replaces-label">Replaces:</span>
+        <span class="feat-replaces-items">Manual BCIF builds, estimate parsing by hand, late-night admin sessions.</span>
+      </div>
+      <div class="feat-img-wrap">
+        <img src="/marketing/assets/total-loss-preview.png"
+             alt="Total Loss Studio UI"
+             class="feat-img"
+             data-lightbox="features"
+             data-index="2"
+             data-title="Total Loss Studio"
+             data-caption="CCC estimate processing, BCIF generation, claim summaries"
+             style="width:100%;border-radius:6px;display:block;margin-top:10px;">
+      </div>
     </div>
 
   </div>
@@ -1061,6 +1091,115 @@ function switchTab(i) {
 
 // init
 switchTab(0);
+</script>
+
+<!-- FEATURE LIGHTBOX -->
+<div class="lb-overlay" id="featLightbox">
+  <div class="lb-container">
+    <div class="lb-header">
+      <div class="lb-header-left">
+        <div class="lb-eyebrow">Feature Preview</div>
+        <div class="lb-title" id="lbTitle">Route Cipher</div>
+      </div>
+      <button class="lb-close" id="lbClose">&#10005;</button>
+    </div>
+    <div class="lb-img-wrap">
+      <button class="lb-arrow lb-arrow--prev" id="lbPrev">&#8249;</button>
+      <img class="lb-img" id="lbImg" src="" alt="">
+      <button class="lb-arrow lb-arrow--next" id="lbNext">&#8250;</button>
+    </div>
+    <div class="lb-footer">
+      <div class="lb-caption" id="lbCaption"></div>
+      <div class="lb-dots" id="lbDots">
+        <span class="lb-dot lb-dot--active" data-index="0"></span>
+        <span class="lb-dot" data-index="1"></span>
+        <span class="lb-dot" data-index="2"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var images = [
+    {
+      src: '/marketing/assets/route-cipher-preview.png',
+      title: 'Route Cipher',
+      caption: 'Multi-stop optimization with intelligent day splitting'
+    },
+    {
+      src: '/marketing/assets/mileage-cipher-preview.png',
+      title: 'Mileage Cipher',
+      caption: 'Automatic distance calculation with firm-ready billing export'
+    },
+    {
+      src: '/marketing/assets/total-loss-preview.png',
+      title: 'Total Loss Studio',
+      caption: 'CCC estimate processing, BCIF generation, claim summaries'
+    }
+  ];
+
+  var current = 0;
+
+  var overlay   = document.getElementById('featLightbox');
+  var lbImg     = document.getElementById('lbImg');
+  var lbTitle   = document.getElementById('lbTitle');
+  var lbCaption = document.getElementById('lbCaption');
+  var lbClose   = document.getElementById('lbClose');
+  var lbPrev    = document.getElementById('lbPrev');
+  var lbNext    = document.getElementById('lbNext');
+  var dots      = document.querySelectorAll('.lb-dot');
+
+  function show(index) {
+    current = ((index % images.length) + images.length) % images.length;
+    var item = images[current];
+    lbImg.src = item.src;
+    lbImg.alt = item.title;
+    lbTitle.textContent = item.title;
+    lbCaption.textContent = item.caption;
+    dots.forEach(function(d, i) {
+      d.classList.toggle('lb-dot--active', i === current);
+    });
+  }
+
+  function open(index) {
+    show(index);
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('[data-lightbox="features"]').forEach(function(img) {
+    img.addEventListener('click', function() {
+      open(parseInt(img.dataset.index, 10));
+    });
+  });
+
+  lbClose.addEventListener('click', close);
+  lbPrev.addEventListener('click', function() { show(current - 1); });
+  lbNext.addEventListener('click', function() { show(current + 1); });
+
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      show(parseInt(dot.dataset.index, 10));
+    });
+  });
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) close();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (!overlay.classList.contains('active')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+})();
 </script>
 
 </body>
