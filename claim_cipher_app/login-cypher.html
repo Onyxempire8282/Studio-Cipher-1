@@ -378,6 +378,24 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     document.body.style.visibility = 'visible';
 
+    // Show notice if user was kicked from another session
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reason') === 'session_replaced') {
+        const notice = document.createElement('div');
+        notice.style.cssText = `
+            position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
+            padding: 10px 20px;
+            background: rgba(232, 149, 42, 0.12);
+            border-bottom: 1px solid var(--amber-line);
+            text-align: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px; letter-spacing: 0.1em;
+            color: var(--amber);
+        `;
+        notice.textContent = 'You were logged out because this account was accessed from another device.';
+        document.body.appendChild(notice);
+    }
+
     // Get form elements
     const loginForm = document.getElementById('login-cypher-form');
     const signupForm = document.getElementById('signup-cypher-form');
@@ -431,11 +449,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Show loading state
             window.SupabaseAuth.setButtonLoading(loginBtn, true, 'Signing in...');
 
-            // TODO: Supabase JS v2 does not support per-call session persistence.
-            // To honor rememberMe, the Supabase client would need to be re-created
-            // with auth.storage set to sessionStorage (when unchecked) vs localStorage
-            // (when checked). For now the checkbox value is read but not acted upon.
-            const result = await window.SupabaseAuth.signIn(email, password);
+            // Use session-enforced login (checks for active session on another device)
+            const result = await window.SupabaseAuth.signInWithSessionCheck(email, password);
+
+            if (result.cancelled) {
+                // User cancelled — they chose not to take over the other session
+                window.SupabaseAuth.setButtonLoading(loginBtn, false);
+                return;
+            }
 
             if (result.success) {
                 showMessage('Login successful! Redirecting...', false);
@@ -711,6 +732,35 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
+
+<!-- =====================================================
+     ACTIVE SESSION WARNING MODAL
+     ===================================================== -->
+<div class="session-modal-overlay" id="activeSessionModal">
+  <div class="session-modal">
+    <div class="session-modal-header">
+      <div class="session-modal-eyebrow">Active Session Detected</div>
+      <div class="session-modal-title">Already Logged In</div>
+    </div>
+    <div class="session-modal-body">
+      <div class="session-modal-icon">&#9888;</div>
+      <div class="session-modal-message">
+        This account is currently active on
+        <span id="sessionDeviceLabel"
+          style="color:var(--amber);font-family:'DM Mono',monospace;">another device</span>.
+      </div>
+      <div class="session-modal-sub">
+        Continuing will log out the other session.
+        Only one active session is allowed per account.
+      </div>
+    </div>
+    <div class="session-modal-footer">
+      <button class="btn btn-ghost" id="sessionCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="sessionContinueBtn"
+        style="width:auto;box-shadow:none;">Continue &amp; Log Out Other &rarr;</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

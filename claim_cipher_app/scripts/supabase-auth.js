@@ -72,6 +72,124 @@
     }
 
     /**
+     * Get a human-readable device hint from the user agent
+     * @returns {string}
+     */
+    function getDeviceHint() {
+        const ua = navigator.userAgent;
+        let browser = 'Unknown Browser';
+        let os = 'Unknown Device';
+
+        if (ua.includes('Chrome')) browser = 'Chrome';
+        else if (ua.includes('Firefox')) browser = 'Firefox';
+        else if (ua.includes('Safari')) browser = 'Safari';
+        else if (ua.includes('Edge')) browser = 'Edge';
+
+        if (ua.includes('Windows')) os = 'Windows';
+        else if (ua.includes('Mac')) os = 'Mac';
+        else if (ua.includes('iPhone')) os = 'iPhone';
+        else if (ua.includes('Android')) os = 'Android';
+
+        return `${browser} on ${os}`;
+    }
+
+    /**
+     * Sign in with session enforcement.
+     * Checks for an existing active session on another device and
+     * prompts the user before taking over.
+     * @param {string} email
+     * @param {string} password
+     * @returns {Promise<{success: boolean, error?: string, cancelled?: boolean, user?: object}>}
+     */
+    async function handleLoginWithSessionCheck(email, password) {
+        // 1. Normal sign in
+        const result = await signIn(email, password);
+        if (!result.success) return result;
+
+        const client = initSupabase();
+        const userId = result.user?.id;
+        if (!client || !userId) return result;
+
+        // 2. Read current active session from profiles
+        const { data: profile } = await client
+            .from('profiles')
+            .select('active_session_token, active_session_at, active_session_device')
+            .eq('user_id', userId)
+            .single();
+
+        // 3. Check if another session is active
+        const existingToken = profile?.active_session_token;
+        const myToken = localStorage.getItem('cc_session_token');
+        const otherSessionActive = existingToken && existingToken !== myToken;
+
+        if (otherSessionActive) {
+            // 4. Show warning modal before proceeding
+            const confirmed = await showSessionWarning(
+                profile.active_session_device,
+                profile.active_session_at
+            );
+
+            if (!confirmed) {
+                // User chose not to continue — sign out quietly
+                isManualLogout = true;
+                await client.auth.signOut();
+                return { success: false, cancelled: true };
+            }
+        }
+
+        // 5. Generate new session token for this login
+        const newToken = crypto.randomUUID();
+        const deviceHint = getDeviceHint();
+
+        localStorage.setItem('cc_session_token', newToken);
+
+        // 6. Write new session to profiles
+        await client
+            .from('profiles')
+            .update({
+                active_session_token: newToken,
+                active_session_at: new Date().toISOString(),
+                active_session_device: deviceHint
+            })
+            .eq('user_id', userId);
+
+        return result;
+    }
+
+    /**
+     * Show the session warning modal and return a Promise
+     * that resolves to true (continue) or false (cancel).
+     * @param {string} device
+     * @param {string} lastSeen
+     * @returns {Promise<boolean>}
+     */
+    function showSessionWarning(device, lastSeen) {
+        return new Promise((resolve) => {
+            const label = document.getElementById('sessionDeviceLabel');
+            if (label) {
+                label.textContent = device || 'another device';
+            }
+
+            const overlay = document.getElementById('activeSessionModal');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+
+            document.getElementById('sessionCancelBtn')
+                ?.addEventListener('click', () => {
+                    overlay?.classList.remove('active');
+                    resolve(false);
+                }, { once: true });
+
+            document.getElementById('sessionContinueBtn')
+                ?.addEventListener('click', () => {
+                    overlay?.classList.remove('active');
+                    resolve(true);
+                }, { once: true });
+        });
+    }
+
+    /**
      * Sign up with email and password
      * @param {string} email
      * @param {string} password
@@ -123,6 +241,9 @@
     async function signOut() {
         // Mark as manual logout BEFORE calling signOut
         isManualLogout = true;
+
+        // Clear session token before signing out
+        localStorage.removeItem('cc_session_token');
 
         const client = initSupabase();
         if (!client) {
@@ -321,8 +442,53 @@
         // Setup listener for future auth state changes
         setupAuthStateListener();
 
+        // Validate this session is still the active one
+        validateActiveSession();
 
         return true;
+    }
+
+    /**
+     * Validate that this browser still holds the active session.
+     * If another device took over, sign out and redirect to login.
+     */
+    async function validateActiveSession() {
+        const client = initSupabase();
+        if (!client) return;
+
+        // Demo mode bypass
+        if (sessionStorage.getItem('demo_mode') === 'true') return;
+
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) return; // protectPage handles this
+
+        const myToken = localStorage.getItem('cc_session_token');
+
+        if (!myToken) {
+            // No local token — this session is stale
+            isManualLogout = true;
+            localStorage.removeItem('cc_session_token');
+            await client.auth.signOut();
+            window.location.href = 'login-cypher.html?reason=session_replaced';
+            return;
+        }
+
+        const { data: profile } = await client
+            .from('profiles')
+            .select('active_session_token')
+            .eq('user_id', user.id)
+            .single();
+
+        if (
+            profile?.active_session_token &&
+            profile.active_session_token !== myToken
+        ) {
+            // Another session has taken over
+            isManualLogout = true;
+            localStorage.removeItem('cc_session_token');
+            await client.auth.signOut();
+            window.location.href = 'login-cypher.html?reason=session_replaced';
+        }
     }
 
     /**
@@ -427,11 +593,13 @@
         init: initSupabase,
         getClient: initSupabase,       // Returns the shared Supabase client instance
         signIn: signIn,
+        signInWithSessionCheck: handleLoginWithSessionCheck,
         signUp: signUp,
         signOut: signOut,
         getSession: getSession,
         isAuthenticated: isAuthenticated,
         protectPage: protectPage,
+        validateActiveSession: validateActiveSession,
         loginPageGuard: loginPageGuard,
         getCurrentUser: getCurrentUser,
         setupAuthStateListener: setupAuthStateListener,
