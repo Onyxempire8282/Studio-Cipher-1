@@ -266,12 +266,16 @@ nav {
 .tab.active { color: var(--amber); background: var(--amber-dim); border-bottom: 2px solid var(--amber); }
 
 .tab-screen {
-  flex: 1; padding: 24px; display: flex; flex-direction: column;
+  flex: 1;
   background: var(--surface);
   min-height: 340px;
+  overflow: hidden;
 }
 .tab-screen video {
-  flex: 1; min-height: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .tab-hook {
@@ -509,6 +513,8 @@ nav {
 /* ── PRICING ── */
 .pricing-section {
   position: relative; z-index: 2;
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
   background:
     radial-gradient(ellipse 70% 80% at 50% 50%, rgba(232,149,42,0.05) 0%, transparent 60%),
     var(--black);
@@ -519,7 +525,8 @@ nav {
   text-align: center;
 }
 .price-wrap {
-  max-width: 680px; margin: 0 auto;
+  max-width: 640px; margin: 0 auto;
+  width: 100%;
   padding: 0 56px 72px;
 }
 .price-card-single {
@@ -546,7 +553,7 @@ nav {
   color: var(--amber);
 }
 .price-amount {
-  display: flex; align-items: baseline; gap: 8px;
+  display: flex; align-items: baseline; justify-content: center; gap: 2px;
 }
 .price-num {
   font-family: 'Bebas Neue', sans-serif;
@@ -947,21 +954,21 @@ const hooks = [
 const videos = [
   '/marketing/assets/route-cipher-preview.mp4',
   '/marketing/assets/mileage-cipher-preview.mp4',
-  '/marketing/assets/total -loss-preview_compressed.mp4'
+  '/marketing/assets/total%20-loss-preview_compressed.mp4'
 ];
 
 // Pre-create all three video elements so tab switches are instant
-const videoEls = videos.map(function(src, idx) {
+const videoEls = videos.map(function(src) {
   var v = document.createElement('video');
   v.src = src;
+  v.autoplay = false;
   v.muted = true;
   v.loop = true;
   v.playsInline = true;
   v.setAttribute('playsinline', '');
-  v.style.cssText = 'width:100%;object-fit:cover;border-radius:8px;';
-  v.onerror = function() { v.style.display = 'none'; };
-  // Preload first frame
+  v.setAttribute('muted', '');
   v.preload = 'auto';
+  v.style.cssText = 'width:100%;display:block;object-fit:cover;';
   return v;
 });
 
@@ -985,12 +992,12 @@ function switchTab(i) {
 
   document.getElementById('hook').textContent = hooks[i];
 
-  // Autoplay incoming video
+  // Play incoming video from start
   videoEls[i].currentTime = 0;
   videoEls[i].play().catch(function() {});
 }
 
-// init
+// init — Route Cipher autoplays on load
 switchTab(0);
 </script>
 
@@ -1065,13 +1072,14 @@ switchTab(0);
 
   function open(index) {
     show(index);
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    overlay.style.display = 'flex';
   }
 
   function close() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = 'auto';
+    overlay.style.display = 'none';
+    lbImg.src = '';
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
   }
 
   document.querySelectorAll('[data-lightbox="features"]').forEach(function(img) {
@@ -1096,7 +1104,7 @@ switchTab(0);
   });
 
   document.addEventListener('keydown', function(e) {
-    if (!overlay.classList.contains('active')) return;
+    if (overlay.style.display !== 'flex') return;
     if (e.key === 'Escape') close();
     if (e.key === 'ArrowLeft') show(current - 1);
     if (e.key === 'ArrowRight') show(current + 1);
