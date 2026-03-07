@@ -4481,7 +4481,21 @@ class RouteCipher {
         : optimizeBtn.textContent;
     }
 
+    // Clear destination inputs — reset to single empty input
+    const destList = document.getElementById('destinationsList');
+    if (destList) {
+      destList.innerHTML = `
+        <div class="destination-input">
+          <input type="text" placeholder="Enter destination address" class="destination-address-input">
+          <button class="remove-btn" onclick="removeDestination(this)" title="Remove this destination">✕</button>
+        </div>`;
+    }
 
+    // Clear starting location
+    const startInput = document.getElementById('startLocation');
+    if (startInput) {
+      startInput.value = '';
+    }
   }
 
   /**
