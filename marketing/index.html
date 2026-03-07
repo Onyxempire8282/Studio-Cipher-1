@@ -29,7 +29,6 @@
 <link rel="icon" type="image/png" href="/marketing/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/marketing/styles.css">
 <style>
 :root {
   --black:      #07080a;
@@ -645,6 +644,134 @@ footer {
 .hero-h1    { animation: fadeUp 0.5s ease forwards; animation-delay: 0.2s;  opacity: 0; }
 .hero-body  { animation: fadeUp 0.5s ease forwards; animation-delay: 0.3s;  opacity: 0; }
 .hero-ctas  { animation: fadeUp 0.5s ease forwards; animation-delay: 0.4s;  opacity: 0; }
+
+/* ─ LIGHTBOX ─ */
+.lb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(7, 8, 10, 0.96);
+  backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.lb-overlay.active {
+  display: flex;
+}
+.lb-container {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: lb-in 0.2s ease forwards;
+}
+@keyframes lb-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.lb-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid #2e353d;
+  padding-bottom: 12px;
+}
+.lb-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #e8952a;
+  margin-bottom: 4px;
+}
+.lb-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.06em;
+  color: #edeae4;
+  line-height: 1;
+}
+.lb-close {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: #4a5058;
+  background: none;
+  border: 1px solid #2e353d;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.lb-close:hover {
+  color: #edeae4;
+  border-color: #e8952a;
+}
+.lb-img-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.lb-img {
+  width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  border: 1px solid #2e353d;
+  border-top: 2px solid #e8952a;
+  display: block;
+}
+.lb-arrow {
+  font-size: 32px;
+  color: #4a5058;
+  background: none;
+  border: 1px solid #2e353d;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lb-arrow:hover {
+  color: #e8952a;
+  border-color: #e8952a;
+}
+.lb-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid #2e353d;
+}
+.lb-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #6b7480;
+}
+.lb-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.lb-dot {
+  width: 6px;
+  height: 6px;
+  background: #2e353d;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-block;
+}
+.lb-dot--active {
+  background: #e8952a;
+}
 </style>
 </head>
 <body>
