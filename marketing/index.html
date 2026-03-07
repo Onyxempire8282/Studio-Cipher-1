@@ -954,7 +954,7 @@ const hooks = [
 const videos = [
   '/marketing/assets/route-cipher-preview.mp4',
   '/marketing/assets/mileage-cipher-preview.mp4',
-  '/marketing/assets/total%20-loss-preview_compressed.mp4'
+  '/marketing/assets/total%20-loss-preview.mp4'
 ];
 
 // Pre-create all three video elements so tab switches are instant
@@ -1002,112 +1002,102 @@ switchTab(0);
 </script>
 
 <!-- FEATURE LIGHTBOX -->
-<div class="lb-overlay" id="featLightbox">
+<div class="lb-overlay" id="lightbox">
   <div class="lb-container">
     <div class="lb-header">
       <div class="lb-header-left">
         <div class="lb-eyebrow">Feature Preview</div>
-        <div class="lb-title" id="lbTitle">Route Cipher</div>
+        <div class="lb-title" id="lb-title"></div>
       </div>
-      <button class="lb-close" id="lbClose">&#10005;</button>
+      <button class="lb-close" id="lb-close">[ ESC ]</button>
     </div>
     <div class="lb-img-wrap">
-      <button class="lb-arrow lb-arrow--prev" id="lbPrev">&#8249;</button>
-      <img class="lb-img" id="lbImg" src="" alt="">
-      <button class="lb-arrow lb-arrow--next" id="lbNext">&#8250;</button>
+      <button class="lb-arrow lb-arrow--prev" id="lb-prev">&#8249;</button>
+      <img class="lb-img" id="lb-img" src="" alt="">
+      <button class="lb-arrow lb-arrow--next" id="lb-next">&#8250;</button>
     </div>
     <div class="lb-footer">
-      <div class="lb-caption" id="lbCaption"></div>
-      <div class="lb-dots" id="lbDots">
-        <span class="lb-dot lb-dot--active" data-index="0"></span>
-        <span class="lb-dot" data-index="1"></span>
-        <span class="lb-dot" data-index="2"></span>
-      </div>
+      <div class="lb-caption" id="lb-caption"></div>
+      <div class="lb-dots" id="lb-dots"></div>
     </div>
   </div>
 </div>
 
 <script>
 (function() {
-  var images = [
-    {
-      src: '/marketing/assets/route-cipher-preview.png',
-      title: 'Route Cipher',
-      caption: 'Multi-stop optimization with intelligent day splitting'
-    },
-    {
-      src: '/marketing/assets/mileage-cipher-preview.png',
-      title: 'Mileage Cipher',
-      caption: 'Automatic distance calculation with firm-ready billing export'
-    },
-    {
-      src: '/marketing/assets/total-loss-preview.png',
-      title: 'Total Loss Studio',
-      caption: 'CCC estimate processing, BCIF generation, claim summaries'
-    }
-  ];
+  // Collect all feature images with data-lightbox="features"
+  var triggers = document.querySelectorAll('[data-lightbox="features"]');
+  var images = [];
+  triggers.forEach(function(img, i) {
+    images.push({
+      src: img.src,
+      title: img.getAttribute('data-title') || '',
+      caption: img.getAttribute('data-caption') || ''
+    });
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', function() { open(i); });
+  });
 
   var current = 0;
+  var dotsBuilt = false;
 
-  var overlay   = document.getElementById('featLightbox');
-  var lbImg     = document.getElementById('lbImg');
-  var lbTitle   = document.getElementById('lbTitle');
-  var lbCaption = document.getElementById('lbCaption');
-  var lbClose   = document.getElementById('lbClose');
-  var lbPrev    = document.getElementById('lbPrev');
-  var lbNext    = document.getElementById('lbNext');
-  var dots      = document.querySelectorAll('.lb-dot');
+  var overlay   = document.getElementById('lightbox');
+  var lbImg     = document.getElementById('lb-img');
+  var lbTitle   = document.getElementById('lb-title');
+  var lbCaption = document.getElementById('lb-caption');
+  var lbDots    = document.getElementById('lb-dots');
+  var lbClose   = document.getElementById('lb-close');
+  var lbPrev    = document.getElementById('lb-prev');
+  var lbNext    = document.getElementById('lb-next');
 
-  function show(index) {
+  function buildDots() {
+    if (dotsBuilt) return;
+    lbDots.innerHTML = '';
+    images.forEach(function(_, i) {
+      var span = document.createElement('span');
+      span.className = 'lb-dot';
+      span.addEventListener('click', function() { render(i); });
+      lbDots.appendChild(span);
+    });
+    dotsBuilt = true;
+  }
+
+  function render(index) {
     current = ((index % images.length) + images.length) % images.length;
     var item = images[current];
     lbImg.src = item.src;
     lbImg.alt = item.title;
     lbTitle.textContent = item.title;
     lbCaption.textContent = item.caption;
+    var dots = lbDots.querySelectorAll('.lb-dot');
     dots.forEach(function(d, i) {
       d.classList.toggle('lb-dot--active', i === current);
     });
   }
 
   function open(index) {
-    show(index);
-    overlay.style.display = 'flex';
+    buildDots();
+    render(index);
+    overlay.classList.add('active');
   }
 
   function close() {
-    overlay.style.display = 'none';
-    lbImg.src = '';
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
+    overlay.classList.remove('active');
   }
 
-  document.querySelectorAll('[data-lightbox="features"]').forEach(function(img) {
-    img.addEventListener('click', function() {
-      open(parseInt(img.dataset.index, 10));
-    });
-  });
-
   lbClose.addEventListener('click', close);
-  lbPrev.addEventListener('click', function() { show(current - 1); });
-  lbNext.addEventListener('click', function() { show(current + 1); });
-
-  dots.forEach(function(dot) {
-    dot.addEventListener('click', function() {
-      show(parseInt(dot.dataset.index, 10));
-    });
-  });
+  lbPrev.addEventListener('click', function() { render(current - 1); });
+  lbNext.addEventListener('click', function() { render(current + 1); });
 
   overlay.addEventListener('click', function(e) {
-    // Close when clicking overlay background or the transparent container gap
-    if (e.target === overlay || e.target.classList.contains('lb-container')) close();
+    if (e.target === overlay) close();
   });
 
   document.addEventListener('keydown', function(e) {
-    if (overlay.style.display !== 'flex') return;
+    if (!overlay.classList.contains('active')) return;
     if (e.key === 'Escape') close();
-    if (e.key === 'ArrowLeft') show(current - 1);
-    if (e.key === 'ArrowRight') show(current + 1);
+    if (e.key === 'ArrowLeft') render(current - 1);
+    if (e.key === 'ArrowRight') render(current + 1);
   });
 })();
 </script>
