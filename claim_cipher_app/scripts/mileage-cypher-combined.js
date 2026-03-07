@@ -93,6 +93,8 @@ class MileageCypherCalculator {
       distanceInput.addEventListener("input", () => {
         // Skip auto-calc when distance was set by calculateDistanceWithGoogleMaps
         if (this._settingDistanceProgrammatically) return;
+        // Mark as manual entry so billing validation accepts it
+        this.currentDistanceSource = 'user_manual';
         if (this.settings.autoCalculateEnabled) {
           this.debounceAutoCalculate();
         }
@@ -346,11 +348,17 @@ class MileageCypherCalculator {
       roundTripThumb.style.background = roundTripToggle.checked ? '#e8952a' : '#4a5058';
     }
 
-    // Reset distance source when firm changes (different billing rules may apply)
-    this.currentDistanceSource = null;
-    console.log("Distance source reset (firm changed)");
+    // Reset resolved-pair cache so auto-distance can re-fire for same addresses
+    this._lastResolvedPair = null;
 
-    // Set round trip default based on firm preference
+    // Reset any stuck calculation state
+    this._calculating = false;
+    this._autoDistanceInFlight = false;
+    this._settingDistanceProgrammatically = false;
+    if (this.autoCalculateTimeout) {
+      clearTimeout(this.autoCalculateTimeout);
+      this.autoCalculateTimeout = null;
+    }
 
     // Save selection to FirmStore
     if (window.FirmStore) {
@@ -362,7 +370,7 @@ class MileageCypherCalculator {
       this.debounceAutoCalculate();
     }
 
-    console.log(`Firm changed to: ${firm.name}`);
+    console.log(`[MC] Firm changed to: ${firm.name}, state reset`);
   }
 
   async triggerAutoDistance() {
@@ -501,32 +509,24 @@ class MileageCypherCalculator {
     }
   }
 
-  debounceAutoCalculate() {
-    clearTimeout(this.autoCalculateTimeout);
-    this.autoCalculateTimeout = setTimeout(() => {
-      this.performCalculation(true); // true = silent mode
-    }, 1000);
-  }
-
   performCalculation(auto = false) {
     if (this._calculating) return null;
     this._calculating = true;
-    console.log("performCalculation called, auto:", auto);
-
-    this.setSessionIndicator(true);
-
-    const calculationData = this.gatherCalculationInputs();
-    console.log("Calculation data gathered:", calculationData);
-
-    if (!this.validateCalculationInputs(calculationData, auto)) {
-      console.log("Validation failed, aborting calculation");
-      this._calculating = false;
-      return null;
-    }
-
-    console.log("Validation passed, proceeding with calculation");
+    console.log("[MC] performCalculation called, auto:", auto);
 
     try {
+      this.setSessionIndicator(true);
+
+      const calculationData = this.gatherCalculationInputs();
+      console.log("Calculation data gathered:", calculationData);
+
+      if (!this.validateCalculationInputs(calculationData, auto)) {
+        console.log("Validation failed, aborting calculation");
+        return null;
+      }
+
+      console.log("Validation passed, proceeding with calculation");
+
       const result = this.calculateMileageBilling(calculationData);
       this.currentCalculation = result;
 
@@ -543,11 +543,11 @@ class MileageCypherCalculator {
       }
 
       console.log("Calculation completed:", result);
-      this.showCalculateLoading(false); // Hide loading state
+      this.showCalculateLoading(false);
       return result;
     } catch (error) {
       console.error("Calculation error:", error);
-      this.showCalculateLoading(false); // Hide loading state
+      this.showCalculateLoading(false);
       return null;
     } finally {
       this._calculating = false;
@@ -900,15 +900,36 @@ class MileageCypherCalculator {
     this.closeBillingModal();
     this.latestCopyText = "";
 
+    // Full state reset — clears all flags so pipeline is never stuck
     this.currentCalculation = null;
     this._lastResolvedPair = null;
+    this.currentDistanceSource = null;
+    this._calculating = false;
+    this._autoDistanceInFlight = false;
+    this._settingDistanceProgrammatically = false;
+
+    // Cancel any pending debounce
+    if (this.autoCalculateTimeout) {
+      clearTimeout(this.autoCalculateTimeout);
+      this.autoCalculateTimeout = null;
+    }
+
+    // Re-enable the calculate button
+    const btn = document.getElementById("calculateBtn");
+    if (btn) {
+      btn.disabled = false;
+      const btnText = btn.querySelector('.btn-text');
+      const btnLoading = btn.querySelector('.btn-loading');
+      if (btnText) btnText.style.display = '';
+      if (btnLoading) btnLoading.style.display = 'none';
+    }
 
     // Focus on destination input
     if (pointBInput) {
       pointBInput.focus();
     }
 
-    console.log("New calculation started");
+    console.log("[MC] Clear entry, state reset");
   }
 
   // Route Import Support
