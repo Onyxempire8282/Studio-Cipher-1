@@ -524,7 +524,7 @@
       + 'text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:12px;';
 
     banner.innerHTML = '<span>Demo Mode \u2014 Downloads are watermarked</span>'
-      + '<a href="/signup" id="demoBannerLink" style="color:#000;font-weight:600;text-decoration:underline;">Subscribe to download clean reports \u2192</a>';
+      + '<a href="login-cypher.html?tab=signup" id="demoBannerLink" style="color:#000;font-weight:600;text-decoration:underline;">Subscribe to download clean reports \u2192</a>';
 
     document.body.insertBefore(banner, document.body.firstChild);
 

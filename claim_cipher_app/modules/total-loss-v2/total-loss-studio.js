@@ -123,7 +123,7 @@ function showDemoWelcomeModal(onDismiss) {
             </ol>
             <p style="font-size:12px;color:var(--cipher-text-muted,#888);margin:0 0 24px;line-height:1.6;">
                 CCC ONE estimates only \u2014 Mitchell support coming soon.<br>
-                Demo downloads are watermarked. <a href="/signup" style="color:var(--amber,#e8952a);text-decoration:underline;">Subscribe</a> for clean, professional reports.
+                Demo downloads are watermarked. <a href="login-cypher.html?tab=signup" style="color:var(--amber,#e8952a);text-decoration:underline;">Subscribe</a> for clean, professional reports.
             </p>
             <button id="demo-welcome-dismiss" style="
                 display:block;width:100%;padding:14px;
