@@ -116,52 +116,12 @@ export function initTotalLossDemo(demoPayload, demoParsed) {
             updateSummaryHeaderFooter(demoPayload);
             attachSummaryListeners();
 
-            // Intercept downloads in demo mode — show toast instead
-            interceptDemoDownloads();
+            // Demo downloads now proceed with watermark — no interception needed
         });
     }
 }
 
-function interceptDemoDownloads() {
-    const downloadBtn = document.getElementById('sv-download');
-    const summaryBtn  = document.getElementById('tls-download-summary');
-
-    function showDemoToast(msg) {
-        let toast = document.getElementById('demo-download-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'demo-download-toast';
-            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
-                + 'background:#1a1a1a;border:1px solid #e8952a;color:#d0d0d0;padding:12px 24px;'
-                + 'font-family:"DM Mono",monospace;font-size:13px;z-index:10001;border-radius:4px;'
-                + 'transition:opacity 300ms;';
-            document.body.appendChild(toast);
-        }
-        toast.textContent = msg;
-        toast.style.opacity = '1';
-        clearTimeout(toast._timer);
-        toast._timer = setTimeout(function() { toast.style.opacity = '0'; }, 3000);
-    }
-
-    if (downloadBtn) {
-        // Remove the real handler that attachSummaryListeners just added
-        const fresh = downloadBtn.cloneNode(true);
-        downloadBtn.parentNode.replaceChild(fresh, downloadBtn);
-        fresh.addEventListener('click', function(e) {
-            e.preventDefault();
-            showDemoToast('Demo Mode — Sign up to download BCIF forms');
-        });
-    }
-
-    if (summaryBtn) {
-        const fresh = summaryBtn.cloneNode(true);
-        summaryBtn.parentNode.replaceChild(fresh, summaryBtn);
-        fresh.addEventListener('click', function(e) {
-            e.preventDefault();
-            showDemoToast('Demo Mode — Sign up to download claim summaries');
-        });
-    }
-}
+// interceptDemoDownloads removed — demo users now get watermarked DOCX downloads
 
 // =========================================
 //  DROP ZONE
@@ -1199,9 +1159,13 @@ async function handleDownloadSummary() {
         syncACVToState();
 
         const userProfile = await _gatherUserProfile();
-        const blob = await generateClaimSummaryDocx(state, userProfile);
+        const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
+        const blob = await generateClaimSummaryDocx(state, userProfile, isDemoMode);
         const claimNumber = state.bcifPayload?.claim?.claimNumber || 'EXPORT';
-        triggerDownload(blob, `SUMMARY_${claimNumber}.docx`);
+        const filename = isDemoMode
+            ? 'CLAIM_SUMMARY_DEMO_PREVIEW.docx'
+            : `SUMMARY_${claimNumber}.docx`;
+        triggerDownload(blob, filename);
         if (status) {
             status.textContent = 'Summary downloaded \u2713';
             setTimeout(() => { status.textContent = ''; }, 1500);
@@ -1254,6 +1218,7 @@ async function handleDownload() {
         const activeTokens = tokenKeys.filter(k => state.tokenMap[k] !== '' && !k.startsWith('_'));
         console.log(`[TLS] TokenMap total keys: ${tokenKeys.length}, active (non-empty): ${activeTokens.length}`);
 
+        const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
         let downloaded = false;
 
         // ── 3a. Try DOCX server fill (if Flask is running) ──
@@ -1267,11 +1232,27 @@ async function handleDownload() {
             });
 
             if (response.ok) {
-                const blob = await response.blob();
-                if (blob.size > 0) {
-                    triggerDownload(blob, buildFileName('.docx'));
+                if (isDemoMode && typeof window.JSZip !== 'undefined') {
+                    // Watermark the server-generated DOCX
+                    const arrayBuffer = await response.arrayBuffer();
+                    let zip = await JSZip.loadAsync(arrayBuffer);
+                    zip = await window.DemoWatermark.injectDemoWatermark(zip);
+                    const watermarkedBlob = await zip.generateAsync({
+                        type: 'blob',
+                        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        compression: 'DEFLATE',
+                        compressionOptions: { level: 6 }
+                    });
+                    triggerDownload(watermarkedBlob, 'BCIF_DEMO_PREVIEW.docx');
                     downloaded = true;
-                    console.log('[TLS] DOCX download complete, size:', blob.size);
+                    console.log('[TLS] DOCX download (demo watermarked), size:', watermarkedBlob.size);
+                } else {
+                    const blob = await response.blob();
+                    if (blob.size > 0) {
+                        triggerDownload(blob, buildFileName('.docx'));
+                        downloaded = true;
+                        console.log('[TLS] DOCX download complete, size:', blob.size);
+                    }
                 }
             } else {
                 console.warn('[TLS] DOCX server responded:', response.status);
@@ -1284,9 +1265,10 @@ async function handleDownload() {
         if (!downloaded) {
             try {
                 console.log('[TLS] Generating BCIF DOCX client-side...');
-                const blob = await generateBCIFDocx(state.tokenMap);
+                const blob = await generateBCIFDocx(state.tokenMap, isDemoMode);
                 console.log('[TLS] DOCX generated, size:', blob.size);
-                triggerDownload(blob, buildFileName('.docx'));
+                const filename = isDemoMode ? 'BCIF_DEMO_PREVIEW.docx' : buildFileName('.docx');
+                triggerDownload(blob, filename);
                 downloaded = true;
             } catch (docxErr) {
                 console.error('[TLS] Client-side DOCX failed:', docxErr);

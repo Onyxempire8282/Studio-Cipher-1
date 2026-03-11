@@ -529,7 +529,7 @@ function stripRecallSection(xml) {
 //  MAIN EXPORT
 // =========================================
 
-export async function generateClaimSummaryDocx(state, userProfile = {}) {
+export async function generateClaimSummaryDocx(state, userProfile = {}, isDemoMode = false) {
     if (typeof window.JSZip === 'undefined') {
         throw new Error('JSZip is not loaded. Add JSZip CDN to the page.');
     }
@@ -568,6 +568,12 @@ export async function generateClaimSummaryDocx(state, userProfile = {}) {
                 console.log(`[ClaimSummary] Filled ${fc} tokens in ${part}`);
             }
         }
+    }
+
+    // Inject demo watermark if in demo mode
+    if (isDemoMode && window.DemoWatermark) {
+        await window.DemoWatermark.injectDemoWatermark(zip);
+        console.log('[ClaimSummary] Demo watermark injected');
     }
 
     // Generate the filled DOCX as a Blob

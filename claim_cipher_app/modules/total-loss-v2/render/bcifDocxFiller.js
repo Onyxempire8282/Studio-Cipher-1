@@ -128,7 +128,7 @@ async function fetchTemplate() {
  * @param {Object} tokenMap - Flat { TOKEN_NAME: value } map from bcifRenderer.js
  * @returns {Promise<Blob>} Filled DOCX as a Blob
  */
-export async function generateBCIFDocx(tokenMap) {
+export async function generateBCIFDocx(tokenMap, isDemoMode = false) {
     if (typeof window.JSZip === 'undefined') {
         throw new Error('JSZip is not loaded. Add JSZip CDN to the page.');
     }
@@ -151,6 +151,12 @@ export async function generateBCIFDocx(tokenMap) {
 
     // Replace the document XML in the zip
     zip.file('word/document.xml', filledXml);
+
+    // Inject demo watermark if in demo mode
+    if (isDemoMode && window.DemoWatermark) {
+        await window.DemoWatermark.injectDemoWatermark(zip);
+        console.log('[BCIF-DOCX] Demo watermark injected');
+    }
 
     // Generate the filled DOCX as a Blob
     const blob = await zip.generateAsync({

@@ -97,6 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- JSZip — client-side BCIF DOCX template fill (no server needed) -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
+    <!-- Demo watermark utility (must load before TLS module) -->
+    <script defer src="modules/total-loss-v2/utils/demoWatermark.js"></script>
+
     <!-- Demo data (sets window.__tlsDemoPayload before module runs) -->
     <script defer src="scripts/demo-data.js"></script>
 
