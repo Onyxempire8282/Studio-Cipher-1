@@ -174,159 +174,77 @@
     { id: 'demo-act-5', description: 'Firm added: Sedgwick ($0.60/mi, 50 free)',          type: 'firm',    timestamp: now - 5 * DAY, timeAgo: '5 days ago' }
   ];
 
-  // ── TLS Payload (2018 Nissan Murano Platinum — Total Loss) ──
+  // ── TLS Payload (2019 Honda Accord EX) ──
+  var DEMO_TLS_OPTIONS = [
+    'AC','PS','PB','PW','PL','PM','CC','CL','TL','KE',
+    'AB','SB','IW','TW','RD','AW','CD','DA','HL','AG',
+    'BL','FM','LP','SW','DC'
+  ];
+
   var DEMO_TLS_PAYLOAD = {
     claim: {
-      claimNumber: '7428595-002',
-      policyNumber: 'P102247',
-      dateOfLoss: '2/28/2026',
-      typeOfLoss: 'Collision',
-      pointOfImpact: '15 - Total Loss',
-      carrier: '207 Appraisal',
-      adjuster: 'SCOOBY DOO',
-      writer: 'VERNON LONG',
-      licenseNumber: '19062684'
-    },
-    owner: {
-      name: 'POPE, BRYAN',
-      address: '123 ABC ST',
-      city: 'WACO',
-      state: 'AK',
-      zip: '89524',
-      phone: '(999) 999-9999'
+      carrier: 'State Farm Insurance',
+      claimNumber: 'CLM-2026-00142',
+      adjuster: 'Karen Mitchell',
+      dateOfLoss: '2026-01-15',
+      policyNumber: 'POL-SF-8834201'
     },
     vehicle: {
-      year: '2018',
-      make: 'NISS',
-      model: 'Murano',
-      trim: 'Platinum FWD 4D UTV',
-      engine: '6-3.5L Gasoline Sequential MPI',
-      transmission: 'Automatic Transmission',
-      vin: '5N1AZ2MG0JN149330',
-      odometer: '99,999',
-      color: 'PEARL WHITE',
-      condition: 'Poor',
-      productionDate: '10/2018',
-      license: 'ABC123',
-      state: 'AK'
+      year: '2019',
+      make: 'Honda',
+      model: 'Accord EX',
+      vin: '1HGCV1F34KA019284',
+      mileage: '49812',
+      color: 'Lunar Silver Metallic',
+      engine: '4 cylinder 1.5L Turbo Auto',
+      driveType: 'FWD',
+      bodyStyle: 'Sedan 4D'
     },
-    options: [
-      'Automatic Transmission', 'Power Steering', 'Power Brakes',
-      'Power Windows', 'Power Locks', 'Power Mirrors', 'Heated Mirrors',
-      'Power Driver Seat', 'Power Passenger Seat', 'Memory Package',
-      'Dual Mirrors', 'Privacy Glass', 'Console/Storage', 'Overhead Console',
-      'Tilt Wheel', 'Cruise Control', 'Rear Defogger', 'Keyless Entry',
-      'Alarm', 'Message Center', 'Steering Wheel Touch Controls',
-      'Rear Window Wiper', 'Telescopic Wheel', 'Heated Steering Wheel',
-      'Climate Control', 'Navigation System', 'Backup Camera',
-      'Surround View Camera', 'Remote Starter', 'Intelligent Cruise',
-      'Home Link', 'Communications System', 'Hands Free Device',
-      'Air Conditioning', 'Intermittent Wipers', 'Stereo', 'Search/Seek',
-      'CD Player', 'Auxiliary Audio Connection', 'Premium Radio',
-      'Satellite Radio', 'Electric Glass Sunroof', 'Skyview Roof',
-      'Bucket Seats', 'Leather Seats', 'Heated Seats', 'Rear Heated Seats',
-      'Ventilated Seats', 'Drivers Side Air Bag', 'Passenger Air Bag',
-      'Anti-Lock Brakes (4)', '4 Wheel Disc Brakes', 'Traction Control',
-      'Stability Control', 'Front Side Impact Air Bags',
-      'Head/Curtain Air Bags', '20" Or Larger Wheels', 'Clear Coat Paint',
-      'Fog Lamps', 'Rear Spoiler', 'Signal Integrated Mirrors',
-      'Xenon or L.E.D. Headlamps', 'Blind Spot Detection',
-      'Power Trunk/Liftgate', 'AM Radio', 'FM Radio'
-    ],
     condition: {
-      paint: 'Poor',
-      sheetMetal: 'Poor',
-      glass: 'Average',
-      trim: 'Average',
-      seats: 'Average',
-      carpet: 'Average',
-      engine: 'Average',
-      transmission: 'Average',
-      frontTires: 'Average',
-      rearTires: 'Average'
+      paint:        { rating: 2, comment: 'Normal wear for age. Minor chips or scratches. No major deterioration.' },
+      sheetMetal:   { rating: 2, comment: 'Minor dings or typical wear. Panels align properly.' },
+      glass:        { rating: 3, comment: 'Glass clear. No cracks or defects observed.' },
+      trim:         { rating: 2, comment: 'Normal wear. Minor blemishes only.' },
+      seats:        { rating: 2, comment: 'Light wear. No major damage.' },
+      carpet:       { rating: 2, comment: 'Light wear consistent with age.' },
+      dashboard:    { rating: 3, comment: 'Clean with no damage noted.' },
+      headliner:    { rating: 3, comment: 'Clean and properly secured.' },
+      frontTires:   { rating: 1, treadDepth: '4/32', comment: 'Moderate wear, approaching replacement threshold.' },
+      rearTires:    { rating: 2, treadDepth: '6/32', comment: 'Even wear within acceptable range.' },
+      engine:       { rating: 2, comment: 'Operational with no major issues observed at inspection.' },
+      transmission: { rating: 2, comment: 'No operational concerns observed during inspection.' }
     },
+    options: DEMO_TLS_OPTIONS,
     summary: {
-      istotalLoss: true,
-      overallCondition: 'Poor'
+      damageSummary: 'Front-end collision. Bumper cover, hood, left fender, headlamp assembly, and radiator support require replacement. Supplemental restraint system deployed. Condenser and A/C lines compromised. Frame rail shows measurable deformation at left front. Repair cost exceeds total loss threshold per carrier guidelines.',
+      conclusion: 'Total Loss',
+      additionalNotes: 'Vehicle was inspected at owner residence. All mechanical ratings reflect condition prior to loss. Tire tread measured with calibrated depth gauge. Interior and exterior condition ratings represent pre-loss state and are not influenced by collision damage.'
     }
   };
 
   var DEMO_TLS_PARSED = {
-    claimNumber: '7428595-002',
-    policyNumber: 'P102247',
-    dateOfLoss: '2/28/2026',
-    typeOfLoss: 'Collision',
-    pointOfImpact: '15 - Total Loss',
-    ownerName: 'POPE, BRYAN',
-    ownerPhone: '(999) 999-9999',
-    ownerAddress: '123 ABC ST, WACO, AK 89524',
-    adjusterName: 'SCOOBY DOO',
-    writerName: 'VERNON LONG',
-    year: '2018',
-    make: 'NISS',
-    model: 'Murano',
-    trim: 'Platinum FWD 4D UTV',
-    vin: '5N1AZ2MG0JN149330',
-    odometer: '99,999',
-    engine: '6-3.5L Gasoline Sequential MPI',
-    transmission: 'Automatic',
-    color: 'PEARL WHITE',
-    condition: 'Poor',
-    isotalLoss: true,
-    damageLines: [
-      { description: 'Bumper cover', operation: 'Replace', amount: 434.85 },
-      { description: 'Shutter', operation: 'Replace', amount: 229.18 },
-      { description: 'Energy absorber', operation: 'Replace', amount: 109.11 },
-      { description: 'Impact bar (ALU)', operation: 'Replace', amount: 387.95 },
-      { description: 'Grille assy', operation: 'Replace', amount: 513.20 },
-      { description: 'Emblem w/surround view', operation: 'Replace', amount: 110.65 },
-      { description: 'LT Headlamp assy', operation: 'Replace', amount: 1759.15 },
-      { description: 'RT Headlamp assy', operation: 'Replace', amount: 1759.15 },
-      { description: 'Radiator support', operation: 'Replace', amount: 998.98 },
-      { description: 'Radiator assy', operation: 'Replace', amount: 1050.38 },
-      { description: 'Hood (ALU)', operation: 'Replace', amount: 892.07 },
-      { description: 'RT Fender', operation: 'Replace', amount: 549.64 },
-      { description: 'LT Fender', operation: 'Replace', amount: 549.64 },
-      { description: 'RT Rail assy (HSS)', operation: 'Replace', amount: 1695.02 },
-      { description: 'LT Rail assy (HSS)', operation: 'Replace', amount: 2393.82 },
-      { description: 'Driver air bag', operation: 'Replace', amount: 1235.64 },
-      { description: 'Psngr air bag', operation: 'Replace', amount: 1181.25 },
-      { description: 'Knee air bag', operation: 'Replace', amount: 635.95 },
-      { description: 'RT Head air bag', operation: 'Replace', amount: 856.65 },
-      { description: 'LT Head air bag', operation: 'Replace', amount: 983.02 },
-      { description: 'Clockspring w/heated strg whl', operation: 'Replace', amount: 517.47 },
-      { description: 'Ft impact sensor', operation: 'Replace', amount: 277.87 },
-      { description: 'RT Side impact sens', operation: 'Replace', amount: 235.07 },
-      { description: 'LT Side impact sens', operation: 'Replace', amount: 235.07 },
-      { description: 'Hazardous Waste', operation: 'Miscellaneous', amount: 10.00 },
-      { description: 'Flex additive', operation: 'Replace', amount: 3.00 }
-    ],
-    totals: {
-      parts: 19600.78,
-      bodyLabor: 1152.00,
-      paintLabor: 996.00,
-      mechanicalLabor: 320.00,
-      structuralLabor: 1120.00,
-      paintSupplies: 830.00,
-      miscellaneous: 3.00,
-      subtotal: 24021.78,
-      salesTax: 1080.98,
-      totalCostOfRepairs: 25102.76,
-      deductible: 500.00,
-      netCostOfRepairs: 24602.76
+    claim: {
+      carrier: 'State Farm Insurance',
+      claimNumber: 'CLM-2026-00142',
+      adjuster: 'Karen Mitchell'
     },
-    laborHours: {
-      body: 19.2,
-      paint: 16.6,
-      mechanical: 3.2,
-      structural: 14.0
+    vehicle: {
+      year: '2019',
+      make: 'Honda',
+      model: 'Accord EX',
+      vin: '1HGCV1F34KA019284',
+      mileage: '49812',
+      color: 'Lunar Silver Metallic'
     },
-    laborRates: {
-      body: 60.00,
-      paint: 60.00,
-      mechanical: 100.00,
-      structural: 80.00,
-      paintSupplies: 50.00
+    cylinders: 'CYL_4',
+    engineSize: '1.5L',
+    transmission: 'TRANS_AUTO',
+    options: DEMO_TLS_OPTIONS,
+    damage: {
+      estimateTotal: 14287.52,
+      laborTotal: 4320.00,
+      partsTotal: 8967.52,
+      paintTotal: 1000.00
     }
   };
 
