@@ -57,71 +57,88 @@ export function initTotalLossStudio() {
 export function initTotalLossDemo(demoPayload, demoParsed) {
     if (!container) return;
 
-    // Stage 1: Render normal drop zone, then flip to "file selected" state
-    renderDropZone();
+    // Show welcome modal first, then render the real drop zone
+    showDemoWelcomeModal(() => {
+        state.parsedEstimate = null;
+        state.bcifPayload = null;
+        state.tokenMap = null;
+        renderDropZone();
 
-    const defaultState  = document.getElementById('defaultState');
-    const selectedState = document.getElementById('selectedState');
-    const fileNameEl    = document.getElementById('fileName');
-    const fileSizeEl    = document.getElementById('fileSize');
-    const dropzone      = document.getElementById('dropzone');
-    const proceedBtn    = document.getElementById('proceedBtn');
-    const cancelBtn     = document.getElementById('cancelBtn');
+        // Add "skip upload" fallback if mock data is available
+        if (demoPayload && demoParsed) {
+            const dropzone = document.getElementById('dropzone');
+            if (dropzone) {
+                const skipDiv = document.createElement('div');
+                skipDiv.style.cssText = 'text-align:center;margin-top:12px;';
+                skipDiv.innerHTML = `<button id="demoSkipBtn" style="
+                    background:none;border:none;color:var(--amber,#e8952a);
+                    font-family:'DM Mono',monospace;font-size:11px;
+                    cursor:pointer;text-decoration:underline;
+                    text-transform:uppercase;letter-spacing:0.06em;
+                    opacity:0.7;
+                ">Or preview with sample data (2019 Honda Accord)</button>`;
+                dropzone.parentNode.insertBefore(skipDiv, dropzone.nextSibling);
 
-    if (defaultState)  defaultState.style.display = 'none';
-    if (selectedState) selectedState.style.display = 'flex';
-    if (fileNameEl)    fileNameEl.textContent = 'CCC_Estimate_CLM-2026-00142.pdf';
-    if (fileSizeEl)    fileSizeEl.textContent = '0.2 MB';
-    if (dropzone) {
-        dropzone.style.borderColor = 'var(--amber, #e8952a)';
-        dropzone.style.borderStyle = 'solid';
-    }
-
-    // Disable cancel — there's no real file to remove
-    if (cancelBtn) cancelBtn.style.display = 'none';
-
-    // Stage 2 & 3: On click, run the processing animation then show summary
-    if (proceedBtn) {
-        proceedBtn.addEventListener('click', async function demoProcess() {
-            proceedBtn.removeEventListener('click', demoProcess);
-
-            // Processing animation — same stages as handleFile()
-            mountProcessingView();
-            updateStage(0);
-            await delay(800);
-
-            state.parsedEstimate = demoParsed;
-            state.bcifPayload = demoPayload;
-            updateStage(1);
-            await delay(600);
-
-            updateStage(2);
-            await delay(600);
-
-            state.tokenMap = renderBCIFPayload(demoPayload);
-            updateStage(3);
-            await delay(500);
-
-            updateStage(4);
-            await delay(400);
-
-            unmountProcessingView();
-
-            // Fade in summary
-            container.style.transition = 'opacity 200ms';
-            container.style.opacity = '0';
-            await delay(200);
-            container.innerHTML = renderSummaryView(demoPayload);
-            container.style.opacity = '1';
-            updateSummaryHeaderFooter(demoPayload);
-            attachSummaryListeners();
-
-            // Demo downloads now proceed with watermark — no interception needed
-        });
-    }
+                document.getElementById('demoSkipBtn').addEventListener('click', async () => {
+                    mountProcessingView();
+                    updateStage(0);
+                    await delay(800);
+                    state.parsedEstimate = demoParsed;
+                    state.bcifPayload = demoPayload;
+                    updateStage(1); await delay(600);
+                    updateStage(2); await delay(600);
+                    state.tokenMap = renderBCIFPayload(demoPayload);
+                    updateStage(3); await delay(500);
+                    updateStage(4); await delay(400);
+                    unmountProcessingView();
+                    container.style.transition = 'opacity 200ms';
+                    container.style.opacity = '0';
+                    await delay(200);
+                    container.innerHTML = renderSummaryView(demoPayload);
+                    container.style.opacity = '1';
+                    updateSummaryHeaderFooter(demoPayload);
+                    attachSummaryListeners();
+                });
+            }
+        }
+    });
 }
 
-// interceptDemoDownloads removed — demo users now get watermarked DOCX downloads
+/**
+ * Dismissible welcome modal for demo users — explains the TLS workflow.
+ */
+function showDemoWelcomeModal(onDismiss) {
+    const overlay = document.createElement('div');
+    overlay.id = 'demo-welcome-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:24px;';
+    overlay.innerHTML = `
+        <div style="background:var(--cipher-surface,#1a1a2e);border:1px solid var(--amber,#e8952a);border-radius:12px;max-width:540px;width:100%;padding:36px 32px;font-family:'Barlow',sans-serif;color:var(--cipher-text,#f0f0f0);">
+            <h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--amber,#e8952a);margin:0 0 8px;letter-spacing:0.04em;">Total Loss Studio</h2>
+            <p style="font-size:14px;color:var(--cipher-text-muted,#aaa);margin:0 0 20px;">See your own claim data processed in real time.</p>
+            <ol style="line-height:2.2;padding-left:22px;font-size:15px;margin:0 0 16px;">
+                <li>Upload a <strong style="color:var(--amber,#e8952a);">CCC ONE</strong> estimate PDF</li>
+                <li>Press <strong style="color:var(--amber,#e8952a);">Process Estimate</strong> to parse</li>
+                <li>Verify vehicle options, adjust condition ratings, explore controls</li>
+                <li>Download two watermarked sample forms (BCIF + Claim Summary)</li>
+            </ol>
+            <p style="font-size:12px;color:var(--cipher-text-muted,#888);margin:0 0 24px;line-height:1.6;">
+                CCC ONE estimates only \u2014 Mitchell support coming soon.<br>
+                Demo downloads are watermarked. <a href="/signup" style="color:var(--amber,#e8952a);text-decoration:underline;">Subscribe</a> for clean, professional reports.
+            </p>
+            <button id="demo-welcome-dismiss" style="
+                display:block;width:100%;padding:14px;
+                background:var(--amber,#e8952a);color:#000;border:none;border-radius:6px;
+                font-family:'DM Mono',monospace;font-size:14px;font-weight:700;
+                cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;
+            ">Got it \u2014 let me upload \u2192</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('demo-welcome-dismiss').addEventListener('click', () => {
+        overlay.remove();
+        if (onDismiss) onDismiss();
+    });
+}
 
 // =========================================
 //  DROP ZONE

@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Total Loss Studio Module -->
     <script type="module">
         import { initTotalLossStudio, initTotalLossDemo } from './modules/total-loss-v2/total-loss-studio.js';
-        if (sessionStorage.getItem('demo_mode') === 'true' && window.__tlsDemoPayload) {
-            initTotalLossDemo(window.__tlsDemoPayload, window.__tlsDemoParsed);
+        if (sessionStorage.getItem('demo_mode') === 'true') {
+            initTotalLossDemo(window.__tlsDemoPayload || null, window.__tlsDemoParsed || null);
         } else {
             initTotalLossStudio();
         }

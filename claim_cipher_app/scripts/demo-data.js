@@ -523,8 +523,8 @@
       + 'font-family:"DM Mono",monospace;font-size:12px;letter-spacing:0.08em;'
       + 'text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:12px;';
 
-    banner.innerHTML = '<span>Demo Mode \u2014 Activate to save your data</span>'
-      + '<a href="login-cypher.html" id="demoBannerLink" style="color:#000;font-weight:600;text-decoration:underline;">Activate \u2192</a>';
+    banner.innerHTML = '<span>Demo Mode \u2014 Downloads are watermarked</span>'
+      + '<a href="/signup" id="demoBannerLink" style="color:#000;font-weight:600;text-decoration:underline;">Subscribe to download clean reports \u2192</a>';
 
     document.body.insertBefore(banner, document.body.firstChild);
 
