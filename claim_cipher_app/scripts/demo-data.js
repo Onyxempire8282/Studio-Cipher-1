@@ -452,17 +452,33 @@
   }
 
   function injectMileageCypher() {
-    // Poll for mileageCipher instance, then inject history and render
+    // Poll for mileageCipher instance, then lock starting address and seed history
     function tryInject() {
       if (!window.mileageCipher) { setTimeout(tryInject, 200); return; }
 
+      // Seed calculation history
       window.mileageCipher.calculationHistory = DEMO_MILEAGE_ENTRIES.slice();
+
+      // Lock starting address to demo home — user can enter any destination
+      var pointA = document.getElementById('pointA');
+      if (pointA) {
+        pointA.value = DEMO_HOME_ADDRESS;
+        pointA.readOnly = true;
+        pointA.style.opacity = '0.7';
+        pointA.style.cursor = 'not-allowed';
+        // Block autocomplete/clear from overwriting
+        var origSet = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+        Object.defineProperty(pointA, 'value', {
+          get: function() { return origSet ? DEMO_HOME_ADDRESS : DEMO_HOME_ADDRESS; },
+          set: function() { /* locked */ },
+          configurable: true
+        });
+      }
 
       // Trigger the session log panel update if the function exists
       if (typeof updateSessionLogPanel === 'function') {
         updateSessionLogPanel();
       } else {
-        // Fallback: manually render the session log
         renderDemoSessionLog();
       }
     }
