@@ -539,13 +539,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Demo mode handler — shared by both login and signup panel buttons
-    function enterDemoMode(e) {
-        e.preventDefault();
+    function launchDemoNow() {
         sessionStorage.setItem('demo_mode', 'true');
         sessionStorage.removeItem('claimCipherAuth');
         localStorage.removeItem('cipher_last_route');
         localStorage.removeItem('cipher_routes_by_day');
         window.location.replace('command-center.html');
+    }
+
+    function enterDemoMode(e) {
+        e.preventDefault();
+        // Show email capture modal if not yet seen, then launch demo
+        if (window.CipherCapture && window.CipherCapture.shouldShow()) {
+            window.CipherCapture.show(launchDemoNow);
+        } else {
+            launchDemoNow();
+        }
     }
 
     // Re-query demo buttons AFTER both form clones replaced the DOM nodes
@@ -764,6 +773,7 @@ document.addEventListener('keydown', function(e) {
   </div>
 </div>
 
+<script defer src="shared/email-capture-modal.js"></script>
 </body>
 </html>
 

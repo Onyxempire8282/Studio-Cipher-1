@@ -123,13 +123,20 @@ class CommandCenterManager {
     async handleLogout() {
         this.logActivity('User logged out', 'auth');
 
-        // Demo mode logout - clear demo state and redirect (no Supabase session)
+        // Demo mode logout - show capture modal, then clear demo state and redirect
         if (sessionStorage.getItem('demo_mode') === 'true') {
-            sessionStorage.removeItem('demo_mode');
-            sessionStorage.removeItem('claimCipherAuth');
-            if (window.FirmStore) window.FirmStore.clearDemo();
-            if (window.SessionManager) window.SessionManager.clearDemo();
-            window.location.replace('login-cypher.html');
+            const doClearAndRedirect = () => {
+                sessionStorage.removeItem('demo_mode');
+                sessionStorage.removeItem('claimCipherAuth');
+                if (window.FirmStore) window.FirmStore.clearDemo();
+                if (window.SessionManager) window.SessionManager.clearDemo();
+                window.location.replace('login-cypher.html');
+            };
+            if (window.CipherCapture && window.CipherCapture.shouldShow()) {
+                window.CipherCapture.show(doClearAndRedirect);
+            } else {
+                doClearAndRedirect();
+            }
             return;
         }
 
@@ -1244,13 +1251,20 @@ function quickTest() {
 }
 
 async function handleLogout() {
-    // Demo mode logout - clear demo state and redirect (no Supabase session)
+    // Demo mode logout - show capture modal, then clear and redirect
     if (sessionStorage.getItem('demo_mode') === 'true') {
-        sessionStorage.removeItem('demo_mode');
-        sessionStorage.removeItem('claimCipherAuth');
-        if (window.FirmStore) window.FirmStore.clearDemo();
-        if (window.SessionManager) window.SessionManager.clearDemo();
-        window.location.replace('login-cypher.html');
+        const doClearAndRedirect = () => {
+            sessionStorage.removeItem('demo_mode');
+            sessionStorage.removeItem('claimCipherAuth');
+            if (window.FirmStore) window.FirmStore.clearDemo();
+            if (window.SessionManager) window.SessionManager.clearDemo();
+            window.location.replace('login-cypher.html');
+        };
+        if (window.CipherCapture && window.CipherCapture.shouldShow()) {
+            window.CipherCapture.show(doClearAndRedirect);
+        } else {
+            doClearAndRedirect();
+        }
         return;
     }
 
