@@ -21,11 +21,8 @@
   var SUBMITTED_KEY = 'cc_capture_submitted';
   var SKIPPED_KEY   = 'cc_capture_skipped';
 
-  // Migrate legacy flag — treat old "seen" as "submitted" since we can't tell
-  if (localStorage.getItem('cc_capture_seen') === '1' && !localStorage.getItem(SUBMITTED_KEY)) {
-    localStorage.setItem(SUBMITTED_KEY, '1');
-    localStorage.removeItem('cc_capture_seen');
-  }
+  // Clear legacy flag so new per-location logic takes over
+  localStorage.removeItem('cc_capture_seen');
 
   function isValidEmail(v) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
