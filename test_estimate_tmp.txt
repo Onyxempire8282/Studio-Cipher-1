@@ -1,0 +1,354 @@
+Owner: ALSTON, JESSICA
+
+Insured:
+
+ALSTON, JESSICA
+
+Type of Loss: Comprehensive
+
+Point of Impact: 29 Vandalism
+
+Owner: ALSTON, JESSICA 1115 LICKSKILLET RD Warrenton, NC 27589 (252) 915-6481 Cell (252) 915-6481 Business
+
+AUTO CLAIMS DIRECT
+3196 WILLOW CREEK RD PRESCOTT, AZ 86301 Phone: (602) 773-1961
+For:
+AUTO CLAIMS DIRECT
+NATIONWIDE MUTUAL INSURANCE COMPANY
+
+Workfile ID:
+
+d5e6adb2
+
+Preliminary Estimate
+
+Written By: Vernon Long Adjuster: Boone, Brittany, (833) 369-2567 Business
+
+Job Number:
+
+Policy #: Date of Loss: 8/8/2025 12:00 PM
+
+Claim #:
+
+664723-GQ-1
+
+Days to Repair: 2
+
+Inspection Location: Jessica Alston 211 BARHAM LN Henderson, NC 27537 Other (252) 915-6481 Day
+
+Repair Facility:
+
+VEHICLE
+
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+
+VIN: License: State:
+
+3GNAXHEG0SL290421 GRLFGHTR NC
+
+Production Date: Odometer: Condition:
+
+2/2025 6,826 Excellent
+
+Interior Color: Exterior Color:
+
+WHITE
+
+TRANSMISSION Automatic Transmission POWER Power Steering Power Brakes Power Windows Power Locks Power Mirrors Heated Mirrors DECOR Dual Mirrors Privacy Glass Console/Storage CONVENIENCE Air Conditioning
+
+Tilt Wheel Cruise Control Rear Defogger Keyless Entry Alarm Message Center Steering Wheel Touch Controls Telescopic Wheel Heated Steering Wheel Navigation System Backup Camera Parking Sensors Remote Starter Intelligent Cruise RADIO
+
+AM Radio FM Radio Stereo Search/Seek Auxiliary Audio Connection Satellite Radio SAFETY Drivers Side Air Bag Passenger Air Bag Anti-Lock Brakes (4) 4 Wheel Disc Brakes Traction Control Stability Control Front Side Impact Air Bags Head/Curtain Air Bags
+
+Communications System Hands Free Device Xenon or L.E.D. Headlamps Blind Spot Detection Lane Departure Warning SEATS Cloth Seats Bucket Seats Heated Seats WHEELS Aluminum/Alloy Wheels PAINT Clear Coat Paint
+
+8/15/2025 5:43:23 PM
+
+476348
+
+Page 1
+
+Preliminary Estimate Owner: ALSTON, JESSICA
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+
+Job Number:
+
+Line
+
+Oper
+
+Description
+
+Part Number
+
+1 FENDER
+
+2*
+
+Algn LT Fender
+
+3
+
+R&I LT Wheelhouse liner
+
+4 FRONT DOOR
+
+5
+
+R&I LT R&I trim panel
+
+6
+
+R&I RT R&I trim panel
+
+7
+
+Repl RT Handle, outside
+
+13563173
+
+8
+
+Add for Clear Coat
+
+9
+
+Dis/reassmble to refn
+
+10
+
+Repl LT Handle, outside
+
+13563171
+
+11
+
+Overlap Minor Panel
+
+12
+
+Add for Clear Coat
+
+13
+
+Dis/reassmble to refn
+
+14 *
+
+Rpr RT Upper cover
+
+15
+
+Overlap Minor Panel
+
+16
+
+Add for Clear Coat
+
+17 REAR DOOR
+
+18
+
+Repl RT Handle, outside
+
+13563181
+
+19
+
+Overlap Minor Panel
+
+20
+
+Add for Clear Coat
+
+21
+
+Dis/reassmble to refn
+
+22
+
+R&I RT R&I trim panel
+
+23 LIFT GATE
+
+24
+
+Repl Wiper arm
+
+26527412
+
+25
+
+R&I Lower gate trim w/power lift gate
+
+26 VEHICLE DIAGNOSTICS
+
+27 *
+
+Rpr Pre-repair scan
+
+28 *
+
+Rpr Post-repair scan
+
+SUBTOTALS
+
+Qty Extended Price $
+
+1
+
+64.22
+
+1
+
+78.53
+
+1
+
+52.52
+
+1
+
+20.10
+
+m m 215.37
+
+NOTES
+
+Prior Damage Notes: NO UPD VISIBLE
+
+Labor
+1.0 0.4 0.5 0.5 0.4 0.2 0.4
+0.2 0.5
+0.4
+0.2 0.4 0.2 0.3 0.5 M 0.5 M 6.6
+
+Paint
+0.5 0.1 0.5 -0.2 0.1 0.6 -0.2 0.1 0.4 -0.2 0.1
+1.8
+
+8/15/2025 5:43:23 PM
+
+476348
+
+Page 2
+
+Preliminary Estimate
+Owner: ALSTON, JESSICA
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+ESTIMATE TOTALS
+Category Parts Body Labor Paint Labor Mechanical Labor Paint Supplies Subtotal Sales Tax Total Cost of Repairs Deductible Total Adjustments Net Cost of Repairs
+
+Basis
+5.6 hrs @ 1.8 hrs @ 1.0 hrs @ 1.8 hrs @
+$ 796.57 @
+
+Job Number:
+
+Rate
+$ 55.00 /hr $ 55.00 /hr $ 95.00 /hr $ 44.00 /hr
+6.7500 %
+
+Cost $ 215.37 308.00
+99.00 95.00 79.20 796.57 53.77 850.34 100.00 100.00 750.34
+
+MyPriceLink Estimate ID / Quote ID: 1385729479405477888 / 147206308
+
+Supplements: http://acdcorp.com/supp *THIS IS NOT AN AUTHORIZATION TO REPAIR OR ACCEPTANCE OF LIABILITY *THIS IS NOT A FINAL APPROVED ESTIMATE, NOR ACCEPTANCE TO PAY *SHOP TO PROVIDE AUTHORIZATION TO REPAIR/DIRECTION TO PAY FROM OWNER *ESTIMATE PREPARED BY: E. Kolkhorst *NO SUPPLEMENTS WITHOUT PRIOR AUTHORIZATION: ALL SUPPLEMENTS, CALL FOR SUPPLEMENT REQUEST LISTED NUMBER PAGE 1 ORIGINAL ESTIMATE *REQUIREMENT FOR ALL SUPPLEMENT REQUESTS: INVOICES, OLD PARTS, PHOTOS HIDDEN /ADDITIONAL DAMAGE; MUST BE DOCUMENTED BY JPG PHOTOGRAPH *TEAR DOWN PRIOR TO REPAIRS COMMENCING OR PARTS ORDERED W/WRITTEN OWNER AUTHORIZATION *AGREED PRICE (N) ESTIMATE TO SHOP (N) *ESTIMATE MAILED TO THE OWNER (N) *TOTAL LOSS (N) CCC REQUEST # *RECYCLED PARTS USED (N) *AFTERMARKET PARTS USED (Y)
+THIS IS NOT AN AUTHORIZATION TO REPAIR. THIS IS AN APPRAISAL OF DAMAGES ONLY. NO APPRAISER HAS THE AUTHORITY TO AUTHORIZE REPAIRS. AUTHORIZATION AND GUARANTEE OF PAYMENT CAN ONLY BE GIVEN BY THE OWNER OF THE VEHICLE. ACD (AUTOCLAIMS DIRECT) AND ITS CLIENTS ASSUME NO RESPONSIBILITY FOR REPAIR QUALITY AND SAFETY. ACD (AUTOCLAIMS DIRECT) SPECIFIES AND INTENDS THAT ALL REPAIRS AND PART REPLACEMENTS LISTED HEREON ARE MADE IN STRICT ACCORDANCE WITH THE MANUFACTURER'S RECOMMENDATIONS AND SPECIFICATIONS. SUPPLEMENTAL DAMAGE IS SUBJECT TO REINSPECTION. FOR YOUR PROTECTION.
+
+8/15/2025 5:43:23 PM
+
+476348
+
+Page 3
+
+Preliminary Estimate
+
+Owner: ALSTON, JESSICA
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+
+Job Number:
+
+NOTE: YOU HAVE THE RIGHT TO SELECT THE BODY SHOP THAT WILL REPAIR YOUR VEHICLE.
+
+Estimate based on MOTOR CRASH ESTIMATING GUIDE and potentially other third party sources of data. Unless otherwise noted, (a) all items are derived from the Guide DR1GV17, CCC Data Date 08/08/2025, and potentially other third party sources of data; and (b) the parts presented are OEM-parts. OEM parts are manufactured by or for the vehicle's Original Equipment Manufacturer (OEM) according to OEM's specifications for U.S. distribution. OEM parts are available at OE/Vehicle dealerships or the specified supplier. OPT OEM (Optional OEM) or ALT OEM (Alternative OEM) parts are OEM parts that may be provided by or through alternate sources other than the OEM vehicle dealerships with discounted pricing. Asterisk (*) or Double Asterisk (**) indicates that the parts and/or labor data provided by third party sources of data may have been modified or may have come from an alternate data source. Tilde sign (~) items indicate MOTOR Not-Included Labor operations. The symbol (<>) indicates the refinish operation WILL NOT be performed as a separate procedure from the other panels in the estimate. Non-Original Equipment Manufacturer aftermarket parts are described as Non OEM, A/M or NAGS. Used parts are described as LKQ, RCY, or USED. Reconditioned parts are described as Recond. Recored parts are described as Recore. NAGS Part Numbers and Benchmark Prices are provided by National Auto Glass Specifications. Labor operation times listed on the line with the NAGS information are MOTOR suggested labor operation times. NAGS labor operation times are not included. Pound sign (#) items indicate manual entries.
+Some 2024 vehicles contain minor changes from the previous year. For those vehicles, prior to receiving updated data from the vehicle manufacturer, labor and parts data from the previous year may be used. The CCC ONE estimator has a list of applicable vehicles. Parts numbers and prices should be confirmed with the local dealership.
+The following is a list of additional abbreviations or symbols that may be used to describe work to be done or parts to be repaired or replaced:
+SYMBOLS FOLLOWING PART PRICE: m=MOTOR Mechanical component. s=MOTOR Structural component. T=Miscellaneous Taxed charge category. X=Miscellaneous Non-Taxed charge category.
+SYMBOLS FOLLOWING LABOR: D=Diagnostic labor category. E=Electrical labor category. F=Frame labor category. G=Glass labor category. M=Mechanical labor category. S=Structural labor category. (numbers) 1 through 4=User Defined Labor Categories.
+OTHER SYMBOLS AND ABBREVIATIONS: Adj.=Adjacent. Algn.=Align. ALU=Aluminum. A/M=Aftermarket part. Blnd=Blend. BOR=Boron steel. CAPA=Certified Automotive Parts Association. CFC=Carbon Fiber. D&R=Disconnect and Reconnect. HSS=High Strength Steel. HYD=Hydroformed Steel. Incl.=Included. LKQ=Like Kind and Quality. LT=Left. MAG=Magnesium. Non-Adj.=Non Adjacent. NSF=NSF International Certified Part. O/H=Overhaul. Qty=Quantity. Refn=Refinish. Repl=Replace. R&I=Remove and Install. R&R=Remove and Replace. Rpr=Repair. RT=Right. SAS=Sandwiched Steel. Sect=Section. STS=Stainless Steel. Subl=Sublet. UHS=Ultra High Strength Steel. N=Note(s) associated with the estimate line.
+
+CCC ONE Estimating - A product of CCC Intelligent Solutions Inc.
+The following is a list of abbreviations that may be used in CCC ONE Estimating that are not part of the MOTOR CRASH ESTIMATING GUIDE: BAR=Bureau of Automotive Repair. EPA=Environmental Protection Agency. NHTSA= National Highway Transportation and Safety Administration. PDR=Paintless Dent Repair. VIN=Vehicle Identification Number.
+
+8/15/2025 5:43:23 PM
+
+476348
+
+Page 4
+
+Preliminary Estimate Owner: ALSTON, JESSICA
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+ALTERNATE PARTS USAGE
+
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+
+VIN: License: State:
+
+3GNAXHEG0SL290421 GRLFGHTR NC
+
+Production Date: Odometer: Condition:
+
+2/2025 6,826 Excellent
+
+Job Number:
+
+Interior Color: Exterior Color:
+
+WHITE
+
+Alternate Part Type
+Aftermarket Optional OEM Reconditioned Recycled
+
+Selection Method
+Automatically List Automatically List Automatically List N/A
+
+# Of Times Notified Of Available Parts 0 0 0 0
+
+# Of Parts Selected
+0 0 0 0
+
+8/15/2025 5:43:23 PM
+
+476348
+
+Page 5
+
+Preliminary Estimate Owner: ALSTON, JESSICA
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+RECALL INFO
+
+2025 CHEV Equinox LT1 FWD 4D UTV 4-1.5L Turbocharged Gasoline Direct Injection WHITE
+
+VIN: License: State:
+
+3GNAXHEG0SL290421 GRLFGHTR NC
+
+Production Date: Odometer: Condition:
+
+2/2025 6,826 Excellent
+
+Job Number:
+
+Interior Color: Exterior Color:
+
+WHITE
+
+8/15/2025 5:43:23 PM
+
+476348
+
+Page 6
+
+

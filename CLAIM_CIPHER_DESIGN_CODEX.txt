@@ -1,0 +1,2517 @@
+CLAUDE CODE PROMPT — CLAIM CIPHER DESIGN SYSTEM CODEX
+======================================================
+This file is the complete extracted design system from
+Claim Cipher (studio_cipher-1). Use it as the single
+source of truth when building Cipher Dispatch or any
+new app that must match the Claim Cipher visual design.
+
+When applying this codex:
+  1. Copy the :root variables verbatim into your new CSS.
+  2. Use the same Google Fonts import URL.
+  3. Replicate component classes exactly — do not rename.
+  4. Follow the same HTML structure patterns for sections,
+     modals, forms, nav, and the ECHO widget.
+  5. Use the same Supabase client init pattern and table
+     schemas when wiring data.
+
+DO NOT deviate from these values unless explicitly told.
+======================================================
+
+
+================================================================
+SECTION 1 — DESIGN TOKENS
+================================================================
+
+Google Fonts Import URL:
+https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap
+
+:root {
+  /* ── Surface colors ── */
+  --plate:      #0e0f11;       /* deepest background (body) */
+  --steel:      #161a1d;       /* card / section background */
+  --steel-mid:  #1e2328;       /* header bars, footers */
+  --steel-lift: #252b31;       /* elevated surface */
+  --input-bg:   #0a0c0e;       /* input field background */
+
+  /* ── Border colors ── */
+  --rivet:      #2e353d;       /* standard border */
+  --rivet-hi:   #3d464f;       /* highlighted / top border */
+
+  /* ── Accent ── */
+  --amber:      #e8952a;       /* primary accent */
+  --amber-dim:  rgba(232,149,42,0.12);   /* amber tint bg */
+  --amber-line: rgba(232,149,42,0.35);   /* amber border */
+  --amber-glow: rgba(232,149,42,0.06);   /* subtle glow */
+
+  /* ── Text colors ── */
+  --white:      #edeae4;       /* headings, high emphasis */
+  --text:       #8f9399;       /* body text default */
+  --text-hi:    #b8bdc2;       /* high emphasis body */
+  --muted:      #4a5058;       /* disabled, nav inactive */
+  --text-sub:   #8a9099;       /* subtitles, secondary */
+  --text-dim:   #6b7480;       /* hints, placeholders, meta */
+}
+
+
+================================================================
+SECTION 2 — TYPOGRAPHY
+================================================================
+
+PRIMARY DISPLAY FONT: Bebas Neue
+  font-family: 'Bebas Neue', sans-serif;
+  ┌──────────────────────────────────┬───────────┬────────────────┐
+  │ Usage                            │ font-size │ letter-spacing │
+  ├──────────────────────────────────┼───────────┼────────────────┤
+  │ Page title (.page-title)         │ 32px      │ 0.06em         │
+  │ Dashboard greeting               │ 40px      │ 0.04em         │
+  │ Clock time                       │ 36px      │ 0.06em         │
+  │ Stat numbers (.stat-num)         │ 44px      │ 0.01em         │
+  │ Op card name (.op-name)          │ 24px      │ 0.04em         │
+  │ Modal title (.modal-title)       │ 24px      │ 0.05em         │
+  │ Session modal title              │ 26px      │ 0.05em         │
+  └──────────────────────────────────┴───────────┴────────────────┘
+
+SECONDARY / MONO FONT: DM Mono
+  font-family: 'DM Mono', monospace;
+  Weights: 300, 400, 500
+  ┌──────────────────────────────────┬───────────┬────────────────┬────────────────┐
+  │ Usage                            │ font-size │ letter-spacing │ text-transform │
+  ├──────────────────────────────────┼───────────┼────────────────┼────────────────┤
+  │ Nav tabs (.nav-tab)              │ 11px      │ 0.1em          │ uppercase      │
+  │ Page eyebrow (.page-label)       │ 10px      │ 0.22em         │ uppercase      │
+  │ Section titles (.section-title)  │ 11px      │ 0.2em          │ uppercase      │
+  │ Form labels (.form-label)        │ 10px      │ 0.14em         │ uppercase      │
+  │ Filter chips (.filter-chip)      │ 10px      │ 0.1em          │ uppercase      │
+  │ Badges (.section-badge)          │ 10px      │ 0.1em          │ uppercase      │
+  │ Firm tags (.firm-tag)            │ 9px       │ 0.1em          │ uppercase      │
+  │ Sidebar label (.sidebar-label)   │ 9px       │ 0.2em          │ uppercase      │
+  │ Nav user (.nav-user)             │ 10px      │ 0.1em          │ uppercase      │
+  │ Nav user name (.nav-user strong) │ 12px      │ —              │ uppercase      │
+  │ Buttons (.btn)                   │ 11px      │ 0.12em         │ uppercase      │
+  │ Toast (.settings-toast)          │ 11px      │ 0.12em         │ uppercase      │
+  │ Logout (.nav-logout)             │ 10px      │ 0.1em          │ uppercase      │
+  │ Strength label                   │ 9px       │ 0.1em          │ uppercase      │
+  └──────────────────────────────────┴───────────┴────────────────┴────────────────┘
+
+BODY FONT: Barlow
+  font-family: 'Barlow', sans-serif;
+  Weights: 300, 400, 500, 600
+  ┌──────────────────────────────────┬───────────┬─────────────┬─────────────┐
+  │ Usage                            │ font-size │ font-weight │ line-height │
+  ├──────────────────────────────────┼───────────┼─────────────┼─────────────┤
+  │ Body default                     │ —         │ 300         │ —           │
+  │ Sidebar links (.sidebar-link)    │ 13px      │ —           │ —           │
+  │ Form inputs (.form-input)        │ 13px      │ —           │ —           │
+  │ Toggle labels                    │ 13px      │ —           │ —           │
+  │ Page subtitle (.page-sub)        │ 12px      │ —           │ —           │
+  │ Op card desc (.op-desc)          │ 12px      │ —           │ 1.7         │
+  │ Modal desc (.modal-desc)         │ 13px      │ —           │ 1.6         │
+  │ Danger action title              │ 14px      │ 500         │ —           │
+  │ Session modal message            │ 15px      │ 400         │ 1.6         │
+  └──────────────────────────────────┴───────────┴─────────────┴─────────────┘
+
+
+================================================================
+SECTION 3 — COMPONENT LIBRARY
+================================================================
+
+── BUTTONS ──────────────────────────────────────────────────────
+
+/* Base */
+.btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* Ghost (outline) */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--rivet);
+  color: var(--muted);
+}
+.btn-ghost:hover {
+  border-color: var(--rivet-hi);
+  color: var(--text-hi);
+}
+
+/* Steel (lifted) */
+.btn-steel {
+  background: var(--steel-lift);
+  border: 1px solid var(--rivet-hi);
+  color: var(--text-hi);
+}
+.btn-steel:hover {
+  border-color: var(--amber-line);
+  color: var(--white);
+}
+
+/* Primary (amber filled) */
+.btn-primary {
+  background: var(--amber);
+  color: #000;
+  font-weight: 600;
+  border: 1px solid var(--amber);
+  box-shadow: 0 0 20px rgba(232,149,42,0.25);
+}
+.btn-primary:hover {
+  background: #f0a030;
+  box-shadow: 0 0 28px rgba(232,149,42,0.4);
+  transform: translateY(-1px);
+}
+
+/* Danger (red) */
+.btn-danger {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 1px solid rgba(192,57,43,0.4);
+  background: rgba(192,57,43,0.1);
+  color: #e74c3c;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-danger:hover {
+  background: rgba(192,57,43,0.2);
+  border-color: rgba(192,57,43,0.6);
+}
+
+/* Small variant */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+
+── FORM INPUTS ──────────────────────────────────────────────────
+
+.form-input {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  border-top: 1px solid var(--rivet-hi);
+  padding: 11px 14px;
+  color: var(--white);
+  font-size: 13px;
+  font-family: 'Barlow', sans-serif;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.form-input:focus {
+  border-color: var(--amber);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+}
+.form-input::placeholder {
+  color: var(--text-dim);
+}
+.form-input--readonly {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.form-input--state {
+  max-width: 120px;
+}
+
+/* Alt class name (identical behavior) */
+.field-input { /* same as .form-input */ }
+
+/* Labels */
+.form-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+}
+.field-label { /* identical to .form-label */ }
+
+/* Hints */
+.form-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.field-hint { /* identical */ }
+
+/* Form layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group--full {
+  grid-column: 1 / -1;
+}
+.form-grid--tight {
+  gap: 12px;
+}
+
+/* Email row */
+.email-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.email-row .form-input { flex: 1; }
+
+
+── CARDS / SECTIONS ─────────────────────────────────────────────
+
+/* Section card (settings page) */
+.section-card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+  z-index: 1;
+}
+.section-card--danger {
+  border-left-color: #c0392b;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}
+
+.section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.section-body {
+  padding: 24px 20px;
+  background: var(--steel);
+}
+
+.section-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}
+
+/* Card system (dashboard / general) */
+.card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+}
+.card.accent { border-left-color: var(--amber); }
+
+/* Rivet dots on cards */
+.card::before, .card::after {
+  content: ''; position: absolute;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rivet-hi); border: 1px solid var(--muted);
+}
+.card::before { top: 10px; right: 12px; }
+.card::after  { bottom: 10px; right: 12px; }
+
+.card-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--amber);
+}
+.card-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--amber-line), transparent);
+}
+.card-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em;
+}
+.card-body { padding: 24px; }
+
+
+── BADGES / TAGS ────────────────────────────────────────────────
+
+.section-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--rivet);
+  color: var(--muted);
+  background: var(--steel);
+}
+.section-badge--saved {
+  border-color: rgba(46,204,113,0.3);
+  color: #2ecc71;
+}
+
+.firm-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--rivet);
+  color: var(--text-dim);
+}
+
+.firm-custom-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  background: rgba(232,149,42,0.12);
+  border: 1px solid rgba(232,149,42,0.3);
+  color: var(--amber);
+  padding: 1px 5px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.hbadge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px; border: 1px solid var(--rivet);
+  color: var(--muted); background: var(--steel-mid);
+}
+.hbadge span { color: var(--amber); }
+
+
+── TOGGLE SWITCH ────────────────────────────────────────────────
+
+.toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: var(--rivet); border: 1px solid var(--rivet-hi);
+  cursor: pointer; transition: all 0.2s;
+}
+.toggle-thumb {
+  position: absolute; left: 3px; top: 3px;
+  width: 14px; height: 14px;
+  background: var(--muted); transition: all 0.2s; pointer-events: none;
+}
+.toggle input:checked + .toggle-track {
+  background: var(--amber-dim); border-color: var(--amber-line);
+}
+.toggle input:checked ~ .toggle-thumb {
+  background: var(--amber); left: 21px;
+  box-shadow: 0 0 6px rgba(232,149,42,0.5);
+}
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--rivet);
+}
+.toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* Checkbox-style toggle label (settings) */
+.toggle-label {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; color: var(--text-hi);
+  font-family: 'Barlow', sans-serif; font-size: 13px;
+}
+.toggle-label input[type="checkbox"] {
+  width: 14px; height: 14px; accent-color: var(--amber);
+}
+
+
+── MODALS ───────────────────────────────────────────────────────
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(7,8,10,0.88);
+  backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-top: 2px solid var(--amber);
+  width: 100%; max-width: 480px; margin: 20px;
+  box-shadow: 0 0 0 1px rgba(232,149,42,0.06), 0 40px 80px rgba(0,0,0,0.8);
+  animation: modal-in 0.18s ease forwards;
+  position: relative;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}
+.modal-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 3px;
+}
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px; letter-spacing: 0.05em;
+  color: var(--white); line-height: 1;
+}
+.modal-body {
+  padding: 20px 24px; background: var(--steel);
+}
+.modal-desc {
+  font-size: 13px; color: var(--text); line-height: 1.6;
+  margin-bottom: 16px; font-family: 'Barlow', sans-serif;
+}
+.modal-toggle-group { margin-top: 12px; }
+.modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+}
+
+
+── TOAST ────────────────────────────────────────────────────────
+
+.settings-toast {
+  position: fixed; bottom: 32px; right: 32px; z-index: 99999;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 12px 20px;
+  border: 1px solid var(--rivet);
+  background: var(--steel-mid);
+  color: var(--text-hi);
+  opacity: 0; transform: translateY(8px);
+  transition: all 0.25s ease; pointer-events: none;
+}
+.settings-toast.visible { opacity: 1; transform: translateY(0); }
+.settings-toast--success { border-color: rgba(74,158,107,0.4); color: #4a9e6b; }
+.settings-toast--error   { border-color: rgba(192,57,43,0.4); color: #c0392b; }
+
+/* Toast JS helper */
+function showToast(message, type) {
+  type = type || 'success';
+  var existing = document.getElementById('settingsToast');
+  if (existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.id = 'settingsToast';
+  toast.className = 'settings-toast settings-toast--' + type;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  requestAnimationFrame(function() { toast.classList.add('visible'); });
+  setTimeout(function() {
+    toast.classList.remove('visible');
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 2500);
+}
+
+
+================================================================
+SECTION 4 — NAV BAR
+================================================================
+
+── HTML ─────────────────────────────────────────────────────────
+
+<nav class="nav">
+  <a href="command-center.html" class="nav-logo">
+    <img src="assets/logo.png" alt="Claim Cipher">
+  </a>
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="command-center.html">Dashboard</a>
+    <a class="nav-tab" href="route-cypher.html">Routes</a>
+    <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+    <a class="nav-tab" href="my-routes.html">My Routes</a>
+    <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+    <a class="nav-tab" href="settings.html">Settings</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <strong id="userName">Professional User</strong>
+      Claims Specialist
+    </div>
+    <button class="nav-logout" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+── CSS ──────────────────────────────────────────────────────────
+
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px 0 24px; height: 72px;
+  background: rgba(14,15,17,0.98);
+  border-bottom: 1px solid var(--rivet);
+  box-shadow: 0 1px 0 rgba(232,149,42,0.07);
+  flex-shrink: 0;
+}
+.nav-logo {
+  width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; text-decoration: none;
+}
+.nav-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab {
+  display: flex; align-items: center; padding: 0 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer;
+  border-right: 1px solid var(--rivet);
+  border-left: 1px solid transparent;
+  transition: all 0.2s; text-decoration: none;
+}
+.nav-tab:first-child { border-left: 1px solid var(--rivet); }
+.nav-tab:hover { color: var(--text-hi); background: rgba(255,255,255,0.02); }
+.nav-tab.active {
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-bottom: 2px solid var(--amber);
+}
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-user {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-sub); text-align: right;
+}
+.nav-user strong { color: var(--white); display: block; font-size: 12px; }
+.nav-logout {
+  padding: 7px 16px; border: 1px solid var(--rivet);
+  color: var(--muted); font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all 0.2s; background: transparent;
+}
+.nav-logout:hover { border-color: var(--rivet-hi); color: var(--text-hi); }
+
+── BEHAVIOR ─────────────────────────────────────────────────────
+
+Active tab:   .nav-tab.active — amber color, amber-dim bg, 2px amber bottom border
+User display: .nav-user strong shows name in white 12px; role below in text-sub 10px
+Logout:       onclick="handleLogout()" calls window.SupabaseAuth.signOut()
+
+
+================================================================
+SECTION 5 — PAGE HEADER
+================================================================
+
+── HTML ─────────────────────────────────────────────────────────
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-label">Operations &gt; Settings</div>
+      <div class="page-title">Settings</div>
+      <div class="page-sub">Profile, firm assignments, and account configuration</div>
+    </div>
+  </div>
+</div>
+
+── CSS ──────────────────────────────────────────────────────────
+
+.page-header {
+  background:
+    radial-gradient(ellipse 60% 200% at 0% 50%, rgba(232,149,42,0.07) 0%, transparent 60%),
+    var(--steel);
+  border-bottom: 1px solid var(--rivet);
+  padding: 24px 40px;
+  position: relative; z-index: 1; flex-shrink: 0;
+}
+.page-header-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.page-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 4px;
+}
+.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; letter-spacing: 0.06em; color: var(--white);
+}
+.page-sub { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+
+
+================================================================
+SECTION 6 — BACKGROUND TEXTURE
+================================================================
+
+body {
+  background: var(--plate);  /* #0e0f11 */
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+PATTERN: CSS-only grid using two linear-gradients (H + V) on
+         a ::before pseudo-element.
+         48px grid spacing.
+         Lines are rgba(255,255,255,0.013) — nearly invisible.
+         Fixed position, covers entire viewport.
+         Same on all pages.
+
+
+================================================================
+SECTION 7 — SETTINGS PAGE (COMPLETE HTML)
+================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/claim_cipher_app/">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <title>Claim Cipher — Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/settings.css">
+</head>
+<body style="visibility: hidden;">
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="command-center.html" class="nav-logo"><img src="assets/logo.png" alt="Claim Cipher"></a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="command-center.html">Dashboard</a>
+    <a class="nav-tab" href="route-cypher.html">Routes</a>
+    <a class="nav-tab" href="mileage-cypher.html">Mileage</a>
+    <a class="nav-tab" href="my-routes.html">My Routes</a>
+    <a class="nav-tab" href="total-loss-studio.html">Total Loss</a>
+    <a class="nav-tab active" href="settings.html">Settings</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <strong id="userName">Professional User</strong>
+      Claims Specialist
+    </div>
+    <button class="nav-logout" onclick="handleLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-label">Operations &gt; Settings</div>
+      <div class="page-title">Settings</div>
+      <div class="page-sub">Profile, firm assignments, and account configuration</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS LAYOUT -->
+<div class="settings-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="settings-sidebar">
+    <div class="sidebar-label">Settings</div>
+    <a href="#profileSection" class="sidebar-link active" data-section="profileSection">Profile</a>
+    <a href="#firmsSection" class="sidebar-link" data-section="firmsSection">My Firms</a>
+    <a href="#passwordSection" class="sidebar-link" data-section="passwordSection">Password</a>
+    <a href="#accountSection" class="sidebar-link" data-section="accountSection">Account</a>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="settings-main">
+
+    <!-- PROFILE -->
+    <div class="section-card" id="profileSection">
+      <div class="section-header">
+        <div class="section-title">Profile Information</div>
+        <div class="section-badge section-badge--saved">Saved</div>
+      </div>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" id="firstName" placeholder="Enter first name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" id="lastName" placeholder="Enter last name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Business / Company Name</label>
+            <input type="text" class="form-input" id="companyName" placeholder="Enter company name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Appraiser License #</label>
+            <input type="text" class="form-input" id="licenseNumber" placeholder="e.g. TX-12345">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="phoneNumber" placeholder="(555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="email-row">
+              <input type="email" class="form-input" id="emailAddress" placeholder="user@example.com">
+              <button class="btn btn-ghost btn-sm" type="button" id="updateEmailBtn">Update Email</button>
+            </div>
+            <span class="form-hint" id="emailHint">A confirmation link will be sent to the new address</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-ghost" type="button" id="cancelProfileBtn">Cancel</button>
+        <button class="btn btn-primary" type="button" id="saveProfileBtn" data-label="Save Profile">Save Profile</button>
+      </div>
+    </div>
+
+    <!-- HOME ADDRESS -->
+    <div class="section-card" id="addressSection">
+      <div class="section-header">
+        <div class="section-title">Home Address</div>
+      </div>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label class="form-label">Street Address</label>
+            <input type="text" class="form-input" id="streetAddress" placeholder="123 Main St">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" class="form-input" id="cityField" placeholder="City">
+          </div>
+          <div class="form-group">
+            <div class="form-grid form-grid--tight">
+              <div class="form-group">
+                <label class="form-label">State</label>
+                <input type="text" class="form-input form-input--state" id="stateField" placeholder="TX" maxlength="2">
+              </div>
+              <div class="form-group">
+                <label class="form-label">ZIP Code</label>
+                <input type="text" class="form-input" id="zipField" placeholder="75001" maxlength="10">
+              </div>
+            </div>
+          </div>
+          <div class="address-note">
+            <span class="address-note-icon">&#8505;</span>
+            <span>This address is used as your default starting point for mileage calculations in Route Cipher and Mileage Cipher.</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-ghost" type="button" id="cancelAddressBtn">Cancel</button>
+        <button class="btn btn-primary" type="button" id="saveAddressBtn" data-label="Save Address">Save Address</button>
+      </div>
+    </div>
+
+    <!-- MY FIRMS -->
+    <div class="section-card" id="firmsSection">
+      <div class="section-header">
+        <div class="section-title">My Firms</div>
+      </div>
+      <div class="section-body">
+        <div class="firms-search">
+          <input type="text" class="form-input" id="firmSearch" placeholder="Search firms...">
+        </div>
+        <div class="firms-filters">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="daily_auto">Daily Auto</button>
+          <button class="filter-chip" data-filter="catastrophic">CAT</button>
+          <button class="filter-chip" data-filter="regional">Regional</button>
+        </div>
+        <div class="firms-list" id="firmsList">
+          <!-- populated by settings-page.js -->
+        </div>
+        <div class="firms-summary">
+          <span class="firms-count" id="selectedCount">0 firms selected</span>
+          <span class="clear-link" id="clearFirmsBtn">Clear all</span>
+        </div>
+        <div class="firms-summary">
+          <div></div>
+          <button class="btn btn-ghost" type="button" id="addCustomFirmBtn">Add firm not on list</button>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-primary" type="button" id="saveFirmsBtn" data-label="Save Firms">Save Firms</button>
+      </div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div class="section-card" id="passwordSection">
+      <div class="section-header">
+        <div class="section-title">Change Password</div>
+      </div>
+      <div class="section-body">
+        <div class="password-grid">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+            <div class="strength-bars">
+              <div class="strength-bar"></div>
+              <div class="strength-bar"></div>
+              <div class="strength-bar"></div>
+              <div class="strength-bar"></div>
+            </div>
+            <div class="strength-label">Password strength</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password">
+          </div>
+        </div>
+      </div>
+      <div class="section-footer">
+        <button class="btn btn-primary" type="button" id="updatePasswordBtn" data-label="Update Password">Update Password</button>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="section-card section-card--danger" id="accountSection">
+      <div class="section-header">
+        <div class="section-title">Danger Zone</div>
+      </div>
+      <div class="section-body">
+        <div class="danger-body">
+          <div class="danger-info">
+            <div class="danger-action-title">Delete Account</div>
+            <div class="danger-action-desc">Permanently delete your account and all associated data. This action cannot be undone.</div>
+          </div>
+          <button class="btn-danger" type="button" id="deleteAccountBtn">Delete Account</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RATE MODAL -->
+<div class="modal-overlay" id="rateModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-eyebrow">Firm Rates</div>
+      <div class="modal-title" id="rateModalFirmName">Firm Name</div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Set your mileage rates for this firm. You can update these at any time.</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Free Miles</label>
+          <input type="number" class="form-input" id="rateModalFreeMiles" placeholder="0" min="0">
+          <span class="form-hint">Miles before billing starts</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rate Per Mile ($)</label>
+          <input type="number" class="form-input" id="rateModalRatePerMile" placeholder="0.00" step="0.01" min="0">
+          <span class="form-hint">Dollar amount per billed mile</span>
+        </div>
+      </div>
+      <div class="form-group modal-toggle-group">
+        <label class="toggle-label">
+          <input type="checkbox" id="rateModalRoundTrip">
+          <span>Default to Round Trip</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="rateModalSkipBtn">Skip for now</button>
+      <button class="btn btn-ghost" id="rateModalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="rateModalSaveBtn">Add Firm</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM FIRM MODAL -->
+<div class="modal-overlay" id="customFirmModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-eyebrow">Custom Firm</div>
+      <div class="modal-title">Add Firm Not on List</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Firm Name</label>
+        <input type="text" class="form-input" id="customFirmName" placeholder="Enter firm name">
+      </div>
+      <div class="form-group modal-toggle-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="customFirmCategory">
+          <option value="daily_auto">Daily Auto</option>
+          <option value="heavy">Heavy</option>
+          <option value="catastrophic">Catastrophic</option>
+          <option value="property">Property</option>
+          <option value="regional">Regional</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="customFirmCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="customFirmSaveBtn">Next: Set Rates</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+================================================================
+SECTION 8 — SETTINGS PAGE CSS (COMPLETE VERBATIM)
+================================================================
+
+/* ═══════════════════════════════════════════════════
+   settings.css — Settings page styles
+   Claim Cipher v2 amber design system
+   ═══════════════════════════════════════════════════ */
+
+/* ── SETTINGS LAYOUT ── */
+.settings-layout {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 40px 60px;
+  gap: 32px;
+}
+
+/* ── SIDEBAR ── */
+.settings-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 104px;
+  align-self: flex-start;
+}
+
+.sidebar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--rivet);
+  margin-bottom: 6px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--text-sub);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.sidebar-link:hover {
+  color: var(--text-hi);
+  background: rgba(255,255,255,0.02);
+}
+
+.sidebar-link.active {
+  color: var(--amber);
+  border-left-color: var(--amber);
+  background: var(--amber-dim);
+}
+
+.sidebar-icon {
+  font-size: 15px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ── SETTINGS MAIN ── */
+.settings-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── SECTION CARD ── */
+.section-card {
+  background: var(--steel);
+  border: 1px solid var(--rivet);
+  border-left: 3px solid var(--rivet);
+  position: relative;
+  z-index: 1;
+}
+
+.section-card--danger {
+  border-left-color: #c0392b;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}
+
+.section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.section-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--rivet);
+  color: var(--muted);
+  background: var(--steel);
+}
+
+.section-badge--saved {
+  border-color: rgba(46,204,113,0.3);
+  color: #2ecc71;
+}
+
+.section-body {
+  padding: 24px 20px;
+  background: var(--steel);
+}
+
+/* ── FORM GRID ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+}
+
+.form-input {
+  background: var(--input-bg);
+  border: 1px solid var(--rivet);
+  border-top: 1px solid var(--rivet-hi);
+  padding: 11px 14px;
+  color: var(--white);
+  font-size: 13px;
+  font-family: 'Barlow', sans-serif;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.form-input:focus {
+  border-color: var(--amber);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,149,42,0.2);
+}
+
+.form-input::placeholder {
+  color: var(--text-dim);
+}
+
+.form-input--readonly {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.email-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.email-row .form-input { flex: 1; }
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.form-input--state {
+  max-width: 120px;
+}
+
+.form-grid--tight {
+  gap: 12px;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ── SECTION FOOTER ── */
+.section-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--rivet);
+  background: var(--steel-mid);
+}
+
+/* ── ADDRESS NOTE ── */
+.address-note {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-line);
+  font-size: 12px;
+  color: var(--text-hi);
+  line-height: 1.5;
+}
+
+.address-note-icon {
+  color: var(--amber);
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── FIRMS LIST ── */
+.firms-search {
+  margin-bottom: 16px;
+}
+
+.firms-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.filter-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid var(--rivet);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-chip:hover {
+  border-color: var(--rivet-hi);
+  color: var(--text-hi);
+}
+
+.filter-chip.active {
+  border-color: var(--amber-line);
+  background: var(--amber-dim);
+  color: var(--amber);
+}
+
+.firms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--rivet);
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.firm-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rivet);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.firm-item:last-child {
+  border-bottom: none;
+}
+
+.firm-item:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.firm-checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--rivet-hi);
+  background: var(--input-bg);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.firm-checkbox:checked {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+.firm-checkbox:checked::after {
+  content: '\2713';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  color: #000;
+  font-weight: 700;
+}
+
+.firm-name {
+  font-size: 13px;
+  color: var(--text-hi);
+  flex: 1;
+}
+
+.firm-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--rivet);
+  color: var(--text-dim);
+}
+
+.firms-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.firms-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-hi);
+}
+
+.firms-count span {
+  color: var(--amber);
+  font-weight: 500;
+}
+
+/* ── PASSWORD STRENGTH ── */
+.password-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--rivet);
+  transition: background 0.3s;
+}
+
+.strength-bar.active {
+  background: var(--amber);
+}
+
+.strength-bar.strong {
+  background: #2ecc71;
+}
+
+.strength-bar.filled {
+  background: var(--amber);
+}
+
+.strength-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+/* ── DANGER ZONE ── */
+.danger-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.danger-info {
+  flex: 1;
+}
+
+.danger-action-title {
+  font-size: 14px;
+  color: var(--white);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.danger-action-desc {
+  font-size: 12px;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
+/* ── SCROLLBAR (firms list) ── */
+.firms-list::-webkit-scrollbar { width: 6px; }
+.firms-list::-webkit-scrollbar-track { background: var(--steel); }
+.firms-list::-webkit-scrollbar-thumb { background: var(--rivet-hi); }
+.firms-list::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── FIRM ITEM SELECTED STATE ── */
+.firm-item--selected {
+  background: var(--amber-dim);
+}
+
+.firm-checkbox-check {
+  display: none;
+  font-size: 11px;
+  color: #000;
+  font-weight: 700;
+}
+
+.firm-checkbox--checked {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+.firm-checkbox--checked .firm-checkbox-check {
+  display: block;
+}
+
+.firm-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.firm-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* ── CLEAR LINK ── */
+.clear-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.clear-link:hover {
+  color: #e74c3c;
+}
+
+/* ── CUSTOM FIRM TAG ── */
+.firm-custom-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  background: rgba(232,149,42,0.12);
+  border: 1px solid rgba(232,149,42,0.3);
+  color: var(--amber);
+  padding: 1px 5px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── TOGGLE LABEL ── */
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--text-hi);
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--amber);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .settings-layout { flex-direction: column; padding: 20px 16px 40px; gap: 20px; }
+  .settings-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; position: static; gap: 0; border-bottom: 1px solid var(--rivet); padding-bottom: 12px; }
+  .sidebar-label { width: 100%; border-bottom: none; padding-bottom: 8px; margin-bottom: 4px; }
+  .sidebar-link { border-left: none; border-bottom: 2px solid transparent; padding: 8px 12px; }
+  .sidebar-link.active { border-left-color: transparent; border-bottom-color: var(--amber); }
+  .form-grid { grid-template-columns: 1fr; }
+  .password-grid { grid-template-columns: 1fr; }
+  .form-input--state { max-width: none; }
+  .danger-body { flex-direction: column; align-items: flex-start; }
+}
+
+
+================================================================
+SECTION 9 — FIRMS/VENDORS JAVASCRIPT (COMPLETE)
+================================================================
+
+// ── PRESET FIRMS LIST (Source: FIRM_MASTERSHEET) ──
+// 15 Nationwide Daily Auto · 13 Nationwide CAT · 15 Regional = 43 total
+const PRESET_FIRMS = [
+
+  // ── NATIONWIDE DAILY AUTO (A-Z) ──
+  { firm_id: 'acd',                name: 'AutoClaims Direct (ACD)',                firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.acdcorp.com',                    contact_name: 'Emily Makley',                  contact_email: 'emakley@acdcorp.com' },
+  { firm_id: 'claim_solution',     name: 'Claim Solution Inc.',                    firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.claimsolution.com',              contact_name: 'Dale Mason',                    contact_email: 'dmason@claimsolution.com' },
+  { firm_id: 'condition_now',      name: 'Condition Now',                          firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.conditionnow.com',               contact_name: 'Thomas Allen',                  contact_email: 'tomallen@conditionnow.com' },
+  { firm_id: 'dekra',              name: 'DEKRA Services Inc.',                    firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.dekra.us/en/home-page/',         contact_name: 'Jeff Dickson',                  contact_email: 'jeffrey.dickson@dekra.com' },
+  { firm_id: 'doan',               name: 'The Doan Group',                         firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.doan.com',                       contact_name: 'Amanda Williams',               contact_email: 'amanda.williams@doan.com' },
+  { firm_id: 'engle_martin',       name: 'Engle Martin and Associates',            firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.englemartin.com',                contact_name: 'Lee Maddox',                    contact_email: 'lmaddox@englemartin.com' },
+  { firm_id: 'franklin',           name: 'Franklin Insurance Adjusters, Inc.',     firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.fia.team',                       contact_name: 'Sal Gaetano',                   contact_email: 'sal@fia.team' },
+  { firm_id: 'ias',                name: 'IAS (Independent Appraisal Services)',   firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.iasclaimsgroup.com',             contact_name: 'Ron Ragland',                   contact_email: 'ron.ragland@iasclaimsgroup.com',   notes: 'Recommend working a few months before onboarding' },
+  { firm_id: 'kirks',              name: "Kirk's Appraisal Service",               firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.kirksappraisal.com',             contact_name: 'Mike Torgerson / Kirk Applegate', contact_email: 'recruiting@kirksappraisal.com' },
+  { firm_id: 'legacy_claims',      name: 'Legacy Claims Services',                firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://legacyclaimsservices.com',            contact_name: 'Mark Petty',                    contact_email: 'mark@legacyclaimsservices.com' },
+  { firm_id: 'primeco',            name: 'Primecoclaims Group',                   firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://primecoclaims.com',                  contact_name: 'Ericka Eubanks',                contact_email: 'eeubanks@primecoclaims.com' },
+  { firm_id: 'sca',                name: 'SCA Claims',                            firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.sca-appraisal.com',              contact_name: 'Whitney Hurwitz',               contact_email: 'whurwitz@sca-appraisal.com' },
+  { firm_id: 'sedgwick',           name: 'Sedgwick (formerly Nationwide Appraisals)', firm_category: 'daily_auto', coverage: 'nationwide', website: 'https://www.sedgwick.com/autoappraisals',   contact_name: 'Lina Tomassini',                contact_email: 'eilyn.tomassini@sedgwick.com' },
+  { firm_id: 'thebest',            name: 'TheBest Claims Solutions (formerly TheBestIRS)', firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.thebestirs.com',        contact_name: 'Tom Bielicki',                  contact_email: 'https://thebestclaims.com/website/s/join-our-roster-as' },
+  { firm_id: 'vehicle_inspection', name: 'Vehicle Inspection Solutions',           firm_category: 'daily_auto',   coverage: 'nationwide', website: 'https://www.visclaims.com',                  contact_name: 'Larry Akopyan',                 contact_email: 'info@visclaims.com' },
+
+  // ── NATIONWIDE CATASTROPHIC (A-Z) ──
+  { firm_id: '300_llc',            name: '300 LLC',                               firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://the300advantage.com',                contact_name: 'Ryan Hampton',                  contact_email: 'ryan@the300advantage.com',         notes: 'High emphasis on Colorado' },
+  { firm_id: 'alacrity',           name: 'Alacrity Solutions',                    firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.alacritysolutions.com',          contact_name: 'Jaclyn Klapperich',             contact_email: 'resourcemanagement@alacritysolutions.com' },
+  { firm_id: 'anchor_claims',      name: 'Anchor Claim Services',                firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.anchor-claims.com',              contact_name: 'Brian Jordan',                  contact_email: 'auto@anchorclaimservices.com',     notes: 'Daily Auto in Southeast Region' },
+  { firm_id: 'cnc',                name: 'CNC Catastrophe & National Claims',    firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://adjustingexpectations.com',           contact_name: 'Kim Robbins / Ferrita Dixon',   contact_email: 'fernitadixon@cnc-resource.com' },
+  { firm_id: 'eberl',              name: 'Eberl',                                firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.eberls.com',                     contact_name: '',                              contact_email: 'pmorris@eberls.com' },
+  { firm_id: 'hi_tech_pdr',        name: 'Hi-Tech PDR',                          firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://hi-techdentremoval.com',              contact_name: 'Paul Tsupin',                   contact_email: 'paul@hi-techpdr.com' },
+  { firm_id: 'legion_claims',      name: 'Legion Claims Solutions, LLC',         firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.legionclaims.com',               contact_name: 'Heather Johnson',               contact_email: 'info@legionclaims.com' },
+  { firm_id: 'mid_america',        name: 'Mid-America Catastrophe Services',     firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://midamcat.com',                       contact_name: 'Phillip Piper',                 contact_email: 'phillip.piper@midamcat.com' },
+  { firm_id: 'nexterra',           name: 'Nexterra',                             firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://nexterras.com',                      contact_name: 'Jeremy Shaw',                   contact_email: 'jshaw@nexterras.com' },
+  { firm_id: 'qa_claims',          name: 'QA Claims',                            firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.qaclaims.com',                   contact_name: 'Ryan Roberts',                  contact_email: 'ryan@qaclaims.com' },
+  { firm_id: 'rocky_mountain',     name: 'Rocky Mountain CAT Corp.',             firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.rockymountaincat.com',            contact_name: 'Jim Farley',                    contact_email: 'jimfarley@rockymountaincat.com' },
+  { firm_id: 'solutionworks',      name: 'SolutionWorks',                        firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://getsw.com',                          contact_name: 'James Hastings',                contact_email: 'jhastings@getsw.com' },
+  { firm_id: 'us_adjusting',       name: 'U.S. Adjusting Services',              firm_category: 'catastrophic', coverage: 'nationwide', website: 'https://www.usadjustingservices.net',         contact_name: 'Nicci Young',                   contact_email: 'nyoung@usadj.net' },
+
+  // ── REGIONAL (A-Z) ──
+  { firm_id: 'autocrat',           name: 'Autocrat Appraisal',                   firm_category: 'regional', coverage: 'Texas',                                              website: '',                                           contact_name: 'Darrell Barnett',               contact_email: 'dbarnett393@gmail.com' },
+  { firm_id: 'bbe_appraisal',      name: 'B&E Appraisal Service',                firm_category: 'regional', coverage: 'Arizona',                                            website: 'https://www.bandeappraisal.com',             contact_name: 'Rob Ortega',                    contact_email: 'rortega@bandeappraisal.com' },
+  { firm_id: 'cal_west',           name: 'Cal West Appraisal Services',          firm_category: 'regional', coverage: 'CA, OR, NV, AZ',                                     website: 'https://www.calwestas.com',                  contact_name: 'Brian Hall',                    contact_email: 'Assignments@calwestas.com' },
+  { firm_id: 'cgia',               name: 'CGIA Solutions',                       firm_category: 'regional', coverage: 'Texas',                                              website: 'https://cgiasolutions.com',                  contact_name: 'Chris Cole',                    contact_email: 'chris@cgiasolutions.com' },
+  { firm_id: 'complete_claims',    name: 'Complete Claims Service',              firm_category: 'regional', coverage: 'East Coast (NY,NJ,PA,MD,VA,NC,SC,GA,FL,MS,AL,TN,MO)', website: 'https://www.completeclaims.com',             contact_name: 'Leo Papa',                      contact_email: 'admin@completeclaims.com' },
+  { firm_id: 'frontline',          name: 'Frontline Appraisals LLC',             firm_category: 'regional', coverage: 'VA,WV,DC,MD,NC,OH,IN,KY,TN,PA,SC,MI,DE',            website: 'https://frontlineadjusting.com',              contact_name: 'Dan Read',                      contact_email: 'dan.read@frontlineadjusting.com' },
+  { firm_id: 'mcanally',           name: 'McAnally Appraisal Services',          firm_category: 'regional', coverage: 'Texas & Georgia',                                    website: 'https://masclaims.com',                      contact_name: 'Sarah Grimes',                  contact_email: 'sarahg@masclaims.com' },
+  { firm_id: 'metro_appraisal',    name: 'Metro Appraisal Company',              firm_category: 'regional', coverage: 'Entire Southeast',                                   website: '',                                           contact_name: 'Alvin Ray',                     contact_email: 'alvin@metroapprco.com' },
+  { firm_id: 'professional_auto',  name: 'Professional Auto Appraisals',         firm_category: 'regional', coverage: 'Alabama / Florida',                                  website: '',                                           contact_name: 'Jason Shufford Jr.',             contact_email: 'jshuffordjrc2@gmail.com' },
+  { firm_id: 'quality_claim',      name: 'Quality Claim Services, Inc',          firm_category: 'regional', coverage: 'NC, SC',                                             website: 'https://qualityclaimservices.com',            contact_name: 'Carrie Byers',                  contact_email: 'carrie.byers@qualityclaims.net' },
+  { firm_id: 'quality_estimates',  name: 'Quality Estimates',                    firm_category: 'regional', coverage: 'CA',                                                 website: 'https://www.qualityestimatellc.com',         contact_name: 'Michael Peters',                contact_email: 'mpeters@Qestimates.com' },
+  { firm_id: 'rapid_appraisal',    name: 'Rapid Appraisal Services',             firm_category: 'regional', coverage: 'Texas, New Mexico, Louisiana',                       website: 'https://rasofhouston.com',                   contact_name: 'Shawn Parsons',                 contact_email: 'shawn.parsons@rasofhouston.com' },
+  { firm_id: 'snb_appraisal',      name: 'SNB Appraisal Services',              firm_category: 'regional', coverage: 'NY - Bronx, Westchester, Queens, Brooklyn, Long Island', website: '',                                        contact_name: 'Henry Ness',                    contact_email: 'snbappraisal@gmail.com' },
+  { firm_id: 'ss_appraisal',       name: 'S&S Appraisal Services, LLC',         firm_category: 'regional', coverage: 'East Coast Area surrounding VA',                     website: '',                                           contact_name: 'Stewart Young',                 contact_email: 'ssassignments@hotmail.com' },
+  { firm_id: 'viking_auto',        name: 'Viking Auto Appraisal',               firm_category: 'regional', coverage: 'Massachusetts',                                      website: '',                                           contact_name: 'Paul McKeen',                   contact_email: 'PMcKeen@VikingAutoAppraisal.com' },
+];
+
+// ── STATE ──
+let userFirms = [];
+let pendingFirms = [];
+let currentFirmForModal = null;
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', async () => {
+  bindProfileForm();
+  bindAddressForm();
+  bindFirmsList();
+  bindPasswordForm();
+  bindSidebarNav();
+  bindDeleteAccount();
+
+  try {
+    const profile = await SettingsService.loadProfile();
+    if (profile) {
+      populateProfileForm(profile);
+      populateAddressForm(profile);
+    }
+  } catch (err) {
+    console.error('Profile load error:', err);
+    showToast('Failed to load profile: ' + (err.message || err), 'error');
+  }
+
+  try {
+    userFirms = await SettingsService.loadUserFirms();
+    pendingFirms = [...userFirms];
+    renderFirmsList();
+    updateSelectedCount();
+  } catch (err) {
+    console.error('Firms load error:', err);
+    showToast('Failed to load firms', 'error');
+  }
+});
+
+// ── PROFILE FORM ──
+function populateProfileForm(profile) {
+  if (!profile) return;
+  setValue('firstName',     profile.first_name);
+  setValue('lastName',      profile.last_name);
+  setValue('companyName',   profile.company);
+  setValue('licenseNumber', profile.license_number);
+  setValue('phoneNumber',   profile.phone);
+  setValue('emailAddress',  profile.email);
+}
+
+function bindProfileForm() {
+  document.getElementById('saveProfileBtn')
+    ?.addEventListener('click', async () => {
+      const btn = document.getElementById('saveProfileBtn');
+      setLoading(btn, true);
+      try {
+        await SettingsService.saveProfile({
+          first_name:     getVal('firstName'),
+          last_name:      getVal('lastName'),
+          company:        getVal('companyName'),
+          license_number: getVal('licenseNumber'),
+          phone:          getVal('phoneNumber')
+        });
+        showToast('Profile saved', 'success');
+        updateSectionBadge('profileSection', 'SAVED');
+        const fn = getVal('firstName');
+        const navName = document.getElementById('userName');
+        if (navName && fn) navName.textContent = fn.toUpperCase();
+      } catch (err) {
+        showToast(err.message || 'Failed to save profile', 'error');
+        console.error('saveProfile error:', err);
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+
+  document.getElementById('cancelProfileBtn')
+    ?.addEventListener('click', async () => {
+      const profile = await SettingsService.loadProfile();
+      populateProfileForm(profile);
+    });
+
+  document.getElementById('updateEmailBtn')
+    ?.addEventListener('click', async () => {
+      const newEmail = getVal('emailAddress');
+      if (!newEmail) { showToast('Enter an email address', 'error'); return; }
+      const btn = document.getElementById('updateEmailBtn');
+      setLoading(btn, true);
+      try {
+        await SettingsService.changeEmail(newEmail);
+        showToast('Confirmation link sent to ' + newEmail, 'success');
+        document.getElementById('emailHint').textContent =
+          'Check ' + newEmail + ' for the confirmation link';
+      } catch (err) {
+        showToast(err.message || 'Failed to update email', 'error');
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+}
+
+// ── ADDRESS FORM ──
+function populateAddressForm(profile) {
+  if (!profile) return;
+  setValue('streetAddress', profile.street_address);
+  setValue('cityField',     profile.city);
+  setValue('stateField',    profile.state);
+  setValue('zipField',      profile.zip);
+}
+
+function bindAddressForm() {
+  document.getElementById('saveAddressBtn')
+    ?.addEventListener('click', async () => {
+      const btn = document.getElementById('saveAddressBtn');
+      setLoading(btn, true);
+      try {
+        const street = getVal('streetAddress');
+        const city   = getVal('cityField');
+        const state  = getVal('stateField');
+        const zip    = getVal('zipField');
+        await SettingsService.saveAddress({ street_address: street, city, state, zip });
+        const fullAddress = [street, city, [state, zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+        if (fullAddress) syncHomeAddress(fullAddress);
+        showToast('Address saved', 'success');
+      } catch (err) {
+        showToast(err.message || 'Failed to save address', 'error');
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+
+  document.getElementById('cancelAddressBtn')
+    ?.addEventListener('click', async () => {
+      const profile = await SettingsService.loadProfile();
+      populateAddressForm(profile);
+    });
+}
+
+// ── FIRMS LIST ──
+function renderFirmsList(filter, search) {
+  filter = filter || getCurrentFilter();
+  search = search || getCurrentSearch();
+  const list = document.getElementById('firmsList');
+  if (!list) return;
+
+  const selectedIds = new Set(pendingFirms.map(f => f.firm_id));
+  const presetIds = new Set(PRESET_FIRMS.map(f => f.firm_id));
+  const customFirms = pendingFirms.filter(f => !presetIds.has(f.firm_id));
+
+  const allFirms = [
+    ...PRESET_FIRMS,
+    ...customFirms.map(f => ({
+      firm_id: f.firm_id,
+      name: f.name,
+      firm_category: f.firm_category || 'custom',
+      is_custom: true
+    }))
+  ];
+
+  let filtered = allFirms;
+  if (filter !== 'all') filtered = allFirms.filter(f => f.firm_category === filter);
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter(f => f.name.toLowerCase().includes(q));
+  }
+
+  list.innerHTML = '';
+
+  filtered.forEach(firm => {
+    const isSelected = selectedIds.has(firm.firm_id);
+    const existingData = pendingFirms.find(f => f.firm_id === firm.firm_id);
+    const rateDisplay = existingData
+      ? `$${existingData.rate_per_mile}/mi \u00b7 ${existingData.free_miles} free`
+      : 'No rates set';
+
+    const item = document.createElement('div');
+    item.className = 'firm-item' + (isSelected ? ' firm-item--selected' : '');
+    item.dataset.firmId = firm.firm_id;
+    item.innerHTML = `
+      <div class="firm-checkbox${isSelected ? ' firm-checkbox--checked' : ''}">
+        <span class="firm-checkbox-check">\u2713</span>
+      </div>
+      <div class="firm-info">
+        <div class="firm-name">${firm.name}${firm.is_custom ? '<span class="firm-custom-tag">CUSTOM</span>' : ''}</div>
+        <div class="firm-meta">${isSelected ? rateDisplay : (firm.firm_category === 'regional' && firm.coverage ? firm.coverage : categoryLabel(firm.firm_category))}</div>
+      </div>
+      <span class="firm-tag">${categoryLabel(firm.firm_category)}</span>
+    `;
+
+    item.addEventListener('click', () => {
+      if (isSelected) {
+        pendingFirms = pendingFirms.filter(f => f.firm_id !== firm.firm_id);
+        renderFirmsList();
+        updateSelectedCount();
+      } else {
+        currentFirmForModal = {
+          firm_id: firm.firm_id, name: firm.name,
+          firm_category: firm.firm_category, is_custom: firm.is_custom || false
+        };
+        openRateModal(firm, existingData);
+      }
+    });
+
+    list.appendChild(item);
+  });
+}
+
+// ── RATE MODAL ──
+function openRateModal(firm, existingData) {
+  const modal = document.getElementById('rateModal');
+  if (!modal) return;
+  document.getElementById('rateModalFirmName').textContent = firm.name;
+  document.getElementById('rateModalFreeMiles').value = existingData?.free_miles ?? '';
+  document.getElementById('rateModalRatePerMile').value = existingData?.rate_per_mile ?? '';
+  document.getElementById('rateModalRoundTrip').checked = existingData?.round_trip_default ?? false;
+  modal.classList.add('active');
+  document.getElementById('rateModalFreeMiles').focus();
+}
+
+function closeRateModal() {
+  document.getElementById('rateModal')?.classList.remove('active');
+  currentFirmForModal = null;
+}
+
+function bindRateModal() {
+  document.getElementById('rateModalSaveBtn')?.addEventListener('click', () => {
+    const freeMiles = parseInt(document.getElementById('rateModalFreeMiles').value) || 0;
+    const ratePerMile = parseFloat(document.getElementById('rateModalRatePerMile').value) || 0;
+    const roundTrip = document.getElementById('rateModalRoundTrip')?.checked || false;
+    if (!currentFirmForModal) return;
+    const firmData = { ...currentFirmForModal, free_miles: freeMiles, rate_per_mile: ratePerMile, round_trip_default: roundTrip };
+    const existing = pendingFirms.findIndex(f => f.firm_id === currentFirmForModal.firm_id);
+    if (existing >= 0) pendingFirms[existing] = firmData;
+    else pendingFirms.push(firmData);
+    closeRateModal(); renderFirmsList(); updateSelectedCount();
+  });
+
+  document.getElementById('rateModalCancelBtn')?.addEventListener('click', closeRateModal);
+
+  document.getElementById('rateModalSkipBtn')?.addEventListener('click', () => {
+    if (!currentFirmForModal) return;
+    pendingFirms.push({ ...currentFirmForModal, free_miles: 0, rate_per_mile: 0, round_trip_default: false });
+    closeRateModal(); renderFirmsList(); updateSelectedCount();
+  });
+
+  document.getElementById('rateModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'rateModal') closeRateModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeRateModal(); closeCustomFirmModal(); }
+  });
+}
+
+// ── SAVE FIRMS ──
+function bindFirmsList() {
+  bindRateModal();
+  bindFirmSearch();
+  bindFirmFilters();
+  bindCustomFirmModal();
+
+  document.getElementById('addCustomFirmBtn')?.addEventListener('click', () => openCustomFirmModal());
+
+  document.getElementById('clearFirmsBtn')?.addEventListener('click', () => {
+    pendingFirms = []; renderFirmsList(); updateSelectedCount();
+  });
+
+  document.getElementById('saveFirmsBtn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('saveFirmsBtn');
+    setLoading(btn, true);
+    try {
+      const currentSaved = await SettingsService.loadUserFirms();
+      const savedIds = new Set(currentSaved.map(f => f.firm_id));
+      const pendingIds = new Set(pendingFirms.map(f => f.firm_id));
+      for (const f of currentSaved) { if (!pendingIds.has(f.firm_id)) await SettingsService.deleteFirm(f.firm_id); }
+      for (const f of pendingFirms) { await SettingsService.saveFirm(f); }
+      await SettingsService.syncToFirmStore();
+      userFirms = [...pendingFirms];
+      showToast('Firms saved', 'success');
+      updateSelectedCount();
+    } catch (err) {
+      showToast('Failed to save firms', 'error'); console.error(err);
+    } finally { setLoading(btn, false); }
+  });
+}
+
+// ── SEARCH ──
+function bindFirmSearch() {
+  document.getElementById('firmSearch')?.addEventListener('input', (e) => {
+    renderFirmsList(getCurrentFilter(), e.target.value);
+  });
+}
+
+// ── FILTER CHIPS ──
+function bindFirmFilters() {
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      renderFirmsList(chip.dataset.filter, getCurrentSearch());
+    });
+  });
+}
+
+// ── CUSTOM FIRM MODAL ──
+function openCustomFirmModal() {
+  const modal = document.getElementById('customFirmModal');
+  if (!modal) return;
+  document.getElementById('customFirmName').value = '';
+  document.getElementById('customFirmCategory').value = 'daily_auto';
+  modal.classList.add('active');
+  document.getElementById('customFirmName').focus();
+}
+
+function closeCustomFirmModal() {
+  document.getElementById('customFirmModal')?.classList.remove('active');
+}
+
+function bindCustomFirmModal() {
+  document.getElementById('customFirmSaveBtn')?.addEventListener('click', () => {
+    const name = document.getElementById('customFirmName').value.trim();
+    if (!name) return;
+    const category = document.getElementById('customFirmCategory').value || 'daily_auto';
+    const firmId = 'custom_' + name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const customFirm = { firm_id: firmId, name: name, firm_category: category, is_custom: true };
+    closeCustomFirmModal();
+    currentFirmForModal = customFirm;
+    openRateModal(customFirm, null);
+  });
+
+  document.getElementById('customFirmCancelBtn')?.addEventListener('click', closeCustomFirmModal);
+
+  document.getElementById('customFirmModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'customFirmModal') closeCustomFirmModal();
+  });
+}
+
+// ── PASSWORD FORM ──
+function bindPasswordForm() {
+  document.getElementById('updatePasswordBtn')?.addEventListener('click', async () => {
+    const current = getVal('currentPassword');
+    const newPass = getVal('newPassword');
+    const confirm = getVal('confirmPassword');
+    if (!current || !newPass || !confirm) { showToast('Fill in all password fields', 'error'); return; }
+    if (newPass !== confirm) { showToast('Passwords do not match', 'error'); return; }
+    if (newPass.length < 8) { showToast('Password must be 8+ characters', 'error'); return; }
+    const btn = document.getElementById('updatePasswordBtn');
+    setLoading(btn, true);
+    try {
+      await SettingsService.changePassword(newPass);
+      showToast('Password updated', 'success');
+      setValue('currentPassword', ''); setValue('newPassword', ''); setValue('confirmPassword', '');
+      resetStrengthBars();
+    } catch (err) {
+      showToast(err.message || 'Failed to update password', 'error');
+    } finally { setLoading(btn, false); }
+  });
+
+  document.getElementById('newPassword')?.addEventListener('input', (e) => {
+    updateStrengthBars(e.target.value);
+  });
+}
+
+// ── DELETE ACCOUNT ──
+function bindDeleteAccount() {
+  document.getElementById('deleteAccountBtn')?.addEventListener('click', () => {
+    showConfirmModal('Permanently delete your account? This cannot be undone.', async () => {
+      try {
+        await SettingsService.deleteAccount();
+        window.location.replace('login-cypher.html');
+      } catch (err) {
+        showToast(err.message || 'Failed to delete account', 'error');
+      }
+    });
+  });
+}
+
+// ── SIDEBAR NAV ──
+function bindSidebarNav() {
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.dataset.section;
+      if (target) document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' });
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+}
+
+// ── HOME ADDRESS SYNC ──
+function syncHomeAddress(fullAddress) {
+  try {
+    const mcKey = 'mileage_cypher_settings_v2';
+    const mcSettings = JSON.parse(localStorage.getItem(mcKey) || '{}');
+    mcSettings.homeLocation = fullAddress;
+    localStorage.setItem(mcKey, JSON.stringify(mcSettings));
+    localStorage.setItem('cipher_home_address', fullAddress);
+  } catch (e) { console.error('Failed to sync home address:', e); }
+}
+
+// ── HELPERS ──
+function getVal(id) { return document.getElementById(id)?.value?.trim() || ''; }
+function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val || ''; }
+function setLoading(btn, loading) {
+  if (!btn) return;
+  if (loading) { btn._origLabel = btn.textContent; btn.disabled = true; btn.textContent = 'Saving...'; }
+  else { btn.disabled = false; btn.textContent = btn.dataset.label || btn._origLabel || 'Save'; }
+}
+function updateSelectedCount() {
+  const count = pendingFirms.length;
+  const el = document.getElementById('selectedCount');
+  if (el) el.textContent = count + ' firm' + (count !== 1 ? 's' : '') + ' selected';
+}
+function updateSectionBadge(sectionId, text) {
+  const badge = document.querySelector('#' + sectionId + ' .section-badge');
+  if (badge) badge.textContent = text;
+}
+function getCurrentFilter() { return document.querySelector('.filter-chip.active')?.dataset.filter || 'all'; }
+function getCurrentSearch() { return document.getElementById('firmSearch')?.value || ''; }
+function categoryLabel(cat) {
+  var labels = { daily_auto: 'Daily Auto', catastrophic: 'CAT', regional: 'Regional', custom: 'Custom' };
+  return labels[cat] || cat || '\u2014';
+}
+function updateStrengthBars(password) {
+  var strength = 0;
+  if (password.length >= 8) strength++;
+  if (/[A-Z]/.test(password)) strength++;
+  if (/[0-9]/.test(password)) strength++;
+  if (/[^A-Za-z0-9]/.test(password)) strength++;
+  document.querySelectorAll('.strength-bar').forEach(function(bar, i) { bar.classList.toggle('filled', i < strength); });
+}
+function resetStrengthBars() {
+  document.querySelectorAll('.strength-bar').forEach(function(bar) { bar.classList.remove('filled'); });
+}
+
+window.SettingsPage = { renderFirmsList, updateSelectedCount };
+
+
+================================================================
+SECTION 10 — SUPABASE PATTERNS
+================================================================
+
+── CLIENT INITIALIZATION (supabase-config.js) ──────────────────
+
+const SUPABASE_URL =
+  window.ENV_SUPABASE_URL ||
+  localStorage.getItem('SUPABASE_URL') ||
+  'https://aviwltfqlunxxvkajpyt.supabase.co';
+
+const SUPABASE_ANON_KEY =
+  window.ENV_SUPABASE_ANON_KEY ||
+  localStorage.getItem('SUPABASE_ANON_KEY') ||
+  '<anon-key>';
+
+window.SUPABASE_CONFIG = {
+  url: SUPABASE_URL,
+  anonKey: SUPABASE_ANON_KEY,
+};
+
+// Client obtained via: window.SupabaseAuth.init()
+// Returns supabase.createClient(url, anonKey)
+
+
+── SETTINGS SERVICE (settings-service.js) ───────────────────────
+
+const SettingsService = (() => {
+
+  function getClient() { return window.SupabaseAuth.init(); }
+
+  async function getUserId() {
+    const sb = getClient();
+    const { data: { user } } = await sb.auth.getUser();
+    return user?.id;
+  }
+
+  // PROFILE
+  async function loadProfile() {
+    const sb = getClient();
+    const userId = await getUserId();
+    if (!userId) throw new Error('Not authenticated');
+    const { data, error } = await sb.from('profiles').select('*').eq('user_id', userId).maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+
+  async function saveProfile(fields) {
+    const sb = getClient();
+    const userId = await getUserId();
+    if (!userId) throw new Error('Not authenticated');
+    const { error } = await sb.from('profiles').update({
+      first_name: fields.first_name, last_name: fields.last_name,
+      company: fields.company, license_number: fields.license_number,
+      phone: fields.phone
+    }).eq('user_id', userId);
+    if (error) throw error;
+  }
+
+  // ADDRESS
+  async function saveAddress(fields) {
+    const sb = getClient();
+    const userId = await getUserId();
+    if (!userId) throw new Error('Not authenticated');
+    const { error } = await sb.from('profiles').update({
+      street_address: fields.street_address, city: fields.city,
+      state: fields.state, zip: fields.zip
+    }).eq('user_id', userId);
+    if (error) throw error;
+  }
+
+  // FIRMS
+  async function loadUserFirms() {
+    const sb = getClient();
+    const userId = await getUserId();
+    const { data, error } = await sb.from('user_firms').select('*').eq('user_id', userId).order('name', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async function saveFirm(firm) {
+    const sb = getClient();
+    const userId = await getUserId();
+    const { error } = await sb.from('user_firms').upsert({
+      user_id: userId, firm_id: firm.firm_id, name: firm.name,
+      free_miles: firm.free_miles || 0, rate_per_mile: firm.rate_per_mile || 0,
+      round_trip_default: firm.round_trip_default || false,
+      is_custom: firm.is_custom || false, firm_category: firm.firm_category || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,firm_id' });
+    if (error) throw error;
+  }
+
+  async function deleteFirm(firmId) {
+    const sb = getClient();
+    const userId = await getUserId();
+    const { error } = await sb.from('user_firms').delete().eq('user_id', userId).eq('firm_id', firmId);
+    if (error) throw error;
+  }
+
+  // EMAIL
+  async function changeEmail(newEmail) {
+    const sb = getClient();
+    const { error } = await sb.auth.updateUser({ email: newEmail });
+    if (error) throw error;
+    const userId = await getUserId();
+    await sb.from('profiles').update({ email: newEmail }).eq('user_id', userId);
+  }
+
+  // PASSWORD
+  async function changePassword(newPassword) {
+    const sb = getClient();
+    const { error } = await sb.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+  }
+
+  // SYNC
+  async function syncToFirmStore() {
+    if (!window.FirmStore) return;
+    await window.FirmStore.getAll();
+  }
+
+  // DELETE ACCOUNT
+  async function deleteAccount() {
+    const sb = getClient();
+    const userId = await getUserId();
+    if (!userId) throw new Error('Not authenticated');
+    await sb.from('user_firms').delete().eq('user_id', userId);
+    await sb.from('profiles').delete().eq('user_id', userId);
+    await sb.auth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
+  return {
+    loadProfile, saveProfile, saveAddress, changeEmail,
+    loadUserFirms, saveFirm, deleteFirm, changePassword,
+    syncToFirmStore, deleteAccount
+  };
+})();
+
+window.SettingsService = SettingsService;
+
+
+── user_firms TABLE SCHEMA ──────────────────────────────────────
+
+CREATE TABLE public.user_firms (
+    id                 UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id            UUID          NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    firm_id            TEXT          NOT NULL,
+    name               TEXT          NOT NULL,
+    free_miles         INTEGER       NOT NULL DEFAULT 0,
+    rate_per_mile      NUMERIC(6,4)  NOT NULL DEFAULT 0.0,
+    round_trip_default BOOLEAN       NOT NULL DEFAULT false,
+    is_custom          BOOLEAN       DEFAULT false,
+    firm_category      TEXT,
+    created_at         TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id, firm_id)
+);
+
+-- RLS: owner only
+-- SELECT:  auth.uid() = user_id
+-- INSERT:  auth.uid() = user_id
+-- UPDATE:  auth.uid() = user_id
+-- DELETE:  auth.uid() = user_id
+
+
+── profiles TABLE SCHEMA ────────────────────────────────────────
+
+CREATE TABLE public.profiles (
+    id                     UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id                UUID,
+    email                  TEXT,
+    stripe_customer_id     TEXT,
+    stripe_subscription_id TEXT,
+    subscription_tier      TEXT        NOT NULL DEFAULT 'none',
+    subscription_status    TEXT        NOT NULL DEFAULT 'inactive',
+    current_period_end     TIMESTAMPTZ NULL,
+    dispatch_enabled       BOOLEAN     NOT NULL DEFAULT false,
+    first_name             TEXT,
+    last_name              TEXT,
+    company                TEXT,
+    license_number         TEXT,
+    phone                  TEXT,
+    street_address         TEXT,
+    city                   TEXT,
+    state                  TEXT,
+    zip                    TEXT,
+    created_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- RLS: dual-match policy (some rows have user_id != id)
+-- SELECT:  auth.uid() = id OR auth.uid() = user_id
+-- UPDATE:  auth.uid() = id OR auth.uid() = user_id
+-- INSERT:  auth.uid() = id
+
+
+================================================================
+SECTION 11 — ECHO BUTTON (VISUAL ONLY)
+================================================================
+
+── HTML ─────────────────────────────────────────────────────────
+
+<div id="echo-widget">
+  <div id="echo-panel" class="echo-hidden">
+    <div class="echo-header">
+      <div class="echo-header-left">
+        <div class="echo-header-icon">&#9672;</div>
+        <div class="echo-header-text">
+          <span class="echo-name">ECHO</span>
+          <span class="echo-tagline">CLAIM CIPHER ASSISTANT</span>
+        </div>
+      </div>
+      <div class="echo-header-right">
+        <div class="echo-status-dot"></div>
+        <button class="echo-close" id="echo-close">&#10005;</button>
+      </div>
+    </div>
+    <div class="echo-body" id="echo-chat">
+      <div id="echo-welcome">
+        <div class="echo-welcome-text">Ask me anything about running routes, logging mileage, processing estimates, or configuring your account.</div>
+        <div class="echo-suggestions-label">QUICK QUESTIONS</div>
+        <div id="echo-suggestions"></div>
+      </div>
+    </div>
+    <div class="echo-input-bar">
+      <input id="echo-input" type="text" placeholder="Ask Echo..." autocomplete="off" />
+      <button id="echo-submit">&rarr;</button>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end">
+    <button id="echo-toggle" aria-label="Open Echo Help Assistant">
+      <span class="echo-icon">&#9672;</span>
+      <span class="echo-label">ECHO</span>
+    </button>
+  </div>
+</div>
+
+── CSS (cipher-help.css — complete) ─────────────────────────────
+
+#echo-widget {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#echo-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #c8922a;
+  color: #000;
+  border: 1px solid #c8922a;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  box-shadow: 0 0 20px rgba(200, 146, 42, 0.3);
+  transition: all 0.2s ease;
+}
+#echo-toggle:hover {
+  box-shadow: 0 0 28px rgba(200, 146, 42, 0.45);
+}
+#echo-toggle.echo-toggle--open {
+  background: #1a1b1e;
+  color: #c8922a;
+  box-shadow: none;
+}
+.echo-icon { font-size: 14px; line-height: 1; }
+.echo-label { line-height: 1; }
+
+#echo-panel {
+  position: absolute;
+  bottom: 50px;
+  right: 0;
+  width: 340px;
+  max-height: 520px;
+  background: #111214;
+  border: 1px solid #c8922a;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8), 0 0 60px rgba(200, 146, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 12px;
+  animation: echoSlideUp 0.25s ease-out;
+}
+#echo-panel.echo-hidden { display: none; }
+
+.echo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #1a1b1e;
+  border-bottom: 1px solid rgba(200, 146, 42, 0.3);
+}
+.echo-header-left { display: flex; align-items: center; gap: 10px; }
+.echo-header-icon {
+  width: 28px; height: 28px;
+  background: rgba(200, 146, 42, 0.15);
+  border: 1px solid #c8922a;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #c8922a; flex-shrink: 0;
+}
+.echo-header-text .echo-name {
+  display: block; color: #c8922a;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+}
+.echo-tagline {
+  display: block; color: #555;
+  font-size: 9px; letter-spacing: 2px; margin-top: 1px;
+}
+.echo-header-right { display: flex; align-items: center; gap: 8px; }
+.echo-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.8);
+}
+.echo-close {
+  background: none; border: none; color: #555;
+  font-size: 14px; cursor: pointer; padding: 2px 4px;
+  font-family: inherit; line-height: 1; transition: color 0.15s;
+}
+.echo-close:hover { color: #e0e0e0; }
+
+.echo-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px 14px 8px;
+  display: flex; flex-direction: column; gap: 10px;
+  max-height: 360px; min-height: 120px;
+}
+
+.echo-welcome-text {
+  color: #c0c0c0; font-size: 13px; line-height: 1.7;
+  border-left: 2px solid rgba(200, 146, 42, 0.3);
+  padding-left: 10px; margin-bottom: 14px;
+}
+.echo-suggestions-label {
+  color: #777; font-size: 10px; letter-spacing: 2px; margin-bottom: 8px;
+}
+#echo-suggestions { display: flex; flex-direction: column; gap: 5px; }
+.echo-suggestion {
+  background: rgba(200, 146, 42, 0.06);
+  border: 1px solid rgba(200, 146, 42, 0.2);
+  color: #d0d0d0; font-size: 12px; font-family: inherit;
+  padding: 6px 10px; cursor: pointer; text-align: left;
+  letter-spacing: 0.5px; transition: border-color 0.15s, color 0.15s;
+}
+.echo-suggestion:hover { border-color: #c8922a; color: #c8922a; }
+
+.echo-msg--user { display: flex; justify-content: flex-end; }
+.echo-bubble-user {
+  background: rgba(200, 146, 42, 0.12);
+  border: 1px solid rgba(200, 146, 42, 0.3);
+  color: #e0e0e0; font-size: 11px;
+  padding: 7px 11px; max-width: 80%;
+  line-height: 1.5; word-wrap: break-word;
+}
+
+.echo-back {
+  background: none; border: none; color: #c8922a;
+  font-size: 10px; font-family: inherit;
+  letter-spacing: 2px; cursor: pointer; padding: 0; text-align: left;
+}
+.echo-back:hover { opacity: 0.8; }
+
+.echo-card {
+  background: #1a1b1e;
+  border: 1px solid rgba(200, 146, 42, 0.2);
+  padding: 10px 12px; font-size: 12px; line-height: 1.8;
+}
+.echo-card-title {
+  color: #c8922a; font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; margin-bottom: 8px; text-transform: uppercase;
+}
+.echo-card-label {
+  color: #777; font-size: 10px; letter-spacing: 2px; margin-bottom: 4px;
+}
+.echo-card-step {
+  display: flex; gap: 8px; color: #e0e0e0;
+  padding-left: 4px; margin-bottom: 2px;
+}
+.echo-bullet { color: #c8922a; flex-shrink: 0; }
+.echo-card-output {
+  display: flex; gap: 8px; color: #aaa;
+  font-size: 11px; padding-left: 4px; margin-bottom: 2px;
+}
+.echo-arrow { color: #444; flex-shrink: 0; }
+
+.echo-fallback {
+  background: #1a1b1e;
+  border: 1px solid rgba(200, 146, 42, 0.15);
+  border-left: 2px solid #c8922a;
+  color: #888; font-size: 10px; padding: 8px 12px; line-height: 1.7;
+}
+
+.echo-typing {
+  display: flex; gap: 4px; padding: 8px 12px;
+  background: #1a1b1e;
+  border: 1px solid rgba(200, 146, 42, 0.15);
+  width: fit-content;
+}
+.echo-typing span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #c8922a;
+  animation: echoBounce 0.8s ease-in-out infinite;
+}
+.echo-typing span:nth-child(2) { animation-delay: 0.15s; }
+.echo-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+.echo-input-bar {
+  display: flex; align-items: center;
+  border-top: 1px solid rgba(200, 146, 42, 0.2);
+  background: #0d0e10;
+}
+#echo-input {
+  flex: 1; background: none; border: none;
+  color: #e0e0e0; font-family: inherit; font-size: 12px;
+  padding: 11px 14px; outline: none; letter-spacing: 0.5px;
+}
+#echo-input::placeholder { color: #666; }
+#echo-submit {
+  background: #c8922a; border: none; color: #000;
+  font-size: 14px; font-weight: 700; font-family: inherit;
+  padding: 0 14px; min-height: 40px; cursor: pointer;
+  transition: background 0.15s;
+}
+#echo-submit:hover { background: #e0b44a; }
+
+.echo-body::-webkit-scrollbar { width: 4px; }
+.echo-body::-webkit-scrollbar-track { background: #111; }
+.echo-body::-webkit-scrollbar-thumb { background: rgba(200, 146, 42, 0.3); }
+
+@keyframes echoSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes echoBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50%      { transform: translateY(-4px); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  #echo-toggle { position: fixed; bottom: 16px; right: 16px; }
+  #echo-panel { position: fixed; bottom: 0; right: 0; left: 0; width: 100%; max-height: 70vh; border-bottom: none; }
+}
+
+
+================================================================
+SECTION 12 — FORM FIELD INVENTORY
+================================================================
+
+  ID              | Label                    | Type     | Placeholder              | Validation    | Supabase Column
+  ────────────────|──────────────────────────|──────────|──────────────────────────|───────────────|──────────────────────
+  firstName       | First Name               | text     | Enter first name         | —             | profiles.first_name
+  lastName        | Last Name                | text     | Enter last name          | —             | profiles.last_name
+  companyName     | Business / Company Name   | text     | Enter company name       | —             | profiles.company
+  licenseNumber   | Appraiser License #       | text     | e.g. TX-12345            | —             | profiles.license_number
+  phoneNumber     | Phone Number              | tel      | (555) 000-0000           | —             | profiles.phone
+  emailAddress    | Email Address             | email    | user@example.com         | —             | profiles.email (auth)
+  streetAddress   | Street Address            | text     | 123 Main St              | —             | profiles.street_address
+  cityField       | City                      | text     | City                     | —             | profiles.city
+  stateField      | State                     | text     | TX                       | maxlength="2" | profiles.state
+  zipField        | ZIP Code                  | text     | 75001                    | maxlength="10"| profiles.zip
+  firmSearch      | (none)                    | text     | Search firms...          | —             | (client filter)
+  currentPassword | Current Password          | password | Enter current password   | required      | —
+  newPassword     | New Password              | password | Enter new password       | min 8 chars   | auth.updateUser
+  confirmPassword | Confirm New Password      | password | Confirm new password     | must match    | —
+
+  RATE MODAL:
+  rateModalFreeMiles    | Free Miles         | number   | 0       | min="0"        | user_firms.free_miles
+  rateModalRatePerMile  | Rate Per Mile ($)  | number   | 0.00    | step="0.01"    | user_firms.rate_per_mile
+  rateModalRoundTrip    | Round Trip         | checkbox | —       | —              | user_firms.round_trip_default
+
+  CUSTOM FIRM MODAL:
+  customFirmName        | Firm Name          | text     | Enter firm name | required  | user_firms.name
+  customFirmCategory    | Category           | select   | —               | —         | user_firms.firm_category
+
+
+================================================================
+END OF CODEX
+================================================================
