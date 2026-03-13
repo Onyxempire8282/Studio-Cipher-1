@@ -286,9 +286,7 @@ function renderFirmsList(filter, search) {
 
     item.addEventListener('click', () => {
       if (isSelected) {
-        pendingFirms = pendingFirms.filter(f => f.firm_id !== firm.firm_id);
-        renderFirmsList();
-        updateSelectedCount();
+        openFirmDetail(firm, existingData);
       } else {
         currentFirmForModal = {
           firm_id:       firm.firm_id,
@@ -394,6 +392,90 @@ function renderDemoFirmsList(filter, search) {
   });
 }
 
+// ── FIRM DETAIL PANEL ──
+var _detailFirm = null;
+var _detailData = null;
+
+function openFirmDetail(firm, existingData) {
+  _detailFirm = firm;
+  _detailData = existingData;
+
+  const modal = document.getElementById('firmDetailModal');
+  if (!modal) return;
+
+  document.getElementById('firmDetailName').textContent = firm.name;
+  document.getElementById('firmDetailCategory').textContent = categoryLabel(firm.firm_category);
+  document.getElementById('firmDetailCoverage').textContent = firm.coverage || '—';
+
+  // Website
+  const websiteEl = document.getElementById('firmDetailWebsite');
+  if (firm.website) {
+    websiteEl.innerHTML = '<a href="' + firm.website + '" target="_blank" rel="noopener">' + firm.website.replace(/^https?:\/\//, '') + '</a>';
+  } else {
+    websiteEl.textContent = '—';
+  }
+
+  // Contact
+  document.getElementById('firmDetailContact').textContent = firm.contact_name || '—';
+
+  // Email
+  const emailEl = document.getElementById('firmDetailEmail');
+  if (firm.contact_email && !firm.contact_email.startsWith('http')) {
+    emailEl.innerHTML = '<a href="mailto:' + firm.contact_email + '">' + firm.contact_email + '</a>';
+  } else if (firm.contact_email) {
+    emailEl.innerHTML = '<a href="' + firm.contact_email + '" target="_blank" rel="noopener">Apply Online</a>';
+  } else {
+    emailEl.textContent = '—';
+  }
+
+  // Rates
+  document.getElementById('firmDetailFreeMiles').textContent = existingData?.free_miles ?? '—';
+  document.getElementById('firmDetailRate').textContent = existingData?.rate_per_mile ? '$' + existingData.rate_per_mile : '—';
+  document.getElementById('firmDetailRoundTrip').textContent = existingData?.round_trip_default ? 'Yes' : 'No';
+
+  modal.classList.add('active');
+}
+
+function closeFirmDetail() {
+  document.getElementById('firmDetailModal')?.classList.remove('active');
+  _detailFirm = null;
+  _detailData = null;
+}
+
+function bindFirmDetailModal() {
+  document.getElementById('firmDetailCloseBtn')
+    ?.addEventListener('click', closeFirmDetail);
+
+  document.getElementById('firmDetailRemoveBtn')
+    ?.addEventListener('click', () => {
+      if (!_detailFirm) return;
+      pendingFirms = pendingFirms.filter(f => f.firm_id !== _detailFirm.firm_id);
+      closeFirmDetail();
+      renderFirmsList();
+      updateSelectedCount();
+    });
+
+  document.getElementById('firmDetailEditBtn')
+    ?.addEventListener('click', () => {
+      if (!_detailFirm) return;
+      const firm = _detailFirm;
+      const data = _detailData;
+      closeFirmDetail();
+      currentFirmForModal = {
+        firm_id:       firm.firm_id,
+        name:          firm.name,
+        firm_category: firm.firm_category,
+        is_custom:     firm.is_custom || false
+      };
+      openRateModal(firm, data);
+    });
+
+  document.getElementById('firmDetailModal')
+    ?.addEventListener('click', (e) => {
+      if (e.target.id === 'firmDetailModal') closeFirmDetail();
+    });
+}
+
 // ── RATE MODAL ──
 function openRateModal(firm, existingData) {
   const modal = document.getElementById('rateModal');
@@ -466,6 +548,7 @@ function bindRateModal() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeRateModal();
+      closeFirmDetail();
       closeCustomFirmModal();
     }
   });
@@ -474,6 +557,7 @@ function bindRateModal() {
 // ── SAVE FIRMS ──
 function bindFirmsList() {
   bindRateModal();
+  bindFirmDetailModal();
   bindFirmSearch();
   bindFirmFilters();
   bindCustomFirmModal();

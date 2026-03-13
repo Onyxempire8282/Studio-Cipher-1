@@ -674,6 +674,46 @@
   gap: 8px;
 }
 
+/* ── FIRM DETAIL PANEL ── */
+.firm-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.firm-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.firm-detail-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.firm-detail-value {
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--text-hi);
+  text-align: right;
+  word-break: break-word;
+}
+.firm-detail-value a {
+  color: var(--amber);
+  text-decoration: none;
+}
+.firm-detail-value a:hover {
+  text-decoration: underline;
+}
+.firm-detail-divider {
+  height: 1px;
+  background: var(--rivet);
+  margin: 4px 0;
+}
+
 /* ── TOAST ── */
 .settings-toast {
   position: fixed;
