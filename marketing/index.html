@@ -1488,8 +1488,16 @@ switchTab(0);
 (function () {
   'use strict';
 
-  var STORAGE_KEY  = 'cc_capture_seen';
-  var DEMO_STORAGE = 'demo_mode';
+  var SUBMITTED_KEY = 'cc_capture_submitted';
+  var SKIPPED_KEY   = 'cc_capture_skipped';
+  var DEMO_STORAGE  = 'demo_mode';
+  var LOCATION      = 'marketing';
+
+  // Migrate legacy flag
+  if (localStorage.getItem('cc_capture_seen') === '1' && !localStorage.getItem(SUBMITTED_KEY)) {
+    localStorage.setItem(SUBMITTED_KEY, '1');
+    localStorage.removeItem('cc_capture_seen');
+  }
 
   function isValidEmail(v) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -1502,12 +1510,36 @@ switchTab(0);
     } catch (_) { return false; }
   }
 
-  function hasSeenModal() {
-    return localStorage.getItem(STORAGE_KEY) === '1';
+  function hasSubmitted() {
+    return localStorage.getItem(SUBMITTED_KEY) === '1';
   }
 
-  function markModalSeen() {
-    localStorage.setItem(STORAGE_KEY, '1');
+  function markSubmitted() {
+    localStorage.setItem(SUBMITTED_KEY, '1');
+  }
+
+  function getSkippedLocations() {
+    var raw = localStorage.getItem(SKIPPED_KEY) || '';
+    return raw ? raw.split(',') : [];
+  }
+
+  function markSkipped() {
+    var skipped = getSkippedLocations();
+    if (skipped.indexOf(LOCATION) === -1) {
+      skipped.push(LOCATION);
+      localStorage.setItem(SKIPPED_KEY, skipped.join(','));
+    }
+  }
+
+  function shouldShowHere() {
+    if (hasSubmitted()) return false;
+    if (isPaidSubscriber()) return false;
+    if (getSkippedLocations().indexOf(LOCATION) !== -1) return false;
+    return true;
+  }
+
+  function track(eventName, props) {
+    try { if (window.va) window.va.track(eventName, props); } catch (_) {}
   }
 
   function launchDemo() {
@@ -1526,6 +1558,7 @@ switchTab(0);
 
   function showModal() {
     overlay.classList.add('visible');
+    track('email_capture_shown', { location: LOCATION });
     setTimeout(function() { if (emailInput) emailInput.focus(); }, 250);
   }
 
@@ -1557,7 +1590,8 @@ switchTab(0);
       console.warn('[CipherCapture] Subscribe network error:', err);
     }
 
-    markModalSeen();
+    markSubmitted();
+    track('email_capture_submitted', { location: LOCATION });
     formState.style.display = 'none';
     successState.style.display = 'block';
     submitBtn.disabled = false;
@@ -1565,7 +1599,8 @@ switchTab(0);
   }
 
   function handleSkip() {
-    markModalSeen();
+    markSkipped();
+    track('email_capture_skipped', { location: LOCATION });
     hideModal();
     launchDemo();
   }
@@ -1581,14 +1616,14 @@ switchTab(0);
       if (el.hasAttribute('data-demo-trigger') || text === 'try demo' || text.includes('try demo')) {
         el.addEventListener('click', function(e) {
           e.preventDefault();
-          if (isPaidSubscriber() || hasSeenModal()) { launchDemo(); return; }
+          if (isPaidSubscriber() || !shouldShowHere()) { launchDemo(); return; }
           showModal();
         });
       }
     });
   }
 
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && overlay.classList.contains('visible')) handleSkip();
   });
 

@@ -132,8 +132,8 @@ class CommandCenterManager {
                 if (window.SessionManager) window.SessionManager.clearDemo();
                 window.location.replace('login-cypher.html');
             };
-            if (window.CipherCapture && window.CipherCapture.shouldShow()) {
-                window.CipherCapture.show(doClearAndRedirect);
+            if (window.CipherCapture && window.CipherCapture.shouldShow('exit')) {
+                window.CipherCapture.show(doClearAndRedirect, 'exit');
             } else {
                 doClearAndRedirect();
             }
@@ -1260,8 +1260,8 @@ async function handleLogout() {
             if (window.SessionManager) window.SessionManager.clearDemo();
             window.location.replace('login-cypher.html');
         };
-        if (window.CipherCapture && window.CipherCapture.shouldShow()) {
-            window.CipherCapture.show(doClearAndRedirect);
+        if (window.CipherCapture && window.CipherCapture.shouldShow('exit')) {
+            window.CipherCapture.show(doClearAndRedirect, 'exit');
         } else {
             doClearAndRedirect();
         }

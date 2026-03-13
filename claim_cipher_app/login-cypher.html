@@ -549,9 +549,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function enterDemoMode(e) {
         e.preventDefault();
-        // Show email capture modal if not yet seen, then launch demo
-        if (window.CipherCapture && window.CipherCapture.shouldShow()) {
-            window.CipherCapture.show(launchDemoNow);
+        // Show email capture modal if not yet submitted/skipped at this location
+        if (window.CipherCapture && window.CipherCapture.shouldShow('login')) {
+            window.CipherCapture.show(launchDemoNow, 'login');
         } else {
             launchDemoNow();
         }

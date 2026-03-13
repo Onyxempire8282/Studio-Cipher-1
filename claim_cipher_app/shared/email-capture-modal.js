@@ -7,15 +7,25 @@
  *   <script defer src="shared/email-capture-modal.js"></script>
  *
  * API:
- *   window.CipherCapture.show(onComplete)
- *     — Shows the modal. Calls onComplete() after submit, skip, or Esc.
- *   window.CipherCapture.shouldShow()
- *     — Returns true if the modal hasn't been seen yet and user isn't a subscriber.
+ *   window.CipherCapture.show(onComplete, location)
+ *     — Shows the modal. location = 'login' | 'exit'.
+ *       Calls onComplete() after submit, skip, or Esc.
+ *   window.CipherCapture.shouldShow(location)
+ *     — Returns true if the modal should show for the given location.
+ *       Once an email is submitted the modal never shows again.
+ *       A skip only suppresses that specific location.
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'cc_capture_seen';
+  var SUBMITTED_KEY = 'cc_capture_submitted';
+  var SKIPPED_KEY   = 'cc_capture_skipped';
+
+  // Migrate legacy flag — treat old "seen" as "submitted" since we can't tell
+  if (localStorage.getItem('cc_capture_seen') === '1' && !localStorage.getItem(SUBMITTED_KEY)) {
+    localStorage.setItem(SUBMITTED_KEY, '1');
+    localStorage.removeItem('cc_capture_seen');
+  }
 
   function isValidEmail(v) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -28,16 +38,36 @@
     } catch (_) { return false; }
   }
 
-  function hasSeenModal() {
-    return localStorage.getItem(STORAGE_KEY) === '1';
+  function hasSubmitted() {
+    return localStorage.getItem(SUBMITTED_KEY) === '1';
   }
 
-  function markModalSeen() {
-    localStorage.setItem(STORAGE_KEY, '1');
+  function markSubmitted() {
+    localStorage.setItem(SUBMITTED_KEY, '1');
   }
 
-  function shouldShow() {
-    return !hasSeenModal() && !isPaidSubscriber();
+  function getSkippedLocations() {
+    var raw = localStorage.getItem(SKIPPED_KEY) || '';
+    return raw ? raw.split(',') : [];
+  }
+
+  function markSkipped(location) {
+    var skipped = getSkippedLocations();
+    if (skipped.indexOf(location) === -1) {
+      skipped.push(location);
+      localStorage.setItem(SKIPPED_KEY, skipped.join(','));
+    }
+  }
+
+  function track(eventName, props) {
+    try { if (window.va) window.va.track(eventName, props); } catch (_) {}
+  }
+
+  function shouldShow(location) {
+    if (hasSubmitted()) return false;
+    if (isPaidSubscriber()) return false;
+    if (location && getSkippedLocations().indexOf(location) !== -1) return false;
+    return true;
   }
 
   // ── Build DOM ──────────────────────────────────────────
@@ -111,13 +141,15 @@
 
   // ── Show / wire / hide ─────────────────────────────────
   var _onComplete = null;
+  var _location   = 'login';
   var _wired = false;
 
-  function show(onComplete) {
+  function show(onComplete, location) {
     injectStyles();
     injectHTML();
 
     _onComplete = onComplete || function () {};
+    _location   = location || 'login';
 
     var overlay      = document.getElementById('cipher-capture-overlay');
     var emailInput   = document.getElementById('cc-email-input');
@@ -135,6 +167,7 @@
     if (errorEl) errorEl.textContent = '';
 
     overlay.classList.add('visible');
+    track('email_capture_shown', { location: _location });
     setTimeout(function () { if (emailInput) emailInput.focus(); }, 250);
 
     if (_wired) return;
@@ -173,7 +206,8 @@
         console.warn('[CipherCapture] Subscribe error:', err);
       }
 
-      markModalSeen();
+      markSubmitted();
+      track('email_capture_submitted', { location: _location });
       formState.style.display = 'none';
       successState.style.display = 'block';
       submitBtn.disabled = false;
@@ -181,7 +215,8 @@
     }
 
     function handleSkip() {
-      markModalSeen();
+      markSkipped(_location);
+      track('email_capture_skipped', { location: _location });
       finish();
     }
 
