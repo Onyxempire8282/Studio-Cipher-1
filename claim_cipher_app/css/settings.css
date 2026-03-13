@@ -505,22 +505,26 @@
 
 /* ── DEMO FIRMS BANNER ── */
 .demo-firms-banner {
-  background: var(--amber, #e8952a);
-  color: #000;
+  background: linear-gradient(135deg, rgba(232,149,42,0.14) 0%, rgba(232,149,42,0.06) 100%);
+  border: 1px solid rgba(232,149,42,0.25);
+  border-left: 3px solid var(--amber, #e8952a);
+  color: var(--text-hi, #c8c4bc);
   text-align: center;
-  padding: 8px 16px;
+  padding: 18px 24px;
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
+  line-height: 1.6;
 }
 .demo-firms-banner-link {
-  color: #000;
+  color: var(--amber, #e8952a);
   font-weight: 600;
   text-decoration: underline;
 }
