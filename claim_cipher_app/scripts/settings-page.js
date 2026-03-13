@@ -305,12 +305,32 @@ function renderFirmsList(filter, search) {
 }
 
 // ── DEMO FIRMS (read-only directory) ──
+const DEMO_PREVIEW_COUNT = 6;
+
+function injectDemoFirmsBanner() {
+  const section = document.getElementById('firmsSection');
+  if (!section || document.getElementById('demoFirmsBanner')) return;
+  const header = section.querySelector('.section-header');
+  if (!header) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'demoFirmsBanner';
+  banner.className = 'demo-firms-banner';
+  banner.innerHTML =
+    '<span>Demo Mode \u2014 Access 40+ insurance firms nationwide for less than $1 each</span>'
+    + '<span style="margin:0 6px;opacity:0.5;">|</span>'
+    + '<a href="login-cypher.html?tab=signup" class="demo-firms-banner-link">Get Started for $39.99/mo \u2192</a>';
+  header.insertAdjacentElement('afterend', banner);
+}
+
 function renderDemoFirmsList(filter, search) {
   filter = filter || getCurrentFilter();
   search = search || getCurrentSearch();
 
   const list = document.getElementById('firmsList');
   if (!list) return;
+
+  injectDemoFirmsBanner();
 
   let filtered = PRESET_FIRMS;
   if (filter !== 'all') {
@@ -323,18 +343,39 @@ function renderDemoFirmsList(filter, search) {
 
   list.innerHTML = '';
 
-  filtered.forEach(firm => {
+  filtered.forEach((firm, i) => {
+    const isLocked = i >= DEMO_PREVIEW_COUNT;
     const item = document.createElement('div');
-    item.className = 'firm-item firm-item--demo-locked';
-    item.title = 'Subscribe to manage your firms';
-    item.innerHTML = `
-      <div class="firm-lock-icon">\u{1F512}</div>
-      <div class="firm-info">
-        <div class="firm-name">${firm.name}</div>
-        <div class="firm-meta">${firm.firm_category === 'regional' && firm.coverage ? firm.coverage : categoryLabel(firm.firm_category)}</div>
-      </div>
-      <span class="firm-tag">${categoryLabel(firm.firm_category)}</span>
-    `;
+    item.className = 'firm-item' + (isLocked ? ' firm-item--demo-locked' : ' firm-item--demo-preview');
+
+    if (isLocked) {
+      item.innerHTML = `
+        <div class="firm-lock-overlay" title="Subscribe to unlock">
+          <span class="firm-lock-icon">\u{1F512}</span>
+          <span class="firm-lock-label">Subscribe to unlock</span>
+        </div>
+        <div class="firm-checkbox firm-checkbox--disabled" title="Available with full access">
+          <span class="firm-checkbox-check">\u2713</span>
+        </div>
+        <div class="firm-info">
+          <div class="firm-name">${firm.name}</div>
+          <div class="firm-meta">${firm.firm_category === 'regional' && firm.coverage ? firm.coverage : categoryLabel(firm.firm_category)}</div>
+        </div>
+        <span class="firm-tag">${categoryLabel(firm.firm_category)}</span>
+      `;
+    } else {
+      item.innerHTML = `
+        <div class="firm-checkbox firm-checkbox--disabled" title="Available with full access">
+          <span class="firm-checkbox-check">\u2713</span>
+        </div>
+        <div class="firm-info">
+          <div class="firm-name">${firm.name}</div>
+          <div class="firm-meta">${firm.firm_category === 'regional' && firm.coverage ? firm.coverage : categoryLabel(firm.firm_category)}</div>
+        </div>
+        <span class="firm-tag">${categoryLabel(firm.firm_category)}</span>
+      `;
+    }
+
     list.appendChild(item);
   });
 
@@ -345,7 +386,11 @@ function renderDemoFirmsList(filter, search) {
   // Disable action buttons in demo
   ['saveFirmsBtn', 'clearFirmsBtn', 'addCustomFirmBtn'].forEach(id => {
     const btn = document.getElementById(id);
-    if (btn) { btn.disabled = true; btn.title = 'Subscribe to manage your firms'; }
+    if (btn) {
+      btn.disabled = true;
+      btn.style.cursor = 'not-allowed';
+      btn.title = 'Available with full access';
+    }
   });
 }
 
