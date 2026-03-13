@@ -503,6 +503,19 @@
   margin-top: 2px;
 }
 
+/* ── DEMO LOCKED FIRMS ── */
+.firm-item--demo-locked {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+.firm-lock-icon {
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
 /* ── CLEAR LINK ── */
 .clear-link {
   font-family: 'DM Mono', monospace;

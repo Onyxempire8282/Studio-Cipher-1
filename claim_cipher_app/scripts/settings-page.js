@@ -61,6 +61,7 @@ const PRESET_FIRMS = [
 let userFirms = [];
 let pendingFirms = [];
 let currentFirmForModal = null;
+const IS_DEMO = sessionStorage.getItem('demo_mode') === 'true';
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', async () => {
@@ -71,6 +72,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindPasswordForm();
   bindSidebarNav();
   bindDeleteAccount();
+
+  // Demo mode: skip Supabase entirely, render locked preset directory
+  if (IS_DEMO) {
+    renderDemoFirmsList();
+    return;
+  }
 
   // Load data — profile and firms independently so one failure doesn't block the other
   try {
@@ -297,6 +304,51 @@ function renderFirmsList(filter, search) {
   });
 }
 
+// ── DEMO FIRMS (read-only directory) ──
+function renderDemoFirmsList(filter, search) {
+  filter = filter || getCurrentFilter();
+  search = search || getCurrentSearch();
+
+  const list = document.getElementById('firmsList');
+  if (!list) return;
+
+  let filtered = PRESET_FIRMS;
+  if (filter !== 'all') {
+    filtered = filtered.filter(f => f.firm_category === filter);
+  }
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter(f => f.name.toLowerCase().includes(q));
+  }
+
+  list.innerHTML = '';
+
+  filtered.forEach(firm => {
+    const item = document.createElement('div');
+    item.className = 'firm-item firm-item--demo-locked';
+    item.title = 'Subscribe to manage your firms';
+    item.innerHTML = `
+      <div class="firm-lock-icon">\u{1F512}</div>
+      <div class="firm-info">
+        <div class="firm-name">${firm.name}</div>
+        <div class="firm-meta">${firm.firm_category === 'regional' && firm.coverage ? firm.coverage : categoryLabel(firm.firm_category)}</div>
+      </div>
+      <span class="firm-tag">${categoryLabel(firm.firm_category)}</span>
+    `;
+    list.appendChild(item);
+  });
+
+  // Update count to show directory size
+  const el = document.getElementById('selectedCount');
+  if (el) el.textContent = PRESET_FIRMS.length + ' firms nationwide';
+
+  // Disable action buttons in demo
+  ['saveFirmsBtn', 'clearFirmsBtn', 'addCustomFirmBtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) { btn.disabled = true; btn.title = 'Subscribe to manage your firms'; }
+  });
+}
+
 // ── RATE MODAL ──
 function openRateModal(firm, existingData) {
   const modal = document.getElementById('rateModal');
@@ -431,7 +483,8 @@ function bindFirmsList() {
 function bindFirmSearch() {
   document.getElementById('firmSearch')
     ?.addEventListener('input', (e) => {
-      renderFirmsList(getCurrentFilter(), e.target.value);
+      const renderer = IS_DEMO ? renderDemoFirmsList : renderFirmsList;
+      renderer(getCurrentFilter(), e.target.value);
     });
 }
 
@@ -441,7 +494,8 @@ function bindFirmFilters() {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      renderFirmsList(chip.dataset.filter, getCurrentSearch());
+      const renderer = IS_DEMO ? renderDemoFirmsList : renderFirmsList;
+      renderer(chip.dataset.filter, getCurrentSearch());
     });
   });
 }
