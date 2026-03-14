@@ -141,7 +141,9 @@ export function parseCCCText(rawText) {
         bodyStyle:                veh.bodyStyle,
         cylinders:                veh.cylinders,
         engineSize:               veh.engineSize,
-        transmission:             veh.transmission,
+        transmission:             veh.transmission === "TRANS_UNLISTED"
+                                      ? (parseTransFromOptions(options) || "TRANS_UNLISTED")
+                                      : veh.transmission,
         vin,
         mileage:                  extractMileage(text),
         conditionRating:          extractCondition(text),
@@ -472,6 +474,22 @@ function parseTransFromDesc(desc) {
     if (/\bOVERDRIVE\b/.test(d) || /\bO\/D\b/.test(d)) return "TRANS_OD";
 
     return "TRANS_UNLISTED";
+}
+
+function parseTransFromOptions(options) {
+    if (!Array.isArray(options) || options.length === 0) return "";
+    const block = options.join(" ").toUpperCase();
+
+    if (/AUTOMATIC\s*TRANSMISSION/i.test(block) || /\bAUTOMATIC\b/.test(block)) return "TRANS_AUTO";
+    if (/POWER\s*OVERDRIVE/i.test(block)) return "TRANS_PO";
+    if (/\bOVERDRIVE\b/.test(block)) return "TRANS_OD";
+    if (/6[\s-]*SPEED/i.test(block)) return "TRANS_S6";
+    if (/5[\s-]*SPEED/i.test(block)) return "TRANS_S5";
+    if (/4[\s-]*SPEED/i.test(block)) return "TRANS_S4";
+    if (/3[\s-]*SPEED/i.test(block)) return "TRANS_S3";
+    if (/\b4WD\b/.test(block) || /\bAWD\b/.test(block) || /4[\s-]*WHEEL\s*DRIVE/.test(block)) return "TRANS_4W";
+
+    return "";
 }
 
 function extractVehicleDescLine(text) {
