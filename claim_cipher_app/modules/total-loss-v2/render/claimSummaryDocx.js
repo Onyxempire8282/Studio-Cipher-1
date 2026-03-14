@@ -150,7 +150,7 @@ function buildTokenMap(state, userProfile) {
         'TRANS_S4': '4-Speed Manual', 'TRANS_S5': '5-Speed Manual', 'TRANS_S6': '6-Speed Manual',
         'TRANS_4W': '4WD/AWD', 'TRANS_PO': 'Power', 'TRANS_UNLISTED': 'Not Listed on Estimate',
     };
-    const transmission = TRANS_LABELS[transRaw] || transRaw || 'N/A';
+    const transmission = TRANS_LABELS[transRaw] || transRaw || 'Not Listed on Estimate';
 
     const extColor = parsed.exteriorColor || 'N/A';
 

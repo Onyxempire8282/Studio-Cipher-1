@@ -450,8 +450,16 @@ function parseTransFromDesc(desc) {
     if (/CONTINUOUSLY\s+VARIABLE/i.test(desc)) return "TRANS_AUTO";
     if (/\bAUTOMATIC\b/.test(d)) return "TRANS_AUTO";
     if (/\bCVT\b/.test(d)) return "TRANS_AUTO";
+    if (/\bAT\b/.test(d)) return "TRANS_AUTO";
 
-    // Manual speeds
+    // Manual keyword
+    if (/\bMANUAL\b/.test(d) || /\bMT\b/.test(d)) return "TRANS_S5";
+
+    // Speeds (automatic or manual)
+    if (/\b10[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_AUTO";
+    if (/\b9[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_AUTO";
+    if (/\b8[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_AUTO";
+    if (/\b7[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_AUTO";
     if (/\b6[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S6";
     if (/\b5[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S5";
     if (/\b4[\s-]*SP(?:EED|D)?\b/.test(d)) return "TRANS_S4";

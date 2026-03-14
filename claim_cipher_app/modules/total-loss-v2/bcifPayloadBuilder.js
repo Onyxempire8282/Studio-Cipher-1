@@ -574,23 +574,31 @@ export function buildBCIFPayload(parsedEstimate) {
     if (isTruthy(est.diesel) || /diesel/i.test(fuel)) setCheck(tokenMap, "DIESEL");
     if (isTruthy(est.turbo) || /turbo/i.test(fuel)) setCheck(tokenMap, "TURBO");
 
-    const trans = normalizeText(est.transmission).toLowerCase();
-    if (/(?:\b4wd\b|\b4x4\b|four\s*wheel|4-wheel|\bawd\b|all\s*wheel)/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_4W");
-    } else if (/(?:\b3\s*speed\b|\b3-speed\b|\b3\s*spd\b|\b3spd\b)/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_S3");
-    } else if (/(?:\b4\s*speed\b|\b4-speed\b|\b4\s*spd\b|\b4spd\b)/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_S4");
-    } else if (/(?:\b5\s*speed\b|\b5-speed\b|\b5\s*spd\b|\b5spd\b)/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_S5");
-    } else if (/(?:\b6\s*speed\b|\b6-speed\b|\b6\s*spd\b|\b6spd\b)/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_S6");
-    } else if (/power\s*overdrive/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_PO");
-    } else if (/\boverdrive\b/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_OD");
-    } else if (/(?:\bauto\b|\bautomatic\b)/i.test(trans)) {
-        setCheck(tokenMap, "TRANS_AUTO");
+    const trans = normalizeText(est.transmission);
+    // Parser outputs coded tokens (TRANS_AUTO, TRANS_S6, etc.) — match directly
+    const TRANS_TOKENS = ["TRANS_AUTO","TRANS_OD","TRANS_PO","TRANS_S3","TRANS_S4","TRANS_S5","TRANS_S6","TRANS_4W"];
+    if (TRANS_TOKENS.includes(trans) && trans !== "TRANS_UNLISTED") {
+        setCheck(tokenMap, trans);
+    } else {
+        // Fallback: match human-readable text (e.g. user-entered values)
+        const transLower = trans.toLowerCase();
+        if (/(?:4wd|4x4|four\s*wheel|4-wheel|awd|all\s*wheel)/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_4W");
+        } else if (/3[\s-]*speed/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_S3");
+        } else if (/4[\s-]*speed/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_S4");
+        } else if (/5[\s-]*speed/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_S5");
+        } else if (/6[\s-]*speed/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_S6");
+        } else if (/power\s*overdrive/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_PO");
+        } else if (/overdrive/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_OD");
+        } else if (/auto(?:matic)?/i.test(transLower)) {
+            setCheck(tokenMap, "TRANS_AUTO");
+        }
     }
 
     const mileage = normalizeText(est.mileage);
