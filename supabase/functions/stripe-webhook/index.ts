@@ -129,6 +129,85 @@ Deno.serve(async (req) => {
       const stripeCustomerId = subscription.customer as string;
       const result = await updateProfileFromSubscription(admin, subscription, stripeCustomerId);
       userId = result.userId;
+
+      // Send welcome email via Resend
+      if (userId) {
+        const { data: profile } = await admin
+          .from("profiles")
+          .select("email, full_name, welcome_email_sent")
+          .eq("user_id", userId)
+          .single();
+
+        if (profile && !profile.welcome_email_sent && profile.email) {
+          const resendKey = Deno.env.get("RESEND_API_KEY");
+          if (resendKey) {
+            const firstName = profile.full_name?.split(' ')[0] || 'there';
+            const emailRes = await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${resendKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "Claim Cipher <support@claimcipherhq.com>",
+                to: [profile.email],
+                subject: "Welcome to Claim Cipher\u2122 \u2014 You're In",
+                html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#0e0f11;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+    <div style="border-top:3px solid #e8952a;background:#161a1d;padding:32px 28px;">
+      <div style="font-family:monospace;font-size:11px;letter-spacing:0.2em;color:#e8952a;text-transform:uppercase;margin-bottom:4px;">
+        CLAIM CIPHER\u2122
+      </div>
+      <div style="font-size:24px;font-weight:700;color:#edeae4;letter-spacing:0.04em;margin-bottom:24px;">
+        YOU'RE IN, ${firstName.toUpperCase()}.
+      </div>
+      <div style="font-size:15px;color:#b8bdc2;margin-bottom:24px;font-weight:300;">
+        Your Claim Cipher\u2122 account is active. Built for independent appraisers who are serious about their workflow.
+      </div>
+      <div style="font-size:15px;color:#b8bdc2;margin-bottom:28px;font-weight:300;">
+        Log in and start with Route Cipher \u2014 sequence your stops, calculate your mileage, and generate your first report.
+      </div>
+      <div style="margin:28px 0;">
+        <a href="https://claimcipherhq.com/login" style="display:inline-block;background:#e8952a;color:#0e0f11;font-family:monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;font-weight:700;">
+          ENTER CLAIM CIPHER\u2122 \u2192
+        </a>
+      </div>
+      <div style="font-size:13px;color:#4a5058;margin-top:24px;">
+        Questions? Reply to this email. Built by an independent appraiser \u2014 I actually pick up.
+      </div>
+    </div>
+    <div style="padding:20px 28px;text-align:center;">
+      <div style="font-family:monospace;font-size:10px;letter-spacing:0.14em;color:#4a5058;text-transform:uppercase;">
+        Claim Cipher\u2122 \u2014 claimcipherhq.com
+      </div>
+      <div style="font-size:11px;color:#4a5058;margin-top:6px;">
+        Do not reply to this email.
+      </div>
+    </div>
+  </div>
+</body>
+</html>`
+              }),
+            });
+
+            if (emailRes.ok) {
+              // Mark welcome email as sent
+              await admin
+                .from("profiles")
+                .update({ welcome_email_sent: true })
+                .eq("user_id", userId);
+              console.log(`Welcome email sent to ${profile.email}`);
+            } else {
+              const err = await emailRes.text();
+              console.error("Welcome email error:", err);
+            }
+          }
+        }
+      }
     }
 
     if (
