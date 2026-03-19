@@ -2113,3 +2113,142 @@
         gap: 14px;
     }
 }
+
+/* =================================
+   MVR — Modal
+   ================================= */
+
+.mvr-tab {
+    padding: 8px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted, #4a5058);
+    transition: color .15s, border-color .15s;
+}
+.mvr-tab--active,
+.mvr-tab:hover {
+    color: var(--amber, #e8952a);
+    border-bottom-color: var(--amber, #e8952a);
+}
+
+.mvr-auto-field {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 7px 10px;
+}
+.mvr-auto-field-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 3px;
+    color: var(--muted, #4a5058);
+}
+.mvr-auto-field-value {
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--white, #edeae4);
+}
+
+.mvr-comp-hdr {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--amber, #e8952a);
+    text-align: center;
+    padding: 4px 0;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.mvr-comp-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted, #4a5058);
+    letter-spacing: .04em;
+}
+.mvr-comp-lbl--calc {
+    color: var(--amber, #e8952a);
+    font-weight: 700;
+}
+
+.mvr-input {
+    font-size: 12px;
+    padding: 7px 8px;
+}
+
+.mvr-calc-cell {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--amber, #e8952a);
+    padding: 5px 8px;
+    background: rgba(232,149,42,0.08);
+    border: 1px solid rgba(232,149,42,0.2);
+    border-radius: 0;
+}
+
+.mvr-val-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.mvr-calc-display {
+    font-family: 'DM Mono', monospace;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white, #edeae4);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0;
+}
+.mvr-calc-display--total {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--amber, #e8952a);
+    background: rgba(232,149,42,0.1);
+    border-color: rgba(232,149,42,0.3);
+}
+.mvr-total-label {
+    color: var(--amber, #e8952a) !important;
+    font-weight: 700 !important;
+}
+
+/* Modal download button inherits sv-btn--primary from .tls-summary-layout,
+   but since it's outside that scope, re-apply the critical styles */
+#mvr-download-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    cursor: pointer;
+    border: 1px solid var(--amber, #e8952a);
+    background: var(--amber, #e8952a);
+    color: #000;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 0;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(232,149,42,0.25);
+}
+#mvr-download-btn:hover {
+    background: #f0a030;
+    box-shadow: 0 0 28px rgba(232,149,42,0.4);
+    transform: translateY(-1px);
+}
+#mvr-download-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}

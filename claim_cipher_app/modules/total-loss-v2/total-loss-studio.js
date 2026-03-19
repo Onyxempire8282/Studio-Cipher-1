@@ -14,6 +14,7 @@ import { renderSummaryView } from './ui/summaryView.js';
 import { mapEstimateOptionsToBCIF, TOKEN_META } from './bcifPayloadBuilder.js';
 import { generateBCIFDocx } from './render/bcifDocxFiller.js';
 import { generateClaimSummaryDocx } from './render/claimSummaryDocx.js';
+import { generateMVRDocx } from './render/mvrDocxFiller.js';
 
 // =========================================
 //  BCIF SERVER (optional — DOCX fill when running)
@@ -875,6 +876,9 @@ function attachSummaryListeners() {
     setupPriorDamageToggle();
     setupACVSection();
 
+    // --- MVR modal ---
+    setupMVRModal();
+
     // --- Download BCIF Form ---
 
     const downloadBtn = document.getElementById('sv-download');
@@ -1151,6 +1155,262 @@ async function _gatherUserProfile() {
     if (!profile.businessName) profile.businessName = 'Claim Cipher\u2122';
     if (!profile.fullName) profile.fullName = 'Appraiser';
     return profile;
+}
+
+// =========================================
+//  MVR — Market Value Report (Modal)
+// =========================================
+
+const MVR_RATING_LABELS = { 0: 'Poor', 1: 'Fair', 2: 'Good', 3: 'Excellent' };
+
+function openMVRModal() {
+    const p = state.bcifPayload || {};
+
+    // Populate modal header
+    const claim = p.claim?.claimNumber || '';
+    const vehicle = [p.vehicle?.year, p.vehicle?.make, p.vehicle?.model].filter(Boolean).join(' ');
+    const vin = p.vehicle?.vin ? '\u00b7 ' + p.vehicle.vin : '';
+
+    const titleEl = document.getElementById('mvr-modal-title');
+    if (titleEl && claim) titleEl.textContent = `MARKET VALUE REPORT \u2014 CLAIM ${claim}`;
+
+    const vehicleEl = document.getElementById('mvr-modal-vehicle');
+    if (vehicleEl) vehicleEl.textContent = [vehicle, vin].filter(Boolean).join(' ');
+
+    // Auto-populate read-only strip
+    mvrSetAutoField('mvr-auto-owner', p.claim?.ownerName || '', 'Owner');
+    mvrSetAutoField('mvr-auto-claim', claim, 'Claim #');
+    mvrSetAutoField('mvr-auto-mileage', p.vehicle?.odometer || '', 'Mileage');
+
+    const paintRating = p.condition?.paint?.rating;
+    const paintLabel = (paintRating !== null && paintRating !== undefined) ? MVR_RATING_LABELS[paintRating] || '' : '';
+    mvrSetAutoField('mvr-auto-paint', paintLabel, 'Paint');
+
+    const overlay = document.getElementById('mvr-modal-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeMVRModal() {
+    const overlay = document.getElementById('mvr-modal-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function mvrSetAutoField(id, value, label) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML =
+        `<div class="mvr-auto-field-label">${escapeHTML(label)}</div>` +
+        `<div class="mvr-auto-field-value">${escapeHTML(value || '\u2014')}</div>`;
+}
+
+function mvrShowTab(tab) {
+    document.querySelectorAll('.mvr-tab-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.mvr-tab').forEach(b => b.classList.remove('mvr-tab--active'));
+    const panel = document.getElementById('mvr-tab-' + tab);
+    if (panel) panel.style.display = 'block';
+    const btn = document.querySelector(`.mvr-tab[data-tab="${tab}"]`);
+    if (btn) btn.classList.add('mvr-tab--active');
+}
+
+function mvrRecalc() {
+    const parse = id => {
+        const val = (document.getElementById(id)?.value || '').replace(/[$,\s]/g, '');
+        return parseFloat(val) || 0;
+    };
+
+    const fmt = n => '$' + (n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const adjPrices = [1, 2, 3].map(i => {
+        const total = parse(`mvr_c${i}_price`)
+                    + parse(`mvr_c${i}_mi_adj`)
+                    + parse(`mvr_c${i}_cn_adj`);
+        const el = document.getElementById(`mvr_c${i}_adj`);
+        if (el) el.textContent = total > 0 ? fmt(total) : '\u2014';
+        return total;
+    });
+
+    const valid = adjPrices.filter(p => p > 0);
+    const acv = valid.length > 0 ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
+    const taxRate = parseFloat(document.getElementById('mvr_tax_rate')?.value || 0) || 0;
+    const taxAmount = acv * (taxRate / 100);
+    const total = acv + taxAmount;
+
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+    set('mvr_acv',        acv > 0 ? fmt(acv) : '\u2014');
+    set('mvr_tax_amount', (acv > 0 && taxRate > 0) ? fmt(taxAmount) : (taxRate > 0 && acv === 0) ? '$0.00' : '\u2014');
+    set('mvr_total',      acv > 0 ? fmt(total) : '\u2014');
+}
+
+function mvrBuildTokenMap(userProfile) {
+    const p = state.bcifPayload || {};
+    const cond = p.condition || {};
+    const prof = userProfile || {};
+    const parse = id => (document.getElementById(id)?.value || '').replace(/[$,\s]/g, '');
+    const text  = id => document.getElementById(id)?.value || '';
+    const span  = id => document.getElementById(id)?.textContent || '\u2014';
+
+    function condLabel(component) {
+        const c = cond[component];
+        if (!c || c.rating === null || c.rating === undefined) return '';
+        return MVR_RATING_LABELS[c.rating] || '';
+    }
+
+    return {
+        HEADER_BUSINESS:     prof.businessName || p.claim?.carrier || 'Flavor Holdings LLC',
+        MVR_APPRAISER_NAME:  prof.fullName || '',
+        MVR_CLAIM_NUMBER:    p.claim?.claimNumber  || '',
+        MVR_CARRIER:         p.claim?.carrier       || '',
+        MVR_ADJUSTER:        p.claim?.adjuster      || '',
+        MVR_INSPECTION_DATE: new Date().toLocaleDateString('en-US'),
+        MVR_YEAR:            p.vehicle?.year         || '',
+        MVR_MAKE:            p.vehicle?.make         || '',
+        MVR_MODEL:           p.vehicle?.model        || '',
+        MVR_VIN:             p.vehicle?.vin          || '',
+        MVR_MILEAGE:         p.vehicle?.odometer     || '',
+        MVR_OWNER:           p.claim?.ownerName      || '',
+
+        MVR_COND_PAINT:      condLabel('paint'),
+        MVR_COND_GLASS:      condLabel('glass'),
+        MVR_COND_BODY:       condLabel('sheetMetal'),
+        MVR_COND_INTERIOR:   condLabel('seats'),
+
+        MVR_COMP1_SELLER:      text('mvr_c1_seller'),
+        MVR_COMP1_LOCATION:    text('mvr_c1_location'),
+        MVR_COMP1_PHONE:       text('mvr_c1_phone'),
+        MVR_COMP1_PRICE:       parse('mvr_c1_price'),
+        MVR_COMP1_MILEAGE_ADJ: parse('mvr_c1_mi_adj'),
+        MVR_COMP1_COND_ADJ:    parse('mvr_c1_cn_adj'),
+        MVR_COMP1_ADJ_PRICE:   span('mvr_c1_adj'),
+
+        MVR_COMP2_SELLER:      text('mvr_c2_seller'),
+        MVR_COMP2_LOCATION:    text('mvr_c2_location'),
+        MVR_COMP2_PHONE:       text('mvr_c2_phone'),
+        MVR_COMP2_PRICE:       parse('mvr_c2_price'),
+        MVR_COMP2_MILEAGE_ADJ: parse('mvr_c2_mi_adj'),
+        MVR_COMP2_COND_ADJ:    parse('mvr_c2_cn_adj'),
+        MVR_COMP2_ADJ_PRICE:   span('mvr_c2_adj'),
+
+        MVR_COMP3_SELLER:      text('mvr_c3_seller'),
+        MVR_COMP3_LOCATION:    text('mvr_c3_location'),
+        MVR_COMP3_PHONE:       text('mvr_c3_phone'),
+        MVR_COMP3_PRICE:       parse('mvr_c3_price'),
+        MVR_COMP3_MILEAGE_ADJ: parse('mvr_c3_mi_adj'),
+        MVR_COMP3_COND_ADJ:    parse('mvr_c3_cn_adj'),
+        MVR_COMP3_ADJ_PRICE:   span('mvr_c3_adj'),
+
+        MVR_SALVAGE_QUOTE:   parse('mvr_salvage'),
+        MVR_PRIOR_DAMAGE:    parse('mvr_prior_damage'),
+        MVR_ACV:             span('mvr_acv'),
+        MVR_TAX_RATE:        text('mvr_tax_rate'),
+        MVR_TAX_AMOUNT:      span('mvr_tax_amount'),
+        MVR_TOTAL:           span('mvr_total'),
+        MVR_REMARKS:         text('mvr_remarks'),
+    };
+}
+
+function setupMVRModal() {
+    // Generate MVR button → open modal
+    document.getElementById('btn-generate-mvr')
+        ?.addEventListener('click', openMVRModal);
+
+    // Modal close button
+    document.getElementById('mvr-modal-close')
+        ?.addEventListener('click', closeMVRModal);
+
+    // Overlay background click → close
+    const overlay = document.getElementById('mvr-modal-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) closeMVRModal();
+        });
+    }
+
+    // Tab buttons
+    document.querySelectorAll('.mvr-tab').forEach(btn => {
+        btn.addEventListener('click', () => mvrShowTab(btn.dataset.tab));
+    });
+
+    // Recalc listeners for all money inputs + tax rate
+    const recalcIds = [
+        'mvr_c1_price', 'mvr_c2_price', 'mvr_c3_price',
+        'mvr_c1_mi_adj', 'mvr_c2_mi_adj', 'mvr_c3_mi_adj',
+        'mvr_c1_cn_adj', 'mvr_c2_cn_adj', 'mvr_c3_cn_adj',
+        'mvr_salvage', 'mvr_tax_rate',
+    ];
+    recalcIds.forEach(id => {
+        document.getElementById(id)?.addEventListener('input', mvrRecalc);
+    });
+
+    // Download MVR button inside modal
+    document.getElementById('mvr-download-btn')
+        ?.addEventListener('click', handleDownloadMVR);
+}
+
+async function handleDownloadMVR() {
+    if (!state.bcifPayload) return;
+
+    const btn = document.getElementById('mvr-download-btn');
+    if (btn) btn.disabled = true;
+
+    try {
+        const userProfile = await _gatherUserProfile();
+        const tokenMap = mvrBuildTokenMap(userProfile);
+        const isDemoMode = sessionStorage.getItem('demo_mode') === 'true';
+
+        let downloaded = false;
+
+        // Tier 1: Flask server (optional)
+        try {
+            const res = await fetch(`${BCIF_SERVER_BASE}/fill-mvr-docx`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tokens: tokenMap }),
+                signal: AbortSignal.timeout(2000),
+            });
+            if (res.ok) {
+                const blob = await res.blob();
+                if (blob.size > 0) {
+                    const claimNum = tokenMap.MVR_CLAIM_NUMBER || 'EXPORT';
+                    triggerDownload(blob, isDemoMode ? 'MVR_DEMO_PREVIEW.docx' : `MVR_${claimNum}.docx`);
+                    downloaded = true;
+                }
+            }
+        } catch {}
+
+        // Tier 2: Client-side JSZip template fill (primary)
+        if (!downloaded) {
+            try {
+                console.log('[TLS] Generating MVR DOCX client-side...');
+                const blob = await generateMVRDocx(tokenMap, isDemoMode);
+                const claimNum = tokenMap.MVR_CLAIM_NUMBER || 'EXPORT';
+                const filename = isDemoMode ? 'MVR_DEMO_PREVIEW.docx' : `MVR_${claimNum}.docx`;
+                triggerDownload(blob, filename);
+                downloaded = true;
+            } catch (err) {
+                console.error('[TLS] Client-side MVR DOCX failed:', err);
+            }
+        }
+
+        // Tier 3: JSON fallback
+        if (!downloaded) {
+            const json = JSON.stringify(tokenMap, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            triggerDownload(blob, `MVR_${tokenMap.MVR_CLAIM_NUMBER || 'EXPORT'}_data.json`);
+            alert('MVR form generation failed. Token map saved as JSON.');
+        }
+    } catch (err) {
+        console.error('[TLS] MVR download failed:', err);
+        alert('MVR download failed. Please try again.');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
 }
 
 // =========================================
@@ -1756,3 +2016,11 @@ function escapeHTML(str) {
     div.textContent = str;
     return div.innerHTML;
 }
+
+// Escape key closes MVR modal
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        const overlay = document.getElementById('mvr-modal-overlay');
+        if (overlay && overlay.style.display !== 'none') closeMVRModal();
+    }
+});

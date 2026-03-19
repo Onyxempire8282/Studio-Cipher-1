@@ -147,6 +147,7 @@ export function renderSummaryView(payload) {
                     </div>
                     <div class="sv-action-btns">
                         <button class="sv-btn sv-btn--reset" id="sv-reset">↺ Reset</button>
+                        <button class="sv-btn sv-btn--secondary" id="btn-generate-mvr">+ Generate MVR</button>
                         <button class="sv-btn sv-btn--secondary" id="tls-download-summary">↓ Download Claim Summary</button>
                         <button class="sv-btn sv-btn--primary" id="sv-download">↓ Download BCIF Form</button>
                     </div>
