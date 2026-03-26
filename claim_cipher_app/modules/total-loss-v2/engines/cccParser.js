@@ -85,7 +85,7 @@ export function parseCCCText(rawText) {
     // ── 2. Extract required fields first ─────────────────────────────
     const claimNumber = extractFieldSameLine(text, /claim\s*#\s*:?/i);
     const vin         = extractVIN(text);
-    const options     = extractOptions(text);
+    const options     = extractOptions(text) || [];
 
     // ── 3. Required field guards ──────────────────────────────────────
     if (!claimNumber) {
@@ -103,15 +103,6 @@ export function parseCCCText(rawText) {
             error:   'MISSING_VIN',
             message: 'VIN could not be extracted from this estimate. ' +
                      'Expected a 17-character alphanumeric identifier after "VIN:".'
-        };
-    }
-
-    if (!options || options.length === 0) {
-        return {
-            success: false,
-            error:   'EMPTY_OPTIONS',
-            message: 'No vehicle options or equipment features could be extracted. ' +
-                     'The TRANSMISSION / options section may be missing or formatted unexpectedly.'
         };
     }
 
