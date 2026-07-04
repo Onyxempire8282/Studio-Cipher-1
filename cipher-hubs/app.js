@@ -1,10 +1,10 @@
-const hubs = window.CIPHER_HUBS || [];
 const STORE_KEYS = {
   verified: "cipher_hubs_verified_locations",
   favorites: "cipher_hubs_favorites",
   recent: "cipher_hubs_recent",
   route: "cipher_hubs_route"
 };
+const IMPORT_KEY = "cipher_hubs_imported_hubs";
 
 const $ = (id) => document.getElementById(id);
 const searchInput = $("searchInput");
@@ -21,6 +21,16 @@ const load = (key, fallback) => {
 
 const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
+function loadImportedHubs() {
+  try {
+    const raw = localStorage.getItem(IMPORT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+let hubs = loadImportedHubs() || window.CIPHER_HUBS || [];
 let verified = load(STORE_KEYS.verified, {});
 let favorites = load(STORE_KEYS.favorites, []);
 let recent = load(STORE_KEYS.recent, []);
@@ -218,12 +228,85 @@ function render() {
   if (!list.length) {
     const empty = document.createElement("div");
     empty.className = "hub-card";
-    empty.innerHTML = "<h2>No hubs found</h2><p class='subline'>Try the OLT code, hub number, road name, or development.</p>";
+    empty.innerHTML = "<h2>No hubs found</h2><p class='subline'>Import the hub workbook first, or try the OLT code, hub number, road name, or development.</p>";
     results.appendChild(empty);
     return;
   }
 
   list.forEach(h => results.appendChild(renderHub(h)));
+}
+
+function cleanCell(value) {
+  return String(value ?? "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function findHeaderRow(rows) {
+  for (let i = 0; i < rows.length; i++) {
+    const vals = rows[i].map(v => cleanCell(v).toLowerCase());
+    const hasHub = vals.some(v => v === "hub#" || v === "hub" || v.startsWith("hub#"));
+    const hasAddress = vals.some(v => v.includes("address"));
+    if (hasHub && hasAddress) return i;
+  }
+  return -1;
+}
+
+function findIndex(headers, matcher, fallback = -1) {
+  const idx = headers.findIndex(h => matcher(cleanCell(h).toLowerCase()));
+  return idx >= 0 ? idx : fallback;
+}
+
+function importWorkbook(workbook) {
+  const imported = [];
+
+  workbook.SheetNames.forEach(sheetName => {
+    const sheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+    if (!rows.length) return;
+
+    const titleRow = rows.slice(0, 3).find(row => row.some(cell => cleanCell(cell).includes(sheetName)));
+    const siteTitle = titleRow ? titleRow.map(cleanCell).filter(Boolean).join(" | ") : sheetName;
+
+    const headerIndex = findHeaderRow(rows);
+    if (headerIndex < 0) return;
+
+    const headers = rows[headerIndex].map(cleanCell);
+    const hubIndex = findIndex(headers, h => h.startsWith("hub"), 0);
+    const addressIndex = findIndex(headers, h => h.includes("address"), 1);
+    const developmentIndex = findIndex(headers, h => h.includes("development"));
+    const cabinetIndex = findIndex(headers, h => h.includes("cabinet") || h.includes("capacity"));
+    const pairsIndex = findIndex(headers, h => h.includes("pair"));
+
+    rows.slice(headerIndex + 1).forEach(row => {
+      const rawHub = cleanCell(row[hubIndex]);
+      const address = cleanCell(row[addressIndex]);
+      if (!rawHub || rawHub.toLowerCase() === "hub#" || rawHub.toLowerCase() === "hub") return;
+
+      const match = rawHub.match(/\d+/);
+      const hubNumber = match ? match[0] : rawHub;
+      const hubLabel = rawHub.toUpperCase().startsWith("HUB") ? rawHub : `HUB ${hubNumber}`;
+
+      imported.push({
+        id: `${sheetName}-${hubNumber}`,
+        olt: sheetName,
+        hub: hubLabel,
+        hubNumber,
+        address,
+        development: developmentIndex >= 0 ? cleanCell(row[developmentIndex]) : "",
+        cabinet: cabinetIndex >= 0 ? cleanCell(row[cabinetIndex]) : "",
+        pairs: pairsIndex >= 0 ? cleanCell(row[pairsIndex]) : "",
+        siteTitle,
+        mapsQuery: `${address} ${siteTitle} North Carolina`,
+        verified: false,
+        lat: null,
+        lng: null
+      });
+    });
+  });
+
+  hubs = imported;
+  localStorage.setItem(IMPORT_KEY, JSON.stringify(imported));
+  $("importNote").textContent = `Imported ${imported.length} hubs from workbook.`;
+  render();
 }
 
 searchInput.addEventListener("input", render);
@@ -275,6 +358,23 @@ $("installBtn").addEventListener("click", async () => {
   await deferredPrompt.userChoice;
   deferredPrompt = null;
   $("installBtn").classList.add("hidden");
+});
+
+$("importBtn").addEventListener("click", async () => {
+  const input = $("excelInput");
+  const file = input.files && input.files[0];
+  if (!file) {
+    alert("Choose the Focus hub Excel workbook first.");
+    return;
+  }
+  if (!window.XLSX) {
+    alert("Excel parser did not load. Check internet once, reload, and try again.");
+    return;
+  }
+
+  const buffer = await file.arrayBuffer();
+  const workbook = XLSX.read(buffer, { type: "array" });
+  importWorkbook(workbook);
 });
 
 if ("serviceWorker" in navigator) {
