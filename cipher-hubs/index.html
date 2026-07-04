@@ -23,6 +23,11 @@
         <input id="searchInput" type="search" placeholder="Example: SSDF 3 or Seaside" autocomplete="off" autofocus />
         <button id="clearBtn" title="Clear search">×</button>
       </div>
+      <div class="import-row">
+        <input id="excelInput" type="file" accept=".xlsx,.xls" />
+        <button id="importBtn" class="secondary">Import Excel</button>
+      </div>
+      <p class="import-note" id="importNote">Import the Focus hub workbook once, then search offline.</p>
       <div class="quick-row">
         <button data-filter="verified">Verified</button>
         <button data-filter="recent">Recent</button>
@@ -68,6 +73,7 @@
     </article>
   </template>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="./hubs-data.js"></script>
   <script src="./app.js"></script>
 </body>
